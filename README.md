@@ -1,0 +1,2 @@
+# TrinityLang
+Trinity programming language
