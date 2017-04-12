@@ -1,0 +1,12 @@
+class Object
+    def native hashCode
+
+    def native getClass
+
+    def native isInstance
+
+    def toString
+        getClass().toString() + '@' + hashCode().toHexString()
+
+    def ==(other)
+        getHashCode() == other.getHashCode()

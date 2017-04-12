@@ -1,0 +1,23 @@
+import Trinity.Errors
+
+module Trinity
+    module IO
+        class OutputStream
+            def write(byte)
+                # TODO Implement
+
+            def writeBytes(bytes)
+                writeData(bytes, 0, bytes.length())
+
+            def writeData(bytes, off, len)
+                if bytes == nil
+                    throw(NilError.new)
+                elsif (off < 0) || (off > bytes.length()) || (len < 0) || ((off + len) > bytes.length()) || ((off + len) < 0)
+                    throw(IndexOutOfBoundsError.new)
+
+                for(i = 0; i < len; i += 1)
+                    write(bytes[off+i])
+
+            def flush
+
+            def close

@@ -1,0 +1,28 @@
+module Trinity
+    module Errors
+        class StackTraceElement
+            def initialize(errorClass, method, file, line)
+                @errorClass = errorClass
+                @method = method
+                @file = file
+                @line = line
+
+            def getErrorClass
+                @errorClass
+
+            def getMethod
+                @method
+
+            def getFile
+                @file
+
+            def getLine
+                @line
+
+            def toString
+                str = ''
+                if getErrorClass() != nil
+                    str = getErrorClass() + '.' + getMethod() + ' in file \'' + getFile() + '\' at line ' + getLine()
+                else
+                    str = 'native method \'' + getMethod() + '\''
+                str

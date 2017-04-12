@@ -1,0 +1,26 @@
+module Trinity
+    module Errors
+        class Error
+            def initialize(message)
+                @message = message
+
+                @stackTrace = []
+                populateStackTrace()
+
+            def getMessage
+                @message
+
+            def getStackTrace
+                @stackTrace
+
+            def toString
+                str = getClass().toString()
+
+                if !getMessage().isEmpty()
+                    str += ': ' + getMessage()
+
+                for (i = 0; i < getStackTrace().length(); i += 1)
+                    str += "\n\tat " + getStackTrace()[i].toString()
+                str
+
+            def native populateStackTrace

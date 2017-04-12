@@ -1,0 +1,7 @@
+import Trinity.Errors
+
+class Objects
+    def static requireNonNil(object, message = '')
+        if object == nil
+            throw(NilError.new(message))
+        object

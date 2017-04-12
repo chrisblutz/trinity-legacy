@@ -1,0 +1,17 @@
+class String
+    def native toString
+
+    def native chars
+
+    def native +
+
+    def native ==
+
+    def length
+        chars().length()
+
+    def isEmpty
+        length() == 0
+
+    def [](index)
+        chars()[0]

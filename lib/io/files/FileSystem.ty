@@ -1,0 +1,6 @@
+import Trinity.Errors
+
+module Trinity
+    module IO
+        module Files
+            class FileSystem

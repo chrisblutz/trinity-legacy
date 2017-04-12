@@ -1,0 +1,8 @@
+module Trinity
+    module Math
+        class Math
+            def static pow(x, n)
+                result = 1
+                for(i = 0; i < n; i+=1)
+                    result *= x
+                result
