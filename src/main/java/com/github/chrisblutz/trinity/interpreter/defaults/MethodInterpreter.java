@@ -12,7 +12,6 @@ import com.github.chrisblutz.trinity.lang.errors.stacktrace.TYStackTrace;
 import com.github.chrisblutz.trinity.lang.procedures.ProcedureAction;
 import com.github.chrisblutz.trinity.lang.procedures.TYProcedure;
 import com.github.chrisblutz.trinity.lang.scope.TYRuntime;
-import com.github.chrisblutz.trinity.lang.types.errors.runtime.TYScopeError;
 import com.github.chrisblutz.trinity.lang.types.nativeutils.NativeHelper;
 import com.github.chrisblutz.trinity.parser.blocks.Block;
 import com.github.chrisblutz.trinity.parser.blocks.BlockItem;
@@ -49,16 +48,16 @@ public class MethodInterpreter extends DeclarationInterpreter {
                     String name;
                     int position = 1;
                     
+                    if (l.get(position).getToken() == Token.NATIVE) {
+                        
+                        nativeMethod = true;
+                        position++;
+                    }
+                    
                     TokenInfo staticModifier = l.get(position);
                     if (staticModifier.getToken() == Token.STATIC) {
                         
                         staticMethod = true;
-                        position++;
-                    }
-                    
-                    if (l.get(position).getToken() == Token.NATIVE) {
-                        
-                        nativeMethod = true;
                         position++;
                     }
                     
@@ -67,6 +66,11 @@ public class MethodInterpreter extends DeclarationInterpreter {
                         
                         name = nameInfo.getContents();
                         position++;
+                        
+                    } else if (nameInfo.getToken() == Token.LEFT_SQUARE_BRACKET && position + 1 < l.size() && l.get(position + 1).getToken() == Token.RIGHT_SQUARE_BRACKET) {
+                        
+                        name = "[]";
+                        position += 2;
                         
                     } else {
                         
@@ -80,6 +84,7 @@ public class MethodInterpreter extends DeclarationInterpreter {
                         
                         List<String> mandatoryParams = new ArrayList<>();
                         Map<String, TYObject> optParams = new HashMap<>();
+                        String blockParam = null;
                         
                         if (position < l.size() && l.get(position).getToken() == Token.LEFT_PARENTHESIS && l.get(l.size() - 1).getToken() == Token.RIGHT_PARENTHESIS) {
                             
@@ -140,6 +145,10 @@ public class MethodInterpreter extends DeclarationInterpreter {
                                     }
                                     
                                     optParams.put(list.get(0).getContents(), valueResult);
+                                    
+                                } else if (list.size() == 2 && list.get(0).getToken() == Token.BLOCK_PREFIX && list.get(1).getToken() == Token.NON_TOKEN_STRING) {
+                                    
+                                    blockParam = list.get(1).getContents();
                                 }
                             }
                         }
@@ -157,9 +166,9 @@ public class MethodInterpreter extends DeclarationInterpreter {
                             action = (runtime, stackTrace, thisObj, params) -> TYObject.NONE;
                         }
                         
-                        method = new TYMethod(name, staticMethod, null, new TYProcedure(action));
-                        method.setMandatoryParameters(mandatoryParams);
-                        method.setOptionalParameters(optParams);
+                        TYProcedure procedure = new TYProcedure(action, mandatoryParams, optParams, blockParam);
+                        
+                        method = new TYMethod(name, staticMethod, procedure);
                         method.importModules(TrinityInterpreter.getImportedModules());
                         
                     } else {
@@ -173,7 +182,7 @@ public class MethodInterpreter extends DeclarationInterpreter {
                         
                     } else {
                         
-                        TYError error = new TYError(new TYScopeError(), "Methods must be declared within a class.", new TYStackTrace());
+                        TYError error = new TYError("Trinity.Errors.ScopeError", "Methods must be declared within a class.", new TYStackTrace());
                         error.throwError();
                     }
                 }

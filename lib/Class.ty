@@ -1,1 +1,4 @@
-class native Class
+class Class
+    def native ==
+
+    def native toString

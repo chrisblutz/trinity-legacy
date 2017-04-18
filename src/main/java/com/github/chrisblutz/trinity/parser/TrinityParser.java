@@ -3,7 +3,6 @@ package com.github.chrisblutz.trinity.parser;
 import com.github.chrisblutz.trinity.interpreter.TrinityInterpreter;
 import com.github.chrisblutz.trinity.lang.errors.TYError;
 import com.github.chrisblutz.trinity.lang.errors.stacktrace.TYStackTrace;
-import com.github.chrisblutz.trinity.lang.types.errors.runtime.TYSyntaxError;
 import com.github.chrisblutz.trinity.parser.blocks.Block;
 import com.github.chrisblutz.trinity.parser.blocks.BlockLine;
 import com.github.chrisblutz.trinity.parser.blocks.BlockParseResults;
@@ -17,6 +16,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 /**
@@ -248,6 +249,22 @@ public class TrinityParser {
                             
                             newLine.add(new TokenInfo(Token.NON_TOKEN_STRING, contents));
                             
+                        } else if (c == 'u') {
+                            
+                            contents = contents.substring(1);
+                            
+                            Matcher m = Pattern.compile("([a-zA-Z0-9][a-zA-Z0-9][a-zA-Z0-9][a-zA-Z0-9]).*").matcher(contents);
+                            
+                            if (m.matches()) {
+                                
+                                String unicodeValue = m.group(1);
+                                contents = contents.substring(4);
+                                
+                                newLine.add(new TokenInfo(Token.NON_TOKEN_STRING, Character.toString((char) Integer.parseInt(unicodeValue, 16))));
+                                
+                                newLine.add(new TokenInfo(Token.NON_TOKEN_STRING, contents));
+                            }
+                            
                         } else {
                             
                             newLine.add(info);
@@ -426,7 +443,7 @@ public class TrinityParser {
                     
                     if (info.getToken() == Token.WS_TAB) {
                         
-                        TYError error = new TYError(new TYSyntaxError(), "No tabs allowed in leading whitespace.", new TYStackTrace());
+                        TYError error = new TYError("Trinity.Errors.SyntaxError", "No tabs allowed in leading whitespace.", new TYStackTrace());
                         error.throwError();
                         
                     } else if (info.getToken() == Token.WS_SPACE) {

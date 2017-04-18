@@ -22,9 +22,4 @@ public class TYLong extends TYObject {
         
         return internalLong;
     }
-    
-    public void setInternalLong(long internalLong) {
-        
-        this.internalLong = internalLong;
-    }
 }

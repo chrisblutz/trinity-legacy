@@ -43,7 +43,7 @@ public class WhileLoopInstructionSet extends ChainedInstructionSet {
         
         while (expBoolean.getInternalBoolean()) {
             
-            getAction().onAction(newRuntime, stackTrace, TYObject.NONE);
+            getAction().onAction(newRuntime, stackTrace, null, TYObject.NONE);
             
             expBoolean = (TYBoolean) getExpression().evaluate(TYObject.NONE, newRuntime, stackTrace);
         }

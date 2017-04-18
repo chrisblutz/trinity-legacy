@@ -1,1 +1,2 @@
-class native Module
+class Module
+    def native toString

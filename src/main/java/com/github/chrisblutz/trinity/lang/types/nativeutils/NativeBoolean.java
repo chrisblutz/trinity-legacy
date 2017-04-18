@@ -1,23 +1,23 @@
-package com.github.chrisblutz.trinity.lang.types.bool;
+package com.github.chrisblutz.trinity.lang.types.nativeutils;
 
-import com.github.chrisblutz.trinity.lang.TYClass;
 import com.github.chrisblutz.trinity.lang.TYMethod;
 import com.github.chrisblutz.trinity.lang.TYObject;
 import com.github.chrisblutz.trinity.lang.procedures.TYProcedure;
+import com.github.chrisblutz.trinity.lang.types.bool.TYBoolean;
 import com.github.chrisblutz.trinity.lang.types.strings.TYString;
+
+import java.util.Map;
 
 
 /**
  * @author Christopher Lutz
  */
-public class TYBooleanClass extends TYClass {
+class NativeBoolean {
     
-    public TYBooleanClass() {
+    static void register(Map<String, TYMethod> methods) {
         
-        super("Boolean", "Boolean", null);
-        
-        registerMethod(new TYMethod("toString", false, null, new TYProcedure((runtime, stackTrace, thisObj, params) -> new TYString(Boolean.toString(((TYBoolean) thisObj).getInternalBoolean())))));
-        registerMethod(new TYMethod("==", false, null, new TYProcedure((runtime, stackTrace, thisObj, params) -> {
+        methods.put("Boolean.toString", new TYMethod("toString", false, new TYProcedure((runtime, stackTrace, thisObj, params) -> new TYString(Boolean.toString(((TYBoolean) thisObj).getInternalBoolean())))));
+        methods.put("Boolean.==", new TYMethod("==", false, new TYProcedure((runtime, stackTrace, thisObj, params) -> {
             
             if (params.length > 0) {
                 

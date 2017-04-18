@@ -24,9 +24,4 @@ public class TYBoolean extends TYObject {
         
         return internalBoolean;
     }
-    
-    public void setInternalBoolean(boolean internalBoolean) {
-        
-        this.internalBoolean = internalBoolean;
-    }
 }

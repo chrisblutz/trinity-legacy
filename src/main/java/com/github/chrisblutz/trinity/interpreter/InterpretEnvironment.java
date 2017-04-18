@@ -46,9 +46,9 @@ public class InterpretEnvironment {
         return getClassStack().get(getClassStack().size() - 1);
     }
     
-    public boolean isEmpty() {
+    public boolean hasElements() {
         
-        return getModuleStack().isEmpty() && getClassStack().isEmpty();
+        return !(getModuleStack().isEmpty() && getClassStack().isEmpty());
     }
     
     public InterpretEnvironment append(TYClass tyClass) {

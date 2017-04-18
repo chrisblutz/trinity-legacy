@@ -39,7 +39,7 @@ public class TYStackTraceElement {
     @Override
     public String toString() {
         
-        if (getErrorClass() != null) {
+        if (getFile() != null) {
             
             String str = getErrorClass() + "." + getMethod() + " in file '" + getFile() + "'";
             
@@ -50,6 +50,10 @@ public class TYStackTraceElement {
             
             return str;
             
+        } else if (getErrorClass() != null) {
+            
+            return getErrorClass() + "." + getMethod() + " (native)";
+            
         } else {
             
             return "native method '" + getMethod() + "'";
@@ -58,6 +62,6 @@ public class TYStackTraceElement {
     
     public static TYStackTraceElement getNativeInitStackTraceElement() {
         
-        return new TYStackTraceElement(null, "<init>", "<native>", 0);
+        return new TYStackTraceElement(null, "<init>", null, 0);
     }
 }

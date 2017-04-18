@@ -1,0 +1,5 @@
+module Trinity
+    module Errors
+        class InheritanceError << Error
+            def initialize(message = '')
+                super.initialize(message)

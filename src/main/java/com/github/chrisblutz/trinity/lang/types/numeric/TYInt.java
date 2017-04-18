@@ -22,9 +22,4 @@ public class TYInt extends TYObject {
         
         return internalInteger;
     }
-    
-    public void setInternalInteger(int internalInteger) {
-        
-        this.internalInteger = internalInteger;
-    }
 }

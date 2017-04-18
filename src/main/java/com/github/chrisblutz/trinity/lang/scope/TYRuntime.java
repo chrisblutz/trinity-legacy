@@ -4,6 +4,7 @@ import com.github.chrisblutz.trinity.lang.ModuleRegistry;
 import com.github.chrisblutz.trinity.lang.TYClass;
 import com.github.chrisblutz.trinity.lang.TYModule;
 import com.github.chrisblutz.trinity.lang.TYObject;
+import com.github.chrisblutz.trinity.lang.procedures.TYProcedure;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -20,6 +21,7 @@ public class TYRuntime implements Cloneable {
     private boolean staticScope = false;
     private TYModule module = null;
     private TYClass tyClass = null;
+    private TYProcedure procedure = null;
     private TYModule[] importedModules = new TYModule[0];
     
     public void setVariable(String variable, TYObject value) {
@@ -71,6 +73,16 @@ public class TYRuntime implements Cloneable {
     public void setTyClass(TYClass tyClass) {
         
         this.tyClass = tyClass;
+    }
+    
+    public TYProcedure getProcedure() {
+        
+        return procedure;
+    }
+    
+    public void setProcedure(TYProcedure procedure) {
+        
+        this.procedure = procedure;
     }
     
     public void importModules(String[] modules) {
@@ -136,6 +148,7 @@ public class TYRuntime implements Cloneable {
             runtime.scope = scope;
             runtime.staticScope = staticScope;
             runtime.module = module;
+            runtime.procedure = procedure;
             runtime.importedModules = Arrays.copyOf(importedModules, importedModules.length);
             
             return runtime;

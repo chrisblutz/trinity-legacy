@@ -24,11 +24,6 @@ public class ChainedInstructionSet extends ObjectEvaluator {
         children.addAll(Arrays.asList(evaluators));
     }
     
-    public void addChild(ObjectEvaluator set) {
-        
-        children.add(set);
-    }
-    
     public List<ObjectEvaluator> getChildren() {
         
         return children;

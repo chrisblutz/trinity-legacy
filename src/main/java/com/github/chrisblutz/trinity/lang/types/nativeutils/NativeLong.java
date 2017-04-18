@@ -1,6 +1,5 @@
-package com.github.chrisblutz.trinity.lang.types.numeric;
+package com.github.chrisblutz.trinity.lang.types.nativeutils;
 
-import com.github.chrisblutz.trinity.lang.TYClass;
 import com.github.chrisblutz.trinity.lang.TYMethod;
 import com.github.chrisblutz.trinity.lang.TYObject;
 import com.github.chrisblutz.trinity.lang.errors.TYError;
@@ -8,31 +7,31 @@ import com.github.chrisblutz.trinity.lang.errors.stacktrace.TYStackTrace;
 import com.github.chrisblutz.trinity.lang.procedures.ProcedureAction;
 import com.github.chrisblutz.trinity.lang.procedures.TYProcedure;
 import com.github.chrisblutz.trinity.lang.types.bool.TYBoolean;
-import com.github.chrisblutz.trinity.lang.types.errors.runtime.TYInvalidArgumentNumberError;
-import com.github.chrisblutz.trinity.lang.types.errors.runtime.TYInvalidTypeError;
-import com.github.chrisblutz.trinity.lang.types.errors.runtime.TYUnsupportedOperationError;
+import com.github.chrisblutz.trinity.lang.types.numeric.TYFloat;
+import com.github.chrisblutz.trinity.lang.types.numeric.TYInt;
+import com.github.chrisblutz.trinity.lang.types.numeric.TYLong;
 import com.github.chrisblutz.trinity.lang.types.strings.TYString;
+
+import java.util.Map;
 
 
 /**
  * @author Christopher Lutz
  */
-public class TYIntClass extends TYClass {
+class NativeLong {
     
-    public TYIntClass() {
+    static void register(Map<String, TYMethod> methods) {
         
-        super("Int", "Int", null);
-        
-        registerMethod(new TYMethod("+", false, null, new TYProcedure(getActionForOperation("+"))));
-        registerMethod(new TYMethod("-", false, null, new TYProcedure(getActionForOperation("-"))));
-        registerMethod(new TYMethod("*", false, null, new TYProcedure(getActionForOperation("*"))));
-        registerMethod(new TYMethod("/", false, null, new TYProcedure(getActionForOperation("/"))));
-        registerMethod(new TYMethod("%", false, null, new TYProcedure(getActionForOperation("%"))));
-        registerMethod(new TYMethod("toString", false, null, new TYProcedure((runtime, stackTrace, thisObj, params) -> new TYString(Integer.toString(((TYInt) thisObj).getInternalInteger())))));
-        registerMethod(new TYMethod("toHexString", false, null, new TYProcedure((runtime, stackTrace, thisObj, params) -> new TYString(Integer.toHexString(((TYInt) thisObj).getInternalInteger())))));
-        registerMethod(new TYMethod("compareTo", false, null, new TYProcedure((runtime, stackTrace, thisObj, params) -> {
+        methods.put("Long.+", new TYMethod("+", false, new TYProcedure(getActionForOperation("+"))));
+        methods.put("Long.-", new TYMethod("-", false, new TYProcedure(getActionForOperation("-"))));
+        methods.put("Long.*", new TYMethod("*", false, new TYProcedure(getActionForOperation("*"))));
+        methods.put("Long./", new TYMethod("/", false, new TYProcedure(getActionForOperation("/"))));
+        methods.put("Long.%", new TYMethod("%", false, new TYProcedure(getActionForOperation("%"))));
+        methods.put("Long.toString", new TYMethod("toString", false, new TYProcedure((runtime, stackTrace, thisObj, params) -> new TYString(Long.toString(((TYLong) thisObj).getInternalLong())))));
+        methods.put("Long.toHexString", new TYMethod("toHexString", false, new TYProcedure((runtime, stackTrace, thisObj, params) -> new TYString(Long.toHexString(((TYLong) thisObj).getInternalLong())))));
+        methods.put("Long.compareTo", new TYMethod("compareTo", false, new TYProcedure((runtime, stackTrace, thisObj, params) -> {
             
-            int thisInt = ((TYInt) thisObj).getInternalInteger();
+            long thisLong = ((TYLong) thisObj).getInternalLong();
             
             if (params.length > 0) {
                 
@@ -42,27 +41,27 @@ public class TYIntClass extends TYClass {
                     
                     int objInt = ((TYInt) obj).getInternalInteger();
                     
-                    return new TYInt(Integer.compare(thisInt, objInt));
+                    return new TYInt(Long.compare(thisLong, objInt));
                     
                 } else if (obj instanceof TYLong) {
                     
                     long objLong = ((TYLong) obj).getInternalLong();
                     
-                    return new TYInt(Long.compare(thisInt, objLong));
+                    return new TYInt(Long.compare(thisLong, objLong));
                     
                 } else if (obj instanceof TYFloat) {
                     
                     double objDouble = ((TYFloat) obj).getInternalDouble();
                     
-                    return new TYInt(Double.compare(thisInt, objDouble));
+                    return new TYInt(Double.compare(thisLong, objDouble));
                 }
             }
             
             return new TYInt(-1);
         })));
-        registerMethod(new TYMethod("==", false, null, new TYProcedure((runtime, stackTrace, thisObj, params) -> {
+        methods.put("Long.==", new TYMethod("==", false, new TYProcedure((runtime, stackTrace, thisObj, params) -> {
             
-            int thisInt = ((TYInt) thisObj).getInternalInteger();
+            long thisLong = ((TYLong) thisObj).getInternalLong();
             
             if (params.length > 0) {
                 
@@ -72,19 +71,19 @@ public class TYIntClass extends TYClass {
                     
                     int objInt = ((TYInt) obj).getInternalInteger();
                     
-                    return new TYBoolean(thisInt == objInt);
+                    return new TYBoolean(thisLong == objInt);
                     
                 } else if (obj instanceof TYLong) {
                     
                     long objLong = ((TYLong) obj).getInternalLong();
                     
-                    return new TYBoolean(thisInt == objLong);
+                    return new TYBoolean(thisLong == objLong);
                     
                 } else if (obj instanceof TYFloat) {
                     
                     double objDouble = ((TYFloat) obj).getInternalDouble();
                     
-                    return new TYBoolean(thisInt == objDouble);
+                    return new TYBoolean(thisLong == objDouble);
                 }
             }
             
@@ -96,7 +95,7 @@ public class TYIntClass extends TYClass {
         
         return (runtime, stackTrace, thisObj, params) -> {
             
-            int thisInt = ((TYInt) thisObj).getInternalInteger();
+            long thisLong = ((TYLong) thisObj).getInternalLong();
             
             TYObject returnVal;
             
@@ -107,16 +106,21 @@ public class TYIntClass extends TYClass {
                 if (obj instanceof TYInt) {
                     
                     int newInt = ((TYInt) obj).getInternalInteger();
-                    returnVal = new TYInt(intCalculation(thisInt, newInt, operation, stackTrace));
+                    returnVal = new TYLong(longCalculation(thisLong, newInt, operation, stackTrace));
+                    
+                } else if (obj instanceof TYLong) {
+                    
+                    long newLong = ((TYLong) obj).getInternalLong();
+                    returnVal = new TYLong(longCalculation(thisLong, newLong, operation, stackTrace));
                     
                 } else if (obj instanceof TYFloat) {
                     
                     double newDouble = ((TYFloat) obj).getInternalDouble();
-                    returnVal = new TYFloat(doubleCalculation(thisInt, newDouble, operation, stackTrace));
+                    returnVal = new TYFloat(doubleCalculation(thisLong, newDouble, operation, stackTrace));
                     
                 } else {
                     
-                    TYError error = new TYError(new TYInvalidTypeError(), "Invalid type passed to '" + operation + "'.", stackTrace);
+                    TYError error = new TYError("Trinity.Errors.InvalidTypeError", "Invalid type passed to '" + operation + "'.", stackTrace);
                     error.throwError();
                     
                     returnVal = TYObject.NONE;
@@ -124,7 +128,7 @@ public class TYIntClass extends TYClass {
                 
             } else {
                 
-                TYError error = new TYError(new TYInvalidArgumentNumberError(), "'" + operation + "' requires two operands.", stackTrace);
+                TYError error = new TYError("Trinity.Errors.InvalidArgumentNumberError", "'" + operation + "' requires two operands.", stackTrace);
                 error.throwError();
                 
                 returnVal = TYObject.NONE;
@@ -134,69 +138,69 @@ public class TYIntClass extends TYClass {
         };
     }
     
-    private static int intCalculation(int int1, int int2, String operation, TYStackTrace stackTrace) {
+    private static long longCalculation(long long1, long long2, String operation, TYStackTrace stackTrace) {
         
         switch (operation) {
             
             case "+":
                 
-                return int1 + int2;
+                return long1 + long2;
             
             case "-":
                 
-                return int1 - int2;
+                return long1 - long2;
             
             case "*":
                 
-                return int1 * int2;
+                return long1 * long2;
             
             case "/":
                 
-                return int1 / int2;
+                return long1 / long2;
             
             case "%":
                 
-                return int1 % int2;
+                return long1 % long2;
             
             default:
                 
-                TYError error = new TYError(new TYUnsupportedOperationError(), "Operation '" + operation + "' not supported.", stackTrace);
+                TYError error = new TYError("Trinity.Errors.UnsupportedOperationError", "Operation '" + operation + "' not supported.", stackTrace);
                 error.throwError();
                 
-                return int1;
+                return long1;
         }
     }
     
-    private static double doubleCalculation(int int1, double double1, String operation, TYStackTrace stackTrace) {
+    private static double doubleCalculation(long long1, double double1, String operation, TYStackTrace stackTrace) {
         
         switch (operation) {
             
             case "+":
                 
-                return int1 + double1;
+                return long1 + double1;
             
             case "-":
                 
-                return int1 - double1;
+                return long1 - double1;
             
             case "*":
                 
-                return int1 * double1;
+                return long1 * double1;
             
             case "/":
                 
-                return int1 / double1;
+                return long1 / double1;
             
             case "%":
                 
-                return int1 % double1;
+                return long1 % double1;
             
             default:
                 
-                TYError error = new TYError(new TYUnsupportedOperationError(), "Operation '" + operation + "' not supported.", stackTrace);
+                TYError error = new TYError("Trinity.Errors.UnsupportedOperationError", "Operation '" + operation + "' not supported.", stackTrace);
                 error.throwError();
                 
-                return (double) int1;
+                return (double) long1;
         }
     }
 }

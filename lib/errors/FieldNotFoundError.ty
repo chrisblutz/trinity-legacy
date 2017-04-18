@@ -1,0 +1,5 @@
+module Trinity
+    module Errors
+        class FieldNotFoundError << Error
+            def initialize(message = '')
+                super.initialize(message)

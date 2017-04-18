@@ -44,11 +44,6 @@ public class TYString extends TYObject {
         return internalString;
     }
     
-    public void setInternalString(String internalString) {
-        
-        this.internalString = internalString;
-    }
-    
     public TYArray getCharacterArray() {
         
         return charArray;

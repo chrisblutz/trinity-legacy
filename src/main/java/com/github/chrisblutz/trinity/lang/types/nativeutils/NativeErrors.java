@@ -17,11 +17,13 @@ import java.util.Map;
 /**
  * @author Christopher Lutz
  */
-public class NativeErrors {
+class NativeErrors {
     
-    public static void register(Map<String, TYMethod> methods) {
+    static void register(Map<String, TYMethod> methods) {
         
-        methods.put("Trinity.Errors.Error.populateStackTrace", new TYMethod("populateStackTrace", false, null, new TYProcedure((runtime, stackTrace, thisObj, params) -> {
+        methods.put("Trinity.Errors.Error.populateStackTrace", new TYMethod("populateStackTrace", false, new TYProcedure((runtime, stackTrace, thisObj, params) -> {
+            
+            NativeHelper.appendToStackTrace(stackTrace, "Trinity.Errors.Error", "populateStackTrace");
             
             TYArray ary = new TYArray(new ArrayList<>());
             
@@ -60,7 +62,7 @@ public class NativeErrors {
                 }
                 
                 TYObject line = new TYInt(e.getLine());
-                TYObject stackTraceInstance = ClassRegistry.getClass("Trinity.Errors.StackTraceElement").tyInvoke("new", runtime, stackTrace, TYObject.NONE, errorClass, method, fileName, line);
+                TYObject stackTraceInstance = ClassRegistry.getClass("Trinity.Errors.StackTraceElement").tyInvoke("new", runtime, stackTrace, null, null, TYObject.NONE, errorClass, method, fileName, line);
                 ary.getInternalList().add(stackTraceInstance);
             }
             

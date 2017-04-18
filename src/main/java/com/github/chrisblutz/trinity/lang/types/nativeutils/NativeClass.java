@@ -1,26 +1,27 @@
-package com.github.chrisblutz.trinity.lang.types;
+package com.github.chrisblutz.trinity.lang.types.nativeutils;
 
 import com.github.chrisblutz.trinity.lang.TYClass;
 import com.github.chrisblutz.trinity.lang.TYMethod;
 import com.github.chrisblutz.trinity.lang.TYObject;
 import com.github.chrisblutz.trinity.lang.errors.TYError;
 import com.github.chrisblutz.trinity.lang.procedures.TYProcedure;
+import com.github.chrisblutz.trinity.lang.types.TYClassObject;
+import com.github.chrisblutz.trinity.lang.types.TYStaticClassObject;
 import com.github.chrisblutz.trinity.lang.types.bool.TYBoolean;
-import com.github.chrisblutz.trinity.lang.types.errors.runtime.TYInvalidTypeError;
 import com.github.chrisblutz.trinity.lang.types.strings.TYString;
+
+import java.util.Map;
 
 
 /**
  * @author Christopher Lutz
  */
-public class TYClassClass extends TYClass {
+class NativeClass {
     
-    public TYClassClass() {
+    static void register(Map<String, TYMethod> methods) {
         
-        super("Class", "Class", null);
-        
-        registerMethod(new TYMethod("toString", false, null, new TYProcedure((runtime, stackTrace, thisObj, params) -> new TYString(((TYClassObject) thisObj).getInternalClass().getName()))));
-        registerMethod(new TYMethod("==", false, null, new TYProcedure((runtime, stackTrace, thisObj, params) -> {
+        methods.put("Class.toString", new TYMethod("toString", false, new TYProcedure((runtime, stackTrace, thisObj, params) -> new TYString(((TYClassObject) thisObj).getInternalClass().getName()))));
+        methods.put("Class.==", new TYMethod("==", false, new TYProcedure((runtime, stackTrace, thisObj, params) -> {
             
             TYClass thisClass = ((TYClassObject) thisObj).getInternalClass();
             TYClass otherClass;
@@ -35,7 +36,7 @@ public class TYClassClass extends TYClass {
                 
             } else {
                 
-                TYError error = new TYError(new TYInvalidTypeError(), "Method '==' takes a class object as a parameter.", stackTrace);
+                TYError error = new TYError("Trinity.Errors.InvalidTypeError", "Method '==' takes a class object as a parameter.", stackTrace);
                 error.throwError();
                 
                 otherClass = TYObject.NIL.getObjectClass();

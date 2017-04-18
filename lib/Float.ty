@@ -1,1 +1,16 @@
-class native Float
+class Float
+    def native +
+
+    def native -
+
+    def native *
+
+    def native /
+
+    def native %
+
+    def native ==
+
+    def native toString
+
+    def native compareTo

@@ -7,8 +7,6 @@ import com.github.chrisblutz.trinity.lang.errors.TYError;
 import com.github.chrisblutz.trinity.lang.errors.stacktrace.TYStackTrace;
 import com.github.chrisblutz.trinity.lang.scope.TYRuntime;
 import com.github.chrisblutz.trinity.lang.types.arrays.TYArray;
-import com.github.chrisblutz.trinity.lang.types.errors.runtime.TYClassNotFoundError;
-import com.github.chrisblutz.trinity.lang.types.errors.runtime.TYMethodNotFoundError;
 import com.github.chrisblutz.trinity.lang.types.strings.TYString;
 import com.github.chrisblutz.trinity.parser.TrinityParser;
 
@@ -48,8 +46,9 @@ public class CLI {
         }
         
         if (ClassRegistry.getMainClasses().size() == 0) {
-        
-        
+            
+            TYError error = new TYError("Trinity.Errors.MethodNotFoundError", "No main method found in found in loaded files.", new TYStackTrace());
+            error.throwError();
         }
         
         if (mainClass != null) {
@@ -58,11 +57,11 @@ public class CLI {
                 
                 TYClass main = ClassRegistry.getClass(mainClass);
                 
-                main.tyInvoke("main", new TYRuntime(), new TYStackTrace(), TYObject.NONE, parseIntoStringArray());
+                main.tyInvoke("main", new TYRuntime(), new TYStackTrace(), null, null, TYObject.NONE, parseIntoStringArray());
                 
             } else {
                 
-                TYError error = new TYError(new TYClassNotFoundError(), "Class '" + mainClass + "' not found.", new TYStackTrace());
+                TYError error = new TYError("Trinity.Errors.ClassNotFoundError", "Class '" + mainClass + "' not found.", new TYStackTrace());
                 error.throwError();
             }
             
@@ -70,11 +69,11 @@ public class CLI {
             
             if (ClassRegistry.getMainClasses().size() > 0) {
                 
-                ClassRegistry.getMainClasses().get(0).tyInvoke("main", new TYRuntime(), new TYStackTrace(), TYObject.NONE, parseIntoStringArray());
+                ClassRegistry.getMainClasses().get(0).tyInvoke("main", new TYRuntime(), new TYStackTrace(), null, null, TYObject.NONE, parseIntoStringArray());
                 
             } else {
                 
-                TYError error = new TYError(new TYMethodNotFoundError(), "No 'main' methods found.", new TYStackTrace());
+                TYError error = new TYError("Trinity.Errors.MethodNotFoundError", "No 'main' methods found.", new TYStackTrace());
                 error.throwError();
             }
         }
@@ -156,5 +155,10 @@ public class CLI {
                 arguments.addAll(Arrays.asList(params));
                 break;
         }
+    }
+    
+    public static boolean isDebuggingEnabled() {
+        
+        return debugging;
     }
 }

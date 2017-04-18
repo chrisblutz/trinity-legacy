@@ -1,1 +1,15 @@
-class native Kernel
+class Kernel
+    def native static readln
+
+    def native static print(str)
+
+    def static println(str = '')
+        print(str + "\n")
+
+    def native static throw(error)
+
+    def native static exit(code)
+
+    def static abort(code, message)
+        println(message)
+        exit(code)

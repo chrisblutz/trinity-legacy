@@ -1,0 +1,5 @@
+module Trinity
+    module Errors
+        class ScopeError << Error
+            def initialize(message = '')
+                super.initialize(message)

@@ -42,23 +42,23 @@ public class BinaryOperationInstructionSet extends ObjectEvaluator {
             
             case PLUS:
                 
-                return thisObj.tyInvoke("+", runtime, stackTrace, opObj);
+                return thisObj.tyInvoke("+", runtime, stackTrace, null, null, opObj);
             
             case MINUS:
                 
-                return thisObj.tyInvoke("-", runtime, stackTrace, opObj);
+                return thisObj.tyInvoke("-", runtime, stackTrace, null, null, opObj);
             
             case MULTIPLY:
                 
-                return thisObj.tyInvoke("*", runtime, stackTrace, opObj);
+                return thisObj.tyInvoke("*", runtime, stackTrace, null, null, opObj);
             
             case DIVIDE:
                 
-                return thisObj.tyInvoke("/", runtime, stackTrace, opObj);
+                return thisObj.tyInvoke("/", runtime, stackTrace, null, null, opObj);
             
             case MODULUS:
                 
-                return thisObj.tyInvoke("%", runtime, stackTrace, opObj);
+                return thisObj.tyInvoke("%", runtime, stackTrace, null, null, opObj);
         }
         
         return TYObject.NONE;

@@ -43,11 +43,11 @@ public class BinaryEqualityOperationInstructionSet extends ObjectEvaluator {
             
             case EQUAL_TO:
                 
-                return thisObj.tyInvoke("==", runtime, stackTrace, opObj);
+                return thisObj.tyInvoke("==", runtime, stackTrace, null, null, opObj);
             
             case NOT_EQUAL_TO:
                 
-                return new TYBoolean(!((TYBoolean) thisObj.tyInvoke("==", runtime, stackTrace, opObj)).getInternalBoolean());
+                return new TYBoolean(!((TYBoolean) thisObj.tyInvoke("==", runtime, stackTrace, null, null, opObj)).getInternalBoolean());
         }
         
         return TYBoolean.FALSE;

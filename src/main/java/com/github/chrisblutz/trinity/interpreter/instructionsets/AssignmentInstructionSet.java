@@ -71,23 +71,23 @@ public class AssignmentInstructionSet extends ObjectEvaluator {
             
         } else if (getOperator() == Token.PLUS_EQUAL) {
             
-            opObj = assignObj.tyInvoke("+", runtime, stackTrace, opObj);
+            opObj = assignObj.tyInvoke("+", runtime, stackTrace, null, null, opObj);
             
         } else if (getOperator() == Token.MINUS_EQUAL) {
             
-            opObj = assignObj.tyInvoke("-", runtime, stackTrace, opObj);
+            opObj = assignObj.tyInvoke("-", runtime, stackTrace, null, null, opObj);
             
         } else if (getOperator() == Token.MULTIPLY_EQUAL) {
             
-            opObj = assignObj.tyInvoke("*", runtime, stackTrace, opObj);
+            opObj = assignObj.tyInvoke("*", runtime, stackTrace, null, null, opObj);
             
         } else if (getOperator() == Token.DIVIDE_EQUAL) {
             
-            opObj = assignObj.tyInvoke("/", runtime, stackTrace, opObj);
+            opObj = assignObj.tyInvoke("/", runtime, stackTrace, null, null, opObj);
             
         } else if (getOperator() == Token.MODULUS_EQUAL) {
             
-            opObj = assignObj.tyInvoke("%", runtime, stackTrace, opObj);
+            opObj = assignObj.tyInvoke("%", runtime, stackTrace, null, null, opObj);
         }
         
         if (getAssignmentTokens().length == 1 && getAssignmentTokens()[0].getToken() == Token.NON_TOKEN_STRING) {

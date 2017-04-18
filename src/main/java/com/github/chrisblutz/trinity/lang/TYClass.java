@@ -2,15 +2,11 @@ package com.github.chrisblutz.trinity.lang;
 
 import com.github.chrisblutz.trinity.lang.errors.TYError;
 import com.github.chrisblutz.trinity.lang.errors.stacktrace.TYStackTrace;
-import com.github.chrisblutz.trinity.lang.privelages.TYPrivileges;
 import com.github.chrisblutz.trinity.lang.procedures.DefaultProcedures;
 import com.github.chrisblutz.trinity.lang.procedures.TYProcedure;
 import com.github.chrisblutz.trinity.lang.scope.TYRuntime;
 import com.github.chrisblutz.trinity.lang.types.TYClassObject;
 import com.github.chrisblutz.trinity.lang.types.bool.TYBoolean;
-import com.github.chrisblutz.trinity.lang.types.errors.runtime.TYInvalidArgumentNumberError;
-import com.github.chrisblutz.trinity.lang.types.errors.runtime.TYMethodNotFoundError;
-import com.github.chrisblutz.trinity.lang.types.errors.runtime.TYScopeError;
 import com.github.chrisblutz.trinity.lang.types.numeric.TYInt;
 
 import java.util.ArrayList;
@@ -24,11 +20,8 @@ import java.util.Map;
  */
 public class TYClass {
     
-    public static final TYClass NATIVE = new TYClass("<native>", "<native>", null);
-    
     private List<TYClass> classes = new ArrayList<>();
     private String name, shortName;
-    private TYPrivileges privileges;
     private TYMethod constructor;
     private TYClass superclass;
     private TYModule module;
@@ -36,39 +29,38 @@ public class TYClass {
     private Map<String, TYMethod> methods = new HashMap<>();
     private Map<String, TYObject> variables = new HashMap<>();
     
-    public TYClass(String name, String shortName, TYPrivileges privileges) {
+    public TYClass(String name, String shortName) {
         
-        this(name, shortName, privileges, name.contentEquals("Object") ? null : ClassRegistry.getClass("Object"));
+        this(name, shortName, name.contentEquals("Object") ? null : ClassRegistry.getClass("Object"));
     }
     
-    public TYClass(String name, String shortName, TYPrivileges privileges, TYClass superclass) {
+    public TYClass(String name, String shortName, TYClass superclass) {
         
         this.name = name;
         this.shortName = shortName;
-        this.privileges = privileges;
         this.superclass = superclass;
         
         inheritanceTree = compileInheritanceTree();
         inheritanceTree.add(this);
         
-        registerMethod(new TYMethod("+", false, null, DefaultProcedures.getDefaultUOEOperationProcedure("+")));
-        registerMethod(new TYMethod("-", false, null, DefaultProcedures.getDefaultUOEOperationProcedure("-")));
-        registerMethod(new TYMethod("*", false, null, DefaultProcedures.getDefaultUOEOperationProcedure("*")));
-        registerMethod(new TYMethod("/", false, null, DefaultProcedures.getDefaultUOEOperationProcedure("/")));
-        registerMethod(new TYMethod("%", false, null, DefaultProcedures.getDefaultUOEOperationProcedure("%")));
-        registerMethod(new TYMethod("compareTo", false, null, DefaultProcedures.getDefaultUOEOperationProcedure("compareTo")));
-        registerMethod(new TYMethod("hashCode", false, null, new TYProcedure((runtime, stackTrace, thisObj, params) -> thisObj == TYObject.NIL ? new TYInt(0) : new TYInt(thisObj.hashCode()))));
-        registerMethod(new TYMethod("getClass", false, null, new TYProcedure((runtime, stackTrace, thisObj, params) -> new TYClassObject(thisObj.getObjectClass()))));
-        registerMethod(new TYMethod("==", false, null, new TYProcedure((runtime, stackTrace, thisObj, params) -> {
+        registerMethod(new TYMethod("+", false, DefaultProcedures.getDefaultUOEOperationProcedure("+")));
+        registerMethod(new TYMethod("-", false, DefaultProcedures.getDefaultUOEOperationProcedure("-")));
+        registerMethod(new TYMethod("*", false, DefaultProcedures.getDefaultUOEOperationProcedure("*")));
+        registerMethod(new TYMethod("/", false, DefaultProcedures.getDefaultUOEOperationProcedure("/")));
+        registerMethod(new TYMethod("%", false, DefaultProcedures.getDefaultUOEOperationProcedure("%")));
+        registerMethod(new TYMethod("compareTo", false, DefaultProcedures.getDefaultUOEOperationProcedure("compareTo")));
+        registerMethod(new TYMethod("hashCode", false, new TYProcedure((runtime, stackTrace, thisObj, params) -> thisObj == TYObject.NIL ? new TYInt(0) : new TYInt(thisObj.hashCode()))));
+        registerMethod(new TYMethod("getClass", false, new TYProcedure((runtime, stackTrace, thisObj, params) -> new TYClassObject(thisObj.getObjectClass()))));
+        registerMethod(new TYMethod("==", false, new TYProcedure((runtime, stackTrace, thisObj, params) -> {
             
             if (params.length > 0) {
                 
                 TYObject object = params[0];
                 
-                TYInt thisHashCode = (TYInt) thisObj.tyInvoke("hashCode", runtime, stackTrace);
-                TYInt otherHashCode = (TYInt) object.tyInvoke("hashCode", runtime, stackTrace);
+                TYInt thisHashCode = (TYInt) thisObj.tyInvoke("hashCode", runtime, stackTrace, null, null);
+                TYInt otherHashCode = (TYInt) object.tyInvoke("hashCode", runtime, stackTrace, null, null);
                 
-                return thisHashCode.tyInvoke("==", runtime, stackTrace, otherHashCode);
+                return thisHashCode.tyInvoke("==", runtime, stackTrace, null, null, otherHashCode);
                 
             } else {
                 
@@ -104,11 +96,6 @@ public class TYClass {
     public String getShortName() {
         
         return shortName;
-    }
-    
-    public TYPrivileges getPrivileges() {
-        
-        return privileges;
     }
     
     public TYClass getSuperclass() {
@@ -174,12 +161,12 @@ public class TYClass {
         this.module = module;
     }
     
-    public TYObject tyInvoke(String methodName, TYRuntime runtime, TYStackTrace stackTrace, TYObject thisObj, TYObject... params) {
+    public TYObject tyInvoke(String methodName, TYRuntime runtime, TYStackTrace stackTrace, TYProcedure procedure, TYRuntime procedureRuntime, TYObject thisObj, TYObject... params) {
         
-        return tyInvoke(this, methodName, runtime, stackTrace, thisObj, params);
+        return tyInvoke(this, methodName, runtime, stackTrace, procedure, procedureRuntime, thisObj, params);
     }
     
-    public TYObject tyInvoke(TYClass originClass, String methodName, TYRuntime runtime, TYStackTrace stackTrace, TYObject thisObj, TYObject... params) {
+    public TYObject tyInvoke(TYClass originClass, String methodName, TYRuntime runtime, TYStackTrace stackTrace, TYProcedure procedure, TYRuntime procedureRuntime, TYObject thisObj, TYObject... params) {
         
         if (methodName.contentEquals("new")) {
             
@@ -187,37 +174,6 @@ public class TYClass {
                 
                 TYRuntime newRuntime = runtime.clone();
                 newRuntime.clearVariables();
-                
-                for (String opt : constructor.getOptionalParameters().keySet()) {
-                    
-                    newRuntime.setVariable(opt, constructor.getOptionalParameters().get(opt));
-                }
-                
-                int mandatoryNum = constructor.getMandatoryParameters().size();
-                int optNum = constructor.getOptionalParameters().size();
-                
-                if (params.length >= constructor.getMandatoryParameters().size()) {
-                    
-                    int paramPos;
-                    for (paramPos = 0; paramPos < mandatoryNum; paramPos++) {
-                        
-                        newRuntime.setVariable(constructor.getMandatoryParameters().get(paramPos), params[paramPos]);
-                    }
-                    
-                    for (; paramPos < mandatoryNum + optNum && paramPos < params.length; paramPos++) {
-                        
-                        if (params[paramPos] != TYObject.NONE) {
-                            
-                            String param = new ArrayList<>(constructor.getOptionalParameters().keySet()).get(paramPos - mandatoryNum);
-                            newRuntime.setVariable(param, params[paramPos]);
-                        }
-                    }
-                    
-                } else {
-                    
-                    TYError error = new TYError(new TYInvalidArgumentNumberError(), "Constructor takes " + constructor.getMandatoryParameters().size() + " parameter(s).", stackTrace);
-                    error.throwError();
-                }
                 
                 TYObject newObj = new TYObject(this);
                 
@@ -227,7 +183,7 @@ public class TYClass {
                 newRuntime.setTyClass(this);
                 newRuntime.importModules(constructor.getImportedModules());
                 
-                constructor.getProcedure().call(newRuntime, stackTrace, newObj, params);
+                constructor.getProcedure().call(newRuntime, stackTrace, procedure, procedureRuntime, newObj, params);
                 
                 return newObj;
                 
@@ -246,11 +202,6 @@ public class TYClass {
             newRuntime.importModules(method.getImportedModules());
             newRuntime.clearVariables();
             
-            for (String opt : method.getOptionalParameters().keySet()) {
-                
-                newRuntime.setVariable(opt, method.getOptionalParameters().get(opt));
-            }
-            
             if (method.isStaticMethod()) {
                 
                 newRuntime.setScope(new TYClassObject(this), true);
@@ -259,7 +210,7 @@ public class TYClass {
                 
                 if (thisObj == TYObject.NONE) {
                     
-                    TYError error = new TYError(new TYScopeError(), "Instance method '" + methodName + "' cannot be called from a static context.", stackTrace);
+                    TYError error = new TYError("Trinity.Errors.ScopeError", "Instance method '" + methodName + "' cannot be called from a static context.", stackTrace);
                     error.throwError();
                 }
                 
@@ -267,45 +218,19 @@ public class TYClass {
                 newRuntime.setScope(thisObj, false);
             }
             
-            int mandatoryNum = method.getMandatoryParameters().size();
-            int optNum = method.getOptionalParameters().size();
-            
-            if (params.length >= method.getMandatoryParameters().size()) {
-                
-                int paramPos;
-                for (paramPos = 0; paramPos < mandatoryNum; paramPos++) {
-                    
-                    newRuntime.setVariable(method.getMandatoryParameters().get(paramPos), params[paramPos]);
-                }
-                
-                for (; paramPos < mandatoryNum + optNum && paramPos < params.length; paramPos++) {
-                    
-                    if (params[paramPos] != TYObject.NONE) {
-                        
-                        String param = new ArrayList<>(method.getOptionalParameters().keySet()).get(paramPos - mandatoryNum);
-                        newRuntime.setVariable(param, params[paramPos]);
-                    }
-                }
-                
-            } else {
-                
-                TYError error = new TYError(new TYInvalidArgumentNumberError(), "Method '" + getName() + "." + methodName + "' takes " + method.getMandatoryParameters().size() + " parameter(s).", stackTrace);
-                error.throwError();
-            }
-            
-            return method.getProcedure().call(newRuntime, stackTrace, thisObj, params);
+            return method.getProcedure().call(newRuntime, stackTrace, procedure, procedureRuntime, thisObj, params);
             
         } else if (getSuperclass() != null) {
             
-            return getSuperclass().tyInvoke(originClass, methodName, runtime, stackTrace, thisObj, params);
+            return getSuperclass().tyInvoke(originClass, methodName, runtime, stackTrace, procedure, procedureRuntime, thisObj, params);
             
         } else if (ClassRegistry.getClass("Kernel").getMethods().containsKey(methodName)) {
             
-            return ClassRegistry.getClass("Kernel").tyInvoke(originClass, methodName, runtime, stackTrace, thisObj, params);
+            return ClassRegistry.getClass("Kernel").tyInvoke(originClass, methodName, runtime, stackTrace, procedure, procedureRuntime, thisObj, params);
             
         } else {
             
-            TYError notFoundError = new TYError(new TYMethodNotFoundError(), "No method '" + methodName + "' found in '" + originClass.getName() + "'.", stackTrace);
+            TYError notFoundError = new TYError("Trinity.Errors.MethodNotFoundError", "No method '" + methodName + "' found in '" + originClass.getName() + "'.", stackTrace);
             notFoundError.throwError();
         }
         

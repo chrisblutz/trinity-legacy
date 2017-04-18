@@ -1,11 +1,13 @@
 class String
-    def native toString
-
-    def native chars
 
     def native +
 
     def native ==
+
+    def native chars
+
+    def toString
+        this
 
     def length
         chars().length()

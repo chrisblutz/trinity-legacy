@@ -68,7 +68,7 @@ public class BranchingIfInstructionSet extends ChainedInstructionSet {
                 
                 if (getAction() != null) {
                     
-                    result = getAction().onAction(newRuntime, stackTrace, TYObject.NONE);
+                    result = getAction().onAction(newRuntime, stackTrace, null, TYObject.NONE);
                 }
                 
             } else if (getChild() != null) {
@@ -80,7 +80,7 @@ public class BranchingIfInstructionSet extends ChainedInstructionSet {
             
             if (getAction() != null) {
                 
-                result = getAction().onAction(newRuntime, stackTrace, TYObject.NONE);
+                result = getAction().onAction(newRuntime, stackTrace, null, TYObject.NONE);
             }
         }
         

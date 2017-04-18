@@ -30,6 +30,7 @@ public class Trinity {
         
         // Load default library
         TrinityParser.parse(new File("lib/Object.ty"));
+        TrinityParser.parse(new File("lib/Boolean.ty"));
         TrinityParser.parse(new File("lib/"));
         
         CLI.start(args);

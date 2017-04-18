@@ -1,1 +1,2 @@
 class System
+    def native static currentTimeMillis

@@ -1,30 +1,27 @@
-package com.github.chrisblutz.trinity.lang.types.arrays;
+package com.github.chrisblutz.trinity.lang.types.nativeutils;
 
-import com.github.chrisblutz.trinity.lang.TYClass;
 import com.github.chrisblutz.trinity.lang.TYMethod;
 import com.github.chrisblutz.trinity.lang.TYObject;
 import com.github.chrisblutz.trinity.lang.errors.TYError;
 import com.github.chrisblutz.trinity.lang.procedures.TYProcedure;
+import com.github.chrisblutz.trinity.lang.types.arrays.TYArray;
 import com.github.chrisblutz.trinity.lang.types.bool.TYBoolean;
-import com.github.chrisblutz.trinity.lang.types.errors.runtime.TYInvalidArgumentNumberError;
-import com.github.chrisblutz.trinity.lang.types.errors.runtime.TYInvalidTypeError;
 import com.github.chrisblutz.trinity.lang.types.numeric.TYInt;
 import com.github.chrisblutz.trinity.lang.types.strings.TYString;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 
 /**
  * @author Christopher Lutz
  */
-public class TYArrayClass extends TYClass {
+class NativeArray {
     
-    public TYArrayClass() {
+    static void register(Map<String, TYMethod> methods) {
         
-        super("Array", "Array", null);
-        
-        registerMethod(new TYMethod("toString", false, null, new TYProcedure((runtime, stackTrace, thisObj, params) -> {
+        methods.put("Array.toString", new TYMethod("toString", false, new TYProcedure((runtime, stackTrace, thisObj, params) -> {
             
             StringBuilder str = new StringBuilder("[");
             
@@ -32,7 +29,7 @@ public class TYArrayClass extends TYClass {
             
             for (int i = 0; i < objects.size(); i++) {
                 
-                str.append(((TYString) objects.get(i).tyInvoke("toString", runtime, stackTrace)).getInternalString());
+                str.append(((TYString) objects.get(i).tyInvoke("toString", runtime, stackTrace, null, null)).getInternalString());
                 
                 if (i < objects.size() - 1) {
                     
@@ -42,8 +39,8 @@ public class TYArrayClass extends TYClass {
             
             return new TYString(str.toString());
         })));
-        registerMethod(new TYMethod("length", false, null, new TYProcedure((runtime, stackTrace, thisObj, params) -> new TYInt(((TYArray) thisObj).size()))));
-        registerMethod(new TYMethod("add", false, null, new TYProcedure((runtime, stackTrace, thisObj, params) -> {
+        methods.put("Array.length", new TYMethod("length", false, new TYProcedure((runtime, stackTrace, thisObj, params) -> new TYInt(((TYArray) thisObj).size()))));
+        methods.put("Array.add", new TYMethod("add", false, new TYProcedure((runtime, stackTrace, thisObj, params) -> {
             
             if (params.length > 0) {
                 
@@ -54,7 +51,7 @@ public class TYArrayClass extends TYClass {
                 return new TYBoolean(((TYArray) thisObj).getInternalList().add(TYObject.NIL));
             }
         })));
-        registerMethod(new TYMethod("remove", false, null, new TYProcedure((runtime, stackTrace, thisObj, params) -> {
+        methods.put("Array.remove", new TYMethod("remove", false, new TYProcedure((runtime, stackTrace, thisObj, params) -> {
             
             if (params.length > 0 && params[0] instanceof TYInt) {
                 
@@ -63,7 +60,7 @@ public class TYArrayClass extends TYClass {
             
             return TYObject.NONE;
         })));
-        registerMethod(new TYMethod("removeObject", false, null, new TYProcedure((runtime, stackTrace, thisObj, params) -> {
+        methods.put("Array.removeObject", new TYMethod("removeObject", false, new TYProcedure((runtime, stackTrace, thisObj, params) -> {
             
             if (params.length > 0) {
                 
@@ -72,7 +69,7 @@ public class TYArrayClass extends TYClass {
             
             return TYBoolean.FALSE;
         })));
-        registerMethod(new TYMethod("+", false, null, new TYProcedure((runtime, stackTrace, thisObj, params) -> {
+        methods.put("Array.+", new TYMethod("+", false, new TYProcedure((runtime, stackTrace, thisObj, params) -> {
             
             TYArray thisArray = (TYArray) thisObj;
             List<TYObject> objects = new ArrayList<>();
@@ -94,7 +91,7 @@ public class TYArrayClass extends TYClass {
             
             return new TYArray(objects);
         })));
-        registerMethod(new TYMethod("[]", false, null, new TYProcedure((runtime, stackTrace, thisObj, params) -> {
+        methods.put("Array.[]", new TYMethod("[]", false, new TYProcedure((runtime, stackTrace, thisObj, params) -> {
             
             if (params.length > 0 && params[0] != TYObject.NONE) {
                 
@@ -104,13 +101,13 @@ public class TYArrayClass extends TYClass {
                     
                 } else {
                     
-                    TYError error = new TYError(new TYInvalidTypeError(), "'[]' takes an Int parameter.", stackTrace);
+                    TYError error = new TYError("Trinity.Errors.InvalidTypeError", "'[]' takes an Int parameter.", stackTrace);
                     error.throwError();
                 }
                 
             } else {
                 
-                TYError error = new TYError(new TYInvalidArgumentNumberError(), "'[]' takes 1 parameter.", stackTrace);
+                TYError error = new TYError("Trinity.Errors.InvalidArgumentNumberError", "'[]' takes 1 parameter.", stackTrace);
                 error.throwError();
             }
             

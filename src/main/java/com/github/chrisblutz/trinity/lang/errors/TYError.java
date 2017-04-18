@@ -1,6 +1,7 @@
 package com.github.chrisblutz.trinity.lang.errors;
 
 import com.github.chrisblutz.trinity.Trinity;
+import com.github.chrisblutz.trinity.lang.ClassRegistry;
 import com.github.chrisblutz.trinity.lang.TYClass;
 import com.github.chrisblutz.trinity.lang.errors.stacktrace.TYStackTrace;
 import com.github.chrisblutz.trinity.lang.errors.stacktrace.TYStackTraceElement;
@@ -15,9 +16,9 @@ public class TYError {
     private String message;
     private TYStackTrace stackTrace;
     
-    public TYError(TYClass errorClass, String message, TYStackTrace stackTrace) {
+    public TYError(String errorClass, String message, TYStackTrace stackTrace) {
         
-        this.errorClass = errorClass;
+        this.errorClass = ClassRegistry.getClass(errorClass);
         this.message = message;
         this.stackTrace = stackTrace;
     }

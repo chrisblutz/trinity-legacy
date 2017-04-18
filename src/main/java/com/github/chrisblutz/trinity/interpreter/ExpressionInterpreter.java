@@ -5,7 +5,8 @@ import com.github.chrisblutz.trinity.lang.TYObject;
 import com.github.chrisblutz.trinity.lang.errors.TYError;
 import com.github.chrisblutz.trinity.lang.errors.stacktrace.TYStackTrace;
 import com.github.chrisblutz.trinity.lang.procedures.ProcedureAction;
-import com.github.chrisblutz.trinity.lang.types.errors.runtime.TYParseError;
+import com.github.chrisblutz.trinity.lang.procedures.TYProcedure;
+import com.github.chrisblutz.trinity.lang.scope.TYRuntime;
 import com.github.chrisblutz.trinity.parser.blocks.Block;
 import com.github.chrisblutz.trinity.parser.blocks.BlockLine;
 import com.github.chrisblutz.trinity.parser.lines.Line;
@@ -14,9 +15,7 @@ import com.github.chrisblutz.trinity.parser.tokens.TokenInfo;
 import com.github.chrisblutz.trinity.utils.TokenUtils;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 
 /**
@@ -168,15 +167,49 @@ public class ExpressionInterpreter {
                 
             } else {
                 
-                TYError error = new TYError(new TYParseError(), "For loops require 3 components.", new TYStackTrace());
+                TYError error = new TYError("Trinity.Errors.ParseError", "For loops require 3 components.", new TYStackTrace());
                 error.throwError();
             }
             
+        } else if (nextBlock != null) {
+            
+            List<String> mandatoryParams = new ArrayList<>();
+            Map<String, TYObject> optParams = new HashMap<>();
+            String blockParam = null;
+            int end = 0;
+            
+            if (tokens[tokens.length - 1].getToken() == Token.VERTICAL_BAR) {
+                
+                List<TokenInfo> tokenList = new ArrayList<>();
+                
+                for (int i = tokens.length - 2; tokens[i].getToken() != Token.VERTICAL_BAR; i--) {
+                    
+                    tokenList.add(0, tokens[i]);
+                    end++;
+                }
+                end++;
+                
+                ParameterResults results = parseVerticalBarParameters(tokenList, errorClass, method, fileName, fullFile, lineNumber);
+                mandatoryParams = results.getMandatoryParameters();
+                optParams = results.getOptionalParameters();
+                blockParam = results.getBlockParam();
+            }
+            
+            ProcedureAction action = interpret(nextBlock, environment, errorClass, method, true);
+            
+            TYProcedure procedure = new TYProcedure(action, mandatoryParams, optParams, blockParam);
+            
+            TokenInfo[] newTokens = Arrays.copyOf(tokens, tokens.length - end);
+            
+            ChainedInstructionSet instructionSet = interpretForChainedInstructionSet(errorClass, method, fileName, fullFile, lineNumber, newTokens);
+            ObjectEvaluator set = instructionSet.getChildren().get(instructionSet.getChildren().size() - 1);
+            set.setProcedure(procedure);
+            
+            return instructionSet;
+            
         } else if (TokenUtils.containsOnFirstLevel(tokens, Token.ASSIGNMENT_OPERATOR, Token.NIL_ASSIGNMENT_OPERATOR, Token.PLUS, Token.PLUS_EQUAL, Token.MINUS, Token.MINUS_EQUAL,
                 Token.MULTIPLY, Token.MULTIPLY_EQUAL, Token.DIVIDE, Token.DIVIDE_EQUAL, Token.MODULUS, Token.MODULUS_EQUAL, Token.EQUAL_TO, Token.NOT_EQUAL_TO, Token.GREATER_THAN, Token.GREATER_THAN_OR_EQUAL_TO,
-                Token.LESS_THAN, Token.LESS_THAN_OR_EQUAL_TO, Token.NEGATIVE_OPERATOR, Token.AND, Token.OR))
-        
-        {
+                Token.LESS_THAN, Token.LESS_THAN_OR_EQUAL_TO, Token.NEGATIVE_OPERATOR, Token.AND, Token.OR) && tokens[0].getToken() != Token.MINUS) {
             
             if (TokenUtils.containsOnFirstLevel(tokens, Token.ASSIGNMENT_OPERATOR, Token.NIL_ASSIGNMENT_OPERATOR, Token.PLUS_EQUAL, Token.MINUS_EQUAL, Token.MULTIPLY_EQUAL, Token.DIVIDE_EQUAL, Token.MODULUS_EQUAL)) {
                 
@@ -195,14 +228,16 @@ public class ExpressionInterpreter {
                 
                 return interpretBinaryOperatorMath(errorClass, method, fileName, fullFile, lineNumber, tokens);
                 
+            } else if (tokens[0].getToken() == Token.MINUS) {
+                
+                return interpretNumericUnaryNegation(errorClass, method, fileName, fullFile, lineNumber, tokens);
+                
             } else if (TokenUtils.containsOnFirstLevel(tokens, Token.NEGATIVE_OPERATOR)) {
                 
                 return interpretUnaryNegation(errorClass, method, fileName, fullFile, lineNumber, tokens);
             }
             
-        } else
-        
-        {
+        } else {
             
             return interpretForChainedInstructionSet(errorClass, method, fileName, fullFile, lineNumber, tokens);
         }
@@ -268,7 +303,7 @@ public class ExpressionInterpreter {
                     evaluators.add(new InstructionSet(new TokenInfo[]{info, tokens[i + 1]}, fileName, fullFile, lineNumber));
                     i++;
                     
-                } else if (info.getToken() == Token.__FILE__ || info.getToken() == Token.__LINE__ || info.getToken() == Token.SUPER || info.getToken() == Token.NIL || info.getToken() == Token.LITERAL_STRING || info.getToken() == Token.NUMERIC_STRING || info.getToken() == Token.TRUE || info.getToken() == Token.FALSE) {
+                } else if (info.getToken() == Token.BLOCK_CHECK || info.getToken() == Token.__FILE__ || info.getToken() == Token.__LINE__ || info.getToken() == Token.SUPER || info.getToken() == Token.NIL || info.getToken() == Token.LITERAL_STRING || info.getToken() == Token.NUMERIC_STRING || info.getToken() == Token.TRUE || info.getToken() == Token.FALSE) {
                     
                     evaluators.add(new InstructionSet(new TokenInfo[]{info}, fileName, fullFile, lineNumber));
                 }
@@ -649,6 +684,22 @@ public class ExpressionInterpreter {
         return new ChainedInstructionSet(evaluators.toArray(new ObjectEvaluator[evaluators.size()]), fileName, fullFile, lineNumber);
     }
     
+    private static ChainedInstructionSet interpretNumericUnaryNegation(String errorClass, String method, String fileName, File fullFile, int lineNumber, TokenInfo[] tokens) {
+        
+        List<ObjectEvaluator> evaluators = new ArrayList<>();
+        List<TokenInfo> stripped = new ArrayList<>();
+        stripped.addAll(Arrays.asList(tokens));
+        stripped.remove(0);
+        
+        TokenInfo[] strippedArr = stripped.toArray(new TokenInfo[stripped.size()]);
+        ChainedInstructionSet obj = interpret(errorClass, method, fileName, fullFile, lineNumber, strippedArr, null);
+        
+        UnaryNegationInstructionSet unOpSet = new UnaryNegationInstructionSet(Token.MINUS, obj, fileName, fullFile, lineNumber);
+        evaluators.add(unOpSet);
+        
+        return new ChainedInstructionSet(evaluators.toArray(new ObjectEvaluator[evaluators.size()]), fileName, fullFile, lineNumber);
+    }
+    
     private static class SplitResults {
         
         private TokenInfo[] tokens;
@@ -757,5 +808,75 @@ public class ExpressionInterpreter {
         }
         
         return new ChainedInstructionSet(evaluators.toArray(new ObjectEvaluator[evaluators.size()]), fileName, fullFile, lineNumber);
+    }
+    
+    private static ParameterResults parseVerticalBarParameters(List<TokenInfo> tokens, String errorClass, String method, String fileName, File fullFile, int lineNumber) {
+        
+        List<String> mandatoryParams = new ArrayList<>();
+        Map<String, TYObject> optParams = new HashMap<>();
+        String blockParam = null;
+        
+        List<List<TokenInfo>> infoSets = new ArrayList<>();
+        List<TokenInfo> paramInfo = new ArrayList<>();
+        int level = 0;
+        for (TokenInfo info : tokens) {
+            
+            if (level == 0 && info.getToken() == Token.COMMA) {
+                
+                List<TokenInfo> newList = new ArrayList<>();
+                newList.addAll(paramInfo);
+                infoSets.add(newList);
+                paramInfo.clear();
+                
+            } else {
+                
+                if (info.getToken() == Token.LEFT_PARENTHESIS) {
+                    
+                    level++;
+                    
+                } else if (info.getToken() == Token.RIGHT_PARENTHESIS) {
+                    
+                    level--;
+                }
+                
+                paramInfo.add(info);
+            }
+        }
+        
+        if (!paramInfo.isEmpty()) {
+            
+            infoSets.add(paramInfo);
+        }
+        
+        for (List<TokenInfo> list : infoSets) {
+            
+            if (list.size() == 1 && list.get(0).getToken() == Token.NON_TOKEN_STRING) {
+                
+                mandatoryParams.add(list.get(0).getContents());
+                
+            } else if (list.size() > 2 && list.get(0).getToken() == Token.NON_TOKEN_STRING && list.get(1).getToken() == Token.ASSIGNMENT_OPERATOR) {
+                
+                List<TokenInfo> newList = new ArrayList<>();
+                newList.addAll(list);
+                newList.remove(0);
+                newList.remove(0);
+                
+                ChainedInstructionSet value = ExpressionInterpreter.interpret(errorClass, method, fileName, fullFile, lineNumber, newList.toArray(new TokenInfo[newList.size()]), null);
+                TYObject valueResult = TYObject.NIL;
+                
+                if (value != null) {
+                    
+                    valueResult = value.evaluate(TYObject.NONE, new TYRuntime(), new TYStackTrace());
+                }
+                
+                optParams.put(list.get(0).getContents(), valueResult);
+                
+            } else if (list.size() == 2 && list.get(0).getToken() == Token.BLOCK_PREFIX && list.get(1).getToken() == Token.NON_TOKEN_STRING) {
+                
+                blockParam = list.get(1).getContents();
+            }
+        }
+        
+        return new ParameterResults(mandatoryParams, optParams, blockParam);
     }
 }

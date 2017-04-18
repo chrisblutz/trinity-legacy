@@ -1,1 +1,18 @@
-class native Int
+class Int
+    def native +
+
+    def native -
+
+    def native *
+
+    def native /
+
+    def native %
+
+    def native ==
+
+    def native toString
+
+    def native toHexString
+
+    def native compareTo

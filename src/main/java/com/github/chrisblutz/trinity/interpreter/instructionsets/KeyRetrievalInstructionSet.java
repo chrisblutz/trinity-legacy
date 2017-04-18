@@ -53,7 +53,7 @@ public class KeyRetrievalInstructionSet extends InstructionSet {
                         }
                     }
                     
-                    return keyObject.tyInvoke("[]", runtime, stackTrace, params.toArray(new TYObject[params.size()]));
+                    return keyObject.tyInvoke("[]", runtime, stackTrace, null, null, params.toArray(new TYObject[params.size()]));
                 }
             }
             
@@ -71,7 +71,7 @@ public class KeyRetrievalInstructionSet extends InstructionSet {
                 }
             }
             
-            return thisObj.tyInvoke("[]", runtime, stackTrace, params.toArray(new TYObject[params.size()]));
+            return thisObj.tyInvoke("[]", runtime, stackTrace, null, null, params.toArray(new TYObject[params.size()]));
         }
         
         return TYBoolean.NONE;

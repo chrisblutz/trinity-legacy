@@ -22,9 +22,4 @@ public class TYFloat extends TYObject {
         
         return internalDouble;
     }
-    
-    public void setInternalDouble(double internalDouble) {
-        
-        this.internalDouble = internalDouble;
-    }
 }

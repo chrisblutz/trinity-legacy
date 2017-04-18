@@ -40,7 +40,7 @@ public class BinaryComparisonOperationInstructionSet extends ObjectEvaluator {
         
         TYObject opObj = getOperand().evaluate(TYObject.NONE, runtime, stackTrace);
         
-        TYInt comparison = (TYInt) thisObj.tyInvoke("compareTo", runtime, stackTrace, opObj);
+        TYInt comparison = (TYInt) thisObj.tyInvoke("compareTo", runtime, stackTrace, null, null, opObj);
         int comparisonInt = comparison.getInternalInteger();
         
         switch (getOperator()) {

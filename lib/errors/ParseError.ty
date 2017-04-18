@@ -1,0 +1,5 @@
+module Trinity
+    module Errors
+        class ParseError << Error
+            def initialize(message = '')
+                super.initialize(message)

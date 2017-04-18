@@ -57,7 +57,7 @@ public class ForLoopInstructionSet extends ChainedInstructionSet {
         
         while (expBoolean.getInternalBoolean()) {
             
-            getAction().onAction(newRuntime, stackTrace, TYObject.NONE);
+            getAction().onAction(newRuntime, stackTrace, null, TYObject.NONE);
             
             getAfter().evaluate(TYObject.NONE, newRuntime, stackTrace);
             

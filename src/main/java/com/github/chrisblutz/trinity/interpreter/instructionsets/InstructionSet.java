@@ -9,8 +9,6 @@ import com.github.chrisblutz.trinity.lang.types.TYClassObject;
 import com.github.chrisblutz.trinity.lang.types.TYModuleObject;
 import com.github.chrisblutz.trinity.lang.types.TYStaticClassObject;
 import com.github.chrisblutz.trinity.lang.types.bool.TYBoolean;
-import com.github.chrisblutz.trinity.lang.types.errors.runtime.TYFieldNotFoundError;
-import com.github.chrisblutz.trinity.lang.types.errors.runtime.TYScopeError;
 import com.github.chrisblutz.trinity.lang.types.numeric.TYFloat;
 import com.github.chrisblutz.trinity.lang.types.numeric.TYInt;
 import com.github.chrisblutz.trinity.lang.types.numeric.TYLong;
@@ -112,7 +110,7 @@ public class InstructionSet extends ObjectEvaluator {
                 } else {
                     
                     TYObject thisPointer = runtime.getVariable("this");
-                    thisPointer.superify();
+                    thisPointer.incrementStackLevel();
                     return thisPointer;
                 }
                 
@@ -123,6 +121,10 @@ public class InstructionSet extends ObjectEvaluator {
             } else if (tokens[0].getToken() == Token.__LINE__) {
                 
                 return new TYInt(getLineNumber());
+                
+            } else if (tokens[0].getToken() == Token.BLOCK_CHECK) {
+                
+                return new TYBoolean(runtime.getProcedure() != null);
                 
             } else if (tokens[0].getToken() == Token.INSTANCE_VAR && tokens.length > 1 && tokens[1].getToken() == Token.NON_TOKEN_STRING) {
                 
@@ -136,13 +138,13 @@ public class InstructionSet extends ObjectEvaluator {
                         
                     } else {
                         
-                        TYError error = new TYError(new TYFieldNotFoundError(), "Instance variable '" + varName + "' not found.", stackTrace);
+                        TYError error = new TYError("Trinity.Errors.FieldNotFoundError", "Instance variable '" + varName + "' not found.", stackTrace);
                         error.throwError();
                     }
                     
                 } else {
                     
-                    TYError error = new TYError(new TYScopeError(), "Instance variable '" + varName + "' not accessible from a static context.", stackTrace);
+                    TYError error = new TYError("Trinity.Errors.ScopeError", "Instance variable '" + varName + "' not accessible from a static context.", stackTrace);
                     error.throwError();
                 }
                 
@@ -156,7 +158,7 @@ public class InstructionSet extends ObjectEvaluator {
                     
                 } else {
                     
-                    TYError error = new TYError(new TYFieldNotFoundError(), "Class field '" + varName + "' not found.", stackTrace);
+                    TYError error = new TYError("Trinity.Errors.FieldNotFoundError", "Class field '" + varName + "' not found.", stackTrace);
                     error.throwError();
                 }
                 
@@ -204,11 +206,11 @@ public class InstructionSet extends ObjectEvaluator {
                         
                         if (runtime.isStaticScope()) {
                             
-                            return ((TYClassObject) runtime.getScope()).getInternalClass().tyInvoke(tokenContents, runtime, stackTrace, TYObject.NONE, params.toArray(new TYObject[params.size()]));
+                            return ((TYClassObject) runtime.getScope()).getInternalClass().tyInvoke(tokenContents, runtime, stackTrace, getProcedure(), runtime, TYObject.NONE, params.toArray(new TYObject[params.size()]));
                             
                         } else {
                             
-                            return runtime.getScope().tyInvoke(tokenContents, runtime, stackTrace, params.toArray(new TYObject[params.size()]));
+                            return runtime.getScope().tyInvoke(tokenContents, runtime, stackTrace, getProcedure(), runtime, params.toArray(new TYObject[params.size()]));
                         }
                     }
                     
@@ -239,7 +241,7 @@ public class InstructionSet extends ObjectEvaluator {
                             }
                         }
                         
-                        return thisObj.tyInvoke(tokenContents, runtime, stackTrace, params.toArray(new TYObject[params.size()]));
+                        return thisObj.tyInvoke(tokenContents, runtime, stackTrace, getProcedure(), runtime, params.toArray(new TYObject[params.size()]));
                     }
                     
                 } else if (thisObj instanceof TYStaticClassObject) {
@@ -265,7 +267,7 @@ public class InstructionSet extends ObjectEvaluator {
                             }
                         }
                         
-                        return ((TYStaticClassObject) thisObj).getInternalClass().tyInvoke(tokenContents, runtime, stackTrace, TYObject.NONE, params.toArray(new TYObject[params.size()]));
+                        return ((TYStaticClassObject) thisObj).getInternalClass().tyInvoke(tokenContents, runtime, stackTrace, getProcedure(), runtime, TYObject.NONE, params.toArray(new TYObject[params.size()]));
                     }
                     
                 } else if (thisObj instanceof TYClassObject) {
@@ -281,7 +283,7 @@ public class InstructionSet extends ObjectEvaluator {
                         }
                     }
                     
-                    return thisObj.tyInvoke(tokenContents, runtime, stackTrace, params.toArray(new TYObject[params.size()]));
+                    return thisObj.tyInvoke(tokenContents, runtime, stackTrace, getProcedure(), runtime, params.toArray(new TYObject[params.size()]));
                     
                 } else {
                     
@@ -297,7 +299,7 @@ public class InstructionSet extends ObjectEvaluator {
                         }
                     }
                     
-                    return thisObj.tyInvoke(tokenContents, runtime, stackTrace, params.toArray(new TYObject[params.size()]));
+                    return thisObj.tyInvoke(tokenContents, runtime, stackTrace, getProcedure(), runtime, params.toArray(new TYObject[params.size()]));
                 }
             }
         }

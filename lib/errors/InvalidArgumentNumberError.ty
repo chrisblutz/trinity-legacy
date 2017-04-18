@@ -1,0 +1,5 @@
+module Trinity
+    module Errors
+        class InvalidTypeError << Error
+            def initialize(message = '')
+                super.initialize(message)

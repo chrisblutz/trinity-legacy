@@ -1,1 +1,14 @@
-class native Array
+class Array
+    def native +
+
+    def native []
+
+    def native add
+
+    def native remove
+
+    def native removeObject
+
+    def native length
+
+    def native toString

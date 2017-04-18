@@ -31,7 +31,7 @@ public class ModuleInterpreter extends DeclarationInterpreter {
                     
                     String moduleName = l.get(1).getContents();
                     
-                    if (!env.isEmpty()) {
+                    if (env.hasElements()) {
                         
                         moduleName = env.getEnvironmentString() + "." + moduleName;
                     }

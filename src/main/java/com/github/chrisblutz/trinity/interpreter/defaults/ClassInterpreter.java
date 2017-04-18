@@ -50,7 +50,7 @@ public class ClassInterpreter extends DeclarationInterpreter {
                         extension = l.get(offset).getContents();
                     }
                     
-                    if (!env.isEmpty()) {
+                    if (env.hasElements()) {
                         
                         className = env.getEnvironmentString() + "." + className;
                     }

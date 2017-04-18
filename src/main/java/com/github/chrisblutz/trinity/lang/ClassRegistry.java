@@ -29,7 +29,7 @@ public class ClassRegistry {
                 shortClassName = className;
             }
             
-            TYClass tyClass = new TYClass(className, shortClassName, null);
+            TYClass tyClass = new TYClass(className, shortClassName);
             classes.put(className, tyClass);
         }
         

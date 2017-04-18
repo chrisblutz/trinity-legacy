@@ -25,21 +25,29 @@ public enum Token {
     MULTIPLY("*"), MULTIPLY_EQUAL("*="), DIVIDE("/"), DIVIDE_EQUAL("/"), MODULUS("%"), MODULUS_EQUAL("%="),
     AND("&&"), OR("||"),
     
+    // Native Checks
+    BLOCK_CHECK("block?"),
+    
     // Loops
     IF("if"), ELSIF("elsif"), ELSE("else"), WHILE("while"), FOR("for"),
     
     // Punctuation
     LEFT_PARENTHESIS("("), RIGHT_PARENTHESIS(")"), LEFT_SQUARE_BRACKET("["), RIGHT_SQUARE_BRACKET("]"), COMMA(","), SEMICOLON(";"),
+    VERTICAL_BAR("|"), BLOCK_PREFIX("&"),
     
     // Comments
     SINGLE_LINE_COMMENT("#"),
     
     // Escape Characters
-    BACKSLASH("\\"), BACKSLASH_ESCAPE("\\\\", "\\"), NEWLINE_ESCAPE("\\n", "\n"), RETURN_ESCAPE("\\r", "\r"), /* TODO */ UNICODE_ESCAPE("\\u"), DOUBLE_QUOTE_ESCAPE("\\\"", "\""), SINGLE_QUOTE_ESCAPE("\\\'", "\'"),
+    BACKSLASH("\\"), BACKSLASH_ESCAPE("\\\\", "\\"),
+    NEWLINE_ESCAPE("\\n", "\n"), RETURN_ESCAPE("\\r", "\r"),
+    DOUBLE_QUOTE_ESCAPE("\\\"", "\""), SINGLE_QUOTE_ESCAPE("\\\'", "\'"),
     BACKSPACE_ESCAPE("\\b", "\b"), TAB_ESCAPE("\\t", "\t"),
     
     // Strings
-    NON_TOKEN_STRING("\0"), LITERAL_STRING("\0"), NUMERIC_STRING("\0"), ESCAPED_LITERAL_QUOTE("\'"), UNESCAPED_LITERAL_QUOTE("\"");
+    NON_TOKEN_STRING("\0"), LITERAL_STRING("\0"),
+    NUMERIC_STRING("\0"), ESCAPED_LITERAL_QUOTE("\'"),
+    UNESCAPED_LITERAL_QUOTE("\"");
     
     private String readable, literal;
     

@@ -1,7 +1,29 @@
-import Trinity.Errors
-
 module Trinity
     module IO
         module Files
             class File
-            
+                def initialize(name)
+                    @path = FileSystem.normalize(name)
+
+                def getPath
+                    @path
+
+                def create
+                    FileSystem.create(getPath())
+
+                def open(&block, privileges = 'r', append = false)
+                    if block?
+                        open(privileges, append)
+                        block.call(this)
+                        close()
+                    else
+                        FileSystem.open(getPath(), privileges, append)
+
+                def read
+                    FileSystem.read(getPath())
+
+                def write(str)
+                    FileSystem.write(getPath(), str)
+
+                def close
+                    FileSystem.close(getPath())
