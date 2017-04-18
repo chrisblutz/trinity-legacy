@@ -3,6 +3,7 @@ package com.github.chrisblutz.trinity.interpreter.instructionsets;
 import com.github.chrisblutz.trinity.lang.TYObject;
 import com.github.chrisblutz.trinity.lang.errors.stacktrace.TYStackTrace;
 import com.github.chrisblutz.trinity.lang.scope.TYRuntime;
+import com.github.chrisblutz.trinity.lang.types.strings.TYString;
 import com.github.chrisblutz.trinity.parser.tokens.Token;
 
 import java.io.File;
@@ -42,7 +43,21 @@ public class BinaryOperationInstructionSet extends ObjectEvaluator {
             
             case PLUS:
                 
-                return thisObj.tyInvoke("+", runtime, stackTrace, null, null, opObj);
+                if (opObj instanceof TYString) {
+                    
+                    TYObject thisObjStr = thisObj;
+                    
+                    if (!(thisObj instanceof TYString)) {
+                        
+                        thisObjStr = thisObj.tyInvoke("toString", runtime, stackTrace, null, null);
+                    }
+                    
+                    return thisObjStr.tyInvoke("+", runtime, stackTrace, null, null, opObj);
+                    
+                } else {
+                    
+                    return thisObj.tyInvoke("+", runtime, stackTrace, null, null, opObj);
+                }
             
             case MINUS:
                 

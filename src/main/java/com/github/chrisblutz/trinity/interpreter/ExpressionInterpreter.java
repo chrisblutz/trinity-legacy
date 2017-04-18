@@ -171,6 +171,36 @@ public class ExpressionInterpreter {
                 error.throwError();
             }
             
+        } else if (TokenUtils.containsOnFirstLevel(tokens, Token.ASSIGNMENT_OPERATOR, Token.NIL_ASSIGNMENT_OPERATOR, Token.PLUS, Token.PLUS_EQUAL, Token.MINUS, Token.MINUS_EQUAL,
+                Token.MULTIPLY, Token.MULTIPLY_EQUAL, Token.DIVIDE, Token.DIVIDE_EQUAL, Token.MODULUS, Token.MODULUS_EQUAL, Token.EQUAL_TO, Token.NOT_EQUAL_TO, Token.GREATER_THAN, Token.GREATER_THAN_OR_EQUAL_TO,
+                Token.LESS_THAN, Token.LESS_THAN_OR_EQUAL_TO, Token.NEGATIVE_OPERATOR, Token.AND, Token.OR)) {
+            
+            if (TokenUtils.containsOnFirstLevel(tokens, Token.ASSIGNMENT_OPERATOR, Token.NIL_ASSIGNMENT_OPERATOR, Token.PLUS_EQUAL, Token.MINUS_EQUAL, Token.MULTIPLY_EQUAL, Token.DIVIDE_EQUAL, Token.MODULUS_EQUAL)) {
+                
+                // TODO Allow splitting by commas
+                return interpretAssignment(errorClass, method, fileName, fullFile, lineNumber, tokens, nextBlock);
+                
+            } else if (TokenUtils.containsOnFirstLevel(tokens, Token.AND, Token.OR)) {
+                
+                return interpretBinaryAndOrOperator(errorClass, method, fileName, fullFile, lineNumber, tokens);
+                
+            } else if (TokenUtils.containsOnFirstLevel(tokens, Token.LESS_THAN, Token.LESS_THAN_OR_EQUAL_TO, Token.EQUAL_TO, Token.NOT_EQUAL_TO, Token.GREATER_THAN, Token.GREATER_THAN_OR_EQUAL_TO)) {
+                
+                return interpretBinaryComparisonOperator(errorClass, method, fileName, fullFile, lineNumber, tokens);
+                
+            } else if (TokenUtils.containsOnFirstLevel(tokens, Token.PLUS, Token.MINUS, Token.MULTIPLY, Token.DIVIDE, Token.MODULUS) && tokens[0].getToken() != Token.MINUS) {
+                
+                return interpretBinaryOperatorMath(errorClass, method, fileName, fullFile, lineNumber, tokens);
+                
+            } else if (tokens[0].getToken() == Token.MINUS) {
+                
+                return interpretNumericUnaryNegation(errorClass, method, fileName, fullFile, lineNumber, tokens);
+                
+            } else if (TokenUtils.containsOnFirstLevel(tokens, Token.NEGATIVE_OPERATOR)) {
+                
+                return interpretUnaryNegation(errorClass, method, fileName, fullFile, lineNumber, tokens);
+            }
+            
         } else if (nextBlock != null) {
             
             List<String> mandatoryParams = new ArrayList<>();
@@ -206,36 +236,6 @@ public class ExpressionInterpreter {
             set.setProcedure(procedure);
             
             return instructionSet;
-            
-        } else if (TokenUtils.containsOnFirstLevel(tokens, Token.ASSIGNMENT_OPERATOR, Token.NIL_ASSIGNMENT_OPERATOR, Token.PLUS, Token.PLUS_EQUAL, Token.MINUS, Token.MINUS_EQUAL,
-                Token.MULTIPLY, Token.MULTIPLY_EQUAL, Token.DIVIDE, Token.DIVIDE_EQUAL, Token.MODULUS, Token.MODULUS_EQUAL, Token.EQUAL_TO, Token.NOT_EQUAL_TO, Token.GREATER_THAN, Token.GREATER_THAN_OR_EQUAL_TO,
-                Token.LESS_THAN, Token.LESS_THAN_OR_EQUAL_TO, Token.NEGATIVE_OPERATOR, Token.AND, Token.OR) && tokens[0].getToken() != Token.MINUS) {
-            
-            if (TokenUtils.containsOnFirstLevel(tokens, Token.ASSIGNMENT_OPERATOR, Token.NIL_ASSIGNMENT_OPERATOR, Token.PLUS_EQUAL, Token.MINUS_EQUAL, Token.MULTIPLY_EQUAL, Token.DIVIDE_EQUAL, Token.MODULUS_EQUAL)) {
-                
-                // TODO Allow splitting by commas
-                return interpretAssignment(errorClass, method, fileName, fullFile, lineNumber, tokens);
-                
-            } else if (TokenUtils.containsOnFirstLevel(tokens, Token.AND, Token.OR)) {
-                
-                return interpretBinaryAndOrOperator(errorClass, method, fileName, fullFile, lineNumber, tokens);
-                
-            } else if (TokenUtils.containsOnFirstLevel(tokens, Token.LESS_THAN, Token.LESS_THAN_OR_EQUAL_TO, Token.EQUAL_TO, Token.NOT_EQUAL_TO, Token.GREATER_THAN, Token.GREATER_THAN_OR_EQUAL_TO)) {
-                
-                return interpretBinaryComparisonOperator(errorClass, method, fileName, fullFile, lineNumber, tokens);
-                
-            } else if (TokenUtils.containsOnFirstLevel(tokens, Token.PLUS, Token.MINUS, Token.MULTIPLY, Token.DIVIDE, Token.MODULUS)) {
-                
-                return interpretBinaryOperatorMath(errorClass, method, fileName, fullFile, lineNumber, tokens);
-                
-            } else if (tokens[0].getToken() == Token.MINUS) {
-                
-                return interpretNumericUnaryNegation(errorClass, method, fileName, fullFile, lineNumber, tokens);
-                
-            } else if (TokenUtils.containsOnFirstLevel(tokens, Token.NEGATIVE_OPERATOR)) {
-                
-                return interpretUnaryNegation(errorClass, method, fileName, fullFile, lineNumber, tokens);
-            }
             
         } else {
             
@@ -723,7 +723,7 @@ public class ExpressionInterpreter {
         
     }
     
-    private static SplitResults splitIntoTokensAndValue(String errorClass, String method, String fileName, File fullFile, int lineNumber, TokenInfo[] tokens, Token delimiter) {
+    private static SplitResults splitIntoTokensAndValue(String errorClass, String method, String fileName, File fullFile, int lineNumber, TokenInfo[] tokens, Token delimiter, Block nextBlock) {
         
         List<List<TokenInfo>> tokenLists = new ArrayList<>();
         tokenLists.add(new ArrayList<>());
@@ -748,60 +748,60 @@ public class ExpressionInterpreter {
         }
         
         TokenInfo[] tokenArr = tokenLists.get(0).toArray(new TokenInfo[tokenLists.get(0).size()]);
-        ChainedInstructionSet value = interpret(errorClass, method, fileName, fullFile, lineNumber, tokenLists.get(1).toArray(new TokenInfo[tokenLists.get(1).size()]), null);
+        ChainedInstructionSet value = interpret(errorClass, method, fileName, fullFile, lineNumber, tokenLists.get(1).toArray(new TokenInfo[tokenLists.get(1).size()]), nextBlock);
         
         return new SplitResults(tokenArr, value);
     }
     
-    private static ChainedInstructionSet interpretAssignment(String errorClass, String method, String fileName, File fullFile, int lineNumber, TokenInfo[] tokens) {
+    private static ChainedInstructionSet interpretAssignment(String errorClass, String method, String fileName, File fullFile, int lineNumber, TokenInfo[] tokens, Block nextBlock) {
         
         List<ObjectEvaluator> evaluators = new ArrayList<>();
         
         if (TokenUtils.containsOnFirstLevel(tokens, Token.ASSIGNMENT_OPERATOR)) {
             
-            SplitResults results = splitIntoTokensAndValue(errorClass, method, fileName, fullFile, lineNumber, tokens, Token.ASSIGNMENT_OPERATOR);
+            SplitResults results = splitIntoTokensAndValue(errorClass, method, fileName, fullFile, lineNumber, tokens, Token.ASSIGNMENT_OPERATOR, nextBlock);
             
             AssignmentInstructionSet assignSet = new AssignmentInstructionSet(results.getTokens(), Token.ASSIGNMENT_OPERATOR, results.getValue(), fileName, fullFile, lineNumber);
             evaluators.add(assignSet);
             
         } else if (TokenUtils.containsOnFirstLevel(tokens, Token.NIL_ASSIGNMENT_OPERATOR)) {
             
-            SplitResults results = splitIntoTokensAndValue(errorClass, method, fileName, fullFile, lineNumber, tokens, Token.NIL_ASSIGNMENT_OPERATOR);
+            SplitResults results = splitIntoTokensAndValue(errorClass, method, fileName, fullFile, lineNumber, tokens, Token.NIL_ASSIGNMENT_OPERATOR, nextBlock);
             
             AssignmentInstructionSet assignSet = new AssignmentInstructionSet(results.getTokens(), Token.NIL_ASSIGNMENT_OPERATOR, results.getValue(), fileName, fullFile, lineNumber);
             evaluators.add(assignSet);
             
         } else if (TokenUtils.containsOnFirstLevel(tokens, Token.PLUS_EQUAL)) {
             
-            SplitResults results = splitIntoTokensAndValue(errorClass, method, fileName, fullFile, lineNumber, tokens, Token.PLUS_EQUAL);
+            SplitResults results = splitIntoTokensAndValue(errorClass, method, fileName, fullFile, lineNumber, tokens, Token.PLUS_EQUAL, nextBlock);
             
             AssignmentInstructionSet assignSet = new AssignmentInstructionSet(results.getTokens(), Token.PLUS_EQUAL, results.getValue(), fileName, fullFile, lineNumber);
             evaluators.add(assignSet);
             
         } else if (TokenUtils.containsOnFirstLevel(tokens, Token.MINUS_EQUAL)) {
             
-            SplitResults results = splitIntoTokensAndValue(errorClass, method, fileName, fullFile, lineNumber, tokens, Token.MINUS_EQUAL);
+            SplitResults results = splitIntoTokensAndValue(errorClass, method, fileName, fullFile, lineNumber, tokens, Token.MINUS_EQUAL, nextBlock);
             
             AssignmentInstructionSet assignSet = new AssignmentInstructionSet(results.getTokens(), Token.MINUS_EQUAL, results.getValue(), fileName, fullFile, lineNumber);
             evaluators.add(assignSet);
             
         } else if (TokenUtils.containsOnFirstLevel(tokens, Token.MULTIPLY_EQUAL)) {
             
-            SplitResults results = splitIntoTokensAndValue(errorClass, method, fileName, fullFile, lineNumber, tokens, Token.MULTIPLY_EQUAL);
+            SplitResults results = splitIntoTokensAndValue(errorClass, method, fileName, fullFile, lineNumber, tokens, Token.MULTIPLY_EQUAL, nextBlock);
             
             AssignmentInstructionSet assignSet = new AssignmentInstructionSet(results.getTokens(), Token.MULTIPLY_EQUAL, results.getValue(), fileName, fullFile, lineNumber);
             evaluators.add(assignSet);
             
         } else if (TokenUtils.containsOnFirstLevel(tokens, Token.DIVIDE_EQUAL)) {
             
-            SplitResults results = splitIntoTokensAndValue(errorClass, method, fileName, fullFile, lineNumber, tokens, Token.DIVIDE_EQUAL);
+            SplitResults results = splitIntoTokensAndValue(errorClass, method, fileName, fullFile, lineNumber, tokens, Token.DIVIDE_EQUAL, nextBlock);
             
             AssignmentInstructionSet assignSet = new AssignmentInstructionSet(results.getTokens(), Token.DIVIDE_EQUAL, results.getValue(), fileName, fullFile, lineNumber);
             evaluators.add(assignSet);
             
         } else if (TokenUtils.containsOnFirstLevel(tokens, Token.MODULUS_EQUAL)) {
             
-            SplitResults results = splitIntoTokensAndValue(errorClass, method, fileName, fullFile, lineNumber, tokens, Token.MODULUS_EQUAL);
+            SplitResults results = splitIntoTokensAndValue(errorClass, method, fileName, fullFile, lineNumber, tokens, Token.MODULUS_EQUAL, nextBlock);
             
             AssignmentInstructionSet assignSet = new AssignmentInstructionSet(results.getTokens(), Token.MODULUS_EQUAL, results.getValue(), fileName, fullFile, lineNumber);
             evaluators.add(assignSet);

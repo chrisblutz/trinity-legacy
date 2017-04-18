@@ -113,6 +113,11 @@ class NativeInt {
                     double newDouble = ((TYFloat) obj).getInternalDouble();
                     returnVal = new TYFloat(doubleCalculation(thisInt, newDouble, operation, stackTrace));
                     
+                } else if (obj instanceof TYLong) {
+                    
+                    long newLong = ((TYLong) obj).getInternalLong();
+                    returnVal = new TYLong(longCalculation(thisInt, newLong, operation, stackTrace));
+                    
                 } else {
                     
                     TYError error = new TYError("Trinity.Errors.InvalidTypeError", "Invalid type passed to '" + operation + "'.", stackTrace);
@@ -196,6 +201,39 @@ class NativeInt {
                 error.throwError();
                 
                 return (double) int1;
+        }
+    }
+    
+    private static long longCalculation(int int1, long long1, String operation, TYStackTrace stackTrace) {
+        
+        switch (operation) {
+            
+            case "+":
+                
+                return int1 + long1;
+            
+            case "-":
+                
+                return int1 - long1;
+            
+            case "*":
+                
+                return int1 * long1;
+            
+            case "/":
+                
+                return int1 / long1;
+            
+            case "%":
+                
+                return int1 % long1;
+            
+            default:
+                
+                TYError error = new TYError("Trinity.Errors.UnsupportedOperationError", "Operation '" + operation + "' not supported.", stackTrace);
+                error.throwError();
+                
+                return (long) int1;
         }
     }
 }

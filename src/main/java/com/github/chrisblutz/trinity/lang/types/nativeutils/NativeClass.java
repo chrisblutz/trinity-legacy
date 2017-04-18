@@ -20,7 +20,19 @@ class NativeClass {
     
     static void register(Map<String, TYMethod> methods) {
         
-        methods.put("Class.toString", new TYMethod("toString", false, new TYProcedure((runtime, stackTrace, thisObj, params) -> new TYString(((TYClassObject) thisObj).getInternalClass().getName()))));
+        methods.put("Class.toString", new TYMethod("toString", false, new TYProcedure((runtime, stackTrace, thisObj, params) -> {
+            
+            if (thisObj instanceof TYClassObject) {
+                
+                return new TYString(((TYClassObject) thisObj).getInternalClass().getName());
+                
+            } else if (thisObj instanceof TYStaticClassObject) {
+                
+                return new TYString(((TYStaticClassObject) thisObj).getInternalClass().getName());
+            }
+            
+            return new TYString("");
+        })));
         methods.put("Class.==", new TYMethod("==", false, new TYProcedure((runtime, stackTrace, thisObj, params) -> {
             
             TYClass thisClass = ((TYClassObject) thisObj).getInternalClass();
