@@ -96,8 +96,6 @@ public class ExpressionInterpreter {
     
     public static ChainedInstructionSet interpret(String errorClass, String method, String fileName, File fullFile, int lineNumber, TokenInfo[] tokens, Block nextBlock) {
         
-        // TODO Parse for - at beginning of Expression
-        
         if (tokens[0].getToken() == Token.IF || tokens[0].getToken() == Token.ELSIF || tokens[0].getToken() == Token.ELSE) {
             
             List<TokenInfo> stripped = new ArrayList<>();
@@ -177,8 +175,15 @@ public class ExpressionInterpreter {
             
             if (TokenUtils.containsOnFirstLevel(tokens, Token.ASSIGNMENT_OPERATOR, Token.NIL_ASSIGNMENT_OPERATOR, Token.PLUS_EQUAL, Token.MINUS_EQUAL, Token.MULTIPLY_EQUAL, Token.DIVIDE_EQUAL, Token.MODULUS_EQUAL)) {
                 
-                // TODO Allow splitting by commas
-                return interpretAssignment(errorClass, method, fileName, fullFile, lineNumber, tokens, nextBlock);
+                if (TokenUtils.containsOnFirstLevel(tokens, Token.COMMA)) {
+                    
+                    ChainedInstructionSet[] sets = interpretListOfChainedInstructionSets(errorClass, method, fileName, fullFile, lineNumber, tokens, Token.COMMA, nextBlock);
+                    return new ChainedInstructionSet(sets, fileName, fullFile, lineNumber);
+                    
+                } else {
+                    
+                    return interpretAssignment(errorClass, method, fileName, fullFile, lineNumber, tokens, nextBlock);
+                }
                 
             } else if (TokenUtils.containsOnFirstLevel(tokens, Token.AND, Token.OR)) {
                 
