@@ -152,7 +152,7 @@ public class ExpressionInterpreter {
                 stripped.remove(stripped.size() - 1);
             }
             
-            ChainedInstructionSet[] expressions = interpretListOfChainedInstructionSets(errorClass, method, fileName, fullFile, lineNumber, stripped.toArray(new TokenInfo[stripped.size()]), Token.SEMICOLON);
+            ChainedInstructionSet[] expressions = interpretListOfChainedInstructionSets(errorClass, method, fileName, fullFile, lineNumber, stripped.toArray(new TokenInfo[stripped.size()]), Token.SEMICOLON, nextBlock);
             
             if (expressions.length == 3) {
                 
@@ -182,23 +182,23 @@ public class ExpressionInterpreter {
                 
             } else if (TokenUtils.containsOnFirstLevel(tokens, Token.AND, Token.OR)) {
                 
-                return interpretBinaryAndOrOperator(errorClass, method, fileName, fullFile, lineNumber, tokens);
+                return interpretBinaryAndOrOperator(errorClass, method, fileName, fullFile, lineNumber, tokens, nextBlock);
                 
             } else if (TokenUtils.containsOnFirstLevel(tokens, Token.LESS_THAN, Token.LESS_THAN_OR_EQUAL_TO, Token.EQUAL_TO, Token.NOT_EQUAL_TO, Token.GREATER_THAN, Token.GREATER_THAN_OR_EQUAL_TO)) {
                 
-                return interpretBinaryComparisonOperator(errorClass, method, fileName, fullFile, lineNumber, tokens);
+                return interpretBinaryComparisonOperator(errorClass, method, fileName, fullFile, lineNumber, tokens, nextBlock);
                 
             } else if (TokenUtils.containsOnFirstLevel(tokens, Token.PLUS, Token.MINUS, Token.MULTIPLY, Token.DIVIDE, Token.MODULUS) && tokens[0].getToken() != Token.MINUS) {
                 
-                return interpretBinaryOperatorMath(errorClass, method, fileName, fullFile, lineNumber, tokens);
+                return interpretBinaryOperatorMath(errorClass, method, fileName, fullFile, lineNumber, tokens, nextBlock);
                 
             } else if (tokens[0].getToken() == Token.MINUS) {
                 
-                return interpretNumericUnaryNegation(errorClass, method, fileName, fullFile, lineNumber, tokens);
+                return interpretNumericUnaryNegation(errorClass, method, fileName, fullFile, lineNumber, tokens, nextBlock);
                 
             } else if (TokenUtils.containsOnFirstLevel(tokens, Token.NEGATIVE_OPERATOR)) {
                 
-                return interpretUnaryNegation(errorClass, method, fileName, fullFile, lineNumber, tokens);
+                return interpretUnaryNegation(errorClass, method, fileName, fullFile, lineNumber, tokens, nextBlock);
             }
             
         } else if (nextBlock != null) {
@@ -231,7 +231,7 @@ public class ExpressionInterpreter {
             
             TokenInfo[] newTokens = Arrays.copyOf(tokens, tokens.length - end);
             
-            ChainedInstructionSet instructionSet = interpretForChainedInstructionSet(errorClass, method, fileName, fullFile, lineNumber, newTokens);
+            ChainedInstructionSet instructionSet = interpretForChainedInstructionSet(errorClass, method, fileName, fullFile, lineNumber, newTokens, nextBlock);
             ObjectEvaluator set = instructionSet.getChildren().get(instructionSet.getChildren().size() - 1);
             set.setProcedure(procedure);
             
@@ -239,13 +239,13 @@ public class ExpressionInterpreter {
             
         } else {
             
-            return interpretForChainedInstructionSet(errorClass, method, fileName, fullFile, lineNumber, tokens);
+            return interpretForChainedInstructionSet(errorClass, method, fileName, fullFile, lineNumber, tokens, nextBlock);
         }
         
         return null;
     }
     
-    public static ChainedInstructionSet interpretForChainedInstructionSet(String errorClass, String method, String fileName, File fullFile, int lineNumber, TokenInfo[] tokens) {
+    public static ChainedInstructionSet interpretForChainedInstructionSet(String errorClass, String method, String fileName, File fullFile, int lineNumber, TokenInfo[] tokens, Block nextBlock) {
         
         List<ObjectEvaluator> evaluators = new ArrayList<>();
         
@@ -335,7 +335,7 @@ public class ExpressionInterpreter {
                         }
                         levelTemp.clear();
                         
-                        ChainedInstructionSet[] params = interpretListOfChainedInstructionSets(errorClass, method, fileName, fullFile, lineNumber, temp.toArray(new TokenInfo[temp.size()]), Token.COMMA);
+                        ChainedInstructionSet[] params = interpretListOfChainedInstructionSets(errorClass, method, fileName, fullFile, lineNumber, temp.toArray(new TokenInfo[temp.size()]), Token.COMMA, nextBlock);
                         
                         TokenInfo[] tokenArr = new TokenInfo[0];
                         if (previousNonToken != null) {
@@ -363,7 +363,7 @@ public class ExpressionInterpreter {
                         }
                         levelTemp.clear();
                         
-                        ChainedInstructionSet[] params = interpretListOfChainedInstructionSets(errorClass, method, fileName, fullFile, lineNumber, temp.toArray(new TokenInfo[temp.size()]), Token.COMMA);
+                        ChainedInstructionSet[] params = interpretListOfChainedInstructionSets(errorClass, method, fileName, fullFile, lineNumber, temp.toArray(new TokenInfo[temp.size()]), Token.COMMA, nextBlock);
                         
                         ArrayInitializationInstructionSet arraySet = new ArrayInitializationInstructionSet(params, fileName, fullFile, lineNumber);
                         evaluators.add(arraySet);
@@ -380,7 +380,7 @@ public class ExpressionInterpreter {
                         }
                         levelTemp.clear();
                         
-                        ChainedInstructionSet[] params = interpretListOfChainedInstructionSets(errorClass, method, fileName, fullFile, lineNumber, temp.toArray(new TokenInfo[temp.size()]), Token.COMMA);
+                        ChainedInstructionSet[] params = interpretListOfChainedInstructionSets(errorClass, method, fileName, fullFile, lineNumber, temp.toArray(new TokenInfo[temp.size()]), Token.COMMA, nextBlock);
                         
                         TokenInfo[] tokenArr = new TokenInfo[0];
                         if (previousNonToken != null) {
@@ -408,7 +408,7 @@ public class ExpressionInterpreter {
                         }
                         levelTemp.clear();
                         
-                        ChainedInstructionSet[] params = interpretListOfChainedInstructionSets(errorClass, method, fileName, fullFile, lineNumber, temp.toArray(new TokenInfo[temp.size()]), Token.COMMA);
+                        ChainedInstructionSet[] params = interpretListOfChainedInstructionSets(errorClass, method, fileName, fullFile, lineNumber, temp.toArray(new TokenInfo[temp.size()]), Token.COMMA, nextBlock);
                         
                         KeyRetrievalInstructionSet keyRetrievalSet = new KeyRetrievalInstructionSet(new TokenInfo[0], fileName, fullFile, lineNumber);
                         
@@ -437,7 +437,7 @@ public class ExpressionInterpreter {
         return new ChainedInstructionSet(evaluators.toArray(new ObjectEvaluator[evaluators.size()]), fileName, fullFile, lineNumber);
     }
     
-    public static ChainedInstructionSet[] interpretListOfChainedInstructionSets(String errorClass, String method, String fileName, File fullFile, int lineNumber, TokenInfo[] tokens, Token delimiter) {
+    public static ChainedInstructionSet[] interpretListOfChainedInstructionSets(String errorClass, String method, String fileName, File fullFile, int lineNumber, TokenInfo[] tokens, Token delimiter, Block nextBlock) {
         
         List<List<TokenInfo>> infoSets = new ArrayList<>();
         List<ChainedInstructionSet> sets = new ArrayList<>();
@@ -473,15 +473,23 @@ public class ExpressionInterpreter {
             infoSets.add(current);
         }
         
-        for (List<TokenInfo> infoList : infoSets) {
+        for (int i = 0; i < infoSets.size(); i++) {
             
-            sets.add(interpret(errorClass, method, fileName, fullFile, lineNumber, infoList.toArray(new TokenInfo[infoList.size()]), null));
+            List<TokenInfo> infoList = infoSets.get(i);
+            
+            Block block = null;
+            if (i == infoSets.size() - 1) {
+                
+                block = nextBlock;
+            }
+            
+            sets.add(interpret(errorClass, method, fileName, fullFile, lineNumber, infoList.toArray(new TokenInfo[infoList.size()]), block));
         }
         
         return sets.toArray(new ChainedInstructionSet[sets.size()]);
     }
     
-    private static ChainedInstructionSet[] splitByToken(String errorClass, String method, String fileName, File fullFile, int lineNumber, TokenInfo[] tokens, Token delimiter) {
+    private static ChainedInstructionSet[] splitByToken(String errorClass, String method, String fileName, File fullFile, int lineNumber, TokenInfo[] tokens, Token delimiter, Block nextBlock) {
         
         List<List<TokenInfo>> infoSets = new ArrayList<>();
         
@@ -530,19 +538,19 @@ public class ExpressionInterpreter {
         ChainedInstructionSet first = interpret(errorClass, method, fileName, fullFile, lineNumber, firstExpression.toArray(new TokenInfo[firstExpression.size()]), null);
         
         List<TokenInfo> secondExpression = infoSets.get(infoSets.size() - 1);
-        ChainedInstructionSet second = interpret(errorClass, method, fileName, fullFile, lineNumber, secondExpression.toArray(new TokenInfo[secondExpression.size()]), null);
+        ChainedInstructionSet second = interpret(errorClass, method, fileName, fullFile, lineNumber, secondExpression.toArray(new TokenInfo[secondExpression.size()]), nextBlock);
         
         return new ChainedInstructionSet[]{first, second};
     }
     
-    private static ChainedInstructionSet interpretBinaryOperatorMath(String errorClass, String method, String fileName, File fullFile, int lineNumber, TokenInfo[] tokens) {
+    private static ChainedInstructionSet interpretBinaryOperatorMath(String errorClass, String method, String fileName, File fullFile, int lineNumber, TokenInfo[] tokens, Block nextBlock) {
         
         List<ObjectEvaluator> evaluators = new ArrayList<>();
         
         // Maintain order of operations (perform subtraction last, so parse it first, allowing all others to be interpreted before it is)
         if (TokenUtils.containsOnFirstLevel(tokens, Token.MINUS)) {
             
-            ChainedInstructionSet[] components = splitByToken(errorClass, method, fileName, fullFile, lineNumber, tokens, Token.MINUS);
+            ChainedInstructionSet[] components = splitByToken(errorClass, method, fileName, fullFile, lineNumber, tokens, Token.MINUS, nextBlock);
             evaluators.add(components[0]);
             
             BinaryOperationInstructionSet binOpSet = new BinaryOperationInstructionSet(Token.MINUS, components[1], fileName, fullFile, lineNumber);
@@ -550,7 +558,7 @@ public class ExpressionInterpreter {
             
         } else if (TokenUtils.containsOnFirstLevel(tokens, Token.PLUS)) {
             
-            ChainedInstructionSet[] components = splitByToken(errorClass, method, fileName, fullFile, lineNumber, tokens, Token.PLUS);
+            ChainedInstructionSet[] components = splitByToken(errorClass, method, fileName, fullFile, lineNumber, tokens, Token.PLUS, nextBlock);
             evaluators.add(components[0]);
             
             BinaryOperationInstructionSet binOpSet = new BinaryOperationInstructionSet(Token.PLUS, components[1], fileName, fullFile, lineNumber);
@@ -558,7 +566,7 @@ public class ExpressionInterpreter {
             
         } else if (TokenUtils.containsOnFirstLevel(tokens, Token.MODULUS)) {
             
-            ChainedInstructionSet[] components = splitByToken(errorClass, method, fileName, fullFile, lineNumber, tokens, Token.MODULUS);
+            ChainedInstructionSet[] components = splitByToken(errorClass, method, fileName, fullFile, lineNumber, tokens, Token.MODULUS, nextBlock);
             evaluators.add(components[0]);
             
             BinaryOperationInstructionSet binOpSet = new BinaryOperationInstructionSet(Token.MODULUS, components[1], fileName, fullFile, lineNumber);
@@ -566,7 +574,7 @@ public class ExpressionInterpreter {
             
         } else if (TokenUtils.containsOnFirstLevel(tokens, Token.DIVIDE)) {
             
-            ChainedInstructionSet[] components = splitByToken(errorClass, method, fileName, fullFile, lineNumber, tokens, Token.DIVIDE);
+            ChainedInstructionSet[] components = splitByToken(errorClass, method, fileName, fullFile, lineNumber, tokens, Token.DIVIDE, nextBlock);
             evaluators.add(components[0]);
             
             BinaryOperationInstructionSet binOpSet = new BinaryOperationInstructionSet(Token.DIVIDE, components[1], fileName, fullFile, lineNumber);
@@ -574,7 +582,7 @@ public class ExpressionInterpreter {
             
         } else if (TokenUtils.containsOnFirstLevel(tokens, Token.MULTIPLY)) {
             
-            ChainedInstructionSet[] components = splitByToken(errorClass, method, fileName, fullFile, lineNumber, tokens, Token.MULTIPLY);
+            ChainedInstructionSet[] components = splitByToken(errorClass, method, fileName, fullFile, lineNumber, tokens, Token.MULTIPLY, nextBlock);
             evaluators.add(components[0]);
             
             BinaryOperationInstructionSet binOpSet = new BinaryOperationInstructionSet(Token.MULTIPLY, components[1], fileName, fullFile, lineNumber);
@@ -584,13 +592,13 @@ public class ExpressionInterpreter {
         return new ChainedInstructionSet(evaluators.toArray(new ObjectEvaluator[evaluators.size()]), fileName, fullFile, lineNumber);
     }
     
-    private static ChainedInstructionSet interpretBinaryComparisonOperator(String errorClass, String method, String fileName, File fullFile, int lineNumber, TokenInfo[] tokens) {
+    private static ChainedInstructionSet interpretBinaryComparisonOperator(String errorClass, String method, String fileName, File fullFile, int lineNumber, TokenInfo[] tokens, Block nextBlock) {
         
         List<ObjectEvaluator> evaluators = new ArrayList<>();
         
         if (TokenUtils.containsOnFirstLevel(tokens, Token.EQUAL_TO)) {
             
-            ChainedInstructionSet[] components = splitByToken(errorClass, method, fileName, fullFile, lineNumber, tokens, Token.EQUAL_TO);
+            ChainedInstructionSet[] components = splitByToken(errorClass, method, fileName, fullFile, lineNumber, tokens, Token.EQUAL_TO, nextBlock);
             evaluators.add(components[0]);
             
             BinaryEqualityOperationInstructionSet binOpSet = new BinaryEqualityOperationInstructionSet(Token.EQUAL_TO, components[1], fileName, fullFile, lineNumber);
@@ -598,7 +606,7 @@ public class ExpressionInterpreter {
             
         } else if (TokenUtils.containsOnFirstLevel(tokens, Token.NOT_EQUAL_TO)) {
             
-            ChainedInstructionSet[] components = splitByToken(errorClass, method, fileName, fullFile, lineNumber, tokens, Token.NOT_EQUAL_TO);
+            ChainedInstructionSet[] components = splitByToken(errorClass, method, fileName, fullFile, lineNumber, tokens, Token.NOT_EQUAL_TO, nextBlock);
             evaluators.add(components[0]);
             
             BinaryEqualityOperationInstructionSet binOpSet = new BinaryEqualityOperationInstructionSet(Token.NOT_EQUAL_TO, components[1], fileName, fullFile, lineNumber);
@@ -606,7 +614,7 @@ public class ExpressionInterpreter {
             
         } else if (TokenUtils.containsOnFirstLevel(tokens, Token.LESS_THAN)) {
             
-            ChainedInstructionSet[] components = splitByToken(errorClass, method, fileName, fullFile, lineNumber, tokens, Token.LESS_THAN);
+            ChainedInstructionSet[] components = splitByToken(errorClass, method, fileName, fullFile, lineNumber, tokens, Token.LESS_THAN, nextBlock);
             evaluators.add(components[0]);
             
             BinaryComparisonOperationInstructionSet binOpSet = new BinaryComparisonOperationInstructionSet(Token.LESS_THAN, components[1], fileName, fullFile, lineNumber);
@@ -614,7 +622,7 @@ public class ExpressionInterpreter {
             
         } else if (TokenUtils.containsOnFirstLevel(tokens, Token.LESS_THAN_OR_EQUAL_TO)) {
             
-            ChainedInstructionSet[] components = splitByToken(errorClass, method, fileName, fullFile, lineNumber, tokens, Token.LESS_THAN_OR_EQUAL_TO);
+            ChainedInstructionSet[] components = splitByToken(errorClass, method, fileName, fullFile, lineNumber, tokens, Token.LESS_THAN_OR_EQUAL_TO, nextBlock);
             evaluators.add(components[0]);
             
             BinaryComparisonOperationInstructionSet binOpSet = new BinaryComparisonOperationInstructionSet(Token.LESS_THAN_OR_EQUAL_TO, components[1], fileName, fullFile, lineNumber);
@@ -622,7 +630,7 @@ public class ExpressionInterpreter {
             
         } else if (TokenUtils.containsOnFirstLevel(tokens, Token.GREATER_THAN)) {
             
-            ChainedInstructionSet[] components = splitByToken(errorClass, method, fileName, fullFile, lineNumber, tokens, Token.GREATER_THAN);
+            ChainedInstructionSet[] components = splitByToken(errorClass, method, fileName, fullFile, lineNumber, tokens, Token.GREATER_THAN, nextBlock);
             evaluators.add(components[0]);
             
             BinaryComparisonOperationInstructionSet binOpSet = new BinaryComparisonOperationInstructionSet(Token.GREATER_THAN, components[1], fileName, fullFile, lineNumber);
@@ -630,7 +638,7 @@ public class ExpressionInterpreter {
             
         } else if (TokenUtils.containsOnFirstLevel(tokens, Token.GREATER_THAN_OR_EQUAL_TO)) {
             
-            ChainedInstructionSet[] components = splitByToken(errorClass, method, fileName, fullFile, lineNumber, tokens, Token.GREATER_THAN_OR_EQUAL_TO);
+            ChainedInstructionSet[] components = splitByToken(errorClass, method, fileName, fullFile, lineNumber, tokens, Token.GREATER_THAN_OR_EQUAL_TO, nextBlock);
             evaluators.add(components[0]);
             
             BinaryComparisonOperationInstructionSet binOpSet = new BinaryComparisonOperationInstructionSet(Token.GREATER_THAN_OR_EQUAL_TO, components[1], fileName, fullFile, lineNumber);
@@ -640,13 +648,13 @@ public class ExpressionInterpreter {
         return new ChainedInstructionSet(evaluators.toArray(new ObjectEvaluator[evaluators.size()]), fileName, fullFile, lineNumber);
     }
     
-    private static ChainedInstructionSet interpretBinaryAndOrOperator(String errorClass, String method, String fileName, File fullFile, int lineNumber, TokenInfo[] tokens) {
+    private static ChainedInstructionSet interpretBinaryAndOrOperator(String errorClass, String method, String fileName, File fullFile, int lineNumber, TokenInfo[] tokens, Block nextBlock) {
         
         List<ObjectEvaluator> evaluators = new ArrayList<>();
         
         if (TokenUtils.containsOnFirstLevel(tokens, Token.AND)) {
             
-            ChainedInstructionSet[] components = splitByToken(errorClass, method, fileName, fullFile, lineNumber, tokens, Token.AND);
+            ChainedInstructionSet[] components = splitByToken(errorClass, method, fileName, fullFile, lineNumber, tokens, Token.AND, nextBlock);
             evaluators.add(components[0]);
             
             BinaryAndOrInstructionSet binOpSet = new BinaryAndOrInstructionSet(Token.AND, components[1], fileName, fullFile, lineNumber);
@@ -654,7 +662,7 @@ public class ExpressionInterpreter {
             
         } else if (TokenUtils.containsOnFirstLevel(tokens, Token.OR)) {
             
-            ChainedInstructionSet[] components = splitByToken(errorClass, method, fileName, fullFile, lineNumber, tokens, Token.OR);
+            ChainedInstructionSet[] components = splitByToken(errorClass, method, fileName, fullFile, lineNumber, tokens, Token.OR, nextBlock);
             evaluators.add(components[0]);
             
             BinaryAndOrInstructionSet binOpSet = new BinaryAndOrInstructionSet(Token.OR, components[1], fileName, fullFile, lineNumber);
@@ -664,7 +672,7 @@ public class ExpressionInterpreter {
         return new ChainedInstructionSet(evaluators.toArray(new ObjectEvaluator[evaluators.size()]), fileName, fullFile, lineNumber);
     }
     
-    private static ChainedInstructionSet interpretUnaryNegation(String errorClass, String method, String fileName, File fullFile, int lineNumber, TokenInfo[] tokens) {
+    private static ChainedInstructionSet interpretUnaryNegation(String errorClass, String method, String fileName, File fullFile, int lineNumber, TokenInfo[] tokens, Block nextBlock) {
         
         List<ObjectEvaluator> evaluators = new ArrayList<>();
         
@@ -675,7 +683,7 @@ public class ExpressionInterpreter {
             stripped.remove(0);
             
             TokenInfo[] strippedArr = stripped.toArray(new TokenInfo[stripped.size()]);
-            ChainedInstructionSet obj = interpret(errorClass, method, fileName, fullFile, lineNumber, strippedArr, null);
+            ChainedInstructionSet obj = interpret(errorClass, method, fileName, fullFile, lineNumber, strippedArr, nextBlock);
             
             UnaryNegationInstructionSet unOpSet = new UnaryNegationInstructionSet(Token.NEGATIVE_OPERATOR, obj, fileName, fullFile, lineNumber);
             evaluators.add(unOpSet);
@@ -684,7 +692,7 @@ public class ExpressionInterpreter {
         return new ChainedInstructionSet(evaluators.toArray(new ObjectEvaluator[evaluators.size()]), fileName, fullFile, lineNumber);
     }
     
-    private static ChainedInstructionSet interpretNumericUnaryNegation(String errorClass, String method, String fileName, File fullFile, int lineNumber, TokenInfo[] tokens) {
+    private static ChainedInstructionSet interpretNumericUnaryNegation(String errorClass, String method, String fileName, File fullFile, int lineNumber, TokenInfo[] tokens, Block nextBlock) {
         
         List<ObjectEvaluator> evaluators = new ArrayList<>();
         List<TokenInfo> stripped = new ArrayList<>();
@@ -692,7 +700,7 @@ public class ExpressionInterpreter {
         stripped.remove(0);
         
         TokenInfo[] strippedArr = stripped.toArray(new TokenInfo[stripped.size()]);
-        ChainedInstructionSet obj = interpret(errorClass, method, fileName, fullFile, lineNumber, strippedArr, null);
+        ChainedInstructionSet obj = interpret(errorClass, method, fileName, fullFile, lineNumber, strippedArr, nextBlock);
         
         UnaryNegationInstructionSet unOpSet = new UnaryNegationInstructionSet(Token.MINUS, obj, fileName, fullFile, lineNumber);
         evaluators.add(unOpSet);
