@@ -126,6 +126,11 @@ public class InstructionSet extends ObjectEvaluator {
                 
                 return new TYBoolean(runtime.getProcedure() != null);
                 
+            } else if (tokens[0].getToken() == Token.BREAK) {
+                
+                runtime.setBroken(true);
+                return null;
+                
             } else if (tokens[0].getToken() == Token.INSTANCE_VAR && tokens.length > 1 && tokens[1].getToken() == Token.NON_TOKEN_STRING) {
                 
                 String varName = tokens[1].getContents();

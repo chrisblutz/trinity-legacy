@@ -22,6 +22,8 @@ public class TYRuntime implements Cloneable {
     private TYModule module = null;
     private TYClass tyClass = null;
     private TYProcedure procedure = null;
+    private boolean isBroken = false, isChainingSwitch = false;
+    private TYObject switchObj = TYObject.NONE;
     private TYModule[] importedModules = new TYModule[0];
     
     public void setVariable(String variable, TYObject value) {
@@ -83,6 +85,36 @@ public class TYRuntime implements Cloneable {
     public void setProcedure(TYProcedure procedure) {
         
         this.procedure = procedure;
+    }
+    
+    public boolean isBroken() {
+        
+        return isBroken;
+    }
+    
+    public void setBroken(boolean broken) {
+    
+        isBroken = broken;
+    }
+    
+    public boolean isChainingSwitch() {
+        
+        return isChainingSwitch;
+    }
+    
+    public void setChainingSwitch(boolean chainingSwitch) {
+    
+        isChainingSwitch = chainingSwitch;
+    }
+    
+    public TYObject getSwitchObj() {
+        
+        return switchObj;
+    }
+    
+    public void setSwitchObj(TYObject switchObj) {
+        
+        this.switchObj = switchObj;
     }
     
     public void importModules(String[] modules) {

@@ -32,6 +32,7 @@ public class ExpressionInterpreter {
         List<ChainedInstructionSet> sets = new ArrayList<>();
         
         BranchingIfInstructionSet ifSet = null;
+        BranchingSwitchInstructionSet switchSet = null;
         
         for (int i = 0; i < block.size(); i++) {
             
@@ -49,6 +50,7 @@ public class ExpressionInterpreter {
             
             if (set instanceof BranchingIfInstructionSet) {
                 
+                switchSet = null;
                 BranchingIfInstructionSet newIfSet = ((BranchingIfInstructionSet) set);
                 
                 if (newIfSet.getBranchToken() != Token.IF && ifSet != null) {
@@ -62,9 +64,26 @@ public class ExpressionInterpreter {
                 
                 ifSet = newIfSet;
                 
+            } else if (set instanceof BranchingSwitchInstructionSet) {
+                
+                ifSet = null;
+                BranchingSwitchInstructionSet newSwitchSet = ((BranchingSwitchInstructionSet) set);
+                
+                if (newSwitchSet.getBranchToken() != Token.SWITCH && switchSet != null) {
+                    
+                    switchSet.setChild(newSwitchSet);
+                    
+                } else {
+                    
+                    sets.add(set);
+                }
+                
+                switchSet = newSwitchSet;
+                
             } else {
                 
                 ifSet = null;
+                switchSet = null;
                 sets.add(set);
             }
         }
@@ -87,7 +106,12 @@ public class ExpressionInterpreter {
                     newTrace.add(errorClass, method, set.getFileName(), set.getLineNumber());
                 }
                 
-                returnObj = set.evaluate(TYObject.NONE, runtime, newTrace);
+                TYObject result = set.evaluate(TYObject.NONE, runtime, newTrace);
+                
+                if (result != null) {
+                    
+                    returnObj = result;
+                }
             }
             
             return returnObj;
@@ -117,6 +141,28 @@ public class ExpressionInterpreter {
             }
             
             return new BranchingIfInstructionSet(tokens[0].getToken(), expression, action, fileName, fullFile, lineNumber);
+            
+        } else if (tokens[0].getToken() == Token.SWITCH || tokens[0].getToken() == Token.CASE || tokens[0].getToken() == Token.DEFAULT) {
+            
+            List<TokenInfo> stripped = new ArrayList<>();
+            stripped.addAll(Arrays.asList(tokens));
+            stripped.remove(0);
+            
+            ChainedInstructionSet expression = null;
+            
+            if (tokens[0].getToken() != Token.DEFAULT) {
+                
+                expression = interpret(errorClass, method, fileName, fullFile, lineNumber, stripped.toArray(new TokenInfo[stripped.size()]), null);
+            }
+            
+            ProcedureAction action = null;
+            
+            if (nextBlock != null) {
+                
+                action = interpret(nextBlock, environment, errorClass, method, false);
+            }
+            
+            return new BranchingSwitchInstructionSet(tokens[0].getToken(), expression, action, fileName, fullFile, lineNumber);
             
         } else if (tokens[0].getToken() == Token.WHILE) {
             
@@ -244,7 +290,7 @@ public class ExpressionInterpreter {
             
         } else {
             
-            return interpretForChainedInstructionSet(errorClass, method, fileName, fullFile, lineNumber, tokens, nextBlock);
+            return interpretForChainedInstructionSet(errorClass, method, fileName, fullFile, lineNumber, tokens, null);
         }
         
         return null;
@@ -308,7 +354,7 @@ public class ExpressionInterpreter {
                     evaluators.add(new InstructionSet(new TokenInfo[]{info, tokens[i + 1]}, fileName, fullFile, lineNumber));
                     i++;
                     
-                } else if (info.getToken() == Token.BLOCK_CHECK || info.getToken() == Token.__FILE__ || info.getToken() == Token.__LINE__ || info.getToken() == Token.SUPER || info.getToken() == Token.NIL || info.getToken() == Token.LITERAL_STRING || info.getToken() == Token.NUMERIC_STRING || info.getToken() == Token.TRUE || info.getToken() == Token.FALSE) {
+                } else if (info.getToken() == Token.BREAK || info.getToken() == Token.BLOCK_CHECK || info.getToken() == Token.__FILE__ || info.getToken() == Token.__LINE__ || info.getToken() == Token.SUPER || info.getToken() == Token.NIL || info.getToken() == Token.LITERAL_STRING || info.getToken() == Token.NUMERIC_STRING || info.getToken() == Token.TRUE || info.getToken() == Token.FALSE) {
                     
                     evaluators.add(new InstructionSet(new TokenInfo[]{info}, fileName, fullFile, lineNumber));
                 }
