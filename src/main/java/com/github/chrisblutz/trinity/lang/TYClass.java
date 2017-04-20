@@ -185,6 +185,12 @@ public class TYClass {
                 
                 constructor.getProcedure().call(newRuntime, stackTrace, procedure, procedureRuntime, newObj, params);
                 
+                if (newRuntime.isReturning()) {
+                    
+                    TYError error = new TYError("Trinity.Errors.ReturnError", "Cannot return a value from a constructor.", stackTrace);
+                    error.throwError();
+                }
+                
                 return newObj;
                 
             } else {
@@ -218,7 +224,14 @@ public class TYClass {
                 newRuntime.setScope(thisObj, false);
             }
             
-            return method.getProcedure().call(newRuntime, stackTrace, procedure, procedureRuntime, thisObj, params);
+            TYObject result = method.getProcedure().call(newRuntime, stackTrace, procedure, procedureRuntime, thisObj, params);
+            
+            if (newRuntime.isReturning()) {
+                
+                return newRuntime.getReturnObject();
+            }
+            
+            return result;
             
         } else if (getSuperclass() != null) {
             

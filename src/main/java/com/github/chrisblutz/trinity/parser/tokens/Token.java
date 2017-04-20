@@ -31,6 +31,9 @@ public enum Token {
     // Loops
     IF("if"), ELSIF("elsif"), ELSE("else"), WHILE("while"), FOR("for"), SWITCH("switch"), CASE("case"), DEFAULT("default"), BREAK("break"),
     
+    // Other
+    RETURN("return"),
+    
     // Punctuation
     LEFT_PARENTHESIS("("), RIGHT_PARENTHESIS(")"), LEFT_SQUARE_BRACKET("["), RIGHT_SQUARE_BRACKET("]"), COMMA(","), SEMICOLON(";"),
     VERTICAL_BAR("|"), BLOCK_PREFIX("&"),

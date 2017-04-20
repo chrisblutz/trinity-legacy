@@ -108,9 +108,17 @@ public class ExpressionInterpreter {
                 
                 TYObject result = set.evaluate(TYObject.NONE, runtime, newTrace);
                 
-                if (result != null) {
+                if (result != null && !runtime.isReturning()) {
                     
                     returnObj = result;
+                    
+                } else if (runtime.isReturning()) {
+                    
+                    return runtime.getReturnObject();
+                    
+                } else {
+                    
+                    return returnObj;
                 }
             }
             
@@ -214,6 +222,21 @@ public class ExpressionInterpreter {
                 TYError error = new TYError("Trinity.Errors.ParseError", "For loops require 3 components.", new TYStackTrace());
                 error.throwError();
             }
+            
+        } else if (tokens[0].getToken() == Token.RETURN) {
+            
+            List<TokenInfo> stripped = new ArrayList<>();
+            stripped.addAll(Arrays.asList(tokens));
+            stripped.remove(0);
+            
+            ChainedInstructionSet expression = null;
+            
+            if (stripped.size() > 0) {
+                
+                expression = interpret(errorClass, method, fileName, fullFile, lineNumber, stripped.toArray(new TokenInfo[stripped.size()]), nextBlock);
+            }
+            
+            return new ReturnInstructionSet(tokens[0].getToken(), expression, fileName, fullFile, lineNumber);
             
         } else if (TokenUtils.containsOnFirstLevel(tokens, Token.ASSIGNMENT_OPERATOR, Token.NIL_ASSIGNMENT_OPERATOR, Token.PLUS, Token.PLUS_EQUAL, Token.MINUS, Token.MINUS_EQUAL,
                 Token.MULTIPLY, Token.MULTIPLY_EQUAL, Token.DIVIDE, Token.DIVIDE_EQUAL, Token.MODULUS, Token.MODULUS_EQUAL, Token.EQUAL_TO, Token.NOT_EQUAL_TO, Token.GREATER_THAN, Token.GREATER_THAN_OR_EQUAL_TO,

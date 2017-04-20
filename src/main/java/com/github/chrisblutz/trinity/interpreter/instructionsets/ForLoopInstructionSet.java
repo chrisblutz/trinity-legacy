@@ -59,6 +59,16 @@ public class ForLoopInstructionSet extends ChainedInstructionSet {
             
             getAction().onAction(newRuntime, stackTrace, null, TYObject.NONE);
             
+            if (newRuntime.isReturning()) {
+                
+                break;
+                
+            } else if (newRuntime.isBroken()) {
+                
+                newRuntime.setBroken(false);
+                break;
+            }
+            
             getAfter().evaluate(TYObject.NONE, newRuntime, stackTrace);
             
             expBoolean = (TYBoolean) getExpression().evaluate(TYObject.NONE, newRuntime, stackTrace);

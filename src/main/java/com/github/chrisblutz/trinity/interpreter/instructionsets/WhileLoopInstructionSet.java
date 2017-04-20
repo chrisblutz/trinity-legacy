@@ -45,7 +45,19 @@ public class WhileLoopInstructionSet extends ChainedInstructionSet {
             
             getAction().onAction(newRuntime, stackTrace, null, TYObject.NONE);
             
-            expBoolean = (TYBoolean) getExpression().evaluate(TYObject.NONE, newRuntime, stackTrace);
+            if (newRuntime.isReturning()) {
+                
+                break;
+                
+            } else if (newRuntime.isBroken()) {
+                
+                newRuntime.setBroken(false);
+                break;
+                
+            } else {
+                
+                expBoolean = (TYBoolean) getExpression().evaluate(TYObject.NONE, newRuntime, stackTrace);
+            }
         }
         
         newRuntime.dispose(runtime);

@@ -117,7 +117,7 @@ public class BranchingSwitchInstructionSet extends ChainedInstructionSet {
     @Override
     public String toString(String indent) {
         
-        String str = indent + "BranchingIfInstructionSet [Branch Token: " + getBranchToken() + "]";
+        String str = indent + "BranchingSwitchInstructionSet [Branch Token: " + getBranchToken() + "]";
         
         if (getExpression() != null) {
             
