@@ -4,7 +4,6 @@ import com.github.chrisblutz.trinity.lang.ClassRegistry;
 import com.github.chrisblutz.trinity.lang.TYClass;
 import com.github.chrisblutz.trinity.lang.TYMethod;
 import com.github.chrisblutz.trinity.lang.errors.stacktrace.TYStackTrace;
-import com.github.chrisblutz.trinity.lang.types.TYNilClass;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,9 +28,6 @@ public class NativeHelper {
     }
     
     static {
-        
-        TYClass nativeClass = new TYNilClass();
-        classes.put(nativeClass.getName(), nativeClass);
         
         NativeObject.register(methods);
         NativeString.register(methods);

@@ -37,6 +37,8 @@ class NativeArray {
                 }
             }
             
+            str.append("]");
+            
             return new TYString(str.toString());
         })));
         methods.put("Array.length", new TYMethod("length", false, new TYProcedure((runtime, stackTrace, thisObj, params) -> new TYInt(((TYArray) thisObj).size()))));

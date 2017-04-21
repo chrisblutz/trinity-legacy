@@ -65,21 +65,46 @@ public class TYProcedure {
         int mandatoryNum = getMandatoryParameters().size();
         int optNum = getOptionalParameters().size();
         
-        if (params.length >= getMandatoryParameters().size()) {
+        ArrayList<String> opts = new ArrayList<>(getOptionalParameters().keySet());
+        
+        if (params.length >= mandatoryNum) {
             
             int paramPos;
             for (paramPos = 0; paramPos < mandatoryNum; paramPos++) {
                 
-                runtime.setVariable(getMandatoryParameters().get(paramPos), params[paramPos]);
+                if (subProcedure == null && getBlockParameter() != null && params[paramPos] instanceof TYProcedureObject) {
+                    
+                    runtime.setVariable(getBlockParameter(), params[paramPos]);
+                    
+                    paramPos--;
+                    
+                } else {
+                    
+                    runtime.setVariable(getMandatoryParameters().get(paramPos), params[paramPos]);
+                }
             }
             
             for (; paramPos < mandatoryNum + optNum && paramPos < params.length; paramPos++) {
                 
                 if (params[paramPos] != TYObject.NONE) {
                     
-                    String param = new ArrayList<>(getOptionalParameters().keySet()).get(paramPos - mandatoryNum);
-                    runtime.setVariable(param, params[paramPos]);
+                    if (subProcedure == null && getBlockParameter() != null && params[paramPos] instanceof TYProcedureObject) {
+                        
+                        runtime.setVariable(getBlockParameter(), params[paramPos]);
+                        
+                        paramPos--;
+                        
+                    } else {
+                        
+                        String param = opts.get(paramPos - mandatoryNum);
+                        runtime.setVariable(param, params[paramPos]);
+                    }
                 }
+            }
+            
+            if (paramPos < params.length && subProcedure == null && getBlockParameter() != null && params[paramPos] instanceof TYProcedureObject) {
+                
+                runtime.setVariable(getBlockParameter(), params[paramPos]);
             }
             
         } else {
@@ -95,13 +120,13 @@ public class TYProcedure {
             if (subProcedure != null) {
                 
                 obj = new TYProcedureObject(subProcedure, procedureRuntime);
+                runtime.setVariable(getBlockParameter(), obj);
                 
-            } else {
+            } else if (!runtime.hasVariable(getBlockParameter())) {
                 
                 obj = new TYProcedureObject(new TYProcedure((runtime1, stackTrace1, thisObj1, params1) -> TYObject.NONE), new TYRuntime());
+                runtime.setVariable(getBlockParameter(), obj);
             }
-            
-            runtime.setVariable(getBlockParameter(), obj);
         }
         
         runtime.setProcedure(subProcedure);

@@ -1,0 +1,19 @@
+module Trinity
+    module ArrayUtils
+        class Iterator
+            def initialize(values)
+                @values = values
+                @i = 0
+
+            def next
+                n = @values[@i]
+                @i += 1
+                n
+
+            def hasNext
+                @i < @values.length()
+
+            def iterate(&block)
+                @i = 0
+                while hasNext()
+                    block.call(next())

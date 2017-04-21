@@ -42,7 +42,7 @@ public class ReturnInstructionSet extends ChainedInstructionSet {
         
         if (getExpression() != null) {
             
-            getExpression().evaluate(TYObject.NONE, runtime, stackTrace);
+            result = getExpression().evaluate(TYObject.NONE, runtime, stackTrace);
         }
         
         runtime.setReturning(true);

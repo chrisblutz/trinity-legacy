@@ -4,6 +4,7 @@ import com.github.chrisblutz.trinity.lang.errors.TYError;
 import com.github.chrisblutz.trinity.lang.errors.stacktrace.TYStackTrace;
 import com.github.chrisblutz.trinity.lang.procedures.TYProcedure;
 import com.github.chrisblutz.trinity.lang.scope.TYRuntime;
+import com.github.chrisblutz.trinity.lang.types.TYNilClass;
 
 
 /**
@@ -11,7 +12,7 @@ import com.github.chrisblutz.trinity.lang.scope.TYRuntime;
  */
 public class TYObject {
     
-    public static final TYObject NIL = new TYObject(ClassRegistry.getClass("Nil")), NONE = new TYObject(ClassRegistry.getClass("Class"));
+    public static final TYObject NIL = new TYObject(new TYNilClass()), NONE = new TYObject(ClassRegistry.getClass("Class"));
     
     private TYClass objClass;
     private int superStack = 0;
