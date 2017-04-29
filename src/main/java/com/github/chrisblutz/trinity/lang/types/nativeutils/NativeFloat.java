@@ -1,18 +1,15 @@
 package com.github.chrisblutz.trinity.lang.types.nativeutils;
 
-import com.github.chrisblutz.trinity.lang.TYMethod;
 import com.github.chrisblutz.trinity.lang.TYObject;
 import com.github.chrisblutz.trinity.lang.errors.TYError;
 import com.github.chrisblutz.trinity.lang.errors.stacktrace.TYStackTrace;
 import com.github.chrisblutz.trinity.lang.procedures.ProcedureAction;
-import com.github.chrisblutz.trinity.lang.procedures.TYProcedure;
 import com.github.chrisblutz.trinity.lang.types.bool.TYBoolean;
 import com.github.chrisblutz.trinity.lang.types.numeric.TYFloat;
 import com.github.chrisblutz.trinity.lang.types.numeric.TYInt;
 import com.github.chrisblutz.trinity.lang.types.numeric.TYLong;
 import com.github.chrisblutz.trinity.lang.types.strings.TYString;
-
-import java.util.Map;
+import com.github.chrisblutz.trinity.natives.TrinityNatives;
 
 
 /**
@@ -20,74 +17,66 @@ import java.util.Map;
  */
 class NativeFloat {
     
-    static void register(Map<String, TYMethod> methods) {
+    static void register() {
         
-        methods.put("Float.+", new TYMethod("+", false, new TYProcedure(getActionForOperation("+"))));
-        methods.put("Float.-", new TYMethod("-", false, new TYProcedure(getActionForOperation("-"))));
-        methods.put("Float.*", new TYMethod("*", false, new TYProcedure(getActionForOperation("*"))));
-        methods.put("Float./", new TYMethod("/", false, new TYProcedure(getActionForOperation("/"))));
-        methods.put("Float.%", new TYMethod("%", false, new TYProcedure(getActionForOperation("%"))));
-        methods.put("Float.toString", new TYMethod("toString", false, new TYProcedure((runtime, stackTrace, thisObj, params) -> new TYString(Double.toString(((TYFloat) thisObj).getInternalDouble())))));
-        methods.put("Float.compareTo", new TYMethod("compareTo", false, new TYProcedure((runtime, stackTrace, thisObj, params) -> {
+        TrinityNatives.registerMethod("Float", "+", false, new String[]{"other"}, null, null, getActionForOperation("+"));
+        TrinityNatives.registerMethod("Float", "-", false, new String[]{"other"}, null, null, getActionForOperation("-"));
+        TrinityNatives.registerMethod("Float", "*", false, new String[]{"other"}, null, null, getActionForOperation("*"));
+        TrinityNatives.registerMethod("Float", "/", false, new String[]{"other"}, null, null, getActionForOperation("/"));
+        TrinityNatives.registerMethod("Float", "%", false, new String[]{"other"}, null, null, getActionForOperation("%"));
+        TrinityNatives.registerMethod("Float", "toString", false, null, null, null, (runtime, stackTrace, thisObj, params) -> new TYString(Double.toString(((TYFloat) thisObj).getInternalDouble())));
+        TrinityNatives.registerMethod("Float", "compareTo", false, new String[]{"other"}, null, null, (runtime, stackTrace, thisObj, params) -> {
             
             double thisDouble = ((TYFloat) thisObj).getInternalDouble();
+            TYObject obj = runtime.getVariable("other");
             
-            if (params.length > 0) {
+            if (obj instanceof TYInt) {
                 
-                TYObject obj = params[0];
+                int objInt = ((TYInt) obj).getInternalInteger();
                 
-                if (obj instanceof TYInt) {
-                    
-                    int objInt = ((TYInt) obj).getInternalInteger();
-                    
-                    return new TYInt(Double.compare(thisDouble, objInt));
-                    
-                } else if (obj instanceof TYLong) {
-                    
-                    long objLong = ((TYLong) obj).getInternalLong();
-                    
-                    return new TYInt(Double.compare(thisDouble, objLong));
-                    
-                } else if (obj instanceof TYFloat) {
-                    
-                    double objDouble = ((TYFloat) obj).getInternalDouble();
-                    
-                    return new TYInt(Double.compare(thisDouble, objDouble));
-                }
+                return new TYInt(Double.compare(thisDouble, objInt));
+                
+            } else if (obj instanceof TYLong) {
+                
+                long objLong = ((TYLong) obj).getInternalLong();
+                
+                return new TYInt(Double.compare(thisDouble, objLong));
+                
+            } else if (obj instanceof TYFloat) {
+                
+                double objDouble = ((TYFloat) obj).getInternalDouble();
+                
+                return new TYInt(Double.compare(thisDouble, objDouble));
             }
             
             return new TYInt(-1);
-        })));
-        methods.put("Float.==", new TYMethod("==", false, new TYProcedure((runtime, stackTrace, thisObj, params) -> {
+        });
+        TrinityNatives.registerMethod("Float", "==", false, new String[]{"other"}, null, null, (runtime, stackTrace, thisObj, params) -> {
             
             double thisDouble = ((TYFloat) thisObj).getInternalDouble();
+            TYObject obj = runtime.getVariable("other");
             
-            if (params.length > 0) {
+            if (obj instanceof TYInt) {
                 
-                TYObject obj = params[0];
+                int objInt = ((TYInt) obj).getInternalInteger();
                 
-                if (obj instanceof TYInt) {
-                    
-                    int objInt = ((TYInt) obj).getInternalInteger();
-                    
-                    return new TYBoolean(thisDouble == objInt);
-                    
-                } else if (obj instanceof TYLong) {
-                    
-                    long objLong = ((TYLong) obj).getInternalLong();
-                    
-                    return new TYBoolean(thisDouble == objLong);
-                    
-                } else if (obj instanceof TYFloat) {
-                    
-                    double objDouble = ((TYFloat) obj).getInternalDouble();
-                    
-                    return new TYBoolean(thisDouble == objDouble);
-                }
+                return new TYBoolean(thisDouble == objInt);
+                
+            } else if (obj instanceof TYLong) {
+                
+                long objLong = ((TYLong) obj).getInternalLong();
+                
+                return new TYBoolean(thisDouble == objLong);
+                
+            } else if (obj instanceof TYFloat) {
+                
+                double objDouble = ((TYFloat) obj).getInternalDouble();
+                
+                return new TYBoolean(thisDouble == objDouble);
             }
             
             return TYBoolean.FALSE;
-        })));
+        });
     }
     
     private static ProcedureAction getActionForOperation(String operation) {
@@ -98,36 +87,26 @@ class NativeFloat {
             
             TYObject returnVal;
             
-            if (params.length == 1) {
+            TYObject obj = runtime.getVariable("other");
+            
+            if (obj instanceof TYInt) {
                 
-                TYObject obj = params[0];
+                int newInt = ((TYInt) obj).getInternalInteger();
+                returnVal = new TYFloat(doubleCalculation(thisDouble, newInt, operation, stackTrace));
                 
-                if (obj instanceof TYInt) {
-                    
-                    int newInt = ((TYInt) obj).getInternalInteger();
-                    returnVal = new TYFloat(doubleCalculation(thisDouble, newInt, operation, stackTrace));
-                    
-                } else if (obj instanceof TYLong) {
-                    
-                    long newLong = ((TYLong) obj).getInternalLong();
-                    returnVal = new TYFloat(doubleCalculation(thisDouble, newLong, operation, stackTrace));
-                    
-                } else if (obj instanceof TYFloat) {
-                    
-                    double newDouble = ((TYFloat) obj).getInternalDouble();
-                    returnVal = new TYFloat(doubleCalculation(thisDouble, newDouble, operation, stackTrace));
-                    
-                } else {
-                    
-                    TYError error = new TYError("Trinity.Errors.InvalidTypeError", "Invalid type passed to '" + operation + "'.", stackTrace);
-                    error.throwError();
-                    
-                    returnVal = TYObject.NONE;
-                }
+            } else if (obj instanceof TYLong) {
+                
+                long newLong = ((TYLong) obj).getInternalLong();
+                returnVal = new TYFloat(doubleCalculation(thisDouble, newLong, operation, stackTrace));
+                
+            } else if (obj instanceof TYFloat) {
+                
+                double newDouble = ((TYFloat) obj).getInternalDouble();
+                returnVal = new TYFloat(doubleCalculation(thisDouble, newDouble, operation, stackTrace));
                 
             } else {
                 
-                TYError error = new TYError("Trinity.Errors.InvalidArgumentNumberError", "'" + operation + "' requires two operands.", stackTrace);
+                TYError error = new TYError("Trinity.Errors.InvalidTypeError", "Invalid type passed to '" + operation + "'.", stackTrace);
                 error.throwError();
                 
                 returnVal = TYObject.NONE;

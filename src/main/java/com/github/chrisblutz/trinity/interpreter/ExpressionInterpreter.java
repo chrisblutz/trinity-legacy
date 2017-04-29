@@ -326,7 +326,7 @@ public class ExpressionInterpreter {
         TokenInfo previousNonToken = null;
         TokenInfo previous = null;
         List<TokenInfo> levelTemp = new ArrayList<>();
-        boolean matchingParam = false, matchingObjArrayIndex = false, matchingArray = false, matchingArrayIndex = false;
+        boolean matchingParam = false, matchingObjArrayIndex = false, matchingArray = false, matchingArrayIndex = false, matchingMap = false;
         int level = 0;
         
         for (int i = 0; i < tokens.length; i++) {
@@ -342,6 +342,11 @@ public class ExpressionInterpreter {
                 
                 level++;
                 matchingArray = true;
+                
+            } else if (i == 0 && info.getToken() == Token.LEFT_CURLY_BRACKET) {
+                
+                level++;
+                matchingMap = true;
                 
             } else if (level == 0) {
                 
@@ -384,11 +389,11 @@ public class ExpressionInterpreter {
                 
             } else {
                 
-                if (info.getToken() == Token.LEFT_PARENTHESIS || info.getToken() == Token.LEFT_SQUARE_BRACKET) {
+                if (info.getToken() == Token.LEFT_PARENTHESIS || info.getToken() == Token.LEFT_SQUARE_BRACKET || info.getToken() == Token.LEFT_CURLY_BRACKET) {
                     
                     level++;
                     
-                } else if (info.getToken() == Token.RIGHT_PARENTHESIS || info.getToken() == Token.RIGHT_SQUARE_BRACKET) {
+                } else if (info.getToken() == Token.RIGHT_PARENTHESIS || info.getToken() == Token.RIGHT_SQUARE_BRACKET || info.getToken() == Token.RIGHT_CURLY_BRACKET) {
                     
                     level--;
                 }
@@ -492,6 +497,29 @@ public class ExpressionInterpreter {
                         }
                         evaluators.add(keyRetrievalSet);
                         
+                    } else if (matchingMap) {
+                        
+                        matchingMap = false;
+                        
+                        List<TokenInfo> temp = new ArrayList<>();
+                        temp.addAll(levelTemp);
+                        if (levelTemp.get(levelTemp.size() - 1).getToken() == Token.RIGHT_CURLY_BRACKET) {
+                            
+                            temp.remove(temp.size() - 1);
+                        }
+                        levelTemp.clear();
+                        
+                        List<List<TokenInfo>> split = splitByTokenIntoList(temp.toArray(new TokenInfo[temp.size()]), Token.COMMA);
+                        List<ChainedInstructionSet[]> elements = new ArrayList<>();
+                        
+                        for (List<TokenInfo> part : split) {
+                            
+                            elements.add(splitByToken(errorClass, method, fileName, fullFile, lineNumber, part.toArray(new TokenInfo[part.size()]), Token.COLON, null));
+                        }
+                        
+                        MapInitializationInstructionSet mapSet = new MapInitializationInstructionSet(elements, fileName, fullFile, lineNumber);
+                        evaluators.add(mapSet);
+                        
                     } else {
                         
                         evaluators.add(interpret(errorClass, method, fileName, fullFile, lineNumber, levelTemp.toArray(new TokenInfo[levelTemp.size()]), null));
@@ -563,7 +591,7 @@ public class ExpressionInterpreter {
         return sets.toArray(new ChainedInstructionSet[sets.size()]);
     }
     
-    private static ChainedInstructionSet[] splitByToken(String errorClass, String method, String fileName, File fullFile, int lineNumber, TokenInfo[] tokens, Token delimiter, Block nextBlock) {
+    private static List<List<TokenInfo>> splitByTokenIntoList(TokenInfo[] tokens, Token delimiter) {
         
         List<List<TokenInfo>> infoSets = new ArrayList<>();
         
@@ -597,6 +625,13 @@ public class ExpressionInterpreter {
             
             infoSets.add(current);
         }
+        
+        return infoSets;
+    }
+    
+    private static ChainedInstructionSet[] splitByToken(String errorClass, String method, String fileName, File fullFile, int lineNumber, TokenInfo[] tokens, Token delimiter, Block nextBlock) {
+        
+        List<List<TokenInfo>> infoSets = splitByTokenIntoList(tokens, delimiter);
         
         List<TokenInfo> firstExpression = new ArrayList<>();
         

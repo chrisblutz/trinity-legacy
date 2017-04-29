@@ -19,11 +19,11 @@ public class TokenUtils {
         int level = 0;
         for (TokenInfo info : infoSets) {
             
-            if (info.getToken() == Token.LEFT_PARENTHESIS || info.getToken() == Token.LEFT_SQUARE_BRACKET) {
+            if (info.getToken() == Token.LEFT_PARENTHESIS || info.getToken() == Token.LEFT_SQUARE_BRACKET || info.getToken() == Token.LEFT_CURLY_BRACKET) {
                 
                 level += 1;
                 
-            } else if (info.getToken() == Token.RIGHT_PARENTHESIS || info.getToken() == Token.RIGHT_SQUARE_BRACKET) {
+            } else if (info.getToken() == Token.RIGHT_PARENTHESIS || info.getToken() == Token.RIGHT_SQUARE_BRACKET || info.getToken() == Token.RIGHT_CURLY_BRACKET) {
                 
                 level -= 1;
                 

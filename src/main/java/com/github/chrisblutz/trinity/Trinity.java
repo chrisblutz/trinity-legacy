@@ -1,10 +1,8 @@
 package com.github.chrisblutz.trinity;
 
+import com.github.chrisblutz.trinity.bootstrap.Bootstrap;
 import com.github.chrisblutz.trinity.cli.CLI;
 import com.github.chrisblutz.trinity.lang.errors.TYError;
-import com.github.chrisblutz.trinity.parser.TrinityParser;
-
-import java.io.File;
 
 
 /**
@@ -28,10 +26,7 @@ public class Trinity {
     
     public static void main(String[] args) {
         
-        // Load default library
-        TrinityParser.parse(new File("lib/Object.ty"));
-        TrinityParser.parse(new File("lib/Boolean.ty"));
-        TrinityParser.parse(new File("lib/"));
+        Bootstrap.bootstrap();
         
         CLI.start(args);
     }

@@ -1,16 +1,13 @@
 package com.github.chrisblutz.trinity.lang.types.nativeutils;
 
 import com.github.chrisblutz.trinity.lang.TYClass;
-import com.github.chrisblutz.trinity.lang.TYMethod;
 import com.github.chrisblutz.trinity.lang.TYObject;
 import com.github.chrisblutz.trinity.lang.errors.TYError;
-import com.github.chrisblutz.trinity.lang.procedures.TYProcedure;
 import com.github.chrisblutz.trinity.lang.types.TYClassObject;
 import com.github.chrisblutz.trinity.lang.types.TYStaticClassObject;
 import com.github.chrisblutz.trinity.lang.types.bool.TYBoolean;
 import com.github.chrisblutz.trinity.lang.types.strings.TYString;
-
-import java.util.Map;
+import com.github.chrisblutz.trinity.natives.TrinityNatives;
 
 
 /**
@@ -18,9 +15,9 @@ import java.util.Map;
  */
 class NativeClass {
     
-    static void register(Map<String, TYMethod> methods) {
+    static void register() {
         
-        methods.put("Class.toString", new TYMethod("toString", false, new TYProcedure((runtime, stackTrace, thisObj, params) -> {
+        TrinityNatives.registerMethod("Class", "toString", false, null, null, null, (runtime, stackTrace, thisObj, params) -> {
             
             if (thisObj instanceof TYClassObject) {
                 
@@ -32,19 +29,21 @@ class NativeClass {
             }
             
             return new TYString("");
-        })));
-        methods.put("Class.==", new TYMethod("==", false, new TYProcedure((runtime, stackTrace, thisObj, params) -> {
+        });
+        TrinityNatives.registerMethod("Class", "==", false, new String[]{"other"}, null, null, (runtime, stackTrace, thisObj, params) -> {
             
             TYClass thisClass = ((TYClassObject) thisObj).getInternalClass();
             TYClass otherClass;
             
-            if (params[0] instanceof TYClassObject) {
+            TYObject obj = runtime.getVariable("other");
+            
+            if (obj instanceof TYClassObject) {
                 
-                otherClass = ((TYClassObject) params[0]).getInternalClass();
+                otherClass = ((TYClassObject) obj).getInternalClass();
                 
-            } else if (params[0] instanceof TYStaticClassObject) {
+            } else if (obj instanceof TYStaticClassObject) {
                 
-                otherClass = ((TYStaticClassObject) params[0]).getInternalClass();
+                otherClass = ((TYStaticClassObject) obj).getInternalClass();
                 
             } else {
                 
@@ -55,6 +54,6 @@ class NativeClass {
             }
             
             return new TYBoolean(thisClass == otherClass);
-        })));
+        });
     }
 }

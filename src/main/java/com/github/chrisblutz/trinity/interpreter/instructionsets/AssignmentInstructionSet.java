@@ -2,6 +2,7 @@ package com.github.chrisblutz.trinity.interpreter.instructionsets;
 
 import com.github.chrisblutz.trinity.interpreter.variables.Variables;
 import com.github.chrisblutz.trinity.lang.TYObject;
+import com.github.chrisblutz.trinity.lang.errors.TYError;
 import com.github.chrisblutz.trinity.lang.errors.stacktrace.TYStackTrace;
 import com.github.chrisblutz.trinity.lang.scope.TYRuntime;
 import com.github.chrisblutz.trinity.parser.tokens.Token;
@@ -88,6 +89,12 @@ public class AssignmentInstructionSet extends ObjectEvaluator {
         } else if (getOperator() == Token.MODULUS_EQUAL) {
             
             opObj = assignObj.tyInvoke("%", runtime, stackTrace, null, null, opObj);
+        }
+        
+        if (opObj == TYObject.NONE) {
+            
+            TYError error = new TYError("Trinity.Errors.AssignmentError", "Right-hand side of assignment expression must return a value.", stackTrace);
+            error.throwError();
         }
         
         if (getAssignmentTokens().length == 1 && getAssignmentTokens()[0].getToken() == Token.NON_TOKEN_STRING) {

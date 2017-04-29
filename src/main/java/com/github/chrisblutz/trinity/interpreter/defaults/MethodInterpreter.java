@@ -5,6 +5,7 @@ import com.github.chrisblutz.trinity.interpreter.ExpressionInterpreter;
 import com.github.chrisblutz.trinity.interpreter.InterpretEnvironment;
 import com.github.chrisblutz.trinity.interpreter.TrinityInterpreter;
 import com.github.chrisblutz.trinity.interpreter.instructionsets.ChainedInstructionSet;
+import com.github.chrisblutz.trinity.lang.TYClass;
 import com.github.chrisblutz.trinity.lang.TYMethod;
 import com.github.chrisblutz.trinity.lang.TYObject;
 import com.github.chrisblutz.trinity.lang.errors.TYError;
@@ -12,7 +13,7 @@ import com.github.chrisblutz.trinity.lang.errors.stacktrace.TYStackTrace;
 import com.github.chrisblutz.trinity.lang.procedures.ProcedureAction;
 import com.github.chrisblutz.trinity.lang.procedures.TYProcedure;
 import com.github.chrisblutz.trinity.lang.scope.TYRuntime;
-import com.github.chrisblutz.trinity.lang.types.nativeutils.NativeHelper;
+import com.github.chrisblutz.trinity.natives.TrinityNatives;
 import com.github.chrisblutz.trinity.parser.blocks.Block;
 import com.github.chrisblutz.trinity.parser.blocks.BlockItem;
 import com.github.chrisblutz.trinity.parser.blocks.BlockLine;
@@ -78,7 +79,17 @@ public class MethodInterpreter extends DeclarationInterpreter {
                         position++;
                     }
                     
-                    TYMethod method;
+                    TYClass containerClass = null;
+                    
+                    if (!env.getClassStack().isEmpty()) {
+                        
+                        containerClass = env.getClassStack().get(env.getClassStack().size() - 1);
+                        
+                    } else {
+                        
+                        TYError error = new TYError("Trinity.Errors.ScopeError", "Methods must be declared within a class.", new TYStackTrace());
+                        error.throwError();
+                    }
                     
                     if (!nativeMethod) {
                         
@@ -168,22 +179,13 @@ public class MethodInterpreter extends DeclarationInterpreter {
                         
                         TYProcedure procedure = new TYProcedure(action, mandatoryParams, optParams, blockParam);
                         
-                        method = new TYMethod(name, staticMethod, procedure);
+                        TYMethod method = new TYMethod(name, staticMethod, procedure);
                         method.importModules(TrinityInterpreter.getImportedModules());
+                        containerClass.registerMethod(method);
                         
                     } else {
                         
-                        method = NativeHelper.getNativeMethod(env.getEnvironmentString() + "." + name);
-                    }
-                    
-                    if (!env.getClassStack().isEmpty()) {
-                        
-                        env.getClassStack().get(env.getClassStack().size() - 1).registerMethod(method);
-                        
-                    } else {
-                        
-                        TYError error = new TYError("Trinity.Errors.ScopeError", "Methods must be declared within a class.", new TYStackTrace());
-                        error.throwError();
+                        TrinityNatives.doLoad(env.getEnvironmentString() + "." + name, containerClass);
                     }
                 }
             }

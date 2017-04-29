@@ -1,11 +1,8 @@
 package com.github.chrisblutz.trinity.lang.types.nativeutils;
 
-import com.github.chrisblutz.trinity.lang.TYMethod;
-import com.github.chrisblutz.trinity.lang.procedures.TYProcedure;
 import com.github.chrisblutz.trinity.lang.types.TYModuleObject;
 import com.github.chrisblutz.trinity.lang.types.strings.TYString;
-
-import java.util.Map;
+import com.github.chrisblutz.trinity.natives.TrinityNatives;
 
 
 /**
@@ -13,8 +10,8 @@ import java.util.Map;
  */
 class NativeModule {
     
-    static void register(Map<String, TYMethod> methods) {
+    static void register() {
         
-        methods.put("Module.toString", new TYMethod("toString", false, new TYProcedure((runtime, stackTrace, thisObj, params) -> new TYString(((TYModuleObject) thisObj).getInternalModule().getName()))));
+        TrinityNatives.registerMethod("Module", "toString", false, null, null, null, (runtime, stackTrace, thisObj, params) -> new TYString(((TYModuleObject) thisObj).getInternalModule().getName()));
     }
 }

@@ -1,12 +1,9 @@
 package com.github.chrisblutz.trinity.lang.types.nativeutils;
 
-import com.github.chrisblutz.trinity.lang.TYMethod;
 import com.github.chrisblutz.trinity.lang.TYObject;
-import com.github.chrisblutz.trinity.lang.procedures.TYProcedure;
 import com.github.chrisblutz.trinity.lang.types.bool.TYBoolean;
 import com.github.chrisblutz.trinity.lang.types.strings.TYString;
-
-import java.util.Map;
+import com.github.chrisblutz.trinity.natives.TrinityNatives;
 
 
 /**
@@ -14,22 +11,19 @@ import java.util.Map;
  */
 class NativeBoolean {
     
-    static void register(Map<String, TYMethod> methods) {
+    static void register() {
         
-        methods.put("Boolean.toString", new TYMethod("toString", false, new TYProcedure((runtime, stackTrace, thisObj, params) -> new TYString(Boolean.toString(((TYBoolean) thisObj).getInternalBoolean())))));
-        methods.put("Boolean.==", new TYMethod("==", false, new TYProcedure((runtime, stackTrace, thisObj, params) -> {
+        TrinityNatives.registerMethod("Boolean", "toString", false, null, null, null, (runtime, stackTrace, thisObj, params) -> new TYString(Boolean.toString(((TYBoolean) thisObj).getInternalBoolean())));
+        TrinityNatives.registerMethod("Boolean", "==", false, new String[]{"other"}, null, null, (runtime, stackTrace, thisObj, params) -> {
             
-            if (params.length > 0) {
+            TYObject object = runtime.getVariable("other");
+            
+            if (object instanceof TYBoolean) {
                 
-                TYObject object = params[0];
-                
-                if (object instanceof TYBoolean) {
-                    
-                    return new TYBoolean(((TYBoolean) thisObj).getInternalBoolean() == ((TYBoolean) object).getInternalBoolean());
-                }
+                return new TYBoolean(((TYBoolean) thisObj).getInternalBoolean() == ((TYBoolean) object).getInternalBoolean());
             }
             
             return TYBoolean.FALSE;
-        })));
+        });
     }
 }

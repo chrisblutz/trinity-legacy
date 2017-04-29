@@ -1,4 +1,4 @@
 class Boolean
-    def native ==
+    def native ==(other)
 
     def native toString

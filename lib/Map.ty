@@ -1,0 +1,18 @@
+class Map
+    def native initialize
+
+    def native [](key)
+
+    def native put(key, value)
+
+    def native remove(key)
+
+    def native keySet
+
+    def native length
+
+    def native toString
+
+    def each(&block)
+        keySet().each() |key|
+            block.call(key, this[key])

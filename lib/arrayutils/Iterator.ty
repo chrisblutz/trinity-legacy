@@ -17,3 +17,6 @@ module Trinity
                 @i = 0
                 while hasNext()
                     block.call(next())
+
+            def reset
+                @i = 0

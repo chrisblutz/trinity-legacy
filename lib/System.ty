@@ -1,2 +1,15 @@
 class System
     def native static currentTimeMillis
+
+    def native getEnv(name = nil)
+
+    def native loadProperties
+
+    def static getProperty(name)
+        @@properties[name]
+
+    def static setProperty(name, value)
+        @@properties.put(name, value)
+
+    def static clearProperty(name)
+        @@properties.remove(name)

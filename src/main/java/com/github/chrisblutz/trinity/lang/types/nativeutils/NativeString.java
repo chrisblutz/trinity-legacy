@@ -1,13 +1,9 @@
 package com.github.chrisblutz.trinity.lang.types.nativeutils;
 
-import com.github.chrisblutz.trinity.lang.TYMethod;
 import com.github.chrisblutz.trinity.lang.TYObject;
-import com.github.chrisblutz.trinity.lang.errors.TYError;
-import com.github.chrisblutz.trinity.lang.procedures.TYProcedure;
 import com.github.chrisblutz.trinity.lang.types.bool.TYBoolean;
 import com.github.chrisblutz.trinity.lang.types.strings.TYString;
-
-import java.util.Map;
+import com.github.chrisblutz.trinity.natives.TrinityNatives;
 
 
 /**
@@ -15,56 +11,28 @@ import java.util.Map;
  */
 class NativeString {
     
-    static void register(Map<String, TYMethod> methods) {
+    static void register() {
         
-        methods.put("String.chars", new TYMethod("chars", false, new TYProcedure((runtime, stackTrace, thisObj, params) -> {
-            
-            NativeHelper.appendToStackTrace(stackTrace, "String", "chars");
-            
-            return ((TYString) thisObj).getCharacterArray();
-        })));
-        methods.put("String.+", new TYMethod("+", false, new TYProcedure((runtime, stackTrace, thisObj, params) -> {
-            
-            NativeHelper.appendToStackTrace(stackTrace, "String", "+");
+        TrinityNatives.registerMethod("String", "chars", false, null, null, null, (runtime, stackTrace, thisObj, params) -> ((TYString) thisObj).getCharacterArray());
+        TrinityNatives.registerMethod("String", "+", false, new String[]{"other"}, null, null, (runtime, stackTrace, thisObj, params) -> {
             
             String thisString = ((TYString) thisObj).getInternalString();
             
-            TYString returnVal;
+            TYObject object = runtime.getVariable("other");
+            String objStr = ((TYString) object.tyInvoke("toString", runtime, stackTrace, null, null)).getInternalString();
             
-            if (params.length == 1) {
-                
-                TYObject obj = params[0];
-                String objStr = ((TYString) obj.tyInvoke("toString", runtime, stackTrace, null, null)).getInternalString();
-                
-                returnVal = new TYString(thisString + objStr);
-                
-            } else {
-                
-                TYError error = new TYError("Trinity.Errors.InvalidArgumentNumberError", "'+' requires two operands.", stackTrace);
-                error.throwError();
-                
-                String objStr = ((TYString) TYObject.NIL.tyInvoke("toString", runtime, stackTrace, null, null)).getInternalString();
-                
-                returnVal = new TYString(thisString + objStr);
-            }
+            return new TYString(thisString + objStr);
+        });
+        TrinityNatives.registerMethod("String", "==", false, new String[]{"other"}, null, null, (runtime, stackTrace, thisObj, params) -> {
             
-            return returnVal;
-        })));
-        methods.put("String.==", new TYMethod("==", false, new TYProcedure((runtime, stackTrace, thisObj, params) -> {
+            TYObject object = runtime.getVariable("other");
             
-            NativeHelper.appendToStackTrace(stackTrace, "String", "==");
-            
-            if (params.length > 0) {
+            if (object instanceof TYString) {
                 
-                TYObject object = params[0];
-                
-                if (object instanceof TYString) {
-                    
-                    return new TYBoolean(((TYString) thisObj).getInternalString().contentEquals(((TYString) object).getInternalString()));
-                }
+                return new TYBoolean(((TYString) thisObj).getInternalString().contentEquals(((TYString) object).getInternalString()));
             }
             
             return TYBoolean.FALSE;
-        })));
+        });
     }
 }

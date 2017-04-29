@@ -3,7 +3,7 @@ class Object
 
     def native getClass
 
-    def native isInstance
+    def native isInstance(instClass)
 
     def toString
         getClass().toString() + '@' + hashCode().toHexString()

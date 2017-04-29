@@ -1,17 +1,15 @@
 package com.github.chrisblutz.trinity.lang.types.nativeutils;
 
-import com.github.chrisblutz.trinity.lang.TYMethod;
 import com.github.chrisblutz.trinity.lang.TYObject;
 import com.github.chrisblutz.trinity.lang.errors.TYError;
-import com.github.chrisblutz.trinity.lang.procedures.TYProcedure;
 import com.github.chrisblutz.trinity.lang.types.arrays.TYArray;
 import com.github.chrisblutz.trinity.lang.types.bool.TYBoolean;
 import com.github.chrisblutz.trinity.lang.types.numeric.TYInt;
 import com.github.chrisblutz.trinity.lang.types.strings.TYString;
+import com.github.chrisblutz.trinity.natives.TrinityNatives;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 
 /**
@@ -19,9 +17,9 @@ import java.util.Map;
  */
 class NativeArray {
     
-    static void register(Map<String, TYMethod> methods) {
+    static void register() {
         
-        methods.put("Array.toString", new TYMethod("toString", false, new TYProcedure((runtime, stackTrace, thisObj, params) -> {
+        TrinityNatives.registerMethod("Array", "toString", false, null, null, null, (runtime, stackTrace, thisObj, params) -> {
             
             StringBuilder str = new StringBuilder("[");
             
@@ -40,80 +38,50 @@ class NativeArray {
             str.append("]");
             
             return new TYString(str.toString());
-        })));
-        methods.put("Array.length", new TYMethod("length", false, new TYProcedure((runtime, stackTrace, thisObj, params) -> new TYInt(((TYArray) thisObj).size()))));
-        methods.put("Array.add", new TYMethod("add", false, new TYProcedure((runtime, stackTrace, thisObj, params) -> {
+        });
+        TrinityNatives.registerMethod("Array", "length", false, null, null, null, (runtime, stackTrace, thisObj, params) -> new TYInt(((TYArray) thisObj).size()));
+        TrinityNatives.registerMethod("Array", "add", false, new String[]{"value"}, null, null, (runtime, stackTrace, thisObj, params) -> new TYBoolean(((TYArray) thisObj).getInternalList().add(runtime.getVariable("value"))));
+        TrinityNatives.registerMethod("Array", "insert", false, new String[]{"index", "value"}, null, null, (runtime, stackTrace, thisObj, params) -> {
             
-            if (params.length > 0) {
-                
-                return new TYBoolean(((TYArray) thisObj).getInternalList().add(params[0]));
-                
-            } else {
-                
-                return new TYBoolean(((TYArray) thisObj).getInternalList().add(TYObject.NIL));
-            }
-        })));
-        methods.put("Array.remove", new TYMethod("remove", false, new TYProcedure((runtime, stackTrace, thisObj, params) -> {
-            
-            if (params.length > 0 && params[0] instanceof TYInt) {
-                
-                return ((TYArray) thisObj).getInternalList().remove(((TYInt) params[0]).getInternalInteger());
-            }
-            
+            ((TYArray) thisObj).getInternalList().add(((TYInt) runtime.getVariable("index")).getInternalInteger(), runtime.getVariable("value"));
             return TYObject.NONE;
-        })));
-        methods.put("Array.removeObject", new TYMethod("removeObject", false, new TYProcedure((runtime, stackTrace, thisObj, params) -> {
-            
-            if (params.length > 0) {
-                
-                return new TYBoolean(((TYArray) thisObj).getInternalList().remove(params[0]));
-            }
-            
-            return TYBoolean.FALSE;
-        })));
-        methods.put("Array.+", new TYMethod("+", false, new TYProcedure((runtime, stackTrace, thisObj, params) -> {
+        });
+        TrinityNatives.registerMethod("Array", "remove", false, new String[]{"index"}, null, null, (runtime, stackTrace, thisObj, params) -> ((TYArray) thisObj).getInternalList().remove(((TYInt) runtime.getVariable("index")).getInternalInteger()));
+        TrinityNatives.registerMethod("Array", "removeObject", false, new String[]{"value"}, null, null, (runtime, stackTrace, thisObj, params) -> new TYBoolean(((TYArray) thisObj).getInternalList().remove(runtime.getVariable("value"))));
+        TrinityNatives.registerMethod("Array", "+", false, new String[]{"other"}, null, null, (runtime, stackTrace, thisObj, params) -> {
             
             TYArray thisArray = (TYArray) thisObj;
             List<TYObject> objects = new ArrayList<>();
             objects.addAll(thisArray.getInternalList());
             
-            if (params.length > 0) {
-                
-                TYObject obj = params[0];
-                
-                if (obj instanceof TYArray) {
-                    
-                    objects.addAll(((TYArray) obj).getInternalList());
-                    
-                } else {
-                    
-                    objects.add(obj);
-                }
-            }
+            TYObject obj = runtime.getVariable("other");
             
-            return new TYArray(objects);
-        })));
-        methods.put("Array.[]", new TYMethod("[]", false, new TYProcedure((runtime, stackTrace, thisObj, params) -> {
-            
-            if (params.length > 0 && params[0] != TYObject.NONE) {
+            if (obj instanceof TYArray) {
                 
-                if (params[0] instanceof TYInt) {
-                    
-                    return ((TYArray) thisObj).getInternalList().get(((TYInt) params[0]).getInternalInteger());
-                    
-                } else {
-                    
-                    TYError error = new TYError("Trinity.Errors.InvalidTypeError", "'[]' takes an Int parameter.", stackTrace);
-                    error.throwError();
-                }
+                objects.addAll(((TYArray) obj).getInternalList());
                 
             } else {
                 
-                TYError error = new TYError("Trinity.Errors.InvalidArgumentNumberError", "'[]' takes 1 parameter.", stackTrace);
+                objects.add(obj);
+            }
+            
+            return new TYArray(objects);
+        });
+        TrinityNatives.registerMethod("Array", "[]", false, new String[]{"index"}, null, null, (runtime, stackTrace, thisObj, params) -> {
+            
+            TYObject obj = runtime.getVariable("index");
+            
+            if (obj instanceof TYInt) {
+                
+                return ((TYArray) thisObj).getInternalList().get(((TYInt) obj).getInternalInteger());
+                
+            } else {
+                
+                TYError error = new TYError("Trinity.Errors.InvalidTypeError", "'[]' takes an Int parameter.", stackTrace);
                 error.throwError();
             }
             
-            return TYObject.NONE;
-        })));
+            return TYObject.NIL;
+        });
     }
 }

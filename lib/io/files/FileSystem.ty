@@ -8,7 +8,7 @@ module Trinity
 
                 def native static create(path)
 
-                def native static open(path, privileges)
+                def native static open(path, privileges = 'r', append = false)
 
                 def native static read(path)
 

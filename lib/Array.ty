@@ -1,15 +1,17 @@
 import Trinity.ArrayUtils
 
 class Array
-    def native +
+    def native +(other)
 
-    def native []
+    def native [](index)
 
-    def native add
+    def native add(value)
 
-    def native remove
+    def native insert(index, value)
 
-    def native removeObject
+    def native remove(index)
+
+    def native removeObject(value)
 
     def native length
 

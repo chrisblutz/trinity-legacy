@@ -1,0 +1,5 @@
+module Trinity
+    module Errors
+        class NativeTypeError << Error
+            def initialize(message = '')
+                super.initialize(message)

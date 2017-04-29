@@ -2,15 +2,13 @@ package com.github.chrisblutz.trinity.lang.types.nativeutils;
 
 import com.github.chrisblutz.trinity.Trinity;
 import com.github.chrisblutz.trinity.lang.ClassRegistry;
-import com.github.chrisblutz.trinity.lang.TYMethod;
 import com.github.chrisblutz.trinity.lang.TYObject;
 import com.github.chrisblutz.trinity.lang.errors.TYError;
-import com.github.chrisblutz.trinity.lang.procedures.TYProcedure;
 import com.github.chrisblutz.trinity.lang.types.numeric.TYInt;
 import com.github.chrisblutz.trinity.lang.types.numeric.TYLong;
 import com.github.chrisblutz.trinity.lang.types.strings.TYString;
+import com.github.chrisblutz.trinity.natives.TrinityNatives;
 
-import java.util.Map;
 import java.util.Scanner;
 
 
@@ -19,56 +17,47 @@ import java.util.Scanner;
  */
 class NativeKernel {
     
-    static void register(Map<String, TYMethod> methods) {
+    private static Scanner readlnSc = null;
+    
+    static void register() {
         
-        methods.put("Kernel.print", new TYMethod("print", true, new TYProcedure((runtime, stackTrace, thisObj, params) -> {
+        TrinityNatives.registerMethod("Kernel", "print", true, new String[]{"str"}, null, null, (runtime, stackTrace, thisObj, params) -> {
             
-            if (params.length == 1) {
+            TYObject obj = runtime.getVariable("str");
+            TYObject strObj = obj.tyInvoke("toString", runtime, stackTrace, null, null);
+            
+            if (strObj instanceof TYString) {
                 
-                TYObject obj = params[0];
-                TYObject strObj = obj.tyInvoke("toString", runtime, stackTrace, null, null);
+                System.out.print(((TYString) strObj).getInternalString());
                 
-                if (strObj instanceof TYString) {
-                    
-                    System.out.print(((TYString) strObj).getInternalString());
-                    
-                } else if (strObj == null) {
-                    
-                    System.out.print("nil");
-                }
+            } else if (strObj == null) {
                 
-            } else {
-                
-                TYError error = new TYError("Trinity.Errors.InvalidArgumentNumberError", "Kernel.print receives one argument.", stackTrace);
-                error.throwError();
+                System.out.print("nil");
             }
             
             return TYObject.NONE;
-        })));
-        methods.put("Kernel.readln", new TYMethod("readln", true, new TYProcedure((runtime, stackTrace, thisObj, params) -> {
+        });
+        TrinityNatives.registerMethod("Kernel", "readln", true, null, null, null, (runtime, stackTrace, thisObj, params) -> {
             
-            Scanner sc = new Scanner(System.in);
-            return new TYString(sc.nextLine());
-        })));
-        methods.put("Kernel.currentTimeMillis", new TYMethod("currentTimeMillis", true, new TYProcedure((runtime, stackTrace, thisObj, params) -> {
-            
-            if (params.length == 0 || params[0] == TYObject.NONE) {
+            if (readlnSc == null) {
                 
-                return new TYLong(System.currentTimeMillis());
+                readlnSc = new Scanner(System.in);
                 
             } else {
                 
-                TYError error = new TYError("Trinity.Errors.InvalidArgumentNumberError", "Kernel.currentTimeMillis takes no argument(s).", stackTrace);
-                error.throwError();
+                readlnSc.reset();
             }
             
-            return TYObject.NONE;
-        })));
-        methods.put("Kernel.throw", new TYMethod("throw", true, new TYProcedure((runtime, stackTrace, thisObj, params) -> {
+            return new TYString(readlnSc.nextLine());
+        });
+        TrinityNatives.registerMethod("Kernel", "currentTimeMillis", true, null, null, null, (runtime, stackTrace, thisObj, params) -> new TYLong(System.currentTimeMillis()));
+        TrinityNatives.registerMethod("Kernel", "throw", true, new String[]{"error"}, null, null, (runtime, stackTrace, thisObj, params) -> {
             
-            if (params.length > 0 && params[0].getObjectClass().isInstanceOf(ClassRegistry.getClass("Trinity.Errors.Error"))) {
+            TYObject error = runtime.getVariable("error");
+            
+            if (error.getObjectClass().isInstanceOf(ClassRegistry.getClass("Trinity.Errors.Error"))) {
                 
-                String errorMessage = ((TYString) params[0].tyInvoke("toString", runtime, stackTrace, null, null)).getInternalString();
+                String errorMessage = ((TYString) error.tyInvoke("toString", runtime, stackTrace, null, null)).getInternalString();
                 System.err.println(errorMessage);
                 
                 Trinity.exit(1);
@@ -77,29 +66,21 @@ class NativeKernel {
             }
             
             return TYObject.NONE;
-        })));
-        methods.put("Kernel.exit", new TYMethod("exit", true, new TYProcedure((runtime, stackTrace, thisObj, params) -> {
+        });
+        TrinityNatives.registerMethod("Kernel", "exit", true, new String[]{"code"}, null, null, (runtime, stackTrace, thisObj, params) -> {
             
-            if (params.length == 1) {
+            TYObject obj = runtime.getVariable("code");
+            if (obj instanceof TYInt) {
                 
-                TYObject obj = params[0];
-                if (obj instanceof TYInt) {
-                    
-                    Trinity.exit(((TYInt) obj).getInternalInteger());
-                    
-                } else {
-                    
-                    TYError error = new TYError("Trinity.Errors.InvalidTypeError", "Kernel.exit requires an integer.", stackTrace);
-                    error.throwError();
-                }
+                Trinity.exit(((TYInt) obj).getInternalInteger());
                 
             } else {
                 
-                TYError error = new TYError("Trinity.Errors.InvalidArgumentNumberError", "Kernel.exit receives one argument.", stackTrace);
+                TYError error = new TYError("Trinity.Errors.InvalidTypeError", "Kernel.exit requires an integer.", stackTrace);
                 error.throwError();
             }
             
-            return TYObject.NONE;
-        })));
+            return TYObject.NIL;
+        });
     }
 }

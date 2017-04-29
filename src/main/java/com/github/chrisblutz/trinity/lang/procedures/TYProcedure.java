@@ -55,6 +55,11 @@ public class TYProcedure {
         return blockParameter;
     }
     
+    public void setBlockParameter(String blockParameter) {
+        
+        this.blockParameter = blockParameter;
+    }
+    
     public TYObject call(TYRuntime runtime, TYStackTrace stackTrace, TYProcedure subProcedure, TYRuntime procedureRuntime, TYObject thisObj, TYObject... params) {
         
         for (String opt : getOptionalParameters().keySet()) {

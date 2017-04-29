@@ -1,5 +1,7 @@
 package com.github.chrisblutz.trinity.cli;
 
+import com.github.chrisblutz.trinity.bootstrap.Bootstrap;
+import com.github.chrisblutz.trinity.info.TrinityInfo;
 import com.github.chrisblutz.trinity.lang.ClassRegistry;
 import com.github.chrisblutz.trinity.lang.TYClass;
 import com.github.chrisblutz.trinity.lang.TYObject;
@@ -21,6 +23,7 @@ import java.util.List;
  */
 public class CLI {
     
+    private static boolean loadedAnyFiles = false;
     private static boolean debugging = false;
     
     private static List<File> sourceFiles = new ArrayList<>();
@@ -45,36 +48,49 @@ public class CLI {
             TrinityParser.parse(file);
         }
         
-        if (ClassRegistry.getMainClasses().size() == 0) {
+        if (areAnyFilesLoaded()) {
             
-            TYError error = new TYError("Trinity.Errors.MethodNotFoundError", "No main method found in found in loaded files.", new TYStackTrace());
-            error.throwError();
-        }
-        
-        if (mainClass != null) {
-            
-            if (ClassRegistry.classExists(mainClass)) {
+            if (ClassRegistry.getMainClasses().size() == 0) {
                 
-                TYClass main = ClassRegistry.getClass(mainClass);
-                
-                main.tyInvoke("main", new TYRuntime(), new TYStackTrace(), null, null, TYObject.NONE, parseIntoStringArray());
-                
-            } else {
-                
-                TYError error = new TYError("Trinity.Errors.ClassNotFoundError", "Class '" + mainClass + "' not found.", new TYStackTrace());
+                TYError error = new TYError("Trinity.Errors.MethodNotFoundError", "No main method found in found in loaded files.", new TYStackTrace());
                 error.throwError();
             }
             
-        } else {
+            long startMillis = System.currentTimeMillis();
             
-            if (ClassRegistry.getMainClasses().size() > 0) {
+            if (mainClass != null) {
                 
-                ClassRegistry.getMainClasses().get(0).tyInvoke("main", new TYRuntime(), new TYStackTrace(), null, null, TYObject.NONE, parseIntoStringArray());
+                if (ClassRegistry.classExists(mainClass)) {
+                    
+                    TYClass main = ClassRegistry.getClass(mainClass);
+                    
+                    main.tyInvoke("main", new TYRuntime(), new TYStackTrace(), null, null, TYObject.NONE, parseIntoStringArray());
+                    
+                } else {
+                    
+                    TYError error = new TYError("Trinity.Errors.ClassNotFoundError", "Class '" + mainClass + "' not found.", new TYStackTrace());
+                    error.throwError();
+                }
                 
             } else {
                 
-                TYError error = new TYError("Trinity.Errors.MethodNotFoundError", "No 'main' methods found.", new TYStackTrace());
-                error.throwError();
+                if (ClassRegistry.getMainClasses().size() > 0) {
+                    
+                    ClassRegistry.getMainClasses().get(0).tyInvoke("main", new TYRuntime(), new TYStackTrace(), null, null, TYObject.NONE, parseIntoStringArray());
+                    
+                } else {
+                    
+                    TYError error = new TYError("Trinity.Errors.MethodNotFoundError", "No 'main' methods found.", new TYStackTrace());
+                    error.throwError();
+                }
+            }
+            
+            long endMillis = System.currentTimeMillis();
+            
+            if (isDebuggingEnabled()) {
+                
+                long total = endMillis - startMillis;
+                System.out.println(String.format("\nExecution took %.4f seconds.", (float) total / 1000f));
             }
         }
     }
@@ -134,6 +150,8 @@ public class CLI {
             
             if (file.exists()) {
                 
+                loadedAnyFiles = true;
+                
                 sourceFiles.add(file);
             }
         }
@@ -149,12 +167,43 @@ public class CLI {
                 debugging = true;
                 break;
             
+            case "-v":
+            case "--version":
+                
+                System.out.println(TrinityInfo.getVersionString());
+                break;
+            
             case "-a":
             case "--arguments":
                 
                 arguments.addAll(Arrays.asList(params));
                 break;
+            
+            case "-l":
+            case "--lib":
+                
+                handleLibraries(params);
+                break;
         }
+    }
+    
+    private static void handleLibraries(String[] params) {
+        
+        for (String lib : params) {
+            
+            switch (lib) {
+                
+                case "Trinity.UI":
+                    
+                    Bootstrap.bootstrapUI();
+                    break;
+            }
+        }
+    }
+    
+    public static boolean areAnyFilesLoaded() {
+        
+        return loadedAnyFiles;
     }
     
     public static boolean isDebuggingEnabled() {

@@ -183,12 +183,16 @@ public class TYClass {
                 newRuntime.setTyClass(this);
                 newRuntime.importModules(constructor.getImportedModules());
                 
-                constructor.getProcedure().call(newRuntime, stackTrace, procedure, procedureRuntime, newObj, params);
+                TYObject obj = constructor.getProcedure().call(newRuntime, stackTrace, procedure, procedureRuntime, newObj, params);
                 
                 if (newRuntime.isReturning()) {
                     
                     TYError error = new TYError("Trinity.Errors.ReturnError", "Cannot return a value from a constructor.", stackTrace);
                     error.throwError();
+                    
+                } else if (obj.getObjectClass().isInstanceOf(ClassRegistry.getClass("Map")) || obj.getObjectClass().isInstanceOf(ClassRegistry.getClass("Procedure"))) {
+                    
+                    newObj = obj;
                 }
                 
                 return newObj;

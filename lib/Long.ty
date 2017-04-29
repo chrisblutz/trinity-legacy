@@ -1,18 +1,18 @@
 class Long
-    def native +
+    def native +(other)
 
-    def native -
+    def native -(other)
 
-    def native *
+    def native *(other)
 
-    def native /
+    def native /(other)
 
-    def native %
+    def native %(other)
 
-    def native ==
+    def native ==(other)
 
     def native toString
 
     def native toHexString
 
-    def native compareTo
+    def native compareTo(other)

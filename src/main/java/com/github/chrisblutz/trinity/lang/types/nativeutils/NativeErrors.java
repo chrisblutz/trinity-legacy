@@ -1,17 +1,14 @@
 package com.github.chrisblutz.trinity.lang.types.nativeutils;
 
 import com.github.chrisblutz.trinity.interpreter.variables.Variables;
-import com.github.chrisblutz.trinity.lang.ClassRegistry;
-import com.github.chrisblutz.trinity.lang.TYMethod;
 import com.github.chrisblutz.trinity.lang.TYObject;
 import com.github.chrisblutz.trinity.lang.errors.stacktrace.TYStackTraceElement;
-import com.github.chrisblutz.trinity.lang.procedures.TYProcedure;
 import com.github.chrisblutz.trinity.lang.types.arrays.TYArray;
 import com.github.chrisblutz.trinity.lang.types.numeric.TYInt;
 import com.github.chrisblutz.trinity.lang.types.strings.TYString;
+import com.github.chrisblutz.trinity.natives.TrinityNatives;
 
 import java.util.ArrayList;
-import java.util.Map;
 
 
 /**
@@ -19,11 +16,9 @@ import java.util.Map;
  */
 class NativeErrors {
     
-    static void register(Map<String, TYMethod> methods) {
+    static void register() {
         
-        methods.put("Trinity.Errors.Error.populateStackTrace", new TYMethod("populateStackTrace", false, new TYProcedure((runtime, stackTrace, thisObj, params) -> {
-            
-            NativeHelper.appendToStackTrace(stackTrace, "Trinity.Errors.Error", "populateStackTrace");
+        TrinityNatives.registerMethod("Trinity.Errors.Error", "populateStackTrace", false, null, null, null, (runtime, stackTrace, thisObj, params) -> {
             
             TYArray ary = new TYArray(new ArrayList<>());
             
@@ -62,13 +57,13 @@ class NativeErrors {
                 }
                 
                 TYObject line = new TYInt(e.getLine());
-                TYObject stackTraceInstance = ClassRegistry.getClass("Trinity.Errors.StackTraceElement").tyInvoke("new", runtime, stackTrace, null, null, TYObject.NONE, errorClass, method, fileName, line);
+                TYObject stackTraceInstance = TrinityNatives.newInstance("Trinity.Errors.StackTraceElement", runtime, stackTrace, errorClass, method, fileName, line);
                 ary.getInternalList().add(stackTraceInstance);
             }
             
             Variables.getInstanceVariables(runtime.getScope()).put("stackTrace", ary);
             
             return TYObject.NONE;
-        })));
+        });
     }
 }

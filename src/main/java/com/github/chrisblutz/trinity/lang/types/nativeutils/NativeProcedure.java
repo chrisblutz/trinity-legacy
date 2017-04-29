@@ -1,12 +1,10 @@
 package com.github.chrisblutz.trinity.lang.types.nativeutils;
 
-import com.github.chrisblutz.trinity.lang.TYMethod;
 import com.github.chrisblutz.trinity.lang.TYObject;
 import com.github.chrisblutz.trinity.lang.procedures.TYProcedure;
 import com.github.chrisblutz.trinity.lang.scope.TYRuntime;
 import com.github.chrisblutz.trinity.lang.types.procedures.TYProcedureObject;
-
-import java.util.Map;
+import com.github.chrisblutz.trinity.natives.TrinityNatives;
 
 
 /**
@@ -14,17 +12,26 @@ import java.util.Map;
  */
 class NativeProcedure {
     
-    static void register(Map<String, TYMethod> methods) {
+    static void register() {
         
-        methods.put("Procedure.call", new TYMethod("call", false, new TYProcedure((runtime, stackTrace, thisObj, params) -> {
+        TrinityNatives.registerMethod("Procedure", "initialize", false, null, null, "block", (runtime, stackTrace, thisObj, params) -> {
             
-            NativeHelper.appendToStackTrace(stackTrace, "Procedure", "call");
+            if (runtime.hasVariable("block")) {
+                
+                return runtime.getVariable("block");
+                
+            } else {
+                
+                return new TYProcedureObject(new TYProcedure((runtime1, stackTrace1, thisObj1, params1) -> TYObject.NIL), new TYRuntime());
+            }
+        });
+        TrinityNatives.registerMethod("Procedure", "call", false, null, null, null, (runtime, stackTrace, thisObj, params) -> {
             
             TYProcedureObject obj = (TYProcedureObject) thisObj;
             TYProcedure proc = obj.getInternalProcedure();
             TYRuntime newRuntime = obj.getProcedureRuntime().clone();
             
             return proc.call(newRuntime, stackTrace, null, null, TYObject.NONE, params);
-        })));
+        });
     }
 }

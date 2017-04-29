@@ -1,5 +1,7 @@
 package com.github.chrisblutz.trinity.lang;
 
+import com.github.chrisblutz.trinity.natives.TrinityNatives;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -31,6 +33,8 @@ public class ClassRegistry {
             
             TYClass tyClass = new TYClass(className, shortClassName);
             classes.put(className, tyClass);
+            
+            TrinityNatives.triggerActionsPendingLoad(className);
         }
         
         return classes.get(className);

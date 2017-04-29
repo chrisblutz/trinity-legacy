@@ -35,8 +35,8 @@ public enum Token {
     RETURN("return"),
     
     // Punctuation
-    LEFT_PARENTHESIS("("), RIGHT_PARENTHESIS(")"), LEFT_SQUARE_BRACKET("["), RIGHT_SQUARE_BRACKET("]"), COMMA(","), SEMICOLON(";"),
-    VERTICAL_BAR("|"), BLOCK_PREFIX("&"),
+    LEFT_PARENTHESIS("("), RIGHT_PARENTHESIS(")"), LEFT_SQUARE_BRACKET("["), RIGHT_SQUARE_BRACKET("]"), LEFT_CURLY_BRACKET("{"), RIGHT_CURLY_BRACKET("}"),
+    COMMA(","), COLON(":"), SEMICOLON(";"), VERTICAL_BAR("|"), BLOCK_PREFIX("&"),
     
     // Comments
     SINGLE_LINE_COMMENT("#"),

@@ -1,4 +1,4 @@
 class Class
-    def native ==
+    def native ==(other)
 
     def native toString

@@ -1,8 +1,7 @@
 class String
+    def native +(other)
 
-    def native +
-
-    def native ==
+    def native ==(other)
 
     def native chars
 
