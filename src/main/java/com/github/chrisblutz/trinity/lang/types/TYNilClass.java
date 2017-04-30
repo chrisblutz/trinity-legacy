@@ -15,6 +15,6 @@ public class TYNilClass extends TYClass {
         
         super("Nil", "Nil");
         
-        registerMethod(new TYMethod("toString", false, new TYProcedure((runtime, stackTrace, thisObj, params) -> new TYString("nil"))));
+        registerMethod(new TYMethod("toString", false, true, new TYProcedure((runtime, stackTrace, thisObj, params) -> new TYString("nil"))));
     }
 }

@@ -2,3 +2,23 @@ class Class
     def native ==(other)
 
     def native toString
+
+    def native getSuperclass
+
+    def native getModule
+
+    def native getName
+
+    def native getShortName
+
+    def native construct(args)
+
+    def native getMethods
+
+    def native getMethod(name)
+
+    def native getInnerClasses
+
+    def native getInnerClass(name)
+
+    def native static get(name)

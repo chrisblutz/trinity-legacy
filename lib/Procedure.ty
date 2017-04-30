@@ -1,4 +1,4 @@
 class Procedure
     def native initialize(&block)
 
-    def native call
+    def native call(args)

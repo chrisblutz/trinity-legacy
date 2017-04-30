@@ -8,6 +8,7 @@ import com.github.chrisblutz.trinity.lang.scope.TYRuntime;
 import com.github.chrisblutz.trinity.lang.types.TYClassObject;
 import com.github.chrisblutz.trinity.lang.types.TYModuleObject;
 import com.github.chrisblutz.trinity.lang.types.TYStaticClassObject;
+import com.github.chrisblutz.trinity.lang.types.TYStaticModuleObject;
 import com.github.chrisblutz.trinity.lang.types.bool.TYBoolean;
 import com.github.chrisblutz.trinity.lang.types.numeric.TYFloat;
 import com.github.chrisblutz.trinity.lang.types.numeric.TYInt;
@@ -131,6 +132,30 @@ public class InstructionSet extends ObjectEvaluator {
                 runtime.setBroken(true);
                 return null;
                 
+            } else if (tokens[0].getToken() == Token.CLASS) {
+                
+                if (thisObj instanceof TYStaticClassObject) {
+                    
+                    return new TYClassObject(((TYStaticClassObject) thisObj).getInternalClass());
+                    
+                } else {
+                    
+                    TYError error = new TYError("Trinity.Errors.SyntaxError", "Cannot retrieve a class here.", stackTrace);
+                    error.throwError();
+                }
+                
+            } else if (tokens[0].getToken() == Token.MODULE) {
+                
+                if (thisObj instanceof TYStaticModuleObject) {
+                    
+                    return new TYModuleObject(((TYStaticModuleObject) thisObj).getInternalModule());
+                    
+                } else {
+                    
+                    TYError error = new TYError("Trinity.Errors.SyntaxError", "Cannot retrieve a module here.", stackTrace);
+                    error.throwError();
+                }
+                
             } else if (tokens[0].getToken() == Token.INSTANCE_VAR && tokens.length > 1 && tokens[1].getToken() == Token.NON_TOKEN_STRING) {
                 
                 String varName = tokens[1].getContents();
@@ -179,7 +204,7 @@ public class InstructionSet extends ObjectEvaluator {
                         
                     } else if (ModuleRegistry.moduleExists(tokenContents)) {
                         
-                        return new TYModuleObject(ModuleRegistry.getModule(tokenContents));
+                        return new TYStaticModuleObject(ModuleRegistry.getModule(tokenContents));
                         
                     } else if (ClassRegistry.classExists(tokenContents)) {
                         
@@ -219,35 +244,35 @@ public class InstructionSet extends ObjectEvaluator {
                         }
                     }
                     
-                } else if (thisObj instanceof TYModuleObject) {
+                } else if (thisObj instanceof TYStaticModuleObject) {
                     
-                    TYModuleObject moduleObject = (TYModuleObject) thisObj;
+                    TYStaticModuleObject moduleObject = (TYStaticModuleObject) thisObj;
                     TYModule tyModule = moduleObject.getInternalModule();
                     
                     if (tyModule.hasModule(tokenContents)) {
                         
-                        return new TYModuleObject(tyModule.getModule(tokenContents));
+                        return new TYStaticModuleObject(tyModule.getModule(tokenContents));
                         
                     } else if (tyModule.hasClass(tokenContents)) {
                         
                         return new TYStaticClassObject(tyModule.getClass(tokenContents));
-                        
-                    } else {
-                        
-                        List<TYObject> params = new ArrayList<>();
-                        
-                        for (ChainedInstructionSet set : getChildren()) {
-                            
-                            TYObject obj = set.evaluate(TYObject.NONE, runtime, stackTrace);
-                            
-                            if (obj != TYObject.NONE) {
-                                
-                                params.add(obj);
-                            }
-                        }
-                        
-                        return thisObj.tyInvoke(tokenContents, runtime, stackTrace, getProcedure(), runtime, params.toArray(new TYObject[params.size()]));
                     }
+                    
+                } else if (thisObj instanceof TYModuleObject) {
+                    
+                    List<TYObject> params = new ArrayList<>();
+                    
+                    for (ChainedInstructionSet set : getChildren()) {
+                        
+                        TYObject obj = set.evaluate(TYObject.NONE, runtime, stackTrace);
+                        
+                        if (obj != TYObject.NONE) {
+                            
+                            params.add(obj);
+                        }
+                    }
+                    
+                    return thisObj.tyInvoke(tokenContents, runtime, stackTrace, getProcedure(), runtime, params.toArray(new TYObject[params.size()]));
                     
                 } else if (thisObj instanceof TYStaticClassObject) {
                     

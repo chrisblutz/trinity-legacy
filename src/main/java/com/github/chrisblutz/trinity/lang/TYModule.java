@@ -12,6 +12,7 @@ public class TYModule {
     private List<TYClass> classes = new ArrayList<>();
     private List<TYModule> modules = new ArrayList<>();
     private String name, shortName;
+    private TYModule parentModule;
     
     public TYModule(String name, String shortName) {
         
@@ -63,6 +64,16 @@ public class TYModule {
         }
         
         return null;
+    }
+    
+    public TYModule getParentModule() {
+        
+        return parentModule;
+    }
+    
+    public void setParentModule(TYModule parentModule) {
+    
+        this.parentModule = parentModule;
     }
     
     public void addClass(TYClass tyClass) {

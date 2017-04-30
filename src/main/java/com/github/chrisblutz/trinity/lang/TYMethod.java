@@ -9,14 +9,15 @@ import com.github.chrisblutz.trinity.lang.procedures.TYProcedure;
 public class TYMethod {
     
     private String name;
-    private boolean staticMethod;
+    private boolean staticMethod, nativeMethod;
     private TYProcedure procedure;
     private String[] importedModules = new String[0];
     
-    public TYMethod(String name, boolean staticMethod, TYProcedure procedure) {
+    public TYMethod(String name, boolean staticMethod, boolean nativeMethod, TYProcedure procedure) {
         
         this.name = name;
         this.staticMethod = staticMethod;
+        this.nativeMethod = nativeMethod;
         this.procedure = procedure;
     }
     
@@ -28,6 +29,11 @@ public class TYMethod {
     public boolean isStaticMethod() {
         
         return staticMethod;
+    }
+    
+    public boolean isNativeMethod() {
+    
+        return nativeMethod;
     }
     
     public TYProcedure getProcedure() {

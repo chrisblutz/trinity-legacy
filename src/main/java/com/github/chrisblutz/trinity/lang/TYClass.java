@@ -43,15 +43,15 @@ public class TYClass {
         inheritanceTree = compileInheritanceTree();
         inheritanceTree.add(this);
         
-        registerMethod(new TYMethod("+", false, DefaultProcedures.getDefaultUOEOperationProcedure("+")));
-        registerMethod(new TYMethod("-", false, DefaultProcedures.getDefaultUOEOperationProcedure("-")));
-        registerMethod(new TYMethod("*", false, DefaultProcedures.getDefaultUOEOperationProcedure("*")));
-        registerMethod(new TYMethod("/", false, DefaultProcedures.getDefaultUOEOperationProcedure("/")));
-        registerMethod(new TYMethod("%", false, DefaultProcedures.getDefaultUOEOperationProcedure("%")));
-        registerMethod(new TYMethod("compareTo", false, DefaultProcedures.getDefaultUOEOperationProcedure("compareTo")));
-        registerMethod(new TYMethod("hashCode", false, new TYProcedure((runtime, stackTrace, thisObj, params) -> thisObj == TYObject.NIL ? new TYInt(0) : new TYInt(thisObj.hashCode()))));
-        registerMethod(new TYMethod("getClass", false, new TYProcedure((runtime, stackTrace, thisObj, params) -> new TYClassObject(thisObj.getObjectClass()))));
-        registerMethod(new TYMethod("==", false, new TYProcedure((runtime, stackTrace, thisObj, params) -> {
+        registerMethod(new TYMethod("+", false, true, DefaultProcedures.getDefaultUOEOperationProcedure("+")));
+        registerMethod(new TYMethod("-", false, true, DefaultProcedures.getDefaultUOEOperationProcedure("-")));
+        registerMethod(new TYMethod("*", false, true, DefaultProcedures.getDefaultUOEOperationProcedure("*")));
+        registerMethod(new TYMethod("/", false, true, DefaultProcedures.getDefaultUOEOperationProcedure("/")));
+        registerMethod(new TYMethod("%", false, true, DefaultProcedures.getDefaultUOEOperationProcedure("%")));
+        registerMethod(new TYMethod("compareTo", false, true, DefaultProcedures.getDefaultUOEOperationProcedure("compareTo")));
+        registerMethod(new TYMethod("hashCode", false, true, new TYProcedure((runtime, stackTrace, thisObj, params) -> thisObj == TYObject.NIL ? new TYInt(0) : new TYInt(thisObj.hashCode()))));
+        registerMethod(new TYMethod("getClass", false, true, new TYProcedure((runtime, stackTrace, thisObj, params) -> new TYClassObject(thisObj.getObjectClass()))));
+        registerMethod(new TYMethod("==", false, true, new TYProcedure((runtime, stackTrace, thisObj, params) -> {
             
             if (params.length > 0) {
                 
@@ -276,5 +276,15 @@ public class TYClass {
     public Map<String, TYMethod> getMethods() {
         
         return methods;
+    }
+    
+    public TYMethod[] getMethodArray() {
+        
+        return methods.values().toArray(new TYMethod[methods.values().size()]);
+    }
+    
+    public TYMethod getMethod(String name) {
+        
+        return getMethods().getOrDefault(name, null);
     }
 }

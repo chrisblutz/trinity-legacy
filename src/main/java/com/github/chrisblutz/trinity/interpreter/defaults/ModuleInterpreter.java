@@ -37,6 +37,11 @@ public class ModuleInterpreter extends DeclarationInterpreter {
                     }
                     
                     TYModule tyModule = ModuleRegistry.getModule(moduleName);
+                    if (!env.getModuleStack().isEmpty()) {
+                        
+                        TYModule topModule = env.getLastModule();
+                        tyModule.setParentModule(topModule);
+                    }
                     InterpretEnvironment newEnv = env.append(tyModule);
                     
                     if (i + 1 < block.size() && block.get(i + 1) instanceof Block) {

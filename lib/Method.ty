@@ -1,0 +1,8 @@
+class Method
+    def native toString
+
+    def native getRequiredArguments
+
+    def native getOptionalArguments
+
+    def native invoke(obj, args)

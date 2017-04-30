@@ -9,6 +9,7 @@ import com.github.chrisblutz.trinity.lang.errors.stacktrace.TYStackTrace;
 import com.github.chrisblutz.trinity.lang.procedures.ProcedureAction;
 import com.github.chrisblutz.trinity.lang.procedures.TYProcedure;
 import com.github.chrisblutz.trinity.lang.scope.TYRuntime;
+import com.github.chrisblutz.trinity.lang.types.arrays.TYArray;
 import com.github.chrisblutz.trinity.lang.types.bool.TYBoolean;
 import com.github.chrisblutz.trinity.lang.types.numeric.TYFloat;
 import com.github.chrisblutz.trinity.lang.types.numeric.TYInt;
@@ -55,7 +56,7 @@ public class TrinityNatives {
         }
         
         TYProcedure procedure = new TYProcedure(actionWithStackTrace, mandatoryParamsList, optionalParams, blockParam);
-        TYMethod method = new TYMethod(methodName, staticMethod, procedure);
+        TYMethod method = new TYMethod(methodName, staticMethod, true, procedure);
         String fullName = className + "." + methodName;
         methods.put(fullName, method);
     }
@@ -176,6 +177,36 @@ public class TrinityNatives {
         error.throwError();
         
         return TYObject.NIL;
+    }
+    
+    
+    /**
+     * This method wraps an array of native types inside Trinity's
+     * array format ({@code TYObject}).  All objects inside are converted
+     * into Trinity's native type of them.
+     * <br>
+     * <br>
+     * Possible Types:<br>
+     * - Integer<br>
+     * - Float/Double<br>
+     * - Long<br>
+     * - String<br>
+     * - Boolean<br>
+     *
+     * @param arr The array of Objects to be converted into a native array of Trinity object
+     * @return The converted {@code TYArray} form of the original form, containing {@code TYObject} forms of
+     * the original objects
+     */
+    public static TYObject getArrayFor(Object[] arr) {
+        
+        List<TYObject> objects = new ArrayList<>();
+        
+        for (Object o : arr) {
+            
+            objects.add(getObjectFor(o));
+        }
+        
+        return new TYArray(objects);
     }
     
     public static TYObject newInstance(String className, TYObject... args) {

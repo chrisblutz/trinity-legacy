@@ -1,2 +1,14 @@
 class Module
     def native toString
+
+    def native getModule
+
+    def native getInnerModules
+
+    def native getInnerModule(name)
+
+    def native getInnerClasses
+
+    def native getInnerClass(name)
+
+    def native static get(name)
