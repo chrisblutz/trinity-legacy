@@ -41,8 +41,10 @@ class NativeMethod {
             
             TYObject invokeThis = runtime.getVariable("obj");
             TYObject[] newParams = Arrays.copyOfRange(params, 1, params.length);
+            TYMethod method = TrinityNatives.cast(TYMethodObject.class, thisObj, stackTrace).getInternalMethod();
+            String name = method.getName();
             
-            return TrinityNatives.cast(TYMethodObject.class, thisObj, stackTrace).getInternalMethod().getProcedure().call(runtime, stackTrace, null, null, invokeThis, newParams);
+            return method.getContainerClass().tyInvoke(name, runtime, stackTrace, null, null, invokeThis, newParams);
         });
     }
 }

@@ -56,7 +56,7 @@ public class TrinityNatives {
         }
         
         TYProcedure procedure = new TYProcedure(actionWithStackTrace, mandatoryParamsList, optionalParams, blockParam);
-        TYMethod method = new TYMethod(methodName, staticMethod, true, procedure);
+        TYMethod method = new TYMethod(methodName, staticMethod, true, ClassRegistry.getClass(className), procedure);
         String fullName = className + "." + methodName;
         methods.put(fullName, method);
     }

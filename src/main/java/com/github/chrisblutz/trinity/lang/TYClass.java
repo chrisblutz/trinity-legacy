@@ -44,13 +44,13 @@ public class TYClass {
         inheritanceTree = compileInheritanceTree();
         inheritanceTree.add(this);
         
-        registerMethod(new TYMethod("+", false, true, DefaultProcedures.getDefaultUOEOperationProcedure("+")));
-        registerMethod(new TYMethod("-", false, true, DefaultProcedures.getDefaultUOEOperationProcedure("-")));
-        registerMethod(new TYMethod("*", false, true, DefaultProcedures.getDefaultUOEOperationProcedure("*")));
-        registerMethod(new TYMethod("/", false, true, DefaultProcedures.getDefaultUOEOperationProcedure("/")));
-        registerMethod(new TYMethod("%", false, true, DefaultProcedures.getDefaultUOEOperationProcedure("%")));
-        registerMethod(new TYMethod("compareTo", false, true, DefaultProcedures.getDefaultUOEOperationProcedure("compareTo")));
-        registerMethod(new TYMethod("==", false, true, new TYProcedure((runtime, stackTrace, thisObj, params) -> {
+        registerMethod(new TYMethod("+", false, true, this, DefaultProcedures.getDefaultUOEOperationProcedure("+")));
+        registerMethod(new TYMethod("-", false, true, this, DefaultProcedures.getDefaultUOEOperationProcedure("-")));
+        registerMethod(new TYMethod("*", false, true, this, DefaultProcedures.getDefaultUOEOperationProcedure("*")));
+        registerMethod(new TYMethod("/", false, true, this, DefaultProcedures.getDefaultUOEOperationProcedure("/")));
+        registerMethod(new TYMethod("%", false, true, this, DefaultProcedures.getDefaultUOEOperationProcedure("%")));
+        registerMethod(new TYMethod("compareTo", false, true, this, DefaultProcedures.getDefaultUOEOperationProcedure("compareTo")));
+        registerMethod(new TYMethod("==", false, true, this, new TYProcedure((runtime, stackTrace, thisObj, params) -> {
             
             if (params.length > 0) {
                 
