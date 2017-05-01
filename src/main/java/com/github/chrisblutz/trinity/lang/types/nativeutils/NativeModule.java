@@ -23,7 +23,7 @@ class NativeModule {
         
         TrinityNatives.registerMethod("Module", "getModule", false, null, null, null, (runtime, stackTrace, thisObj, params) -> {
             
-            TYModule module = ((TYModuleObject) thisObj).getInternalModule().getParentModule();
+            TYModule module = TrinityNatives.cast(TYModuleObject.class, thisObj, stackTrace).getInternalModule().getParentModule();
             
             if (module != null) {
                 
@@ -34,13 +34,13 @@ class NativeModule {
                 return TYObject.NIL;
             }
         });
-        TrinityNatives.registerMethod("Module", "getName", false, null, null, null, (runtime, stackTrace, thisObj, params) -> NativeStorage.getModuleName(((TYModuleObject) thisObj).getInternalModule()));
-        TrinityNatives.registerMethod("Module", "getShortName", false, null, null, null, (runtime, stackTrace, thisObj, params) -> NativeStorage.getModuleShortName(((TYModuleObject) thisObj).getInternalModule()));
+        TrinityNatives.registerMethod("Module", "getName", false, null, null, null, (runtime, stackTrace, thisObj, params) -> NativeStorage.getModuleName(TrinityNatives.cast(TYModuleObject.class, thisObj, stackTrace).getInternalModule()));
+        TrinityNatives.registerMethod("Module", "getShortName", false, null, null, null, (runtime, stackTrace, thisObj, params) -> NativeStorage.getModuleShortName(TrinityNatives.cast(TYModuleObject.class, thisObj, stackTrace).getInternalModule()));
         TrinityNatives.registerMethod("Module", "getInnerModules", false, null, null, null, (runtime, stackTrace, thisObj, params) -> {
             
             List<TYObject> modules = new ArrayList<>();
             
-            for (TYModule m : ((TYModuleObject) thisObj).getInternalModule().getModules()) {
+            for (TYModule m : TrinityNatives.cast(TYModuleObject.class, thisObj, stackTrace).getInternalModule().getModules()) {
                 
                 modules.add(NativeStorage.getModuleObject(m));
             }
@@ -49,7 +49,7 @@ class NativeModule {
         });
         TrinityNatives.registerMethod("Module", "getInnerModule", false, new String[]{"name"}, null, null, (runtime, stackTrace, thisObj, params) -> {
             
-            TYModule m = ((TYModuleObject) thisObj).getInternalModule().getModule(((TYString) runtime.getVariable("name")).getInternalString());
+            TYModule m = TrinityNatives.cast(TYModuleObject.class, thisObj, stackTrace).getInternalModule().getModule(TrinityNatives.cast(TYString.class, runtime.getVariable("name"), stackTrace).getInternalString());
             
             if (m != null) {
                 
@@ -64,7 +64,7 @@ class NativeModule {
             
             List<TYObject> classes = new ArrayList<>();
             
-            for (TYClass c : ((TYModuleObject) thisObj).getInternalModule().getClasses()) {
+            for (TYClass c : TrinityNatives.cast(TYModuleObject.class, thisObj, stackTrace).getInternalModule().getClasses()) {
                 
                 classes.add(NativeStorage.getClassObject(c));
             }
@@ -73,7 +73,7 @@ class NativeModule {
         });
         TrinityNatives.registerMethod("Module", "getInnerClass", false, new String[]{"name"}, null, null, (runtime, stackTrace, thisObj, params) -> {
             
-            TYClass c = ((TYModuleObject) thisObj).getInternalModule().getClass(((TYString) runtime.getVariable("name")).getInternalString());
+            TYClass c = TrinityNatives.cast(TYModuleObject.class, thisObj, stackTrace).getInternalModule().getClass(TrinityNatives.cast(TYString.class, runtime.getVariable("name"), stackTrace).getInternalString());
             
             if (c != null) {
                 
@@ -86,7 +86,7 @@ class NativeModule {
         });
         TrinityNatives.registerMethod("Module", "get", true, new String[]{"name"}, null, null, (runtime, stackTrace, thisObj, params) -> {
             
-            String name = ((TYString) runtime.getVariable("name")).getInternalString();
+            String name = TrinityNatives.cast(TYString.class, runtime.getVariable("name"), stackTrace).getInternalString();
             
             if (ModuleRegistry.moduleExists(name)) {
                 

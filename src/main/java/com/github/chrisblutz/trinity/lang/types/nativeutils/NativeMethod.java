@@ -19,7 +19,7 @@ class NativeMethod {
         
         TrinityNatives.registerMethod("Method", "toString", false, null, null, null, (runtime, stackTrace, thisObj, params) -> {
             
-            TYMethod method = ((TYMethodObject) thisObj).getInternalMethod();
+            TYMethod method = TrinityNatives.cast(TYMethodObject.class, thisObj, stackTrace).getInternalMethod();
             
             String str = "Method [" + method.getName() + "]";
             
@@ -34,15 +34,15 @@ class NativeMethod {
             
             return new TYString(str);
         });
-        TrinityNatives.registerMethod("Method", "getRequiredArguments", false, null, null, null, (runtime, stackTrace, thisObj, params) -> NativeStorage.getMandatoryArguments(((TYMethodObject) thisObj).getInternalMethod()));
-        TrinityNatives.registerMethod("Method", "getOptionalArguments", false, null, null, null, (runtime, stackTrace, thisObj, params) -> NativeStorage.getOptionalArguments(((TYMethodObject) thisObj).getInternalMethod()));
-        TrinityNatives.registerMethod("Method", "getBlockArgument", false, null, null, null, (runtime, stackTrace, thisObj, params) -> NativeStorage.getBlockArgument(((TYMethodObject) thisObj).getInternalMethod()));
+        TrinityNatives.registerMethod("Method", "getRequiredArguments", false, null, null, null, (runtime, stackTrace, thisObj, params) -> NativeStorage.getMandatoryArguments(TrinityNatives.cast(TYMethodObject.class, thisObj, stackTrace).getInternalMethod()));
+        TrinityNatives.registerMethod("Method", "getOptionalArguments", false, null, null, null, (runtime, stackTrace, thisObj, params) -> NativeStorage.getOptionalArguments(TrinityNatives.cast(TYMethodObject.class, thisObj, stackTrace).getInternalMethod()));
+        TrinityNatives.registerMethod("Method", "getBlockArgument", false, null, null, null, (runtime, stackTrace, thisObj, params) -> NativeStorage.getBlockArgument(TrinityNatives.cast(TYMethodObject.class, thisObj, stackTrace).getInternalMethod()));
         TrinityNatives.registerMethod("Method", "invoke", false, new String[]{"obj"}, null, null, (runtime, stackTrace, thisObj, params) -> {
             
             TYObject invokeThis = runtime.getVariable("obj");
             TYObject[] newParams = Arrays.copyOfRange(params, 1, params.length);
             
-            return ((TYMethodObject) thisObj).getInternalMethod().getProcedure().call(runtime, stackTrace, null, null, invokeThis, newParams);
+            return TrinityNatives.cast(TYMethodObject.class, thisObj, stackTrace).getInternalMethod().getProcedure().call(runtime, stackTrace, null, null, invokeThis, newParams);
         });
     }
 }

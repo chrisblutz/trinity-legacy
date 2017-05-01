@@ -15,6 +15,7 @@ import com.github.chrisblutz.trinity.lang.types.numeric.TYInt;
 import com.github.chrisblutz.trinity.lang.types.numeric.TYLong;
 import com.github.chrisblutz.trinity.lang.types.strings.TYString;
 import com.github.chrisblutz.trinity.natives.NativeStorage;
+import com.github.chrisblutz.trinity.natives.TrinityNatives;
 import com.github.chrisblutz.trinity.parser.tokens.Token;
 import com.github.chrisblutz.trinity.parser.tokens.TokenInfo;
 
@@ -237,7 +238,7 @@ public class InstructionSet extends ObjectEvaluator {
                         
                         if (runtime.isStaticScope()) {
                             
-                            return ((TYClassObject) runtime.getScope()).getInternalClass().tyInvoke(tokenContents, runtime, stackTrace, getProcedure(), runtime, TYObject.NONE, params.toArray(new TYObject[params.size()]));
+                            return TrinityNatives.cast(TYClassObject.class, runtime.getScope(), stackTrace).getInternalClass().tyInvoke(tokenContents, runtime, stackTrace, getProcedure(), runtime, TYObject.NONE, params.toArray(new TYObject[params.size()]));
                             
                         } else {
                             
@@ -298,7 +299,7 @@ public class InstructionSet extends ObjectEvaluator {
                             }
                         }
                         
-                        return ((TYStaticClassObject) thisObj).getInternalClass().tyInvoke(tokenContents, runtime, stackTrace, getProcedure(), runtime, TYObject.NONE, params.toArray(new TYObject[params.size()]));
+                        return classObject.getInternalClass().tyInvoke(tokenContents, runtime, stackTrace, getProcedure(), runtime, TYObject.NONE, params.toArray(new TYObject[params.size()]));
                     }
                     
                 } else if (thisObj instanceof TYClassObject) {

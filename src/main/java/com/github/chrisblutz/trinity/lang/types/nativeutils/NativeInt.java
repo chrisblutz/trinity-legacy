@@ -24,11 +24,11 @@ class NativeInt {
         TrinityNatives.registerMethod("Int", "*", false, new String[]{"other"}, null, null, getActionForOperation("*"));
         TrinityNatives.registerMethod("Int", "/", false, new String[]{"other"}, null, null, getActionForOperation("/"));
         TrinityNatives.registerMethod("Int", "%", false, new String[]{"other"}, null, null, getActionForOperation("%"));
-        TrinityNatives.registerMethod("Int", "toString", false, null, null, null, (runtime, stackTrace, thisObj, params) -> new TYString(Integer.toString(((TYInt) thisObj).getInternalInteger())));
-        TrinityNatives.registerMethod("Int", "toHexString", false, null, null, null, (runtime, stackTrace, thisObj, params) -> new TYString(Integer.toHexString(((TYInt) thisObj).getInternalInteger())));
+        TrinityNatives.registerMethod("Int", "toString", false, null, null, null, (runtime, stackTrace, thisObj, params) -> new TYString(Integer.toString(TrinityNatives.cast(TYInt.class, thisObj, stackTrace).getInternalInteger())));
+        TrinityNatives.registerMethod("Int", "toHexString", false, null, null, null, (runtime, stackTrace, thisObj, params) -> new TYString(Integer.toHexString(TrinityNatives.cast(TYInt.class, thisObj, stackTrace).getInternalInteger())));
         TrinityNatives.registerMethod("Int", "compareTo", false, new String[]{"other"}, null, null, (runtime, stackTrace, thisObj, params) -> {
             
-            int thisInt = ((TYInt) thisObj).getInternalInteger();
+            int thisInt = TrinityNatives.cast(TYInt.class, thisObj, stackTrace).getInternalInteger();
             TYObject obj = runtime.getVariable("other");
             
             if (obj instanceof TYInt) {
@@ -54,7 +54,7 @@ class NativeInt {
         });
         TrinityNatives.registerMethod("Int", "==", false, new String[]{"other"}, null, null, (runtime, stackTrace, thisObj, params) -> {
             
-            int thisInt = ((TYInt) thisObj).getInternalInteger();
+            int thisInt = TrinityNatives.cast(TYInt.class, thisObj, stackTrace).getInternalInteger();
             TYObject obj = runtime.getVariable("other");
             
             if (obj instanceof TYInt) {
@@ -84,7 +84,7 @@ class NativeInt {
         
         return (runtime, stackTrace, thisObj, params) -> {
             
-            int thisInt = ((TYInt) thisObj).getInternalInteger();
+            int thisInt = TrinityNatives.cast(TYInt.class, thisObj, stackTrace).getInternalInteger();
             
             TYObject returnVal;
             

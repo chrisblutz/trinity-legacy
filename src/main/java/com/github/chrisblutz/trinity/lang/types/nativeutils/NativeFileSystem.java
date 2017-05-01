@@ -26,37 +26,29 @@ class NativeFileSystem {
             
             TYObject object = runtime.getVariable("path");
             
-            if (object instanceof TYString) {
-                
-                return new TYString(new File(((TYString) object).getInternalString()).getAbsolutePath());
-            }
-            
-            return TYObject.NIL;
+            return new TYString(new File(TrinityNatives.cast(TYString.class, object, stackTrace).getInternalString()).getAbsolutePath());
         });
         TrinityNatives.registerMethod("Trinity.IO.Files.FileSystem", "create", true, new String[]{"path"}, null, null, (runtime, stackTrace, thisObj, params) -> {
             
             TYObject object = runtime.getVariable("path");
             
-            if (object instanceof TYString) {
+            try {
                 
-                try {
+                File f = new File(TrinityNatives.cast(TYString.class, object, stackTrace).getInternalString());
+                if (f.getParentFile() != null && !f.getParentFile().exists()) {
                     
-                    File f = new File(((TYString) object).getInternalString());
-                    if (f.getParentFile() != null && !f.getParentFile().exists()) {
+                    if (f.getParentFile().mkdirs()) {
                         
-                        if (f.getParentFile().mkdirs()) {
-                            
-                            TYError error = new TYError("Trinity.Errors.IOError", "Unable to create parent directories.", stackTrace);
-                            error.throwError();
-                        }
+                        TYError error = new TYError("Trinity.Errors.IOError", "Unable to create parent directories.", stackTrace);
+                        error.throwError();
                     }
-                    return new TYBoolean(f.createNewFile());
-                    
-                } catch (Exception e) {
-                    
-                    TYError error = new TYError("Trinity.Errors.IOError", "An error occurred creating a file at '" + ((TYString) object).getInternalString() + "'.", stackTrace);
-                    error.throwError();
                 }
+                return new TYBoolean(f.createNewFile());
+                
+            } catch (Exception e) {
+                
+                TYError error = new TYError("Trinity.Errors.IOError", "An error occurred creating a file at '" + ((TYString) object).getInternalString() + "'.", stackTrace);
+                error.throwError();
             }
             
             return TYBoolean.FALSE;
@@ -70,21 +62,18 @@ class NativeFileSystem {
             TYObject privilege = runtime.getVariable("privileges");
             TYObject append = runtime.getVariable("append");
             
-            if (path instanceof TYString && privilege instanceof TYString && append instanceof TYBoolean) {
+            List<FilePrivilege> privileges = new ArrayList<>();
+            String privilegeStr = TrinityNatives.cast(TYString.class, privilege, stackTrace).getInternalString();
+            if (privilegeStr.contains("r")) {
                 
-                List<FilePrivilege> privileges = new ArrayList<>();
-                String privilegeStr = ((TYString) privilege).getInternalString();
-                if (privilegeStr.contains("r")) {
-                    
-                    privileges.add(FilePrivilege.READ);
-                }
-                if (privilegeStr.contains("w")) {
-                    
-                    privileges.add(FilePrivilege.WRITE);
-                }
-                
-                FileUtils.open(((TYString) path).getInternalString(), privileges, ((TYBoolean) append).getInternalBoolean(), stackTrace);
+                privileges.add(FilePrivilege.READ);
             }
+            if (privilegeStr.contains("w")) {
+                
+                privileges.add(FilePrivilege.WRITE);
+            }
+            
+            FileUtils.open(TrinityNatives.cast(TYString.class, path, stackTrace).getInternalString(), privileges, TrinityNatives.cast(TYBoolean.class, append, stackTrace).getInternalBoolean(), stackTrace);
             
             return TYObject.NONE;
         });
@@ -92,22 +81,14 @@ class NativeFileSystem {
             
             TYObject path = runtime.getVariable("path");
             
-            if (path instanceof TYString) {
-                
-                return FileUtils.read(((TYString) path).getInternalString(), stackTrace);
-            }
-            
-            return TYObject.NONE;
+            return FileUtils.read(TrinityNatives.cast(TYString.class, path, stackTrace).getInternalString(), stackTrace);
         });
         TrinityNatives.registerMethod("Trinity.IO.Files.FileSystem", "write", true, new String[]{"path", "str"}, null, null, (runtime, stackTrace, thisObj, params) -> {
             
             TYObject path = runtime.getVariable("path");
             TYObject str = runtime.getVariable("str");
             
-            if (path instanceof TYString && str instanceof TYString) {
-                
-                FileUtils.write(((TYString) path).getInternalString(), ((TYString) str).getInternalString(), stackTrace);
-            }
+            FileUtils.write(TrinityNatives.cast(TYString.class, path, stackTrace).getInternalString(), TrinityNatives.cast(TYString.class, str, stackTrace).getInternalString(), stackTrace);
             
             return TYObject.NONE;
         });
@@ -115,10 +96,7 @@ class NativeFileSystem {
             
             TYObject path = runtime.getVariable("path");
             
-            if (path instanceof TYString) {
-                
-                FileUtils.close(((TYString) path).getInternalString(), stackTrace);
-            }
+            FileUtils.close(TrinityNatives.cast(TYString.class, path, stackTrace).getInternalString(), stackTrace);
             
             return TYObject.NONE;
         });

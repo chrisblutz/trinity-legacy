@@ -5,6 +5,7 @@ import com.github.chrisblutz.trinity.lang.errors.stacktrace.TYStackTrace;
 import com.github.chrisblutz.trinity.lang.scope.TYRuntime;
 import com.github.chrisblutz.trinity.lang.types.bool.TYBoolean;
 import com.github.chrisblutz.trinity.lang.types.numeric.TYInt;
+import com.github.chrisblutz.trinity.natives.TrinityNatives;
 import com.github.chrisblutz.trinity.parser.tokens.Token;
 
 import java.io.File;
@@ -44,14 +45,7 @@ public class UnaryNegationInstructionSet extends ObjectEvaluator {
             
             case NEGATIVE_OPERATOR:
                 
-                if (opObj instanceof TYBoolean) {
-                    
-                    return new TYBoolean(!((TYBoolean) opObj).getInternalBoolean());
-                    
-                } else {
-                    
-                    return TYBoolean.FALSE;
-                }
+                return new TYBoolean(!TrinityNatives.cast(TYBoolean.class, opObj, stackTrace).getInternalBoolean());
             
             case MINUS:
                 

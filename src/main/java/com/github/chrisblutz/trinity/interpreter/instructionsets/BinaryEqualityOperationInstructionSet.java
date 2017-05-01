@@ -4,6 +4,7 @@ import com.github.chrisblutz.trinity.lang.TYObject;
 import com.github.chrisblutz.trinity.lang.errors.stacktrace.TYStackTrace;
 import com.github.chrisblutz.trinity.lang.scope.TYRuntime;
 import com.github.chrisblutz.trinity.lang.types.bool.TYBoolean;
+import com.github.chrisblutz.trinity.natives.TrinityNatives;
 import com.github.chrisblutz.trinity.parser.tokens.Token;
 
 import java.io.File;
@@ -47,7 +48,7 @@ public class BinaryEqualityOperationInstructionSet extends ObjectEvaluator {
             
             case NOT_EQUAL_TO:
                 
-                return new TYBoolean(!((TYBoolean) thisObj.tyInvoke("==", runtime, stackTrace, null, null, opObj)).getInternalBoolean());
+                return new TYBoolean(!TrinityNatives.cast(TYBoolean.class, thisObj.tyInvoke("==", runtime, stackTrace, null, null, opObj), stackTrace).getInternalBoolean());
         }
         
         return TYBoolean.FALSE;

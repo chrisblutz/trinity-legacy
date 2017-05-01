@@ -1,5 +1,5 @@
 module Trinity
     module Errors
-        class InvalidArgumentNumberError << Error
+        class InvalidTypeError << Error
             def initialize(message = '')
                 super.initialize(message)

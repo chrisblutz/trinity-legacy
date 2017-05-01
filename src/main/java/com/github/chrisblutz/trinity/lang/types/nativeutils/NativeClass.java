@@ -23,7 +23,7 @@ class NativeClass {
         
         TrinityNatives.registerMethod("Class", "==", false, new String[]{"other"}, null, null, (runtime, stackTrace, thisObj, params) -> {
             
-            TYClass thisClass = ((TYClassObject) thisObj).getInternalClass();
+            TYClass thisClass = TrinityNatives.cast(TYClassObject.class, thisObj, stackTrace).getInternalClass();
             TYClass otherClass;
             
             TYObject obj = runtime.getVariable("other");
@@ -48,7 +48,7 @@ class NativeClass {
         });
         TrinityNatives.registerMethod("Class", "getSuperclass", false, null, null, null, (runtime, stackTrace, thisObj, params) -> {
             
-            TYClass superclass = ((TYClassObject) thisObj).getInternalClass().getSuperclass();
+            TYClass superclass = TrinityNatives.cast(TYClassObject.class, thisObj, stackTrace).getInternalClass().getSuperclass();
             
             if (superclass == null) {
                 
@@ -61,7 +61,7 @@ class NativeClass {
         });
         TrinityNatives.registerMethod("Class", "getModule", false, null, null, null, (runtime, stackTrace, thisObj, params) -> {
             
-            TYModule module = ((TYClassObject) thisObj).getInternalClass().getModule();
+            TYModule module = TrinityNatives.cast(TYClassObject.class, thisObj, stackTrace).getInternalClass().getModule();
             
             if (module != null) {
                 
@@ -72,14 +72,14 @@ class NativeClass {
                 return TYObject.NIL;
             }
         });
-        TrinityNatives.registerMethod("Class", "getName", false, null, null, null, (runtime, stackTrace, thisObj, params) -> NativeStorage.getClassName(((TYClassObject) thisObj).getInternalClass()));
-        TrinityNatives.registerMethod("Class", "getShortName", false, null, null, null, (runtime, stackTrace, thisObj, params) -> NativeStorage.getClassShortName(((TYClassObject) thisObj).getInternalClass()));
-        TrinityNatives.registerMethod("Class", "construct", false, null, null, null, (runtime, stackTrace, thisObj, params) -> TrinityNatives.newInstance(((TYClassObject) thisObj).getInternalClass().getName(), runtime, stackTrace, params));
+        TrinityNatives.registerMethod("Class", "getName", false, null, null, null, (runtime, stackTrace, thisObj, params) -> NativeStorage.getClassName(TrinityNatives.cast(TYClassObject.class, thisObj, stackTrace).getInternalClass()));
+        TrinityNatives.registerMethod("Class", "getShortName", false, null, null, null, (runtime, stackTrace, thisObj, params) -> NativeStorage.getClassShortName(TrinityNatives.cast(TYClassObject.class, thisObj, stackTrace).getInternalClass()));
+        TrinityNatives.registerMethod("Class", "construct", false, null, null, null, (runtime, stackTrace, thisObj, params) -> TrinityNatives.newInstance(TrinityNatives.cast(TYClassObject.class, thisObj, stackTrace).getInternalClass().getName(), runtime, stackTrace, params));
         TrinityNatives.registerMethod("Class", "getMethods", false, null, null, null, (runtime, stackTrace, thisObj, params) -> {
             
             List<TYObject> methods = new ArrayList<>();
             
-            for (TYMethod m : ((TYClassObject) thisObj).getInternalClass().getMethodArray()) {
+            for (TYMethod m : TrinityNatives.cast(TYClassObject.class, thisObj, stackTrace).getInternalClass().getMethodArray()) {
                 
                 methods.add(NativeStorage.getMethodObject(m));
             }
@@ -88,7 +88,7 @@ class NativeClass {
         });
         TrinityNatives.registerMethod("Class", "getMethod", false, new String[]{"name"}, null, null, (runtime, stackTrace, thisObj, params) -> {
             
-            TYMethod method = ((TYClassObject) thisObj).getInternalClass().getMethod(((TYString) runtime.getVariable("name")).getInternalString());
+            TYMethod method = TrinityNatives.cast(TYClassObject.class, thisObj, stackTrace).getInternalClass().getMethod(TrinityNatives.cast(TYString.class, runtime.getVariable("name"), stackTrace).getInternalString());
             
             if (method != null) {
                 
@@ -103,7 +103,7 @@ class NativeClass {
             
             List<TYObject> classes = new ArrayList<>();
             
-            for (TYClass c : ((TYClassObject) thisObj).getInternalClass().getClasses()) {
+            for (TYClass c : TrinityNatives.cast(TYClassObject.class, thisObj, stackTrace).getInternalClass().getClasses()) {
                 
                 classes.add(NativeStorage.getClassObject(c));
             }
@@ -112,7 +112,7 @@ class NativeClass {
         });
         TrinityNatives.registerMethod("Class", "getInnerClass", false, new String[]{"name"}, null, null, (runtime, stackTrace, thisObj, params) -> {
             
-            TYClass c = ((TYClassObject) thisObj).getInternalClass().getClass(((TYString) runtime.getVariable("name")).getInternalString());
+            TYClass c = TrinityNatives.cast(TYClassObject.class, thisObj, stackTrace).getInternalClass().getClass(TrinityNatives.cast(TYString.class, runtime.getVariable("name"), stackTrace).getInternalString());
             
             if (c != null) {
                 
@@ -125,7 +125,7 @@ class NativeClass {
         });
         TrinityNatives.registerMethod("Class", "get", true, new String[]{"name"}, null, null, (runtime, stackTrace, thisObj, params) -> {
             
-            String name = ((TYString) runtime.getVariable("name")).getInternalString();
+            String name = TrinityNatives.cast(TYString.class, runtime.getVariable("name"), stackTrace).getInternalString();
             
             if (ClassRegistry.classExists(name)) {
                 

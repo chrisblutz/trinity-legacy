@@ -218,4 +218,20 @@ public class TrinityNatives {
         
         return ClassRegistry.getClass(className).tyInvoke("new", runtime, stackTrace, null, null, TYObject.NONE, args);
     }
+    
+    public static <T extends TYObject> T cast(Class<T> desiredClass, TYObject object, TYStackTrace stackTrace) {
+        
+        if (desiredClass.isInstance(object)) {
+            
+            return desiredClass.cast(object);
+            
+        } else {
+            
+            TYError error = new TYError("Trinity.Errors.InvalidTypeError", "Unexpected value of type " + object.getObjectClass().getName() + " found.", stackTrace);
+            error.throwError();
+            
+            // This will throw an error, but the program will exit at the line above, never reaching this point
+            return desiredClass.cast(object);
+        }
+    }
 }

@@ -8,10 +8,10 @@ It is heavily influenced by aspects of [Java](https://www.java.com/) and [Ruby](
 - `src` - Java source code for the Trinity interpreter
 
 ## Getting Started
-See [Trinity's Wiki](https://github.com/chrisblutz/TrinityLang/wiki) for syntax information and example code.
+See Trinity's [Wiki](https://github.com/chrisblutz/TrinityLang/wiki) for syntax information and example code.
 
 ## Development
-Follow Trinity's development roadmap on [Trello](https://trello.com/b/MUH1xzWc).
+Follow Trinity's development plans on [Trello](https://trello.com/b/MUH1xzWc).
 
 ## Copyright
 Copyright &copy; 2017 Christopher Lutz.  See [LICENSE](LICENSE) for further details.

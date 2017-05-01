@@ -5,6 +5,7 @@ import com.github.chrisblutz.trinity.lang.errors.stacktrace.TYStackTrace;
 import com.github.chrisblutz.trinity.lang.scope.TYRuntime;
 import com.github.chrisblutz.trinity.lang.types.bool.TYBoolean;
 import com.github.chrisblutz.trinity.lang.types.numeric.TYInt;
+import com.github.chrisblutz.trinity.natives.TrinityNatives;
 import com.github.chrisblutz.trinity.parser.tokens.Token;
 
 import java.io.File;
@@ -40,7 +41,7 @@ public class BinaryComparisonOperationInstructionSet extends ObjectEvaluator {
         
         TYObject opObj = getOperand().evaluate(TYObject.NONE, runtime, stackTrace);
         
-        TYInt comparison = (TYInt) thisObj.tyInvoke("compareTo", runtime, stackTrace, null, null, opObj);
+        TYInt comparison = TrinityNatives.cast(TYInt.class, thisObj.tyInvoke("compareTo", runtime, stackTrace, null, null, opObj), stackTrace);
         int comparisonInt = comparison.getInternalInteger();
         
         switch (getOperator()) {

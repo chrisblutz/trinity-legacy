@@ -24,10 +24,10 @@ class NativeFloat {
         TrinityNatives.registerMethod("Float", "*", false, new String[]{"other"}, null, null, getActionForOperation("*"));
         TrinityNatives.registerMethod("Float", "/", false, new String[]{"other"}, null, null, getActionForOperation("/"));
         TrinityNatives.registerMethod("Float", "%", false, new String[]{"other"}, null, null, getActionForOperation("%"));
-        TrinityNatives.registerMethod("Float", "toString", false, null, null, null, (runtime, stackTrace, thisObj, params) -> new TYString(Double.toString(((TYFloat) thisObj).getInternalDouble())));
+        TrinityNatives.registerMethod("Float", "toString", false, null, null, null, (runtime, stackTrace, thisObj, params) -> new TYString(Double.toString(TrinityNatives.cast(TYFloat.class, thisObj, stackTrace).getInternalDouble())));
         TrinityNatives.registerMethod("Float", "compareTo", false, new String[]{"other"}, null, null, (runtime, stackTrace, thisObj, params) -> {
             
-            double thisDouble = ((TYFloat) thisObj).getInternalDouble();
+            double thisDouble = TrinityNatives.cast(TYFloat.class, thisObj, stackTrace).getInternalDouble();
             TYObject obj = runtime.getVariable("other");
             
             if (obj instanceof TYInt) {
@@ -53,7 +53,7 @@ class NativeFloat {
         });
         TrinityNatives.registerMethod("Float", "==", false, new String[]{"other"}, null, null, (runtime, stackTrace, thisObj, params) -> {
             
-            double thisDouble = ((TYFloat) thisObj).getInternalDouble();
+            double thisDouble = TrinityNatives.cast(TYFloat.class, thisObj, stackTrace).getInternalDouble();
             TYObject obj = runtime.getVariable("other");
             
             if (obj instanceof TYInt) {
@@ -83,7 +83,7 @@ class NativeFloat {
         
         return (runtime, stackTrace, thisObj, params) -> {
             
-            double thisDouble = ((TYFloat) thisObj).getInternalDouble();
+            double thisDouble = TrinityNatives.cast(TYFloat.class, thisObj, stackTrace).getInternalDouble();
             
             TYObject returnVal;
             

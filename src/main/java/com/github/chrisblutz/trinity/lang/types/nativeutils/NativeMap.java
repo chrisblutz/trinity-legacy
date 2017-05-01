@@ -25,13 +25,13 @@ class NativeMap {
             
             StringBuilder str = new StringBuilder("{");
             
-            Map<TYObject, TYObject> map = ((TYMap) thisObj).getInternalMap();
+            Map<TYObject, TYObject> map = TrinityNatives.cast(TYMap.class, thisObj, stackTrace).getInternalMap();
             
             for (TYObject keyObj : map.keySet()) {
                 
-                str.append(((TYString) keyObj.tyInvoke("toString", runtime, stackTrace, null, null)).getInternalString());
+                str.append(TrinityNatives.cast(TYString.class, keyObj.tyInvoke("toString", runtime, stackTrace, null, null), stackTrace).getInternalString());
                 str.append(": ");
-                str.append(((TYString) map.get(keyObj).tyInvoke("toString", runtime, stackTrace, null, null)).getInternalString());
+                str.append(TrinityNatives.cast(TYString.class, map.get(keyObj).tyInvoke("toString", runtime, stackTrace, null, null), stackTrace).getInternalString());
                 str.append(", ");
             }
             
@@ -44,25 +44,25 @@ class NativeMap {
             
             return new TYString(str.toString());
         });
-        TrinityNatives.registerMethod("Map", "length", false, null, null, null, (runtime, stackTrace, thisObj, params) -> NativeStorage.getMapLength((TYMap) thisObj));
-        TrinityNatives.registerMethod("Map", "keySet", false, null, null, null, (runtime, stackTrace, thisObj, params) -> NativeStorage.getMapKeySet((TYMap) thisObj));
-        TrinityNatives.registerMethod("Map", "values", false, null, null, null, (runtime, stackTrace, thisObj, params) -> NativeStorage.getMapValues((TYMap) thisObj));
+        TrinityNatives.registerMethod("Map", "length", false, null, null, null, (runtime, stackTrace, thisObj, params) -> NativeStorage.getMapLength(TrinityNatives.cast(TYMap.class, thisObj, stackTrace)));
+        TrinityNatives.registerMethod("Map", "keySet", false, null, null, null, (runtime, stackTrace, thisObj, params) -> NativeStorage.getMapKeySet(TrinityNatives.cast(TYMap.class, thisObj, stackTrace)));
+        TrinityNatives.registerMethod("Map", "values", false, null, null, null, (runtime, stackTrace, thisObj, params) -> NativeStorage.getMapValues(TrinityNatives.cast(TYMap.class, thisObj, stackTrace)));
         TrinityNatives.registerMethod("Map", "put", false, new String[]{"key", "value"}, null, null, (runtime, stackTrace, thisObj, params) -> {
             
-            Map<TYObject, TYObject> map = ((TYMap) thisObj).getInternalMap();
+            Map<TYObject, TYObject> map = TrinityNatives.cast(TYMap.class, thisObj, stackTrace).getInternalMap();
             map.put(runtime.getVariable("key"), runtime.getVariable("value"));
             
-            NativeStorage.clearMapData((TYMap) thisObj);
+            NativeStorage.clearMapData(TrinityNatives.cast(TYMap.class, thisObj, stackTrace));
             
             return TYObject.NONE;
         });
         TrinityNatives.registerMethod("Map", "remove", false, new String[]{"key"}, null, null, (runtime, stackTrace, thisObj, params) -> {
             
-            NativeStorage.clearMapData((TYMap) thisObj);
+            NativeStorage.clearMapData(TrinityNatives.cast(TYMap.class, thisObj, stackTrace));
             
-            return remove((TYMap) thisObj, runtime.getVariable("key"), runtime, stackTrace);
+            return remove(TrinityNatives.cast(TYMap.class, thisObj, stackTrace), runtime.getVariable("key"), runtime, stackTrace);
         });
-        TrinityNatives.registerMethod("Map", "[]", false, new String[]{"key"}, null, null, (runtime, stackTrace, thisObj, params) -> get((TYMap) thisObj, runtime.getVariable("key"), runtime, stackTrace));
+        TrinityNatives.registerMethod("Map", "[]", false, new String[]{"key"}, null, null, (runtime, stackTrace, thisObj, params) -> get(TrinityNatives.cast(TYMap.class, thisObj, stackTrace), runtime.getVariable("key"), runtime, stackTrace));
     }
     
     private static TYObject get(TYMap tyMap, TYObject obj, TYRuntime runtime, TYStackTrace stackTrace) {
@@ -71,7 +71,7 @@ class NativeMap {
         
         for (TYObject key : map.keySet()) {
             
-            TYBoolean equal = (TYBoolean) key.tyInvoke("==", runtime, stackTrace, null, null, obj);
+            TYBoolean equal = TrinityNatives.cast(TYBoolean.class, key.tyInvoke("==", runtime, stackTrace, null, null, obj), stackTrace);
             
             if (equal.getInternalBoolean()) {
                 
@@ -88,7 +88,7 @@ class NativeMap {
         
         for (TYObject key : map.keySet()) {
             
-            TYBoolean equal = (TYBoolean) key.tyInvoke("==", runtime, stackTrace, null, null, obj);
+            TYBoolean equal = TrinityNatives.cast(TYBoolean.class, key.tyInvoke("==", runtime, stackTrace, null, null, obj), stackTrace);
             
             if (equal.getInternalBoolean()) {
                 

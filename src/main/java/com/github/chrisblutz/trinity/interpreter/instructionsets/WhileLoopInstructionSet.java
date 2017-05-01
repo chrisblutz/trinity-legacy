@@ -5,6 +5,7 @@ import com.github.chrisblutz.trinity.lang.errors.stacktrace.TYStackTrace;
 import com.github.chrisblutz.trinity.lang.procedures.ProcedureAction;
 import com.github.chrisblutz.trinity.lang.scope.TYRuntime;
 import com.github.chrisblutz.trinity.lang.types.bool.TYBoolean;
+import com.github.chrisblutz.trinity.natives.TrinityNatives;
 
 import java.io.File;
 
@@ -39,7 +40,7 @@ public class WhileLoopInstructionSet extends ChainedInstructionSet {
         
         TYRuntime newRuntime = runtime.clone();
         
-        TYBoolean expBoolean = (TYBoolean) getExpression().evaluate(TYObject.NONE, newRuntime, stackTrace);
+        TYBoolean expBoolean = TrinityNatives.cast(TYBoolean.class, getExpression().evaluate(TYObject.NONE, newRuntime, stackTrace), stackTrace);
         
         while (expBoolean.getInternalBoolean()) {
             
@@ -56,7 +57,7 @@ public class WhileLoopInstructionSet extends ChainedInstructionSet {
                 
             } else {
                 
-                expBoolean = (TYBoolean) getExpression().evaluate(TYObject.NONE, newRuntime, stackTrace);
+                expBoolean = TrinityNatives.cast(TYBoolean.class, getExpression().evaluate(TYObject.NONE, newRuntime, stackTrace), stackTrace);
             }
         }
         

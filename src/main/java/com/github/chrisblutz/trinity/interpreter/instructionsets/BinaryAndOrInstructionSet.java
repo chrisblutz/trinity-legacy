@@ -4,6 +4,7 @@ import com.github.chrisblutz.trinity.lang.TYObject;
 import com.github.chrisblutz.trinity.lang.errors.stacktrace.TYStackTrace;
 import com.github.chrisblutz.trinity.lang.scope.TYRuntime;
 import com.github.chrisblutz.trinity.lang.types.bool.TYBoolean;
+import com.github.chrisblutz.trinity.natives.TrinityNatives;
 import com.github.chrisblutz.trinity.parser.tokens.Token;
 
 import java.io.File;
@@ -37,36 +38,37 @@ public class BinaryAndOrInstructionSet extends ObjectEvaluator {
     
     public TYObject evaluate(TYObject thisObj, TYRuntime runtime, TYStackTrace stackTrace) {
         
-        if (thisObj instanceof TYBoolean) {
+        switch (getOperator()) {
             
-            switch (getOperator()) {
+            case AND:
                 
-                case AND:
-                    
-                    if (!((TYBoolean) thisObj).getInternalBoolean()) {
-                        
-                        return TYBoolean.FALSE;
-                        
-                    } else {
-                        
-                        TYObject opObj = getOperand().evaluate(TYObject.NONE, runtime, stackTrace);
-                        
-                        return new TYBoolean(((TYBoolean) thisObj).getInternalBoolean() && ((TYBoolean) opObj).getInternalBoolean());
-                    }
+                TYBoolean thisBool = TrinityNatives.cast(TYBoolean.class, thisObj, stackTrace);
                 
-                case OR:
+                if (!thisBool.getInternalBoolean()) {
                     
-                    if (((TYBoolean) thisObj).getInternalBoolean()) {
-                        
-                        return TYBoolean.TRUE;
-                        
-                    } else {
-                        
-                        TYObject opObj = getOperand().evaluate(TYObject.NONE, runtime, stackTrace);
-                        
-                        return new TYBoolean(((TYBoolean) thisObj).getInternalBoolean() || ((TYBoolean) opObj).getInternalBoolean());
-                    }
-            }
+                    return TYBoolean.FALSE;
+                    
+                } else {
+                    
+                    TYObject opObj = getOperand().evaluate(TYObject.NONE, runtime, stackTrace);
+                    
+                    return new TYBoolean(thisBool.getInternalBoolean() && TrinityNatives.cast(TYBoolean.class, opObj, stackTrace).getInternalBoolean());
+                }
+            
+            case OR:
+                
+                thisBool = TrinityNatives.cast(TYBoolean.class, thisObj, stackTrace);
+                
+                if (thisBool.getInternalBoolean()) {
+                    
+                    return TYBoolean.TRUE;
+                    
+                } else {
+                    
+                    TYObject opObj = getOperand().evaluate(TYObject.NONE, runtime, stackTrace);
+                    
+                    return new TYBoolean(thisBool.getInternalBoolean() || TrinityNatives.cast(TYBoolean.class, opObj, stackTrace).getInternalBoolean());
+                }
         }
         
         return TYBoolean.FALSE;

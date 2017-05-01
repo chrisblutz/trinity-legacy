@@ -8,6 +8,7 @@ import com.github.chrisblutz.trinity.lang.scope.TYRuntime;
 import com.github.chrisblutz.trinity.lang.types.bool.TYBoolean;
 import com.github.chrisblutz.trinity.lang.types.numeric.TYInt;
 import com.github.chrisblutz.trinity.natives.NativeStorage;
+import com.github.chrisblutz.trinity.natives.TrinityNatives;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -55,8 +56,8 @@ public class TYClass {
                 
                 TYObject object = params[0];
                 
-                TYInt thisHashCode = (TYInt) thisObj.tyInvoke("hashCode", runtime, stackTrace, null, null);
-                TYInt otherHashCode = (TYInt) object.tyInvoke("hashCode", runtime, stackTrace, null, null);
+                TYInt thisHashCode = TrinityNatives.cast(TYInt.class, thisObj.tyInvoke("hashCode", runtime, stackTrace, null, null), stackTrace);
+                TYInt otherHashCode = TrinityNatives.cast(TYInt.class, object.tyInvoke("hashCode", runtime, stackTrace, null, null), stackTrace);
                 
                 return thisHashCode.tyInvoke("==", runtime, stackTrace, null, null, otherHashCode);
                 

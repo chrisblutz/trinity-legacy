@@ -13,14 +13,14 @@ class NativeBoolean {
     
     static void register() {
         
-        TrinityNatives.registerMethod("Boolean", "toString", false, null, null, null, (runtime, stackTrace, thisObj, params) -> new TYString(Boolean.toString(((TYBoolean) thisObj).getInternalBoolean())));
+        TrinityNatives.registerMethod("Boolean", "toString", false, null, null, null, (runtime, stackTrace, thisObj, params) -> new TYString(Boolean.toString(TrinityNatives.cast(TYBoolean.class, thisObj, stackTrace).getInternalBoolean())));
         TrinityNatives.registerMethod("Boolean", "==", false, new String[]{"other"}, null, null, (runtime, stackTrace, thisObj, params) -> {
             
             TYObject object = runtime.getVariable("other");
             
             if (object instanceof TYBoolean) {
                 
-                return new TYBoolean(((TYBoolean) thisObj).getInternalBoolean() == ((TYBoolean) object).getInternalBoolean());
+                return new TYBoolean(TrinityNatives.cast(TYBoolean.class, thisObj, stackTrace).getInternalBoolean() == ((TYBoolean) object).getInternalBoolean());
             }
             
             return TYBoolean.FALSE;

@@ -28,18 +28,13 @@ class NativeSystem {
             
             if (name != TYObject.NIL) {
                 
-                if (name instanceof TYString) {
-                    
-                    String value = System.getenv(((TYString) name).getInternalString());
-                    return value == null ? TYObject.NIL : new TYString(value);
-                }
+                String value = System.getenv(TrinityNatives.cast(TYString.class, name, stackTrace).getInternalString());
+                return value == null ? TYObject.NIL : new TYString(value);
                 
             } else {
                 
                 return getEnvironmentMap();
             }
-            
-            return TYObject.NONE;
         });
         TrinityNatives.registerMethod("System", "loadProperties", true, null, null, null, (runtime, stackTrace, thisObj, params12) -> {
             

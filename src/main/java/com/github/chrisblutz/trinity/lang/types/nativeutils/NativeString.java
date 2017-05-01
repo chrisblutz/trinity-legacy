@@ -13,13 +13,13 @@ class NativeString {
     
     static void register() {
         
-        TrinityNatives.registerMethod("String", "chars", false, null, null, null, (runtime, stackTrace, thisObj, params) -> ((TYString) thisObj).getCharacterArray());
+        TrinityNatives.registerMethod("String", "chars", false, null, null, null, (runtime, stackTrace, thisObj, params) -> TrinityNatives.cast(TYString.class, thisObj, stackTrace).getCharacterArray());
         TrinityNatives.registerMethod("String", "+", false, new String[]{"other"}, null, null, (runtime, stackTrace, thisObj, params) -> {
             
-            String thisString = ((TYString) thisObj).getInternalString();
+            String thisString = TrinityNatives.cast(TYString.class, thisObj, stackTrace).getInternalString();
             
             TYObject object = runtime.getVariable("other");
-            String objStr = ((TYString) object.tyInvoke("toString", runtime, stackTrace, null, null)).getInternalString();
+            String objStr = TrinityNatives.cast(TYString.class, object.tyInvoke("toString", runtime, stackTrace, null, null), stackTrace).getInternalString();
             
             return new TYString(thisString + objStr);
         });
@@ -27,12 +27,7 @@ class NativeString {
             
             TYObject object = runtime.getVariable("other");
             
-            if (object instanceof TYString) {
-                
-                return new TYBoolean(((TYString) thisObj).getInternalString().contentEquals(((TYString) object).getInternalString()));
-            }
-            
-            return TYBoolean.FALSE;
+            return new TYBoolean(TrinityNatives.cast(TYString.class, thisObj, stackTrace).getInternalString().contentEquals(TrinityNatives.cast(TYString.class, object, stackTrace).getInternalString()));
         });
     }
 }

@@ -2,7 +2,6 @@ package com.github.chrisblutz.trinity.interpreter.instructionsets;
 
 import com.github.chrisblutz.trinity.lang.TYObject;
 import com.github.chrisblutz.trinity.lang.errors.stacktrace.TYStackTrace;
-import com.github.chrisblutz.trinity.lang.procedures.ProcedureAction;
 import com.github.chrisblutz.trinity.lang.scope.TYRuntime;
 import com.github.chrisblutz.trinity.parser.tokens.Token;
 
@@ -16,7 +15,6 @@ public class ReturnInstructionSet extends ChainedInstructionSet {
     
     private Token branchToken;
     private ChainedInstructionSet expression;
-    private ProcedureAction action;
     
     public ReturnInstructionSet(Token branchToken, ChainedInstructionSet expression, String fileName, File fullFile, int lineNumber) {
         
