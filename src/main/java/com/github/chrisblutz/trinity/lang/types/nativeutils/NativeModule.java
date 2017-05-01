@@ -4,14 +4,10 @@ import com.github.chrisblutz.trinity.lang.ModuleRegistry;
 import com.github.chrisblutz.trinity.lang.TYClass;
 import com.github.chrisblutz.trinity.lang.TYModule;
 import com.github.chrisblutz.trinity.lang.TYObject;
-import com.github.chrisblutz.trinity.lang.errors.stacktrace.TYStackTrace;
-import com.github.chrisblutz.trinity.lang.procedures.ProcedureAction;
-import com.github.chrisblutz.trinity.lang.scope.TYRuntime;
-import com.github.chrisblutz.trinity.lang.types.TYClassObject;
 import com.github.chrisblutz.trinity.lang.types.TYModuleObject;
-import com.github.chrisblutz.trinity.lang.types.TYStaticModuleObject;
 import com.github.chrisblutz.trinity.lang.types.arrays.TYArray;
 import com.github.chrisblutz.trinity.lang.types.strings.TYString;
+import com.github.chrisblutz.trinity.natives.NativeStorage;
 import com.github.chrisblutz.trinity.natives.TrinityNatives;
 
 import java.util.ArrayList;
@@ -25,43 +21,28 @@ class NativeModule {
     
     static void register() {
         
-        TrinityNatives.registerMethod("Module", "toString", false, null, null, null, (runtime, stackTrace, thisObj, params) -> {
+        TrinityNatives.registerMethod("Module", "getModule", false, null, null, null, (runtime, stackTrace, thisObj, params) -> {
             
-            if (thisObj instanceof TYModuleObject) {
-                
-                return new TYString(((TYModuleObject) thisObj).getInternalModule().getName());
-                
-            } else if (thisObj instanceof TYStaticModuleObject) {
-                
-                return new TYString(((TYStaticModuleObject) thisObj).getInternalModule().getName());
-            }
+            TYModule module = ((TYModuleObject) thisObj).getInternalModule().getParentModule();
             
-            return new TYString("");
-        });
-        TrinityNatives.registerMethod("Module", "getModule", false, null, null, null, new ProcedureAction() {
-            
-            @Override
-            public TYObject onAction(TYRuntime runtime, TYStackTrace stackTrace, TYObject thisObj, TYObject... params) {
+            if (module != null) {
                 
-                TYModule module = ((TYModuleObject) thisObj).getInternalModule().getParentModule();
+                return NativeStorage.getModuleObject(module);
                 
-                if (module != null) {
-                    
-                    return new TYModuleObject(module);
-                    
-                } else {
-                    
-                    return TYObject.NIL;
-                }
+            } else {
+                
+                return TYObject.NIL;
             }
         });
+        TrinityNatives.registerMethod("Module", "getName", false, null, null, null, (runtime, stackTrace, thisObj, params) -> NativeStorage.getModuleName(((TYModuleObject) thisObj).getInternalModule()));
+        TrinityNatives.registerMethod("Module", "getShortName", false, null, null, null, (runtime, stackTrace, thisObj, params) -> NativeStorage.getModuleShortName(((TYModuleObject) thisObj).getInternalModule()));
         TrinityNatives.registerMethod("Module", "getInnerModules", false, null, null, null, (runtime, stackTrace, thisObj, params) -> {
             
             List<TYObject> modules = new ArrayList<>();
             
             for (TYModule m : ((TYModuleObject) thisObj).getInternalModule().getModules()) {
                 
-                modules.add(new TYModuleObject(m));
+                modules.add(NativeStorage.getModuleObject(m));
             }
             
             return new TYArray(modules);
@@ -72,7 +53,7 @@ class NativeModule {
             
             if (m != null) {
                 
-                return new TYModuleObject(m);
+                return NativeStorage.getModuleObject(m);
                 
             } else {
                 
@@ -85,7 +66,7 @@ class NativeModule {
             
             for (TYClass c : ((TYModuleObject) thisObj).getInternalModule().getClasses()) {
                 
-                classes.add(new TYClassObject(c));
+                classes.add(NativeStorage.getClassObject(c));
             }
             
             return new TYArray(classes);
@@ -96,28 +77,24 @@ class NativeModule {
             
             if (c != null) {
                 
-                return new TYClassObject(c);
+                return NativeStorage.getClassObject(c);
                 
             } else {
                 
                 return TYObject.NIL;
             }
         });
-        TrinityNatives.registerMethod("Module", "get", true, new String[]{"name"}, null, null, new ProcedureAction() {
+        TrinityNatives.registerMethod("Module", "get", true, new String[]{"name"}, null, null, (runtime, stackTrace, thisObj, params) -> {
             
-            @Override
-            public TYObject onAction(TYRuntime runtime, TYStackTrace stackTrace, TYObject thisObj, TYObject... params) {
+            String name = ((TYString) runtime.getVariable("name")).getInternalString();
+            
+            if (ModuleRegistry.moduleExists(name)) {
                 
-                String name = ((TYString) runtime.getVariable("name")).getInternalString();
+                return NativeStorage.getModuleObject(ModuleRegistry.getModule(name));
                 
-                if (ModuleRegistry.moduleExists(name)) {
-                    
-                    return new TYModuleObject(ModuleRegistry.getModule(name));
-                    
-                } else {
-                    
-                    return TYObject.NIL;
-                }
+            } else {
+                
+                return TYObject.NIL;
             }
         });
     }

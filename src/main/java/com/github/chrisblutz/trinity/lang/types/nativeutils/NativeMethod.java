@@ -4,11 +4,10 @@ import com.github.chrisblutz.trinity.lang.TYMethod;
 import com.github.chrisblutz.trinity.lang.TYObject;
 import com.github.chrisblutz.trinity.lang.types.TYMethodObject;
 import com.github.chrisblutz.trinity.lang.types.strings.TYString;
+import com.github.chrisblutz.trinity.natives.NativeStorage;
 import com.github.chrisblutz.trinity.natives.TrinityNatives;
 
 import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
 
 
 /**
@@ -35,18 +34,9 @@ class NativeMethod {
             
             return new TYString(str);
         });
-        TrinityNatives.registerMethod("Method", "getRequiredArguments", false, null, null, null, (runtime, stackTrace, thisObj, params) -> {
-            
-            List<String> arguments = ((TYMethodObject) thisObj).getInternalMethod().getProcedure().getMandatoryParameters();
-            
-            return TrinityNatives.getArrayFor(arguments.toArray(new String[arguments.size()]));
-        });
-        TrinityNatives.registerMethod("Method", "getOptionalArguments", false, null, null, null, (runtime, stackTrace, thisObj, params) -> {
-            
-            Set<String> arguments = ((TYMethodObject) thisObj).getInternalMethod().getProcedure().getOptionalParameters().keySet();
-            
-            return TrinityNatives.getArrayFor(arguments.toArray(new String[arguments.size()]));
-        });
+        TrinityNatives.registerMethod("Method", "getRequiredArguments", false, null, null, null, (runtime, stackTrace, thisObj, params) -> NativeStorage.getMandatoryArguments(((TYMethodObject) thisObj).getInternalMethod()));
+        TrinityNatives.registerMethod("Method", "getOptionalArguments", false, null, null, null, (runtime, stackTrace, thisObj, params) -> NativeStorage.getOptionalArguments(((TYMethodObject) thisObj).getInternalMethod()));
+        TrinityNatives.registerMethod("Method", "getBlockArgument", false, null, null, null, (runtime, stackTrace, thisObj, params) -> NativeStorage.getBlockArgument(((TYMethodObject) thisObj).getInternalMethod()));
         TrinityNatives.registerMethod("Method", "invoke", false, new String[]{"obj"}, null, null, (runtime, stackTrace, thisObj, params) -> {
             
             TYObject invokeThis = runtime.getVariable("obj");

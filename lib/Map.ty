@@ -9,6 +9,8 @@ class Map
 
     def native keySet
 
+    def native values
+
     def native length
 
     def native toString

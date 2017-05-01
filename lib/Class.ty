@@ -1,8 +1,6 @@
 class Class
     def native ==(other)
 
-    def native toString
-
     def native getSuperclass
 
     def native getModule
@@ -22,3 +20,6 @@ class Class
     def native getInnerClass(name)
 
     def native static get(name)
+
+    def toString
+        getName()

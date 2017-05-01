@@ -5,9 +5,9 @@ import com.github.chrisblutz.trinity.lang.errors.stacktrace.TYStackTrace;
 import com.github.chrisblutz.trinity.lang.procedures.DefaultProcedures;
 import com.github.chrisblutz.trinity.lang.procedures.TYProcedure;
 import com.github.chrisblutz.trinity.lang.scope.TYRuntime;
-import com.github.chrisblutz.trinity.lang.types.TYClassObject;
 import com.github.chrisblutz.trinity.lang.types.bool.TYBoolean;
 import com.github.chrisblutz.trinity.lang.types.numeric.TYInt;
+import com.github.chrisblutz.trinity.natives.NativeStorage;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -49,8 +49,6 @@ public class TYClass {
         registerMethod(new TYMethod("/", false, true, DefaultProcedures.getDefaultUOEOperationProcedure("/")));
         registerMethod(new TYMethod("%", false, true, DefaultProcedures.getDefaultUOEOperationProcedure("%")));
         registerMethod(new TYMethod("compareTo", false, true, DefaultProcedures.getDefaultUOEOperationProcedure("compareTo")));
-        registerMethod(new TYMethod("hashCode", false, true, new TYProcedure((runtime, stackTrace, thisObj, params) -> thisObj == TYObject.NIL ? new TYInt(0) : new TYInt(thisObj.hashCode()))));
-        registerMethod(new TYMethod("getClass", false, true, new TYProcedure((runtime, stackTrace, thisObj, params) -> new TYClassObject(thisObj.getObjectClass()))));
         registerMethod(new TYMethod("==", false, true, new TYProcedure((runtime, stackTrace, thisObj, params) -> {
             
             if (params.length > 0) {
@@ -69,7 +67,7 @@ public class TYClass {
         })));
     }
     
-    public List<TYClass> compileInheritanceTree() {
+    private List<TYClass> compileInheritanceTree() {
         
         List<TYClass> tree = new ArrayList<>();
         
@@ -214,7 +212,7 @@ public class TYClass {
             
             if (method.isStaticMethod()) {
                 
-                newRuntime.setScope(new TYClassObject(this), true);
+                newRuntime.setScope(NativeStorage.getClassObject(this), true);
                 
             } else {
                 

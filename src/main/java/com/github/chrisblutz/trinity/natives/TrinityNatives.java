@@ -197,7 +197,7 @@ public class TrinityNatives {
      * @return The converted {@code TYArray} form of the original form, containing {@code TYObject} forms of
      * the original objects
      */
-    public static TYObject getArrayFor(Object[] arr) {
+    public static TYArray getArrayFor(Object[] arr) {
         
         List<TYObject> objects = new ArrayList<>();
         

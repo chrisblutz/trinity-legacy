@@ -5,4 +5,6 @@ class Method
 
     def native getOptionalArguments
 
+    def native getBlockArgument
+
     def native invoke(obj, args)

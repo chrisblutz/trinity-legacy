@@ -14,6 +14,7 @@ import com.github.chrisblutz.trinity.lang.types.numeric.TYFloat;
 import com.github.chrisblutz.trinity.lang.types.numeric.TYInt;
 import com.github.chrisblutz.trinity.lang.types.numeric.TYLong;
 import com.github.chrisblutz.trinity.lang.types.strings.TYString;
+import com.github.chrisblutz.trinity.natives.NativeStorage;
 import com.github.chrisblutz.trinity.parser.tokens.Token;
 import com.github.chrisblutz.trinity.parser.tokens.TokenInfo;
 
@@ -106,7 +107,7 @@ public class InstructionSet extends ObjectEvaluator {
                 if (runtime.isStaticScope()) {
                     
                     TYClass thisClass = runtime.getTyClass();
-                    return new TYStaticClassObject(thisClass.getSuperclass());
+                    return NativeStorage.getStaticClassObject(thisClass.getSuperclass());
                     
                 } else {
                     
@@ -136,7 +137,7 @@ public class InstructionSet extends ObjectEvaluator {
                 
                 if (thisObj instanceof TYStaticClassObject) {
                     
-                    return new TYClassObject(((TYStaticClassObject) thisObj).getInternalClass());
+                    return NativeStorage.getClassObject(((TYStaticClassObject) thisObj).getInternalClass());
                     
                 } else {
                     
@@ -148,7 +149,7 @@ public class InstructionSet extends ObjectEvaluator {
                 
                 if (thisObj instanceof TYStaticModuleObject) {
                     
-                    return new TYModuleObject(((TYStaticModuleObject) thisObj).getInternalModule());
+                    return NativeStorage.getModuleObject(((TYStaticModuleObject) thisObj).getInternalModule());
                     
                 } else {
                     
@@ -204,19 +205,19 @@ public class InstructionSet extends ObjectEvaluator {
                         
                     } else if (ModuleRegistry.moduleExists(tokenContents)) {
                         
-                        return new TYStaticModuleObject(ModuleRegistry.getModule(tokenContents));
+                        return NativeStorage.getStaticModuleObject(ModuleRegistry.getModule(tokenContents));
                         
                     } else if (ClassRegistry.classExists(tokenContents)) {
                         
-                        return new TYStaticClassObject(ClassRegistry.getClass(tokenContents));
+                        return NativeStorage.getStaticClassObject(ClassRegistry.getClass(tokenContents));
                         
                     } else if (runtime.getModule() != null && runtime.getModule().hasClass(tokenContents)) {
                         
-                        return new TYStaticClassObject(runtime.getModule().getClass(tokenContents));
+                        return NativeStorage.getStaticClassObject(runtime.getModule().getClass(tokenContents));
                         
                     } else if (runtime.hasImportedModuleWithClass(tokenContents)) {
                         
-                        return new TYStaticClassObject(runtime.getImportedClassWithModule(tokenContents));
+                        return NativeStorage.getStaticClassObject(runtime.getImportedClassWithModule(tokenContents));
                         
                     } else {
                         
@@ -251,11 +252,11 @@ public class InstructionSet extends ObjectEvaluator {
                     
                     if (tyModule.hasModule(tokenContents)) {
                         
-                        return new TYStaticModuleObject(tyModule.getModule(tokenContents));
+                        return NativeStorage.getStaticModuleObject(tyModule.getModule(tokenContents));
                         
                     } else if (tyModule.hasClass(tokenContents)) {
                         
-                        return new TYStaticClassObject(tyModule.getClass(tokenContents));
+                        return NativeStorage.getStaticClassObject(tyModule.getClass(tokenContents));
                     }
                     
                 } else if (thisObj instanceof TYModuleObject) {
@@ -281,7 +282,7 @@ public class InstructionSet extends ObjectEvaluator {
                     
                     if (tyClass.hasClass(tokenContents)) {
                         
-                        return new TYStaticClassObject(tyClass.getClass(tokenContents));
+                        return NativeStorage.getStaticClassObject(tyClass.getClass(tokenContents));
                         
                     } else {
                         

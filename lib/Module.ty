@@ -1,7 +1,9 @@
 class Module
-    def native toString
-
     def native getModule
+
+    def native getName
+
+    def native getShortName
 
     def native getInnerModules
 
@@ -12,3 +14,6 @@ class Module
     def native getInnerClass(name)
 
     def native static get(name)
+
+    def toString
+        getName()

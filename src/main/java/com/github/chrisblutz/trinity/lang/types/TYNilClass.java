@@ -3,7 +3,7 @@ package com.github.chrisblutz.trinity.lang.types;
 import com.github.chrisblutz.trinity.lang.TYClass;
 import com.github.chrisblutz.trinity.lang.TYMethod;
 import com.github.chrisblutz.trinity.lang.procedures.TYProcedure;
-import com.github.chrisblutz.trinity.lang.types.strings.TYString;
+import com.github.chrisblutz.trinity.natives.NativeStorage;
 
 
 /**
@@ -15,6 +15,6 @@ public class TYNilClass extends TYClass {
         
         super("Nil", "Nil");
         
-        registerMethod(new TYMethod("toString", false, true, new TYProcedure((runtime, stackTrace, thisObj, params) -> new TYString("nil"))));
+        registerMethod(new TYMethod("toString", false, true, new TYProcedure((runtime, stackTrace, thisObj, params) -> NativeStorage.getNilString())));
     }
 }
