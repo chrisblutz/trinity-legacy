@@ -22,7 +22,7 @@ public enum Token {
     // Operators
     NEGATIVE_OPERATOR("!"), ASSIGNMENT_OPERATOR("="), NIL_ASSIGNMENT_OPERATOR("||="), DOT_OPERATOR("."), EQUAL_TO("=="), NOT_EQUAL_TO("!="), GREATER_THAN(">"), GREATER_THAN_OR_EQUAL_TO(">="), LESS_THAN("<"), LESS_THAN_OR_EQUAL_TO("<="),
     PLUS("+"), PLUS_EQUAL("+="), MINUS("-"), MINUS_EQUAL("-="),
-    MULTIPLY("*"), MULTIPLY_EQUAL("*="), DIVIDE("/"), DIVIDE_EQUAL("/"), MODULUS("%"), MODULUS_EQUAL("%="),
+    MULTIPLY("*"), MULTIPLY_EQUAL("*="), DIVIDE("/"), DIVIDE_EQUAL("/="), MODULUS("%"), MODULUS_EQUAL("%="),
     AND("&&"), OR("||"),
     
     // Native Checks
