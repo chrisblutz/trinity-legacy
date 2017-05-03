@@ -90,7 +90,7 @@ public class CLI {
             if (isDebuggingEnabled()) {
                 
                 long total = endMillis - startMillis;
-                System.out.println(String.format("\nExecution took %.4f seconds.", (float) total / 1000f));
+                System.out.println(String.format("\nExecution took %.3f seconds.", (float) total / 1000f));
             }
         }
     }

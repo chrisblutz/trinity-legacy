@@ -80,6 +80,8 @@ class NativeInt {
         });
     }
     
+    private static boolean overflow = false;
+    
     private static ProcedureAction getActionForOperation(String operation) {
         
         return (runtime, stackTrace, thisObj, params) -> {
@@ -93,7 +95,17 @@ class NativeInt {
             if (obj instanceof TYInt) {
                 
                 int newInt = ((TYInt) obj).getInternalInteger();
-                returnVal = new TYInt(intCalculation(thisInt, newInt, operation, stackTrace));
+                long result = intCalculation(thisInt, newInt, operation, stackTrace);
+                
+                if (overflow) {
+                    
+                    overflow = false;
+                    returnVal = new TYLong(result);
+                    
+                } else {
+                    
+                    returnVal = new TYInt((int) result);
+                }
                 
             } else if (obj instanceof TYFloat) {
                 
@@ -117,36 +129,45 @@ class NativeInt {
         };
     }
     
-    private static int intCalculation(int int1, int int2, String operation, TYStackTrace stackTrace) {
+    private static long intCalculation(int int1, int int2, String operation, TYStackTrace stackTrace) {
         
-        switch (operation) {
+        try {
             
-            case "+":
+            switch (operation) {
                 
-                return int1 + int2;
+                case "+":
+                    
+                    return Math.addExact(int1, int2);
+                
+                case "-":
+                    
+                    return Math.subtractExact(int1, int2);
+                
+                case "*":
+                    
+                    return Math.multiplyExact(int1, int2);
+                
+                case "/":
+                    
+                    return Math.floorDiv(int1, int2);
+                
+                case "%":
+                    
+                    return Math.floorMod(int1, int2);
+                
+                default:
+                    
+                    TYError error = new TYError("Trinity.Errors.UnsupportedOperationError", "Operation '" + operation + "' not supported.", stackTrace);
+                    error.throwError();
+                    
+                    return int1;
+            }
             
-            case "-":
-                
-                return int1 - int2;
+        } catch (ArithmeticException e) {
             
-            case "*":
-                
-                return int1 * int2;
+            overflow = true;
             
-            case "/":
-                
-                return int1 / int2;
-            
-            case "%":
-                
-                return int1 % int2;
-            
-            default:
-                
-                TYError error = new TYError("Trinity.Errors.UnsupportedOperationError", "Operation '" + operation + "' not supported.", stackTrace);
-                error.throwError();
-                
-                return int1;
+            return longCalculation(int1, int2, operation, stackTrace);
         }
     }
     
