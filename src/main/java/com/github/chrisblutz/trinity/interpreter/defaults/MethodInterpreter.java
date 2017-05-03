@@ -8,7 +8,7 @@ import com.github.chrisblutz.trinity.interpreter.instructionsets.ChainedInstruct
 import com.github.chrisblutz.trinity.lang.TYClass;
 import com.github.chrisblutz.trinity.lang.TYMethod;
 import com.github.chrisblutz.trinity.lang.TYObject;
-import com.github.chrisblutz.trinity.lang.errors.TYError;
+import com.github.chrisblutz.trinity.lang.errors.TYSyntaxError;
 import com.github.chrisblutz.trinity.lang.errors.stacktrace.TYStackTrace;
 import com.github.chrisblutz.trinity.lang.procedures.ProcedureAction;
 import com.github.chrisblutz.trinity.lang.procedures.TYProcedure;
@@ -87,7 +87,7 @@ public class MethodInterpreter extends DeclarationInterpreter {
                         
                     } else {
                         
-                        TYError error = new TYError("Trinity.Errors.ScopeError", "Methods must be declared within a class.", new TYStackTrace());
+                        TYSyntaxError error = new TYSyntaxError("Trinity.Errors.ScopeError", "Methods must be declared within a class.", block.getFileName(), l.getLineNumber());
                         error.throwError();
                     }
                     
@@ -185,7 +185,7 @@ public class MethodInterpreter extends DeclarationInterpreter {
                         
                     } else {
                         
-                        TrinityNatives.doLoad(env.getEnvironmentString() + "." + name, containerClass);
+                        TrinityNatives.doLoad(env.getEnvironmentString() + "." + name, containerClass, block.getFileName(), l.getLineNumber());
                     }
                 }
             }

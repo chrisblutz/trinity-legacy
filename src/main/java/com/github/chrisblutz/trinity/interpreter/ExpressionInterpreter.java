@@ -2,7 +2,7 @@ package com.github.chrisblutz.trinity.interpreter;
 
 import com.github.chrisblutz.trinity.interpreter.instructionsets.*;
 import com.github.chrisblutz.trinity.lang.TYObject;
-import com.github.chrisblutz.trinity.lang.errors.TYError;
+import com.github.chrisblutz.trinity.lang.errors.TYSyntaxError;
 import com.github.chrisblutz.trinity.lang.errors.stacktrace.TYStackTrace;
 import com.github.chrisblutz.trinity.lang.procedures.ProcedureAction;
 import com.github.chrisblutz.trinity.lang.procedures.TYProcedure;
@@ -219,7 +219,7 @@ public class ExpressionInterpreter {
                 
             } else {
                 
-                TYError error = new TYError("Trinity.Errors.ParseError", "For loops require 3 components.", new TYStackTrace());
+                TYSyntaxError error = new TYSyntaxError("Trinity.Errors.ParseError", "For loops require 3 components.", fileName, lineNumber);
                 error.throwError();
             }
             
@@ -521,7 +521,7 @@ public class ExpressionInterpreter {
                         }
                         levelTemp.clear();
                         
-                        List<List<TokenInfo>> split = splitByTokenIntoList(temp.toArray(new TokenInfo[temp.size()]), Token.COMMA);
+                        List<List<TokenInfo>> split = splitByTokenIntoList(temp.toArray(new TokenInfo[temp.size()]), Token.COMMA, fileName, lineNumber);
                         List<ChainedInstructionSet[]> elements = new ArrayList<>();
                         
                         for (List<TokenInfo> part : split) {
@@ -541,6 +541,12 @@ public class ExpressionInterpreter {
             }
             
             previous = info;
+        }
+        
+        if (level != 0) {
+            
+            TYSyntaxError error = new TYSyntaxError("Trinity.Errors.SyntaxError", "Unmatched brackets.", fileName, lineNumber);
+            error.throwError();
         }
         
         if (previousNonToken != null) {
@@ -603,7 +609,7 @@ public class ExpressionInterpreter {
         return sets.toArray(new ChainedInstructionSet[sets.size()]);
     }
     
-    private static List<List<TokenInfo>> splitByTokenIntoList(TokenInfo[] tokens, Token delimiter) {
+    private static List<List<TokenInfo>> splitByTokenIntoList(TokenInfo[] tokens, Token delimiter, String fileName, int lineNumber) {
         
         List<List<TokenInfo>> infoSets = new ArrayList<>();
         
@@ -643,7 +649,7 @@ public class ExpressionInterpreter {
     
     private static ChainedInstructionSet[] splitByToken(String errorClass, String method, String fileName, File fullFile, int lineNumber, TokenInfo[] tokens, Token delimiter, Block nextBlock) {
         
-        List<List<TokenInfo>> infoSets = splitByTokenIntoList(tokens, delimiter);
+        List<List<TokenInfo>> infoSets = splitByTokenIntoList(tokens, delimiter, fileName, lineNumber);
         
         List<TokenInfo> firstExpression = new ArrayList<>();
         

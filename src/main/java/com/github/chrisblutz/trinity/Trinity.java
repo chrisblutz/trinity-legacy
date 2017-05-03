@@ -3,6 +3,7 @@ package com.github.chrisblutz.trinity;
 import com.github.chrisblutz.trinity.bootstrap.Bootstrap;
 import com.github.chrisblutz.trinity.cli.CLI;
 import com.github.chrisblutz.trinity.lang.errors.TYError;
+import com.github.chrisblutz.trinity.lang.errors.TYSyntaxError;
 
 
 /**
@@ -32,6 +33,12 @@ public class Trinity {
     }
     
     public static void fail(TYError error) {
+        
+        System.err.println(error);
+        System.exit(1);
+    }
+    
+    public static void fail(TYSyntaxError error) {
         
         System.err.println(error);
         System.exit(1);

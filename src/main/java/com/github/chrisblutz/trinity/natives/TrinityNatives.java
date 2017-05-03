@@ -5,6 +5,7 @@ import com.github.chrisblutz.trinity.lang.TYClass;
 import com.github.chrisblutz.trinity.lang.TYMethod;
 import com.github.chrisblutz.trinity.lang.TYObject;
 import com.github.chrisblutz.trinity.lang.errors.TYError;
+import com.github.chrisblutz.trinity.lang.errors.TYSyntaxError;
 import com.github.chrisblutz.trinity.lang.errors.stacktrace.TYStackTrace;
 import com.github.chrisblutz.trinity.lang.procedures.ProcedureAction;
 import com.github.chrisblutz.trinity.lang.procedures.TYProcedure;
@@ -30,6 +31,8 @@ public class TrinityNatives {
     private static Map<String, List<NativeAction>> pendingActions = new HashMap<>();
     private static Map<String, TYMethod> methods = new HashMap<>();
     private static Map<String, TYClass> pendingLoads = new HashMap<>();
+    private static Map<String, String> pendingLoadFiles = new HashMap<>();
+    private static Map<String, Integer> pendingLoadLines = new HashMap<>();
     
     public static void registerMethod(String className, String methodName, boolean staticMethod, String[] mandatoryParams, Map<String, TYObject> optionalParams, String blockParam, ProcedureAction action) {
         
@@ -83,19 +86,21 @@ public class TrinityNatives {
         }
     }
     
-    public static void doLoad(String name, TYClass current) {
+    public static void doLoad(String name, TYClass current, String fileName, int lineNumber) {
         
         if (methods.containsKey(name)) {
             
-            addToClass(name, current);
+            addToClass(name, current, fileName, lineNumber);
             
         } else {
             
             pendingLoads.put(name, current);
+            pendingLoadFiles.put(name, fileName);
+            pendingLoadLines.put(name, lineNumber);
         }
     }
     
-    private static void addToClass(String name, TYClass current) {
+    private static void addToClass(String name, TYClass current, String fileName, int lineNumber) {
         
         if (methods.containsKey(name)) {
             
@@ -103,7 +108,7 @@ public class TrinityNatives {
             
         } else {
             
-            TYError error = new TYError("Trinity.Errors.ParseError", "Native method " + name + " not found.", new TYStackTrace());
+            TYSyntaxError error = new TYSyntaxError("Trinity.Errors.ParseError", "Native method " + name + " not found.", fileName, lineNumber);
             error.throwError();
         }
     }
@@ -122,7 +127,10 @@ public class TrinityNatives {
             
             if (methods.containsKey(str)) {
                 
-                addToClass(str, pendingLoads.get(str));
+                addToClass(str, pendingLoads.get(str), pendingLoadFiles.get(str), pendingLoadLines.get(str));
+                pendingLoads.remove(str);
+                pendingLoadFiles.remove(str);
+                pendingLoadLines.remove(str);
             }
         }
     }
@@ -173,7 +181,7 @@ public class TrinityNatives {
             return new TYBoolean((Boolean) obj);
         }
         
-        TYError error = new TYError("Trinity.Errors.NativeTypeError", "Trinity does not have native type-conversion utilities for " + obj.getClass() + ".", new TYStackTrace());
+        TYSyntaxError error = new TYSyntaxError("Trinity.Errors.NativeTypeError", "Trinity does not have native type-conversion utilities for " + obj.getClass() + ".", null, 0);
         error.throwError();
         
         return TYObject.NIL;
