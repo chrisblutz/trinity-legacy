@@ -1,5 +1,5 @@
 class Object
-    def native hashCode
+    def native secure hashCode
 
     def native getClass
 

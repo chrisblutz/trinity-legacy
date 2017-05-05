@@ -45,7 +45,7 @@ public class MethodInterpreter extends DeclarationInterpreter {
                 
                 if (l.get(0).getToken() == Token.DEF) {
                     
-                    boolean staticMethod = false, nativeMethod = false;
+                    boolean staticMethod = false, nativeMethod = false, secureMethod = false;
                     String name;
                     int position = 1;
                     
@@ -55,10 +55,15 @@ public class MethodInterpreter extends DeclarationInterpreter {
                         position++;
                     }
                     
-                    TokenInfo staticModifier = l.get(position);
-                    if (staticModifier.getToken() == Token.STATIC) {
+                    if (l.get(position).getToken() == Token.STATIC) {
                         
                         staticMethod = true;
+                        position++;
+                    }
+                    
+                    if (l.get(position).getToken() == Token.SECURE) {
+                        
+                        secureMethod = true;
                         position++;
                     }
                     
@@ -184,13 +189,13 @@ public class MethodInterpreter extends DeclarationInterpreter {
                         
                         TYProcedure procedure = new TYProcedure(action, mandatoryParams, optParams, blockParam);
                         
-                        TYMethod method = new TYMethod(name, staticMethod, false, containerClass, procedure);
+                        TYMethod method = new TYMethod(name, staticMethod, false, secureMethod, containerClass, procedure);
                         method.importModules(TrinityInterpreter.getImportedModules());
                         containerClass.registerMethod(method);
                         
                     } else {
                         
-                        TrinityNatives.doLoad(env.getEnvironmentString() + "." + name, containerClass, block.getFileName(), l.getLineNumber());
+                        TrinityNatives.doLoad(env.getEnvironmentString() + "." + name, secureMethod, containerClass, block.getFileName(), l.getLineNumber());
                     }
                 }
             }

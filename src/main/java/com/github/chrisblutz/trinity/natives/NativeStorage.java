@@ -34,6 +34,7 @@ public class NativeStorage {
     private static Map<TYMethod, TYString> methodNames = new HashMap<>();
     private static Map<TYMethod, TYBoolean> methodStatic = new HashMap<>();
     private static Map<TYMethod, TYBoolean> methodNative = new HashMap<>();
+    private static Map<TYMethod, TYBoolean> methodSecure = new HashMap<>();
     private static Map<TYMethod, TYArray> mandatoryArguments = new HashMap<>();
     private static Map<TYMethod, TYArray> optionalArguments = new HashMap<>();
     private static Map<TYMethod, TYObject> blockArguments = new HashMap<>();
@@ -166,6 +167,16 @@ public class NativeStorage {
         }
         
         return methodNative.get(tyMethod);
+    }
+    
+    public static TYBoolean isMethodSecure(TYMethod tyMethod) {
+        
+        if (!methodSecure.containsKey(tyMethod)) {
+            
+            methodSecure.put(tyMethod, new TYBoolean(tyMethod.isSecureMethod()));
+        }
+        
+        return methodSecure.get(tyMethod);
     }
     
     public static TYArray getMandatoryArguments(TYMethod tyMethod) {

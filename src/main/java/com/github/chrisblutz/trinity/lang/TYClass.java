@@ -255,6 +255,11 @@ public class TYClass {
     
     public void registerMethod(TYMethod method) {
         
+        if (methods.containsKey(method.getName()) && methods.get(method.getName()).isSecureMethod()) {
+            
+            return;
+        }
+        
         if (method.getName().contentEquals("initialize")) {
             
             constructor = method;

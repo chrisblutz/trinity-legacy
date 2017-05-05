@@ -31,5 +31,6 @@ class NativeMethod {
         TrinityNatives.registerMethod("Method", "getName", false, null, null, null, (runtime, stackTrace, thisObj, params) -> NativeStorage.getMethodName(TrinityNatives.cast(TYMethodObject.class, thisObj, stackTrace).getInternalMethod()));
         TrinityNatives.registerMethod("Method", "isStatic", false, null, null, null, (runtime, stackTrace, thisObj, params) -> NativeStorage.isMethodStatic(TrinityNatives.cast(TYMethodObject.class, thisObj, stackTrace).getInternalMethod()));
         TrinityNatives.registerMethod("Method", "isNative", false, null, null, null, (runtime, stackTrace, thisObj, params) -> NativeStorage.isMethodNative(TrinityNatives.cast(TYMethodObject.class, thisObj, stackTrace).getInternalMethod()));
+        TrinityNatives.registerMethod("Method", "isSecure", false, null, null, null, (runtime, stackTrace, thisObj, params) -> NativeStorage.isMethodSecure(TrinityNatives.cast(TYMethodObject.class, thisObj, stackTrace).getInternalMethod()));
     }
 }

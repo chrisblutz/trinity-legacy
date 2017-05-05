@@ -13,6 +13,8 @@ class Method
 
     def native isNative
 
+    def native isSecure
+
     def toString
         str = getName()
         str += '(Args: ' + getRequiredArguments().length() + ' required, '
@@ -20,8 +22,11 @@ class Method
         if getBlockArgument() != nil
             str += ', 1 block'
         str += ')'
+
         if isNative()
             str += ' [native]'
         if isStatic()
             str += ' [static]'
+        if isSecure()
+            str += ' [secure]'
         str

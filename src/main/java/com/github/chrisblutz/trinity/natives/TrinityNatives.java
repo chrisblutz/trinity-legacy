@@ -31,6 +31,7 @@ public class TrinityNatives {
     private static Map<String, List<NativeAction>> pendingActions = new HashMap<>();
     private static Map<String, TYMethod> methods = new HashMap<>();
     private static Map<String, TYClass> pendingLoads = new HashMap<>();
+    private static Map<String, Boolean> pendingSecure = new HashMap<>();
     private static Map<String, String> pendingLoadFiles = new HashMap<>();
     private static Map<String, Integer> pendingLoadLines = new HashMap<>();
     
@@ -86,25 +87,28 @@ public class TrinityNatives {
         }
     }
     
-    public static void doLoad(String name, TYClass current, String fileName, int lineNumber) {
+    public static void doLoad(String name, boolean secureMethod, TYClass current, String fileName, int lineNumber) {
         
         if (methods.containsKey(name)) {
             
-            addToClass(name, current, fileName, lineNumber);
+            addToClass(name, secureMethod, current, fileName, lineNumber);
             
         } else {
             
             pendingLoads.put(name, current);
+            pendingSecure.put(name, secureMethod);
             pendingLoadFiles.put(name, fileName);
             pendingLoadLines.put(name, lineNumber);
         }
     }
     
-    private static void addToClass(String name, TYClass current, String fileName, int lineNumber) {
+    private static void addToClass(String name, boolean secureMethod, TYClass current, String fileName, int lineNumber) {
         
         if (methods.containsKey(name)) {
             
-            current.registerMethod(methods.get(name));
+            TYMethod method = methods.get(name);
+            method.setSecureMethod(secureMethod);
+            current.registerMethod(method);
             
         } else {
             
@@ -127,8 +131,9 @@ public class TrinityNatives {
             
             if (methods.containsKey(str)) {
                 
-                addToClass(str, pendingLoads.get(str), pendingLoadFiles.get(str), pendingLoadLines.get(str));
+                addToClass(str, pendingSecure.get(str), pendingLoads.get(str), pendingLoadFiles.get(str), pendingLoadLines.get(str));
                 pendingLoads.remove(str);
+                pendingSecure.remove(str);
                 pendingLoadFiles.remove(str);
                 pendingLoadLines.remove(str);
             }
