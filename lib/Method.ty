@@ -1,6 +1,4 @@
 class Method
-    def native toString
-
     def native getRequiredArguments
 
     def native getOptionalArguments
@@ -8,3 +6,22 @@ class Method
     def native getBlockArgument
 
     def native invoke(obj, args)
+
+    def native getName
+
+    def native isStatic
+
+    def native isNative
+
+    def toString
+        str = getName()
+        str += '(Args: ' + getRequiredArguments().length() + ' required, '
+        str += getOptionalArguments().length() + ' optional'
+        if getBlockArgument() != nil
+            str += ', 1 block'
+        str += ')'
+        if isNative()
+            str += ' [native]'
+        if isStatic()
+            str += ' [static]'
+        str

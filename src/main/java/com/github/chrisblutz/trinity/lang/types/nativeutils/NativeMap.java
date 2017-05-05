@@ -45,7 +45,7 @@ class NativeMap {
             return new TYString(str.toString());
         });
         TrinityNatives.registerMethod("Map", "length", false, null, null, null, (runtime, stackTrace, thisObj, params) -> NativeStorage.getMapLength(TrinityNatives.cast(TYMap.class, thisObj, stackTrace)));
-        TrinityNatives.registerMethod("Map", "keySet", false, null, null, null, (runtime, stackTrace, thisObj, params) -> NativeStorage.getMapKeySet(TrinityNatives.cast(TYMap.class, thisObj, stackTrace)));
+        TrinityNatives.registerMethod("Map", "keys", false, null, null, null, (runtime, stackTrace, thisObj, params) -> NativeStorage.getMapKeySet(TrinityNatives.cast(TYMap.class, thisObj, stackTrace)));
         TrinityNatives.registerMethod("Map", "values", false, null, null, null, (runtime, stackTrace, thisObj, params) -> NativeStorage.getMapValues(TrinityNatives.cast(TYMap.class, thisObj, stackTrace)));
         TrinityNatives.registerMethod("Map", "put", false, new String[]{"key", "value"}, null, null, (runtime, stackTrace, thisObj, params) -> {
             

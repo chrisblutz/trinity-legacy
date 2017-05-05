@@ -6,6 +6,7 @@ import com.github.chrisblutz.trinity.lang.TYModule;
 import com.github.chrisblutz.trinity.lang.TYObject;
 import com.github.chrisblutz.trinity.lang.types.*;
 import com.github.chrisblutz.trinity.lang.types.arrays.TYArray;
+import com.github.chrisblutz.trinity.lang.types.bool.TYBoolean;
 import com.github.chrisblutz.trinity.lang.types.maps.TYMap;
 import com.github.chrisblutz.trinity.lang.types.numeric.TYInt;
 import com.github.chrisblutz.trinity.lang.types.strings.TYString;
@@ -30,6 +31,9 @@ public class NativeStorage {
     private static Map<TYModule, TYString> moduleNames = new HashMap<>();
     private static Map<TYModule, TYString> moduleShortNames = new HashMap<>();
     
+    private static Map<TYMethod, TYString> methodNames = new HashMap<>();
+    private static Map<TYMethod, TYBoolean> methodStatic = new HashMap<>();
+    private static Map<TYMethod, TYBoolean> methodNative = new HashMap<>();
     private static Map<TYMethod, TYArray> mandatoryArguments = new HashMap<>();
     private static Map<TYMethod, TYArray> optionalArguments = new HashMap<>();
     private static Map<TYMethod, TYObject> blockArguments = new HashMap<>();
@@ -132,6 +136,36 @@ public class NativeStorage {
         }
         
         return moduleShortNames.get(tyModule);
+    }
+    
+    public static TYString getMethodName(TYMethod tyMethod) {
+        
+        if (!methodNames.containsKey(tyMethod)) {
+            
+            methodNames.put(tyMethod, new TYString(tyMethod.getName()));
+        }
+        
+        return methodNames.get(tyMethod);
+    }
+    
+    public static TYBoolean isMethodStatic(TYMethod tyMethod) {
+        
+        if (!methodStatic.containsKey(tyMethod)) {
+            
+            methodStatic.put(tyMethod, new TYBoolean(tyMethod.isStaticMethod()));
+        }
+        
+        return methodStatic.get(tyMethod);
+    }
+    
+    public static TYBoolean isMethodNative(TYMethod tyMethod) {
+        
+        if (!methodNative.containsKey(tyMethod)) {
+            
+            methodNative.put(tyMethod, new TYBoolean(tyMethod.isNativeMethod()));
+        }
+        
+        return methodNative.get(tyMethod);
     }
     
     public static TYArray getMandatoryArguments(TYMethod tyMethod) {

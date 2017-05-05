@@ -68,6 +68,11 @@ public class MethodInterpreter extends DeclarationInterpreter {
                         name = nameInfo.getContents();
                         position++;
                         
+                    } else if (nameInfo.getToken() == Token.PLUS || nameInfo.getToken() == Token.MINUS || nameInfo.getToken() == Token.MULTIPLY || nameInfo.getToken() == Token.DIVIDE || nameInfo.getToken() == Token.MODULUS) {
+                        
+                        name = nameInfo.getContents();
+                        position++;
+                        
                     } else if (nameInfo.getToken() == Token.LEFT_SQUARE_BRACKET && position + 1 < l.size() && l.get(position + 1).getToken() == Token.RIGHT_SQUARE_BRACKET) {
                         
                         name = "[]";
