@@ -47,6 +47,11 @@ class NativeFloat {
                 double objDouble = ((TYFloat) obj).getInternalDouble();
                 
                 return new TYInt(Double.compare(thisDouble, objDouble));
+                
+            } else {
+                
+                TYError error = new TYError("Trinity.Errors.InvalidTypeError", "Cannot compare types " + thisObj.getObjectClass().getName() + " and " + obj.getObjectClass().getName() + ".", stackTrace);
+                error.throwError();
             }
             
             return new TYInt(-1);

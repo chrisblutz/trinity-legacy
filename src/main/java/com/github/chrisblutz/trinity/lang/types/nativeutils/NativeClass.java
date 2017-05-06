@@ -1,7 +1,6 @@
 package com.github.chrisblutz.trinity.lang.types.nativeutils;
 
 import com.github.chrisblutz.trinity.lang.*;
-import com.github.chrisblutz.trinity.lang.errors.TYError;
 import com.github.chrisblutz.trinity.lang.types.TYClassObject;
 import com.github.chrisblutz.trinity.lang.types.TYStaticClassObject;
 import com.github.chrisblutz.trinity.lang.types.arrays.TYArray;
@@ -38,10 +37,7 @@ class NativeClass {
                 
             } else {
                 
-                TYError error = new TYError("Trinity.Errors.InvalidTypeError", "Method '==' takes a class object as a parameter.", stackTrace);
-                error.throwError();
-                
-                otherClass = TYObject.NIL.getObjectClass();
+                return TYBoolean.FALSE;
             }
             
             return new TYBoolean(thisClass == otherClass);

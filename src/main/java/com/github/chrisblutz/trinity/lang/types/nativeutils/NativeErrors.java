@@ -22,7 +22,7 @@ class NativeErrors {
             
             TYArray ary = new TYArray(new ArrayList<>());
             
-            for (int i = 1; i < stackTrace.getStackTrace().length; i++) {
+            for (int i = 2 + thisObj.getSuperStackLevel(); i < stackTrace.getStackTrace().length; i++) {
                 
                 TYStackTraceElement e = stackTrace.getStackTrace()[i];
                 

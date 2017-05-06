@@ -39,9 +39,10 @@ public class TrinityNatives {
         
         ProcedureAction actionWithStackTrace = (runtime, stackTrace, thisObj, params) -> {
             
-            stackTrace.add(className, methodName, null, 0);
+            TYStackTrace newTrace = stackTrace.clone();
+            newTrace.add(className, methodName, null, 0);
             
-            return action.onAction(runtime, stackTrace, thisObj, params);
+            return action.onAction(runtime, newTrace, thisObj, params);
         };
         
         List<String> mandatoryParamsList;

@@ -5,10 +5,7 @@ import com.github.chrisblutz.trinity.lang.errors.stacktrace.TYStackTrace;
 import com.github.chrisblutz.trinity.lang.procedures.DefaultProcedures;
 import com.github.chrisblutz.trinity.lang.procedures.TYProcedure;
 import com.github.chrisblutz.trinity.lang.scope.TYRuntime;
-import com.github.chrisblutz.trinity.lang.types.bool.TYBoolean;
-import com.github.chrisblutz.trinity.lang.types.numeric.TYInt;
 import com.github.chrisblutz.trinity.natives.NativeStorage;
-import com.github.chrisblutz.trinity.natives.TrinityNatives;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -49,23 +46,6 @@ public class TYClass {
         registerMethod(new TYMethod("*", false, true, this, DefaultProcedures.getDefaultUOEOperationProcedure("*")));
         registerMethod(new TYMethod("/", false, true, this, DefaultProcedures.getDefaultUOEOperationProcedure("/")));
         registerMethod(new TYMethod("%", false, true, this, DefaultProcedures.getDefaultUOEOperationProcedure("%")));
-        registerMethod(new TYMethod("compareTo", false, true, this, DefaultProcedures.getDefaultUOEOperationProcedure("compareTo")));
-        registerMethod(new TYMethod("==", false, true, this, new TYProcedure((runtime, stackTrace, thisObj, params) -> {
-            
-            if (params.length > 0) {
-                
-                TYObject object = params[0];
-                
-                TYInt thisHashCode = TrinityNatives.cast(TYInt.class, thisObj.tyInvoke("hashCode", runtime, stackTrace, null, null), stackTrace);
-                TYInt otherHashCode = TrinityNatives.cast(TYInt.class, object.tyInvoke("hashCode", runtime, stackTrace, null, null), stackTrace);
-                
-                return thisHashCode.tyInvoke("==", runtime, stackTrace, null, null, otherHashCode);
-                
-            } else {
-                
-                return TYBoolean.FALSE;
-            }
-        })));
     }
     
     private List<TYClass> compileInheritanceTree() {

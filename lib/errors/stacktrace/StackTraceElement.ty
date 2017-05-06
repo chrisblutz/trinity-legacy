@@ -21,8 +21,14 @@ module Trinity
 
             def toString
                 str = ''
-                if getErrorClass() != nil
-                    str = getErrorClass() + '.' + getMethod() + ' in file \'' + getFile() + '\' at line ' + getLine()
+                if getFile() != nil
+                    str = getErrorClass() + '.' + getMethod() + ' in file \'' + getFile() + '\''
+
+                    if getLine() > 0
+                        str += ' at line ' + getLine()
+
+                elsif getErrorClass() != nil
+                    str = getErrorClass() + '.' + getMethod() + ' (native)'
                 else
                     str = 'native method \'' + getMethod() + '\''
                 str

@@ -27,6 +27,11 @@ class NativeString {
             
             TYObject object = runtime.getVariable("other");
             
+            if (!(object instanceof TYString)) {
+                
+                return TYBoolean.FALSE;
+            }
+            
             return new TYBoolean(TrinityNatives.cast(TYString.class, thisObj, stackTrace).getInternalString().contentEquals(TrinityNatives.cast(TYString.class, object, stackTrace).getInternalString()));
         });
     }
