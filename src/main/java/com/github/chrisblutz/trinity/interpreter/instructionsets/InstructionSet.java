@@ -72,7 +72,7 @@ public class InstructionSet extends ObjectEvaluator {
                     
                     return new TYLong(Long.parseLong(tokens[0].getContents().substring(0, tokens[0].getContents().length() - 1)));
                     
-                } else if (tokens[0].getContents().matches("[0-9]*\\.[0-9]+") || tokens[0].getContents().matches("[0-9]+f")) {
+                } else if (tokens[0].getContents().matches("[0-9]*\\.[0-9]+[f]?")) {
                     
                     String floatStr = tokens[0].getContents();
                     

@@ -479,7 +479,9 @@ public class TrinityParser {
             
             StringBuilder number = new StringBuilder();
             
-            for (TokenInfo info : line) {
+            for (int i = 0; i < line.size(); i++) {
+                
+                TokenInfo info = line.get(i);
                 
                 if (number.length() > 0) {
                     
@@ -513,6 +515,10 @@ public class TrinityParser {
                 } else if (info.getToken() == Token.NON_TOKEN_STRING && info.getContents().matches("[0-9]+[f|l]?")) {
                     
                     number = new StringBuilder(info.getContents());
+                    
+                } else if (info.getToken() == Token.DOT_OPERATOR && i + 1 < line.size() && line.get(i + 1).getToken() == Token.NON_TOKEN_STRING && line.get(i + 1).getContents().matches("[0-9]+[f|l]?")) {
+                    
+                    number = new StringBuilder("." + line.get(++i).getContents());
                     
                 } else {
                     
