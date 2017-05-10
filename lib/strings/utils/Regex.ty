@@ -1,0 +1,12 @@
+module Trinity
+    module StringUtils
+        class Regex
+            def initialize(matches, groups)
+                @matches = matches
+                @groups = groups
+
+            def matches()
+                @matches
+
+            def groups
+                @groups

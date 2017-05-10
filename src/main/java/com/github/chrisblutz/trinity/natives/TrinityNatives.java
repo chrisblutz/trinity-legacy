@@ -184,7 +184,14 @@ public class TrinityNatives {
             
         } else if (obj instanceof Boolean) {
             
-            return new TYBoolean((Boolean) obj);
+            if ((Boolean) obj) {
+                
+                return TYBoolean.TRUE;
+                
+            } else {
+                
+                return TYBoolean.FALSE;
+            }
         }
         
         TYSyntaxError error = new TYSyntaxError("Trinity.Errors.NativeTypeError", "Trinity does not have native type-conversion utilities for " + obj.getClass() + ".", null, 0);

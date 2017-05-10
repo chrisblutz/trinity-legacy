@@ -14,7 +14,6 @@ import com.github.chrisblutz.trinity.parser.TrinityParser;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 
@@ -36,6 +35,15 @@ public class CLI {
         for (String arg : args) {
             
             parseArg(arg);
+        }
+        
+        if (currentOption != null) {
+            
+            parseOption(currentOption, params);
+            
+        } else {
+            
+            parseArguments(params);
         }
         
         run();
@@ -116,11 +124,11 @@ public class CLI {
             
             if (currentOption != null) {
                 
-                parseOption(currentOption, params.toArray(new String[params.size()]));
+                parseOption(currentOption, params);
                 
             } else {
                 
-                parseArguments(params.toArray(new String[params.size()]));
+                parseArguments(params);
             }
             
             params.clear();
@@ -131,18 +139,9 @@ public class CLI {
             
             params.add(arg);
         }
-        
-        if (currentOption != null) {
-            
-            parseOption(currentOption, params.toArray(new String[params.size()]));
-            
-        } else {
-            
-            parseArguments(params.toArray(new String[params.size()]));
-        }
     }
     
-    private static void parseArguments(String[] args) {
+    private static void parseArguments(List<String> args) {
         
         for (String arg : args) {
             
@@ -157,7 +156,7 @@ public class CLI {
         }
     }
     
-    private static void parseOption(String arg, String... params) {
+    private static void parseOption(String arg, List<String> params) {
         
         switch (arg) {
             
@@ -176,7 +175,7 @@ public class CLI {
             case "-a":
             case "--arguments":
                 
-                arguments.addAll(Arrays.asList(params));
+                arguments.addAll(params);
                 break;
             
             case "-l":
@@ -187,7 +186,7 @@ public class CLI {
         }
     }
     
-    private static void handleLibraries(String[] params) {
+    private static void handleLibraries(List<String> params) {
         
         for (String lib : params) {
             

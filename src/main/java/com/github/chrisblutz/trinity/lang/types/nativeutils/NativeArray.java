@@ -1,6 +1,7 @@
 package com.github.chrisblutz.trinity.lang.types.nativeutils;
 
 import com.github.chrisblutz.trinity.lang.TYObject;
+import com.github.chrisblutz.trinity.lang.errors.TYError;
 import com.github.chrisblutz.trinity.lang.types.arrays.TYArray;
 import com.github.chrisblutz.trinity.lang.types.bool.TYBoolean;
 import com.github.chrisblutz.trinity.lang.types.numeric.TYInt;
@@ -94,9 +95,16 @@ class NativeArray {
         });
         TrinityNatives.registerMethod("Array", "[]", false, new String[]{"index"}, null, null, (runtime, stackTrace, thisObj, params) -> {
             
-            TYObject obj = runtime.getVariable("index");
+            int index = TrinityNatives.cast(TYInt.class, runtime.getVariable("index"), stackTrace).getInternalInteger();
+            List<TYObject> thisList = TrinityNatives.cast(TYArray.class, thisObj, stackTrace).getInternalList();
             
-            return TrinityNatives.cast(TYArray.class, thisObj, stackTrace).getInternalList().get(TrinityNatives.cast(TYInt.class, obj, stackTrace).getInternalInteger());
+            if (index >= thisList.size() || index < 0) {
+                
+                TYError error = new TYError("Trinity.Errors.IndexOutOfBoundsError", "Index: " + index + ", Size: " + thisList.size(), stackTrace);
+                error.throwError();
+            }
+            
+            return thisList.get(index);
         });
     }
 }

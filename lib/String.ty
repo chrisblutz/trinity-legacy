@@ -5,6 +5,14 @@ class String
 
     def native chars
 
+    # String.match returns a Regex instance, which can be used
+    # to manipulate capture groups, etc.
+    def native match(regex, options = '')
+
+    # String.matches returns a Boolean, which can be used for
+    # quick X matches X scenarios
+    def native matches(regex, options = '')
+
     def toString
         this
 
