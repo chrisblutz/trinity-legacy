@@ -26,13 +26,13 @@ class NativeObject {
                 
                 TYClass tyClass = ((TYStaticClassObject) object).getInternalClass();
                 
-                return new TYBoolean(thisObj.getObjectClass().isInstanceOf(tyClass));
+                return TYBoolean.valueFor(thisObj.getObjectClass().isInstanceOf(tyClass));
                 
             } else if (object instanceof TYClassObject) {
                 
                 TYClass tyClass = ((TYClassObject) object).getInternalClass();
                 
-                return new TYBoolean(thisObj.getObjectClass().isInstanceOf(tyClass));
+                return TYBoolean.valueFor(thisObj.getObjectClass().isInstanceOf(tyClass));
                 
             } else {
                 

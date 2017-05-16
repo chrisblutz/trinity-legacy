@@ -15,7 +15,15 @@ class Array
 
     def native length
 
-    def native toString
+    def toString
+        str = '['
+        for i = 0; i < length(); i += 1
+            str += this[i]
+            if i < length() - 1
+                str += ', '
+
+        str += ']'
+        str
 
     def each(&block)
         iterator().iterate(block)

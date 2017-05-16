@@ -48,7 +48,7 @@ public class BinaryEqualityOperationInstructionSet extends ObjectEvaluator {
             
             case NOT_EQUAL_TO:
                 
-                return new TYBoolean(!TrinityNatives.cast(TYBoolean.class, thisObj.tyInvoke("==", runtime, stackTrace, null, null, opObj), stackTrace).getInternalBoolean());
+                return TYBoolean.valueFor(!TrinityNatives.cast(TYBoolean.class, thisObj.tyInvoke("==", runtime, stackTrace, null, null, opObj), stackTrace).getInternalBoolean());
         }
         
         return TYBoolean.FALSE;

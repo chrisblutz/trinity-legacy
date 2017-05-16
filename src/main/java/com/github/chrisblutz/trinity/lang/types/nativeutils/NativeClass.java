@@ -40,7 +40,7 @@ class NativeClass {
                 return TYBoolean.FALSE;
             }
             
-            return new TYBoolean(thisClass == otherClass);
+            return TYBoolean.valueFor(thisClass == otherClass);
         });
         TrinityNatives.registerMethod("Class", "getSuperclass", false, null, null, null, (runtime, stackTrace, thisObj, params) -> {
             

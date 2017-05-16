@@ -1,4 +1,8 @@
 class Boolean
     def native ==(other)
 
-    def native toString
+    def toString
+        if this == true
+            return 'true'
+        else
+            return 'false'

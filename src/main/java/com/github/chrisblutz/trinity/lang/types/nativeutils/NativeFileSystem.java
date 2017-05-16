@@ -43,7 +43,7 @@ class NativeFileSystem {
                         error.throwError();
                     }
                 }
-                return new TYBoolean(f.createNewFile());
+                return TYBoolean.valueFor(f.createNewFile());
                 
             } catch (Exception e) {
                 

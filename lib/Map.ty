@@ -13,7 +13,15 @@ class Map
 
     def native length
 
-    def native toString
+    def toString
+        str = '{'
+        for i = 0; i < length(); i += 1
+            str += keys()[i] + ': ' + values()[i]
+            if i < length() - 1
+                str += ', '
+
+        str += '}'
+        str
 
     def each(&block)
         keySet().each() |key|

@@ -39,7 +39,7 @@ class NativeString {
                 return TYBoolean.FALSE;
             }
             
-            return new TYBoolean(TrinityNatives.cast(TYString.class, thisObj, stackTrace).getInternalString().contentEquals(TrinityNatives.cast(TYString.class, object, stackTrace).getInternalString()));
+            return TYBoolean.valueFor(TrinityNatives.cast(TYString.class, thisObj, stackTrace).getInternalString().contentEquals(TrinityNatives.cast(TYString.class, object, stackTrace).getInternalString()));
         });
         Map<String, TYObject> params = new HashMap<>();
         params.put("options", TrinityNatives.getObjectFor(""));

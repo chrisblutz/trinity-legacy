@@ -20,3 +20,6 @@ module Trinity
 
             def reset
                 @i = 0
+
+            def toString
+                getClass().toString() + @values.toString()

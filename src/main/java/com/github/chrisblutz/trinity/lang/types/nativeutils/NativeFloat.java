@@ -65,19 +65,19 @@ class NativeFloat {
                 
                 int objInt = ((TYInt) obj).getInternalInteger();
                 
-                return new TYBoolean(thisDouble == objInt);
+                return TYBoolean.valueFor(thisDouble == objInt);
                 
             } else if (obj instanceof TYLong) {
                 
                 long objLong = ((TYLong) obj).getInternalLong();
                 
-                return new TYBoolean(thisDouble == objLong);
+                return TYBoolean.valueFor(thisDouble == objLong);
                 
             } else if (obj instanceof TYFloat) {
                 
                 double objDouble = ((TYFloat) obj).getInternalDouble();
                 
-                return new TYBoolean(thisDouble == objDouble);
+                return TYBoolean.valueFor(thisDouble == objDouble);
             }
             
             return TYBoolean.FALSE;

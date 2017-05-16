@@ -13,7 +13,7 @@ public class TYBoolean extends TYObject {
     
     private boolean internalBoolean;
     
-    public TYBoolean(boolean internal) {
+    private TYBoolean(boolean internal) {
         
         super(ClassRegistry.getClass("Boolean"));
         
@@ -23,5 +23,17 @@ public class TYBoolean extends TYObject {
     public boolean getInternalBoolean() {
         
         return internalBoolean;
+    }
+    
+    public static TYBoolean valueFor(boolean b) {
+        
+        if (b) {
+            
+            return TRUE;
+            
+        } else {
+            
+            return FALSE;
+        }
     }
 }

@@ -66,19 +66,19 @@ class NativeInt {
                 
                 int objInt = ((TYInt) obj).getInternalInteger();
                 
-                return new TYBoolean(thisInt == objInt);
+                return TYBoolean.valueFor(thisInt == objInt);
                 
             } else if (obj instanceof TYLong) {
                 
                 long objLong = ((TYLong) obj).getInternalLong();
                 
-                return new TYBoolean(thisInt == objLong);
+                return TYBoolean.valueFor(thisInt == objLong);
                 
             } else if (obj instanceof TYFloat) {
                 
                 double objDouble = ((TYFloat) obj).getInternalDouble();
                 
-                return new TYBoolean(thisInt == objDouble);
+                return TYBoolean.valueFor(thisInt == objDouble);
             }
             
             return TYBoolean.FALSE;

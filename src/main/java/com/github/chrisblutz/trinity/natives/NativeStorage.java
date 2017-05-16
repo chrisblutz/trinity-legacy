@@ -153,7 +153,7 @@ public class NativeStorage {
         
         if (!methodStatic.containsKey(tyMethod)) {
             
-            methodStatic.put(tyMethod, new TYBoolean(tyMethod.isStaticMethod()));
+            methodStatic.put(tyMethod, TYBoolean.valueFor(tyMethod.isStaticMethod()));
         }
         
         return methodStatic.get(tyMethod);
@@ -163,7 +163,7 @@ public class NativeStorage {
         
         if (!methodNative.containsKey(tyMethod)) {
             
-            methodNative.put(tyMethod, new TYBoolean(tyMethod.isNativeMethod()));
+            methodNative.put(tyMethod, TYBoolean.valueFor(tyMethod.isNativeMethod()));
         }
         
         return methodNative.get(tyMethod);
@@ -173,7 +173,7 @@ public class NativeStorage {
         
         if (!methodSecure.containsKey(tyMethod)) {
             
-            methodSecure.put(tyMethod, new TYBoolean(tyMethod.isSecureMethod()));
+            methodSecure.put(tyMethod, TYBoolean.valueFor(tyMethod.isSecureMethod()));
         }
         
         return methodSecure.get(tyMethod);

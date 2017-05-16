@@ -10,3 +10,6 @@ module Trinity
 
             def groups
                 @groups
+
+            def toString
+                str = getClass().toString() + '[Matches: ' + matches() + ', ' + groups().length() + ' group(s)]'

@@ -127,7 +127,7 @@ public class InstructionSet extends ObjectEvaluator {
                 
             } else if (tokens[0].getToken() == Token.BLOCK_CHECK) {
                 
-                return new TYBoolean(runtime.getProcedure() != null);
+                return TYBoolean.valueFor(runtime.getProcedure() != null);
                 
             } else if (tokens[0].getToken() == Token.BREAK) {
                 
