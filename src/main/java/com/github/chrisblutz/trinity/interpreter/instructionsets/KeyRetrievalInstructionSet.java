@@ -1,7 +1,6 @@
 package com.github.chrisblutz.trinity.interpreter.instructionsets;
 
 import com.github.chrisblutz.trinity.lang.TYObject;
-import com.github.chrisblutz.trinity.lang.errors.stacktrace.TYStackTrace;
 import com.github.chrisblutz.trinity.lang.scope.TYRuntime;
 import com.github.chrisblutz.trinity.lang.types.bool.TYBoolean;
 import com.github.chrisblutz.trinity.parser.tokens.Token;
@@ -22,7 +21,7 @@ public class KeyRetrievalInstructionSet extends InstructionSet {
         super(tokens, fileName, fullFile, lineNumber);
     }
     
-    public TYObject evaluate(TYObject thisObj, TYRuntime runtime, TYStackTrace stackTrace) {
+    public TYObject evaluate(TYObject thisObj, TYRuntime runtime) {
         
         if (getTokens().length >= 1) {
             
@@ -45,7 +44,7 @@ public class KeyRetrievalInstructionSet extends InstructionSet {
                     
                     for (ChainedInstructionSet set : getChildren()) {
                         
-                        TYObject obj = set.evaluate(TYObject.NONE, runtime, stackTrace);
+                        TYObject obj = set.evaluate(TYObject.NONE, runtime);
                         
                         if (obj != TYObject.NONE) {
                             
@@ -53,7 +52,7 @@ public class KeyRetrievalInstructionSet extends InstructionSet {
                         }
                     }
                     
-                    return keyObject.tyInvoke("[]", runtime, stackTrace, null, null, params.toArray(new TYObject[params.size()]));
+                    return keyObject.tyInvoke("[]", runtime, null, null, params.toArray(new TYObject[params.size()]));
                 }
             }
             
@@ -63,7 +62,7 @@ public class KeyRetrievalInstructionSet extends InstructionSet {
             
             for (ChainedInstructionSet set : getChildren()) {
                 
-                TYObject obj = set.evaluate(TYObject.NONE, runtime, stackTrace);
+                TYObject obj = set.evaluate(TYObject.NONE, runtime);
                 
                 if (obj != TYObject.NONE) {
                     
@@ -71,7 +70,7 @@ public class KeyRetrievalInstructionSet extends InstructionSet {
                 }
             }
             
-            return thisObj.tyInvoke("[]", runtime, stackTrace, null, null, params.toArray(new TYObject[params.size()]));
+            return thisObj.tyInvoke("[]", runtime, null, null, params.toArray(new TYObject[params.size()]));
         }
         
         return TYBoolean.NONE;

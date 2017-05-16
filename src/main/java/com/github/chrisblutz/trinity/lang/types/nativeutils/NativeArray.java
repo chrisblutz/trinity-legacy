@@ -19,43 +19,43 @@ class NativeArray {
     
     static void register() {
         
-        TrinityNatives.registerMethod("Array", "length", false, null, null, null, (runtime, stackTrace, thisObj, params) -> NativeStorage.getArrayLength(TrinityNatives.cast(TYArray.class, thisObj, stackTrace)));
-        TrinityNatives.registerMethod("Array", "add", false, new String[]{"value"}, null, null, (runtime, stackTrace, thisObj, params) -> {
+        TrinityNatives.registerMethod("Array", "length", false, null, null, null, (runtime, thisObj, params) -> NativeStorage.getArrayLength(TrinityNatives.cast(TYArray.class, thisObj)));
+        TrinityNatives.registerMethod("Array", "add", false, new String[]{"value"}, null, null, (runtime, thisObj, params) -> {
             
-            TYArray thisArray = TrinityNatives.cast(TYArray.class, thisObj, stackTrace);
+            TYArray thisArray = TrinityNatives.cast(TYArray.class, thisObj);
             
             NativeStorage.clearArrayData(thisArray);
             
             return TYBoolean.valueFor(thisArray.getInternalList().add(runtime.getVariable("value")));
         });
-        TrinityNatives.registerMethod("Array", "insert", false, new String[]{"index", "value"}, null, null, (runtime, stackTrace, thisObj, params) -> {
+        TrinityNatives.registerMethod("Array", "insert", false, new String[]{"index", "value"}, null, null, (runtime, thisObj, params) -> {
             
-            TYArray thisArray = TrinityNatives.cast(TYArray.class, thisObj, stackTrace);
+            TYArray thisArray = TrinityNatives.cast(TYArray.class, thisObj);
             
             NativeStorage.clearArrayData(thisArray);
             
-            thisArray.getInternalList().add(TrinityNatives.cast(TYInt.class, runtime.getVariable("index"), stackTrace).getInternalInteger(), runtime.getVariable("value"));
+            thisArray.getInternalList().add(TrinityNatives.cast(TYInt.class, runtime.getVariable("index")).getInternalInteger(), runtime.getVariable("value"));
             return TYObject.NONE;
         });
-        TrinityNatives.registerMethod("Array", "remove", false, new String[]{"index"}, null, null, (runtime, stackTrace, thisObj, params) -> {
+        TrinityNatives.registerMethod("Array", "remove", false, new String[]{"index"}, null, null, (runtime, thisObj, params) -> {
             
-            TYArray thisArray = TrinityNatives.cast(TYArray.class, thisObj, stackTrace);
+            TYArray thisArray = TrinityNatives.cast(TYArray.class, thisObj);
             
             NativeStorage.clearArrayData(thisArray);
             
-            return thisArray.getInternalList().remove(TrinityNatives.cast(TYInt.class, runtime.getVariable("index"), stackTrace).getInternalInteger());
+            return thisArray.getInternalList().remove(TrinityNatives.cast(TYInt.class, runtime.getVariable("index")).getInternalInteger());
         });
-        TrinityNatives.registerMethod("Array", "removeObject", false, new String[]{"value"}, null, null, (runtime, stackTrace, thisObj, params) -> {
+        TrinityNatives.registerMethod("Array", "removeObject", false, new String[]{"value"}, null, null, (runtime, thisObj, params) -> {
             
-            TYArray thisArray = TrinityNatives.cast(TYArray.class, thisObj, stackTrace);
+            TYArray thisArray = TrinityNatives.cast(TYArray.class, thisObj);
             
             NativeStorage.clearArrayData(thisArray);
             
             return TYBoolean.valueFor(thisArray.getInternalList().remove(runtime.getVariable("value")));
         });
-        TrinityNatives.registerMethod("Array", "+", false, new String[]{"other"}, null, null, (runtime, stackTrace, thisObj, params) -> {
+        TrinityNatives.registerMethod("Array", "+", false, new String[]{"other"}, null, null, (runtime, thisObj, params) -> {
             
-            TYArray thisArray = TrinityNatives.cast(TYArray.class, thisObj, stackTrace);
+            TYArray thisArray = TrinityNatives.cast(TYArray.class, thisObj);
             List<TYObject> objects = new ArrayList<>();
             objects.addAll(thisArray.getInternalList());
             
@@ -72,14 +72,14 @@ class NativeArray {
             
             return new TYArray(objects);
         });
-        TrinityNatives.registerMethod("Array", "[]", false, new String[]{"index"}, null, null, (runtime, stackTrace, thisObj, params) -> {
+        TrinityNatives.registerMethod("Array", "[]", false, new String[]{"index"}, null, null, (runtime, thisObj, params) -> {
             
-            int index = TrinityNatives.cast(TYInt.class, runtime.getVariable("index"), stackTrace).getInternalInteger();
-            List<TYObject> thisList = TrinityNatives.cast(TYArray.class, thisObj, stackTrace).getInternalList();
+            int index = TrinityNatives.cast(TYInt.class, runtime.getVariable("index")).getInternalInteger();
+            List<TYObject> thisList = TrinityNatives.cast(TYArray.class, thisObj).getInternalList();
             
             if (index >= thisList.size() || index < 0) {
                 
-                TYError error = new TYError("Trinity.Errors.IndexOutOfBoundsError", "Index: " + index + ", Size: " + thisList.size(), stackTrace);
+                TYError error = new TYError("Trinity.Errors.IndexOutOfBoundsError", "Index: " + index + ", Size: " + thisList.size());
                 error.throwError();
             }
             

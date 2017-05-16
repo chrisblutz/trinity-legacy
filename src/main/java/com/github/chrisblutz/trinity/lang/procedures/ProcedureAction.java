@@ -1,7 +1,6 @@
 package com.github.chrisblutz.trinity.lang.procedures;
 
 import com.github.chrisblutz.trinity.lang.TYObject;
-import com.github.chrisblutz.trinity.lang.errors.stacktrace.TYStackTrace;
 import com.github.chrisblutz.trinity.lang.scope.TYRuntime;
 
 
@@ -10,5 +9,5 @@ import com.github.chrisblutz.trinity.lang.scope.TYRuntime;
  */
 public interface ProcedureAction {
     
-    TYObject onAction(TYRuntime runtime, TYStackTrace stackTrace, TYObject thisObj, TYObject... params);
+    TYObject onAction(TYRuntime runtime, TYObject thisObj, TYObject... params);
 }

@@ -1,7 +1,6 @@
 package com.github.chrisblutz.trinity.lang;
 
 import com.github.chrisblutz.trinity.lang.errors.TYError;
-import com.github.chrisblutz.trinity.lang.errors.stacktrace.TYStackTrace;
 import com.github.chrisblutz.trinity.lang.procedures.TYProcedure;
 import com.github.chrisblutz.trinity.lang.scope.TYRuntime;
 import com.github.chrisblutz.trinity.lang.types.TYNilClass;
@@ -37,11 +36,11 @@ public class TYObject {
         return superStack;
     }
     
-    public TYObject tyInvoke(String methodName, TYRuntime runtime, TYStackTrace stackTrace, TYProcedure procedure, TYRuntime procedureRuntime, TYObject... params) {
+    public TYObject tyInvoke(String methodName, TYRuntime runtime, TYProcedure procedure, TYRuntime procedureRuntime, TYObject... params) {
         
         if (superStack == 0) {
             
-            return getObjectClass().tyInvoke(methodName, runtime, stackTrace, procedure, procedureRuntime, this, params);
+            return getObjectClass().tyInvoke(methodName, runtime, procedure, procedureRuntime, this, params);
             
         } else {
             
@@ -52,7 +51,7 @@ public class TYObject {
                 
                 if (superClass == null) {
                     
-                    TYError error = new TYError("Trinity.Errors.InheritanceError", "Superclass does not exist.", stackTrace);
+                    TYError error = new TYError("Trinity.Errors.InheritanceError", "Superclass does not exist.");
                     error.throwError();
                     break;
                 }
@@ -62,7 +61,7 @@ public class TYObject {
             
             if (superClass != null) {
                 
-                obj = superClass.tyInvoke(methodName, runtime, stackTrace, procedure, procedureRuntime, this, params);
+                obj = superClass.tyInvoke(methodName, runtime, procedure, procedureRuntime, this, params);
             }
             
             superStack--;

@@ -1,7 +1,6 @@
 package com.github.chrisblutz.trinity.interpreter.instructionsets;
 
 import com.github.chrisblutz.trinity.lang.TYObject;
-import com.github.chrisblutz.trinity.lang.errors.stacktrace.TYStackTrace;
 import com.github.chrisblutz.trinity.lang.procedures.ProcedureAction;
 import com.github.chrisblutz.trinity.lang.scope.TYRuntime;
 import com.github.chrisblutz.trinity.lang.types.bool.TYBoolean;
@@ -55,7 +54,7 @@ public class BranchingIfInstructionSet extends ChainedInstructionSet {
         this.child = child;
     }
     
-    public TYObject evaluate(TYObject thisObj, TYRuntime runtime, TYStackTrace stackTrace) {
+    public TYObject evaluate(TYObject thisObj, TYRuntime runtime) {
         
         TYRuntime newRuntime = runtime.clone();
         
@@ -63,25 +62,25 @@ public class BranchingIfInstructionSet extends ChainedInstructionSet {
         
         if (getBranchToken() == Token.IF || getBranchToken() == Token.ELSIF) {
             
-            TYBoolean expBoolean = TrinityNatives.cast(TYBoolean.class, getExpression().evaluate(TYObject.NONE, newRuntime, stackTrace), stackTrace);
+            TYBoolean expBoolean = TrinityNatives.cast(TYBoolean.class, getExpression().evaluate(TYObject.NONE, newRuntime));
             
             if (expBoolean.getInternalBoolean()) {
                 
                 if (getAction() != null) {
                     
-                    result = getAction().onAction(newRuntime, stackTrace, null, TYObject.NONE);
+                    result = getAction().onAction(newRuntime, null, TYObject.NONE);
                 }
                 
             } else if (getChild() != null) {
                 
-                result = getChild().evaluate(TYObject.NONE, newRuntime, stackTrace);
+                result = getChild().evaluate(TYObject.NONE, newRuntime);
             }
             
         } else if (getBranchToken() == Token.ELSE) {
             
             if (getAction() != null) {
                 
-                result = getAction().onAction(newRuntime, stackTrace, null, TYObject.NONE);
+                result = getAction().onAction(newRuntime, null, TYObject.NONE);
             }
         }
         

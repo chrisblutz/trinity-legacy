@@ -1,7 +1,6 @@
 package com.github.chrisblutz.trinity.interpreter.instructionsets;
 
 import com.github.chrisblutz.trinity.lang.TYObject;
-import com.github.chrisblutz.trinity.lang.errors.stacktrace.TYStackTrace;
 import com.github.chrisblutz.trinity.lang.procedures.TYProcedure;
 import com.github.chrisblutz.trinity.lang.scope.TYRuntime;
 
@@ -50,7 +49,7 @@ public abstract class ObjectEvaluator {
         this.procedure = procedure;
     }
     
-    public abstract TYObject evaluate(TYObject thisObj, TYRuntime runtime, TYStackTrace stackTrace);
+    public abstract TYObject evaluate(TYObject thisObj, TYRuntime runtime);
     
     public abstract String toString(String indent);
 }

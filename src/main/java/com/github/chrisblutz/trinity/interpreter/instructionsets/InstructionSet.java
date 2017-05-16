@@ -3,7 +3,6 @@ package com.github.chrisblutz.trinity.interpreter.instructionsets;
 import com.github.chrisblutz.trinity.interpreter.variables.Variables;
 import com.github.chrisblutz.trinity.lang.*;
 import com.github.chrisblutz.trinity.lang.errors.TYError;
-import com.github.chrisblutz.trinity.lang.errors.stacktrace.TYStackTrace;
 import com.github.chrisblutz.trinity.lang.scope.TYRuntime;
 import com.github.chrisblutz.trinity.lang.types.TYClassObject;
 import com.github.chrisblutz.trinity.lang.types.TYModuleObject;
@@ -54,7 +53,7 @@ public class InstructionSet extends ObjectEvaluator {
         return children;
     }
     
-    public TYObject evaluate(TYObject thisObj, TYRuntime runtime, TYStackTrace stackTrace) {
+    public TYObject evaluate(TYObject thisObj, TYRuntime runtime) {
         
         if (tokens.length >= 1) {
             
@@ -142,7 +141,7 @@ public class InstructionSet extends ObjectEvaluator {
                     
                 } else {
                     
-                    TYError error = new TYError("Trinity.Errors.SyntaxError", "Cannot retrieve a class here.", stackTrace);
+                    TYError error = new TYError("Trinity.Errors.SyntaxError", "Cannot retrieve a class here.");
                     error.throwError();
                 }
                 
@@ -154,7 +153,7 @@ public class InstructionSet extends ObjectEvaluator {
                     
                 } else {
                     
-                    TYError error = new TYError("Trinity.Errors.SyntaxError", "Cannot retrieve a module here.", stackTrace);
+                    TYError error = new TYError("Trinity.Errors.SyntaxError", "Cannot retrieve a module here.");
                     error.throwError();
                 }
                 
@@ -170,13 +169,13 @@ public class InstructionSet extends ObjectEvaluator {
                         
                     } else {
                         
-                        TYError error = new TYError("Trinity.Errors.FieldNotFoundError", "Instance variable '" + varName + "' not found.", stackTrace);
+                        TYError error = new TYError("Trinity.Errors.FieldNotFoundError", "Instance variable '" + varName + "' not found.");
                         error.throwError();
                     }
                     
                 } else {
                     
-                    TYError error = new TYError("Trinity.Errors.ScopeError", "Instance variable '" + varName + "' not accessible from a static context.", stackTrace);
+                    TYError error = new TYError("Trinity.Errors.ScopeError", "Instance variable '" + varName + "' not accessible from a static context.");
                     error.throwError();
                 }
                 
@@ -190,7 +189,7 @@ public class InstructionSet extends ObjectEvaluator {
                     
                 } else {
                     
-                    TYError error = new TYError("Trinity.Errors.FieldNotFoundError", "Class field '" + varName + "' not found.", stackTrace);
+                    TYError error = new TYError("Trinity.Errors.FieldNotFoundError", "Class field '" + varName + "' not found.");
                     error.throwError();
                 }
                 
@@ -228,7 +227,7 @@ public class InstructionSet extends ObjectEvaluator {
                             
                             TYObject obj;
                             
-                            obj = set.evaluate(TYObject.NONE, runtime, stackTrace);
+                            obj = set.evaluate(TYObject.NONE, runtime);
                             
                             if (obj != TYObject.NONE) {
                                 
@@ -238,11 +237,11 @@ public class InstructionSet extends ObjectEvaluator {
                         
                         if (runtime.isStaticScope()) {
                             
-                            return TrinityNatives.cast(TYClassObject.class, runtime.getScope(), stackTrace).getInternalClass().tyInvoke(tokenContents, runtime, stackTrace, getProcedure(), runtime, TYObject.NONE, params.toArray(new TYObject[params.size()]));
+                            return TrinityNatives.cast(TYClassObject.class, runtime.getScope()).getInternalClass().tyInvoke(tokenContents, runtime, getProcedure(), runtime, TYObject.NONE, params.toArray(new TYObject[params.size()]));
                             
                         } else {
                             
-                            return runtime.getScope().tyInvoke(tokenContents, runtime, stackTrace, getProcedure(), runtime, params.toArray(new TYObject[params.size()]));
+                            return runtime.getScope().tyInvoke(tokenContents, runtime, getProcedure(), runtime, params.toArray(new TYObject[params.size()]));
                         }
                     }
                     
@@ -266,7 +265,7 @@ public class InstructionSet extends ObjectEvaluator {
                     
                     for (ChainedInstructionSet set : getChildren()) {
                         
-                        TYObject obj = set.evaluate(TYObject.NONE, runtime, stackTrace);
+                        TYObject obj = set.evaluate(TYObject.NONE, runtime);
                         
                         if (obj != TYObject.NONE) {
                             
@@ -274,7 +273,7 @@ public class InstructionSet extends ObjectEvaluator {
                         }
                     }
                     
-                    return thisObj.tyInvoke(tokenContents, runtime, stackTrace, getProcedure(), runtime, params.toArray(new TYObject[params.size()]));
+                    return thisObj.tyInvoke(tokenContents, runtime, getProcedure(), runtime, params.toArray(new TYObject[params.size()]));
                     
                 } else if (thisObj instanceof TYStaticClassObject) {
                     
@@ -291,7 +290,7 @@ public class InstructionSet extends ObjectEvaluator {
                         
                         for (ChainedInstructionSet set : getChildren()) {
                             
-                            TYObject obj = set.evaluate(TYObject.NONE, runtime, stackTrace);
+                            TYObject obj = set.evaluate(TYObject.NONE, runtime);
                             
                             if (obj != TYObject.NONE) {
                                 
@@ -299,7 +298,7 @@ public class InstructionSet extends ObjectEvaluator {
                             }
                         }
                         
-                        return classObject.getInternalClass().tyInvoke(tokenContents, runtime, stackTrace, getProcedure(), runtime, TYObject.NONE, params.toArray(new TYObject[params.size()]));
+                        return classObject.getInternalClass().tyInvoke(tokenContents, runtime, getProcedure(), runtime, TYObject.NONE, params.toArray(new TYObject[params.size()]));
                     }
                     
                 } else if (thisObj instanceof TYClassObject) {
@@ -307,7 +306,7 @@ public class InstructionSet extends ObjectEvaluator {
                     List<TYObject> params = new ArrayList<>();
                     for (ChainedInstructionSet set : getChildren()) {
                         
-                        TYObject obj = set.evaluate(TYObject.NONE, runtime, stackTrace);
+                        TYObject obj = set.evaluate(TYObject.NONE, runtime);
                         
                         if (obj != TYObject.NONE) {
                             
@@ -315,7 +314,7 @@ public class InstructionSet extends ObjectEvaluator {
                         }
                     }
                     
-                    return thisObj.tyInvoke(tokenContents, runtime, stackTrace, getProcedure(), runtime, params.toArray(new TYObject[params.size()]));
+                    return thisObj.tyInvoke(tokenContents, runtime, getProcedure(), runtime, params.toArray(new TYObject[params.size()]));
                     
                 } else {
                     
@@ -323,7 +322,7 @@ public class InstructionSet extends ObjectEvaluator {
                     
                     for (ChainedInstructionSet set : getChildren()) {
                         
-                        TYObject obj = set.evaluate(TYObject.NONE, runtime, stackTrace);
+                        TYObject obj = set.evaluate(TYObject.NONE, runtime);
                         
                         if (obj != TYObject.NONE) {
                             
@@ -331,7 +330,7 @@ public class InstructionSet extends ObjectEvaluator {
                         }
                     }
                     
-                    return thisObj.tyInvoke(tokenContents, runtime, stackTrace, getProcedure(), runtime, params.toArray(new TYObject[params.size()]));
+                    return thisObj.tyInvoke(tokenContents, runtime, getProcedure(), runtime, params.toArray(new TYObject[params.size()]));
                 }
             }
         }

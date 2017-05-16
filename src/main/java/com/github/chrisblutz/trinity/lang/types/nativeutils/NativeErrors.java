@@ -2,6 +2,7 @@ package com.github.chrisblutz.trinity.lang.types.nativeutils;
 
 import com.github.chrisblutz.trinity.interpreter.variables.Variables;
 import com.github.chrisblutz.trinity.lang.TYObject;
+import com.github.chrisblutz.trinity.lang.errors.stacktrace.TYStackTrace;
 import com.github.chrisblutz.trinity.lang.errors.stacktrace.TYStackTraceElement;
 import com.github.chrisblutz.trinity.lang.types.arrays.TYArray;
 import com.github.chrisblutz.trinity.lang.types.numeric.TYInt;
@@ -18,13 +19,13 @@ class NativeErrors {
     
     static void register() {
         
-        TrinityNatives.registerMethod("Trinity.Errors.Error", "populateStackTrace", false, null, null, null, (runtime, stackTrace, thisObj, params) -> {
+        TrinityNatives.registerMethod("Trinity.Errors.Error", "populateStackTrace", false, null, null, null, (runtime, thisObj, params) -> {
             
             TYArray ary = new TYArray(new ArrayList<>());
             
-            for (int i = 2 + thisObj.getSuperStackLevel(); i < stackTrace.getStackTrace().length; i++) {
+            for (int i = 2 + thisObj.getSuperStackLevel(); i < TYStackTrace.getStackTrace().length; i++) {
                 
-                TYStackTraceElement e = stackTrace.getStackTrace()[i];
+                TYStackTraceElement e = TYStackTrace.getStackTrace()[i];
                 
                 TYObject errorClass;
                 if (e.getErrorClass() != null) {
@@ -57,7 +58,7 @@ class NativeErrors {
                 }
                 
                 TYObject line = new TYInt(e.getLine());
-                TYObject stackTraceInstance = TrinityNatives.newInstance("Trinity.Errors.StackTraceElement", runtime, stackTrace, errorClass, method, fileName, line);
+                TYObject stackTraceInstance = TrinityNatives.newInstance("Trinity.Errors.StackTraceElement", runtime, errorClass, method, fileName, line);
                 ary.getInternalList().add(stackTraceInstance);
             }
             

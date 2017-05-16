@@ -2,7 +2,6 @@ package com.github.chrisblutz.trinity.lang.types.nativeutils;
 
 import com.github.chrisblutz.trinity.lang.TYObject;
 import com.github.chrisblutz.trinity.lang.errors.TYError;
-import com.github.chrisblutz.trinity.lang.errors.stacktrace.TYStackTrace;
 import com.github.chrisblutz.trinity.lang.procedures.ProcedureAction;
 import com.github.chrisblutz.trinity.lang.types.bool.TYBoolean;
 import com.github.chrisblutz.trinity.lang.types.numeric.TYFloat;
@@ -24,10 +23,10 @@ class NativeFloat {
         TrinityNatives.registerMethod("Float", "*", false, new String[]{"other"}, null, null, getActionForOperation("*"));
         TrinityNatives.registerMethod("Float", "/", false, new String[]{"other"}, null, null, getActionForOperation("/"));
         TrinityNatives.registerMethod("Float", "%", false, new String[]{"other"}, null, null, getActionForOperation("%"));
-        TrinityNatives.registerMethod("Float", "toString", false, null, null, null, (runtime, stackTrace, thisObj, params) -> new TYString(Double.toString(TrinityNatives.cast(TYFloat.class, thisObj, stackTrace).getInternalDouble())));
-        TrinityNatives.registerMethod("Float", "compareTo", false, new String[]{"other"}, null, null, (runtime, stackTrace, thisObj, params) -> {
+        TrinityNatives.registerMethod("Float", "toString", false, null, null, null, (runtime, thisObj, params) -> new TYString(Double.toString(TrinityNatives.cast(TYFloat.class, thisObj).getInternalDouble())));
+        TrinityNatives.registerMethod("Float", "compareTo", false, new String[]{"other"}, null, null, (runtime, thisObj, params) -> {
             
-            double thisDouble = TrinityNatives.cast(TYFloat.class, thisObj, stackTrace).getInternalDouble();
+            double thisDouble = TrinityNatives.cast(TYFloat.class, thisObj).getInternalDouble();
             TYObject obj = runtime.getVariable("other");
             
             if (obj instanceof TYInt) {
@@ -50,15 +49,15 @@ class NativeFloat {
                 
             } else {
                 
-                TYError error = new TYError("Trinity.Errors.InvalidTypeError", "Cannot compare types " + thisObj.getObjectClass().getName() + " and " + obj.getObjectClass().getName() + ".", stackTrace);
+                TYError error = new TYError("Trinity.Errors.InvalidTypeError", "Cannot compare types " + thisObj.getObjectClass().getName() + " and " + obj.getObjectClass().getName() + ".");
                 error.throwError();
             }
             
             return new TYInt(-1);
         });
-        TrinityNatives.registerMethod("Float", "==", false, new String[]{"other"}, null, null, (runtime, stackTrace, thisObj, params) -> {
+        TrinityNatives.registerMethod("Float", "==", false, new String[]{"other"}, null, null, (runtime, thisObj, params) -> {
             
-            double thisDouble = TrinityNatives.cast(TYFloat.class, thisObj, stackTrace).getInternalDouble();
+            double thisDouble = TrinityNatives.cast(TYFloat.class, thisObj).getInternalDouble();
             TYObject obj = runtime.getVariable("other");
             
             if (obj instanceof TYInt) {
@@ -86,9 +85,9 @@ class NativeFloat {
     
     private static ProcedureAction getActionForOperation(String operation) {
         
-        return (runtime, stackTrace, thisObj, params) -> {
+        return (runtime, thisObj, params) -> {
             
-            double thisDouble = TrinityNatives.cast(TYFloat.class, thisObj, stackTrace).getInternalDouble();
+            double thisDouble = TrinityNatives.cast(TYFloat.class, thisObj).getInternalDouble();
             
             TYObject returnVal;
             
@@ -97,21 +96,21 @@ class NativeFloat {
             if (obj instanceof TYInt) {
                 
                 int newInt = ((TYInt) obj).getInternalInteger();
-                returnVal = new TYFloat(doubleCalculation(thisDouble, newInt, operation, stackTrace));
+                returnVal = new TYFloat(doubleCalculation(thisDouble, newInt, operation));
                 
             } else if (obj instanceof TYLong) {
                 
                 long newLong = ((TYLong) obj).getInternalLong();
-                returnVal = new TYFloat(doubleCalculation(thisDouble, newLong, operation, stackTrace));
+                returnVal = new TYFloat(doubleCalculation(thisDouble, newLong, operation));
                 
             } else if (obj instanceof TYFloat) {
                 
                 double newDouble = ((TYFloat) obj).getInternalDouble();
-                returnVal = new TYFloat(doubleCalculation(thisDouble, newDouble, operation, stackTrace));
+                returnVal = new TYFloat(doubleCalculation(thisDouble, newDouble, operation));
                 
             } else {
                 
-                TYError error = new TYError("Trinity.Errors.InvalidTypeError", "Invalid type passed to '" + operation + "'.", stackTrace);
+                TYError error = new TYError("Trinity.Errors.InvalidTypeError", "Invalid type passed to '" + operation + "'.");
                 error.throwError();
                 
                 returnVal = TYObject.NONE;
@@ -121,7 +120,7 @@ class NativeFloat {
         };
     }
     
-    private static double doubleCalculation(double double1, int int1, String operation, TYStackTrace stackTrace) {
+    private static double doubleCalculation(double double1, int int1, String operation) {
         
         switch (operation) {
             
@@ -147,14 +146,14 @@ class NativeFloat {
             
             default:
                 
-                TYError error = new TYError("Trinity.Errors.UnsupportedOperationError", "Operation '" + operation + "' not supported.", stackTrace);
+                TYError error = new TYError("Trinity.Errors.UnsupportedOperationError", "Operation '" + operation + "' not supported.");
                 error.throwError();
                 
                 return double1;
         }
     }
     
-    private static double doubleCalculation(double double1, double double2, String operation, TYStackTrace stackTrace) {
+    private static double doubleCalculation(double double1, double double2, String operation) {
         
         switch (operation) {
             
@@ -180,7 +179,7 @@ class NativeFloat {
             
             default:
                 
-                TYError error = new TYError("Trinity.Errors.UnsupportedOperationError", "Operation '" + operation + "' not supported.", stackTrace);
+                TYError error = new TYError("Trinity.Errors.UnsupportedOperationError", "Operation '" + operation + "' not supported.");
                 error.throwError();
                 
                 return double1;

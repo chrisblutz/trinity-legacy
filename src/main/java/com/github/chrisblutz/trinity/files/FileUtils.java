@@ -2,7 +2,6 @@ package com.github.chrisblutz.trinity.files;
 
 import com.github.chrisblutz.trinity.lang.TYObject;
 import com.github.chrisblutz.trinity.lang.errors.TYError;
-import com.github.chrisblutz.trinity.lang.errors.stacktrace.TYStackTrace;
 import com.github.chrisblutz.trinity.lang.types.strings.TYString;
 
 import java.io.File;
@@ -24,7 +23,7 @@ public class FileUtils {
     private static Map<String, Boolean> fileAppending = new HashMap<>();
     private static Map<String, Boolean> hasWritten = new HashMap<>();
     
-    public static void open(String fileName, List<FilePrivilege> privileges, boolean append, TYStackTrace stackTrace) {
+    public static void open(String fileName, List<FilePrivilege> privileges, boolean append) {
         
         StringBuilder sb = new StringBuilder("");
         try {
@@ -43,12 +42,12 @@ public class FileUtils {
             
         } catch (FileNotFoundException e) {
             
-            TYError error = new TYError("Trinity.Errors.IOError", "File '" + fileName + "' not found.", stackTrace);
+            TYError error = new TYError("Trinity.Errors.IOError", "File '" + fileName + "' not found.");
             error.throwError();
         }
     }
     
-    public static TYObject read(String fileName, TYStackTrace stackTrace) {
+    public static TYObject read(String fileName) {
         
         if (filePrivileges.containsKey(fileName)) {
             
@@ -59,20 +58,20 @@ public class FileUtils {
                 
             } else {
                 
-                TYError error = new TYError("Trinity.Errors.IOError", "File '" + fileName + "' not open with reading privileges.", stackTrace);
+                TYError error = new TYError("Trinity.Errors.IOError", "File '" + fileName + "' not open with reading privileges.");
                 error.throwError();
             }
             
         } else {
             
-            TYError error = new TYError("Trinity.Errors.IOError", "File '" + fileName + "' not open.", stackTrace);
+            TYError error = new TYError("Trinity.Errors.IOError", "File '" + fileName + "' not open.");
             error.throwError();
         }
         
         return TYObject.NIL;
     }
     
-    public static void write(String fileName, String str, TYStackTrace stackTrace) {
+    public static void write(String fileName, String str) {
         
         if (filePrivileges.containsKey(fileName)) {
             
@@ -92,18 +91,18 @@ public class FileUtils {
                 
             } else {
                 
-                TYError error = new TYError("Trinity.Errors.IOError", "File '" + fileName + "' not open with writing privileges.", stackTrace);
+                TYError error = new TYError("Trinity.Errors.IOError", "File '" + fileName + "' not open with writing privileges.");
                 error.throwError();
             }
             
         } else {
             
-            TYError error = new TYError("Trinity.Errors.IOError", "File '" + fileName + "' not open.", stackTrace);
+            TYError error = new TYError("Trinity.Errors.IOError", "File '" + fileName + "' not open.");
             error.throwError();
         }
     }
     
-    public static void close(String fileName, TYStackTrace stackTrace) {
+    public static void close(String fileName) {
         
         if (filePrivileges.containsKey(fileName)) {
             
@@ -118,7 +117,7 @@ public class FileUtils {
                     
                 } catch (FileNotFoundException e) {
                     
-                    TYError error = new TYError("Trinity.Errors.IOError", "File '" + fileName + "' not found.", stackTrace);
+                    TYError error = new TYError("Trinity.Errors.IOError", "File '" + fileName + "' not found.");
                     error.throwError();
                 }
             }
@@ -130,7 +129,7 @@ public class FileUtils {
             
         } else {
             
-            TYError error = new TYError("Trinity.Errors.IOError", "File '" + fileName + "' not open.", stackTrace);
+            TYError error = new TYError("Trinity.Errors.IOError", "File '" + fileName + "' not open.");
             error.throwError();
         }
     }

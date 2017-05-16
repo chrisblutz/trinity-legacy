@@ -88,25 +88,25 @@ public class ExpressionInterpreter {
             }
         }
         
-        return (runtime, stackTrace, thisObj, params) -> {
+        return (runtime, thisObj, params) -> {
             
             TYObject returnObj = TYObject.NONE;
             
             for (ChainedInstructionSet set : sets) {
                 
-                TYStackTrace newTrace = stackTrace.clone();
+                if (!includeStackTrace) {
+                    
+                    TYStackTrace.pop();
+                }
+                
+                TYStackTrace.add(errorClass, method, set.getFileName(), set.getLineNumber());
+                
+                TYObject result = set.evaluate(TYObject.NONE, runtime);
                 
                 if (includeStackTrace) {
                     
-                    newTrace.add(errorClass, method, set.getFileName(), set.getLineNumber());
-                    
-                } else {
-                    
-                    newTrace.pop();
-                    newTrace.add(errorClass, method, set.getFileName(), set.getLineNumber());
+                    TYStackTrace.pop();
                 }
-                
-                TYObject result = set.evaluate(TYObject.NONE, runtime, newTrace);
                 
                 if (result != null && !runtime.isReturning()) {
                     
@@ -1001,7 +1001,7 @@ public class ExpressionInterpreter {
                 
                 if (value != null) {
                     
-                    valueResult = value.evaluate(TYObject.NONE, new TYRuntime(), new TYStackTrace());
+                    valueResult = value.evaluate(TYObject.NONE, new TYRuntime());
                 }
                 
                 optParams.put(list.get(0).getContents(), valueResult);

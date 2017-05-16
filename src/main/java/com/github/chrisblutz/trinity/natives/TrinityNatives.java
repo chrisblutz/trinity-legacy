@@ -37,12 +37,15 @@ public class TrinityNatives {
     
     public static void registerMethod(String className, String methodName, boolean staticMethod, String[] mandatoryParams, Map<String, TYObject> optionalParams, String blockParam, ProcedureAction action) {
         
-        ProcedureAction actionWithStackTrace = (runtime, stackTrace, thisObj, params) -> {
+        ProcedureAction actionWithStackTrace = (runtime, thisObj, params) -> {
             
-            TYStackTrace newTrace = stackTrace.clone();
-            newTrace.add(className, methodName, null, 0);
+            TYStackTrace.add(className, methodName, null, 0);
             
-            return action.onAction(runtime, newTrace, thisObj, params);
+            TYObject result = action.onAction(runtime, thisObj, params);
+            
+            TYStackTrace.pop();
+            
+            return result;
         };
         
         List<String> mandatoryParamsList;
@@ -232,15 +235,15 @@ public class TrinityNatives {
     
     public static TYObject newInstance(String className, TYObject... args) {
         
-        return newInstance(className, new TYRuntime(), new TYStackTrace(), args);
+        return newInstance(className, new TYRuntime(), args);
     }
     
-    public static TYObject newInstance(String className, TYRuntime runtime, TYStackTrace stackTrace, TYObject... args) {
+    public static TYObject newInstance(String className, TYRuntime runtime, TYObject... args) {
         
-        return ClassRegistry.getClass(className).tyInvoke("new", runtime, stackTrace, null, null, TYObject.NONE, args);
+        return ClassRegistry.getClass(className).tyInvoke("new", runtime, null, null, TYObject.NONE, args);
     }
     
-    public static <T extends TYObject> T cast(Class<T> desiredClass, TYObject object, TYStackTrace stackTrace) {
+    public static <T extends TYObject> T cast(Class<T> desiredClass, TYObject object) {
         
         if (desiredClass.isInstance(object)) {
             
@@ -248,7 +251,7 @@ public class TrinityNatives {
             
         } else {
             
-            TYError error = new TYError("Trinity.Errors.InvalidTypeError", "Unexpected value of type " + object.getObjectClass().getName() + " found.", stackTrace);
+            TYError error = new TYError("Trinity.Errors.InvalidTypeError", "Unexpected value of type " + object.getObjectClass().getName() + " found.");
             error.throwError();
             
             // This will throw an error, but the program will exit at the line above, never reaching this point

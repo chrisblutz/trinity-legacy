@@ -2,7 +2,6 @@ package com.github.chrisblutz.trinity.lang.types.nativeutils;
 
 import com.github.chrisblutz.trinity.lang.TYObject;
 import com.github.chrisblutz.trinity.lang.errors.TYError;
-import com.github.chrisblutz.trinity.lang.errors.stacktrace.TYStackTrace;
 import com.github.chrisblutz.trinity.lang.procedures.ProcedureAction;
 import com.github.chrisblutz.trinity.lang.types.bool.TYBoolean;
 import com.github.chrisblutz.trinity.lang.types.numeric.TYFloat;
@@ -24,11 +23,11 @@ class NativeInt {
         TrinityNatives.registerMethod("Int", "*", false, new String[]{"other"}, null, null, getActionForOperation("*"));
         TrinityNatives.registerMethod("Int", "/", false, new String[]{"other"}, null, null, getActionForOperation("/"));
         TrinityNatives.registerMethod("Int", "%", false, new String[]{"other"}, null, null, getActionForOperation("%"));
-        TrinityNatives.registerMethod("Int", "toString", false, null, null, null, (runtime, stackTrace, thisObj, params) -> new TYString(Integer.toString(TrinityNatives.cast(TYInt.class, thisObj, stackTrace).getInternalInteger())));
-        TrinityNatives.registerMethod("Int", "toHexString", false, null, null, null, (runtime, stackTrace, thisObj, params) -> new TYString(Integer.toHexString(TrinityNatives.cast(TYInt.class, thisObj, stackTrace).getInternalInteger())));
-        TrinityNatives.registerMethod("Int", "compareTo", false, new String[]{"other"}, null, null, (runtime, stackTrace, thisObj, params) -> {
+        TrinityNatives.registerMethod("Int", "toString", false, null, null, null, (runtime, thisObj, params) -> new TYString(Integer.toString(TrinityNatives.cast(TYInt.class, thisObj).getInternalInteger())));
+        TrinityNatives.registerMethod("Int", "toHexString", false, null, null, null, (runtime, thisObj, params) -> new TYString(Integer.toHexString(TrinityNatives.cast(TYInt.class, thisObj).getInternalInteger())));
+        TrinityNatives.registerMethod("Int", "compareTo", false, new String[]{"other"}, null, null, (runtime, thisObj, params) -> {
             
-            int thisInt = TrinityNatives.cast(TYInt.class, thisObj, stackTrace).getInternalInteger();
+            int thisInt = TrinityNatives.cast(TYInt.class, thisObj).getInternalInteger();
             TYObject obj = runtime.getVariable("other");
             
             if (obj instanceof TYInt) {
@@ -51,15 +50,15 @@ class NativeInt {
                 
             } else {
                 
-                TYError error = new TYError("Trinity.Errors.InvalidTypeError", "Cannot compare types " + thisObj.getObjectClass().getName() + " and " + obj.getObjectClass().getName() + ".", stackTrace);
+                TYError error = new TYError("Trinity.Errors.InvalidTypeError", "Cannot compare types " + thisObj.getObjectClass().getName() + " and " + obj.getObjectClass().getName() + ".");
                 error.throwError();
             }
             
             return new TYInt(-1);
         });
-        TrinityNatives.registerMethod("Int", "==", false, new String[]{"other"}, null, null, (runtime, stackTrace, thisObj, params) -> {
+        TrinityNatives.registerMethod("Int", "==", false, new String[]{"other"}, null, null, (runtime, thisObj, params) -> {
             
-            int thisInt = TrinityNatives.cast(TYInt.class, thisObj, stackTrace).getInternalInteger();
+            int thisInt = TrinityNatives.cast(TYInt.class, thisObj).getInternalInteger();
             TYObject obj = runtime.getVariable("other");
             
             if (obj instanceof TYInt) {
@@ -89,9 +88,9 @@ class NativeInt {
     
     private static ProcedureAction getActionForOperation(String operation) {
         
-        return (runtime, stackTrace, thisObj, params) -> {
+        return (runtime, thisObj, params) -> {
             
-            int thisInt = TrinityNatives.cast(TYInt.class, thisObj, stackTrace).getInternalInteger();
+            int thisInt = TrinityNatives.cast(TYInt.class, thisObj).getInternalInteger();
             
             TYObject returnVal;
             
@@ -100,7 +99,7 @@ class NativeInt {
             if (obj instanceof TYInt) {
                 
                 int newInt = ((TYInt) obj).getInternalInteger();
-                long result = intCalculation(thisInt, newInt, operation, stackTrace);
+                long result = intCalculation(thisInt, newInt, operation);
                 
                 if (overflow) {
                     
@@ -115,16 +114,16 @@ class NativeInt {
             } else if (obj instanceof TYFloat) {
                 
                 double newDouble = ((TYFloat) obj).getInternalDouble();
-                returnVal = new TYFloat(doubleCalculation(thisInt, newDouble, operation, stackTrace));
+                returnVal = new TYFloat(doubleCalculation(thisInt, newDouble, operation));
                 
             } else if (obj instanceof TYLong) {
                 
                 long newLong = ((TYLong) obj).getInternalLong();
-                returnVal = new TYLong(longCalculation(thisInt, newLong, operation, stackTrace));
+                returnVal = new TYLong(longCalculation(thisInt, newLong, operation));
                 
             } else {
                 
-                TYError error = new TYError("Trinity.Errors.InvalidTypeError", "Invalid type passed to '" + operation + "'.", stackTrace);
+                TYError error = new TYError("Trinity.Errors.InvalidTypeError", "Invalid type passed to '" + operation + "'.");
                 error.throwError();
                 
                 returnVal = TYObject.NONE;
@@ -134,7 +133,7 @@ class NativeInt {
         };
     }
     
-    private static long intCalculation(int int1, int int2, String operation, TYStackTrace stackTrace) {
+    private static long intCalculation(int int1, int int2, String operation) {
         
         try {
             
@@ -162,7 +161,7 @@ class NativeInt {
                 
                 default:
                     
-                    TYError error = new TYError("Trinity.Errors.UnsupportedOperationError", "Operation '" + operation + "' not supported.", stackTrace);
+                    TYError error = new TYError("Trinity.Errors.UnsupportedOperationError", "Operation '" + operation + "' not supported.");
                     error.throwError();
                     
                     return int1;
@@ -172,11 +171,11 @@ class NativeInt {
             
             overflow = true;
             
-            return longCalculation(int1, int2, operation, stackTrace);
+            return longCalculation(int1, int2, operation);
         }
     }
     
-    private static double doubleCalculation(int int1, double double1, String operation, TYStackTrace stackTrace) {
+    private static double doubleCalculation(int int1, double double1, String operation) {
         
         switch (operation) {
             
@@ -202,14 +201,14 @@ class NativeInt {
             
             default:
                 
-                TYError error = new TYError("Trinity.Errors.UnsupportedOperationError", "Operation '" + operation + "' not supported.", stackTrace);
+                TYError error = new TYError("Trinity.Errors.UnsupportedOperationError", "Operation '" + operation + "' not supported.");
                 error.throwError();
                 
                 return (double) int1;
         }
     }
     
-    private static long longCalculation(int int1, long long1, String operation, TYStackTrace stackTrace) {
+    private static long longCalculation(int int1, long long1, String operation) {
         
         switch (operation) {
             
@@ -235,7 +234,7 @@ class NativeInt {
             
             default:
                 
-                TYError error = new TYError("Trinity.Errors.UnsupportedOperationError", "Operation '" + operation + "' not supported.", stackTrace);
+                TYError error = new TYError("Trinity.Errors.UnsupportedOperationError", "Operation '" + operation + "' not supported.");
                 error.throwError();
                 
                 return (long) int1;

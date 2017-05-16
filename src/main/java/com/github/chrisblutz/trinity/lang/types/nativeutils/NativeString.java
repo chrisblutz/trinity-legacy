@@ -20,17 +20,17 @@ class NativeString {
     
     static void register() {
         
-        TrinityNatives.registerMethod("String", "chars", false, null, null, null, (runtime, stackTrace, thisObj, params) -> TrinityNatives.cast(TYString.class, thisObj, stackTrace).getCharacterArray());
-        TrinityNatives.registerMethod("String", "+", false, new String[]{"other"}, null, null, (runtime, stackTrace, thisObj, params) -> {
+        TrinityNatives.registerMethod("String", "chars", false, null, null, null, (runtime, thisObj, params) -> TrinityNatives.cast(TYString.class, thisObj).getCharacterArray());
+        TrinityNatives.registerMethod("String", "+", false, new String[]{"other"}, null, null, (runtime, thisObj, params) -> {
             
-            String thisString = TrinityNatives.cast(TYString.class, thisObj, stackTrace).getInternalString();
+            String thisString = TrinityNatives.cast(TYString.class, thisObj).getInternalString();
             
             TYObject object = runtime.getVariable("other");
-            String objStr = TrinityNatives.cast(TYString.class, object.tyInvoke("toString", runtime, stackTrace, null, null), stackTrace).getInternalString();
+            String objStr = TrinityNatives.cast(TYString.class, object.tyInvoke("toString", runtime, null, null)).getInternalString();
             
             return new TYString(thisString + objStr);
         });
-        TrinityNatives.registerMethod("String", "==", false, new String[]{"other"}, null, null, (runtime, stackTrace, thisObj, params) -> {
+        TrinityNatives.registerMethod("String", "==", false, new String[]{"other"}, null, null, (runtime, thisObj, params) -> {
             
             TYObject object = runtime.getVariable("other");
             
@@ -39,15 +39,15 @@ class NativeString {
                 return TYBoolean.FALSE;
             }
             
-            return TYBoolean.valueFor(TrinityNatives.cast(TYString.class, thisObj, stackTrace).getInternalString().contentEquals(TrinityNatives.cast(TYString.class, object, stackTrace).getInternalString()));
+            return TYBoolean.valueFor(TrinityNatives.cast(TYString.class, thisObj).getInternalString().contentEquals(TrinityNatives.cast(TYString.class, object).getInternalString()));
         });
         Map<String, TYObject> params = new HashMap<>();
         params.put("options", TrinityNatives.getObjectFor(""));
-        TrinityNatives.registerMethod("String", "match", false, new String[]{"regex"}, params, null, (runtime, stackTrace, thisObj, params12) -> {
+        TrinityNatives.registerMethod("String", "match", false, new String[]{"regex"}, params, null, (runtime, thisObj, params12) -> {
             
-            String thisString = TrinityNatives.cast(TYString.class, thisObj, stackTrace).getInternalString();
-            String regex = TrinityNatives.cast(TYString.class, runtime.getVariable("regex"), stackTrace).getInternalString();
-            String options = TrinityNatives.cast(TYString.class, runtime.getVariable("options"), stackTrace).getInternalString();
+            String thisString = TrinityNatives.cast(TYString.class, thisObj).getInternalString();
+            String regex = TrinityNatives.cast(TYString.class, runtime.getVariable("regex")).getInternalString();
+            String options = TrinityNatives.cast(TYString.class, runtime.getVariable("options")).getInternalString();
             
             int flags = 0;
             if (options.contains("i")) {
@@ -70,7 +70,7 @@ class NativeString {
             Pattern pattern = Pattern.compile(regex, flags);
             Matcher matcher = pattern.matcher(thisString);
             
-            TYBoolean bool = TrinityNatives.cast(TYBoolean.class, TrinityNatives.getObjectFor(matcher.matches()), stackTrace);
+            TYBoolean bool = TrinityNatives.cast(TYBoolean.class, TrinityNatives.getObjectFor(matcher.matches()));
             TYArray array;
             if (matcher.matches()) {
                 
@@ -86,15 +86,15 @@ class NativeString {
                 array = new TYArray(new ArrayList<>());
             }
             
-            return TrinityNatives.newInstance("Trinity.StringUtils.Regex", runtime, stackTrace, bool, array);
+            return TrinityNatives.newInstance("Trinity.StringUtils.Regex", runtime, bool, array);
         });
         params = new HashMap<>();
         params.put("options", TrinityNatives.getObjectFor(""));
-        TrinityNatives.registerMethod("String", "matches", false, new String[]{"regex"}, params, null, (runtime, stackTrace, thisObj, params1) -> {
+        TrinityNatives.registerMethod("String", "matches", false, new String[]{"regex"}, params, null, (runtime, thisObj, params1) -> {
             
-            String thisString = TrinityNatives.cast(TYString.class, thisObj, stackTrace).getInternalString();
-            String regex = TrinityNatives.cast(TYString.class, runtime.getVariable("regex"), stackTrace).getInternalString();
-            String options = TrinityNatives.cast(TYString.class, runtime.getVariable("options"), stackTrace).getInternalString();
+            String thisString = TrinityNatives.cast(TYString.class, thisObj).getInternalString();
+            String regex = TrinityNatives.cast(TYString.class, runtime.getVariable("regex")).getInternalString();
+            String options = TrinityNatives.cast(TYString.class, runtime.getVariable("options")).getInternalString();
             
             int flags = 0;
             if (options.contains("i")) {
@@ -117,7 +117,7 @@ class NativeString {
             Pattern pattern = Pattern.compile(regex, flags);
             Matcher matcher = pattern.matcher(thisString);
             
-            return TrinityNatives.cast(TYBoolean.class, TrinityNatives.getObjectFor(matcher.matches()), stackTrace);
+            return TrinityNatives.cast(TYBoolean.class, TrinityNatives.getObjectFor(matcher.matches()));
         });
     }
 }

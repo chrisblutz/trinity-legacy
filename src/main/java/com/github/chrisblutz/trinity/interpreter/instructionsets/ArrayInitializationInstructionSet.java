@@ -1,7 +1,6 @@
 package com.github.chrisblutz.trinity.interpreter.instructionsets;
 
 import com.github.chrisblutz.trinity.lang.TYObject;
-import com.github.chrisblutz.trinity.lang.errors.stacktrace.TYStackTrace;
 import com.github.chrisblutz.trinity.lang.scope.TYRuntime;
 import com.github.chrisblutz.trinity.lang.types.arrays.TYArray;
 
@@ -29,13 +28,13 @@ public class ArrayInitializationInstructionSet extends ObjectEvaluator {
         return arrayComponents;
     }
     
-    public TYObject evaluate(TYObject thisObj, TYRuntime runtime, TYStackTrace stackTrace) {
+    public TYObject evaluate(TYObject thisObj, TYRuntime runtime) {
         
         List<TYObject> objects = new ArrayList<>();
         
         for (ChainedInstructionSet set : getArrayComponents()) {
             
-            objects.add(set.evaluate(TYObject.NONE, runtime, stackTrace));
+            objects.add(set.evaluate(TYObject.NONE, runtime));
         }
         
         return new TYArray(objects);

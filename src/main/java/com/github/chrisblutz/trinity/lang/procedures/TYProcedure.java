@@ -2,7 +2,6 @@ package com.github.chrisblutz.trinity.lang.procedures;
 
 import com.github.chrisblutz.trinity.lang.TYObject;
 import com.github.chrisblutz.trinity.lang.errors.TYError;
-import com.github.chrisblutz.trinity.lang.errors.stacktrace.TYStackTrace;
 import com.github.chrisblutz.trinity.lang.scope.TYRuntime;
 import com.github.chrisblutz.trinity.lang.types.procedures.TYProcedureObject;
 
@@ -60,7 +59,7 @@ public class TYProcedure {
         this.blockParameter = blockParameter;
     }
     
-    public TYObject call(TYRuntime runtime, TYStackTrace stackTrace, TYProcedure subProcedure, TYRuntime procedureRuntime, TYObject thisObj, TYObject... params) {
+    public TYObject call(TYRuntime runtime, TYProcedure subProcedure, TYRuntime procedureRuntime, TYObject thisObj, TYObject... params) {
         
         for (String opt : getOptionalParameters().keySet()) {
             
@@ -114,7 +113,7 @@ public class TYProcedure {
             
         } else {
             
-            TYError error = new TYError("Trinity.Errors.InvalidArgumentNumberError", "Procedure takes " + getMandatoryParameters().size() + " parameter(s).", stackTrace);
+            TYError error = new TYError("Trinity.Errors.InvalidArgumentNumberError", "Procedure takes " + getMandatoryParameters().size() + " parameter(s).");
             error.throwError();
         }
         
@@ -129,13 +128,13 @@ public class TYProcedure {
                 
             } else if (!runtime.hasVariable(getBlockParameter())) {
                 
-                obj = new TYProcedureObject(new TYProcedure((runtime1, stackTrace1, thisObj1, params1) -> TYObject.NONE), new TYRuntime());
+                obj = new TYProcedureObject(new TYProcedure((runtime1, thisObj1, params1) -> TYObject.NONE), new TYRuntime());
                 runtime.setVariable(getBlockParameter(), obj);
             }
         }
         
         runtime.setProcedure(subProcedure);
         
-        return getProcedureAction().onAction(runtime, stackTrace, thisObj, params);
+        return getProcedureAction().onAction(runtime, thisObj, params);
     }
 }

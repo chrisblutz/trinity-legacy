@@ -3,7 +3,6 @@ package com.github.chrisblutz.trinity.interpreter.instructionsets;
 import com.github.chrisblutz.trinity.interpreter.variables.Variables;
 import com.github.chrisblutz.trinity.lang.TYObject;
 import com.github.chrisblutz.trinity.lang.errors.TYError;
-import com.github.chrisblutz.trinity.lang.errors.stacktrace.TYStackTrace;
 import com.github.chrisblutz.trinity.lang.scope.TYRuntime;
 import com.github.chrisblutz.trinity.parser.tokens.Token;
 import com.github.chrisblutz.trinity.parser.tokens.TokenInfo;
@@ -44,9 +43,9 @@ public class AssignmentInstructionSet extends ObjectEvaluator {
         return value;
     }
     
-    public TYObject evaluate(TYObject thisObj, TYRuntime runtime, TYStackTrace stackTrace) {
+    public TYObject evaluate(TYObject thisObj, TYRuntime runtime) {
         
-        TYObject opObj = getValue().evaluate(TYObject.NONE, runtime, stackTrace);
+        TYObject opObj = getValue().evaluate(TYObject.NONE, runtime);
         TYObject assignObj = TYObject.NIL;
         
         if (getAssignmentTokens().length == 1 && getAssignmentTokens()[0].getToken() == Token.NON_TOKEN_STRING) {
@@ -72,28 +71,28 @@ public class AssignmentInstructionSet extends ObjectEvaluator {
             
         } else if (getOperator() == Token.PLUS_EQUAL) {
             
-            opObj = assignObj.tyInvoke("+", runtime, stackTrace, null, null, opObj);
+            opObj = assignObj.tyInvoke("+", runtime, null, null, opObj);
             
         } else if (getOperator() == Token.MINUS_EQUAL) {
             
-            opObj = assignObj.tyInvoke("-", runtime, stackTrace, null, null, opObj);
+            opObj = assignObj.tyInvoke("-", runtime, null, null, opObj);
             
         } else if (getOperator() == Token.MULTIPLY_EQUAL) {
             
-            opObj = assignObj.tyInvoke("*", runtime, stackTrace, null, null, opObj);
+            opObj = assignObj.tyInvoke("*", runtime, null, null, opObj);
             
         } else if (getOperator() == Token.DIVIDE_EQUAL) {
             
-            opObj = assignObj.tyInvoke("/", runtime, stackTrace, null, null, opObj);
+            opObj = assignObj.tyInvoke("/", runtime, null, null, opObj);
             
         } else if (getOperator() == Token.MODULUS_EQUAL) {
             
-            opObj = assignObj.tyInvoke("%", runtime, stackTrace, null, null, opObj);
+            opObj = assignObj.tyInvoke("%", runtime, null, null, opObj);
         }
         
         if (opObj == TYObject.NONE) {
             
-            TYError error = new TYError("Trinity.Errors.AssignmentError", "Right-hand side of assignment expression must return a value.", stackTrace);
+            TYError error = new TYError("Trinity.Errors.AssignmentError", "Right-hand side of assignment expression must return a value.");
             error.throwError();
         }
         
