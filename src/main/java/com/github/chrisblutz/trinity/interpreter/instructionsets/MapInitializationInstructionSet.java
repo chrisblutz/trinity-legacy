@@ -1,7 +1,6 @@
 package com.github.chrisblutz.trinity.interpreter.instructionsets;
 
 import com.github.chrisblutz.trinity.lang.TYObject;
-import com.github.chrisblutz.trinity.lang.errors.stacktrace.TYStackTrace;
 import com.github.chrisblutz.trinity.lang.scope.TYRuntime;
 import com.github.chrisblutz.trinity.lang.types.maps.TYMap;
 
@@ -30,7 +29,7 @@ public class MapInitializationInstructionSet extends ObjectEvaluator {
         return mapComponents;
     }
     
-    public TYObject evaluate(TYObject thisObj, TYRuntime runtime, TYStackTrace stackTrace) {
+    public TYObject evaluate(TYObject thisObj, TYRuntime runtime) {
         
         Map<TYObject, TYObject> map = new HashMap<>();
         
@@ -38,8 +37,8 @@ public class MapInitializationInstructionSet extends ObjectEvaluator {
             
             if (element.length == 2) {
                 
-                TYObject key = element[0].evaluate(TYObject.NONE, runtime, stackTrace);
-                TYObject value = element[1].evaluate(TYObject.NONE, runtime, stackTrace);
+                TYObject key = element[0].evaluate(TYObject.NONE, runtime);
+                TYObject value = element[1].evaluate(TYObject.NONE, runtime);
                 
                 map.put(key, value);
             }

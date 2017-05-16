@@ -10,9 +10,9 @@ public class DefaultProcedures {
     
     public static TYProcedure getDefaultUOEOperationProcedure(String operation) {
         
-        return new TYProcedure((runtime, stackTrace, thisObj, params) -> {
+        return new TYProcedure((runtime, thisObj, params) -> {
             
-            TYError error = new TYError("Trinity.Errors.UnsupportedOperationError", "Operation '" + operation + "' not supported.", stackTrace);
+            TYError error = new TYError("Trinity.Errors.UnsupportedOperationError", "Operation '" + operation + "' not supported.");
             error.throwError();
             
             return thisObj;

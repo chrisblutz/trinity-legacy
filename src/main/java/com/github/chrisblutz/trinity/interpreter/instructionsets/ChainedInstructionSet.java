@@ -1,7 +1,6 @@
 package com.github.chrisblutz.trinity.interpreter.instructionsets;
 
 import com.github.chrisblutz.trinity.lang.TYObject;
-import com.github.chrisblutz.trinity.lang.errors.stacktrace.TYStackTrace;
 import com.github.chrisblutz.trinity.lang.scope.TYRuntime;
 
 import java.io.File;
@@ -29,11 +28,11 @@ public class ChainedInstructionSet extends ObjectEvaluator {
         return children;
     }
     
-    public TYObject evaluate(TYObject thisObj, TYRuntime runtime, TYStackTrace stackTrace) {
+    public TYObject evaluate(TYObject thisObj, TYRuntime runtime) {
         
         for (ObjectEvaluator child : getChildren()) {
             
-            thisObj = child.evaluate(thisObj, runtime, stackTrace);
+            thisObj = child.evaluate(thisObj, runtime);
         }
         
         return thisObj;

@@ -16,9 +16,9 @@ class NativeObject {
     
     static void register() {
         
-        TrinityNatives.registerMethod("Object", "hashCode", false, null, null, null, (runtime, stackTrace, thisObj, params) -> NativeStorage.getHashCode(thisObj));
-        TrinityNatives.registerMethod("Object", "getClass", false, null, null, null, (runtime, stackTrace, thisObj, params) -> NativeStorage.getClassObject(thisObj.getObjectClass()));
-        TrinityNatives.registerMethod("Object", "isInstance", false, new String[]{"instClass"}, null, null, (runtime, stackTrace, thisObj, params) -> {
+        TrinityNatives.registerMethod("Object", "hashCode", false, null, null, null, (runtime, thisObj, params) -> NativeStorage.getHashCode(thisObj));
+        TrinityNatives.registerMethod("Object", "getClass", false, null, null, null, (runtime, thisObj, params) -> NativeStorage.getClassObject(thisObj.getObjectClass()));
+        TrinityNatives.registerMethod("Object", "isInstance", false, new String[]{"instClass"}, null, null, (runtime, thisObj, params) -> {
             
             TYObject object = runtime.getVariable("instClass");
             

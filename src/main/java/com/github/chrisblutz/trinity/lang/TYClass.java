@@ -1,7 +1,6 @@
 package com.github.chrisblutz.trinity.lang;
 
 import com.github.chrisblutz.trinity.lang.errors.TYError;
-import com.github.chrisblutz.trinity.lang.errors.stacktrace.TYStackTrace;
 import com.github.chrisblutz.trinity.lang.procedures.DefaultProcedures;
 import com.github.chrisblutz.trinity.lang.procedures.TYProcedure;
 import com.github.chrisblutz.trinity.lang.scope.TYRuntime;
@@ -140,12 +139,12 @@ public class TYClass {
         this.module = module;
     }
     
-    public TYObject tyInvoke(String methodName, TYRuntime runtime, TYStackTrace stackTrace, TYProcedure procedure, TYRuntime procedureRuntime, TYObject thisObj, TYObject... params) {
+    public TYObject tyInvoke(String methodName, TYRuntime runtime, TYProcedure procedure, TYRuntime procedureRuntime, TYObject thisObj, TYObject... params) {
         
-        return tyInvoke(this, methodName, runtime, stackTrace, procedure, procedureRuntime, thisObj, params);
+        return tyInvoke(this, methodName, runtime, procedure, procedureRuntime, thisObj, params);
     }
     
-    public TYObject tyInvoke(TYClass originClass, String methodName, TYRuntime runtime, TYStackTrace stackTrace, TYProcedure procedure, TYRuntime procedureRuntime, TYObject thisObj, TYObject... params) {
+    public TYObject tyInvoke(TYClass originClass, String methodName, TYRuntime runtime, TYProcedure procedure, TYRuntime procedureRuntime, TYObject thisObj, TYObject... params) {
         
         if (methodName.contentEquals("new")) {
             
@@ -162,11 +161,11 @@ public class TYClass {
                 newRuntime.setTyClass(this);
                 newRuntime.importModules(constructor.getImportedModules());
                 
-                TYObject obj = constructor.getProcedure().call(newRuntime, stackTrace, procedure, procedureRuntime, newObj, params);
+                TYObject obj = constructor.getProcedure().call(newRuntime, procedure, procedureRuntime, newObj, params);
                 
                 if (newRuntime.isReturning()) {
                     
-                    TYError error = new TYError("Trinity.Errors.ReturnError", "Cannot return a value from a constructor.", stackTrace);
+                    TYError error = new TYError("Trinity.Errors.ReturnError", "Cannot return a value from a constructor.");
                     error.throwError();
                     
                 } else if (obj.getObjectClass().isInstanceOf(ClassRegistry.getClass("Map")) || obj.getObjectClass().isInstanceOf(ClassRegistry.getClass("Procedure"))) {
@@ -199,7 +198,7 @@ public class TYClass {
                 
                 if (thisObj == TYObject.NONE) {
                     
-                    TYError error = new TYError("Trinity.Errors.ScopeError", "Instance method '" + methodName + "' cannot be called from a static context.", stackTrace);
+                    TYError error = new TYError("Trinity.Errors.ScopeError", "Instance method '" + methodName + "' cannot be called from a static context.");
                     error.throwError();
                 }
                 
@@ -207,7 +206,7 @@ public class TYClass {
                 newRuntime.setScope(thisObj, false);
             }
             
-            TYObject result = method.getProcedure().call(newRuntime, stackTrace, procedure, procedureRuntime, thisObj, params);
+            TYObject result = method.getProcedure().call(newRuntime, procedure, procedureRuntime, thisObj, params);
             
             if (newRuntime.isReturning()) {
                 
@@ -218,15 +217,15 @@ public class TYClass {
             
         } else if (getSuperclass() != null) {
             
-            return getSuperclass().tyInvoke(originClass, methodName, runtime, stackTrace, procedure, procedureRuntime, thisObj, params);
+            return getSuperclass().tyInvoke(originClass, methodName, runtime, procedure, procedureRuntime, thisObj, params);
             
         } else if (ClassRegistry.getClass("Kernel").getMethods().containsKey(methodName)) {
             
-            return ClassRegistry.getClass("Kernel").tyInvoke(originClass, methodName, runtime, stackTrace, procedure, procedureRuntime, thisObj, params);
+            return ClassRegistry.getClass("Kernel").tyInvoke(originClass, methodName, runtime, procedure, procedureRuntime, thisObj, params);
             
         } else {
             
-            TYError notFoundError = new TYError("Trinity.Errors.MethodNotFoundError", "No method '" + methodName + "' found in '" + originClass.getName() + "'.", stackTrace);
+            TYError notFoundError = new TYError("Trinity.Errors.MethodNotFoundError", "No method '" + methodName + "' found in '" + originClass.getName() + "'.");
             notFoundError.throwError();
         }
         

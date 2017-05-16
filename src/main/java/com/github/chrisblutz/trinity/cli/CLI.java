@@ -6,7 +6,6 @@ import com.github.chrisblutz.trinity.lang.ClassRegistry;
 import com.github.chrisblutz.trinity.lang.TYClass;
 import com.github.chrisblutz.trinity.lang.TYObject;
 import com.github.chrisblutz.trinity.lang.errors.TYSyntaxError;
-import com.github.chrisblutz.trinity.lang.errors.stacktrace.TYStackTrace;
 import com.github.chrisblutz.trinity.lang.scope.TYRuntime;
 import com.github.chrisblutz.trinity.lang.types.arrays.TYArray;
 import com.github.chrisblutz.trinity.lang.types.strings.TYString;
@@ -72,7 +71,7 @@ public class CLI {
                     
                     TYClass main = ClassRegistry.getClass(mainClass);
                     
-                    main.tyInvoke("main", new TYRuntime(), new TYStackTrace(), null, null, TYObject.NONE, parseIntoStringArray());
+                    main.tyInvoke("main", new TYRuntime(), null, null, TYObject.NONE, parseIntoStringArray());
                     
                 } else {
                     
@@ -84,7 +83,7 @@ public class CLI {
                 
                 if (ClassRegistry.getMainClasses().size() > 0) {
                     
-                    ClassRegistry.getMainClasses().get(0).tyInvoke("main", new TYRuntime(), new TYStackTrace(), null, null, TYObject.NONE, parseIntoStringArray());
+                    ClassRegistry.getMainClasses().get(0).tyInvoke("main", new TYRuntime(), null, null, TYObject.NONE, parseIntoStringArray());
                     
                 } else {
                     

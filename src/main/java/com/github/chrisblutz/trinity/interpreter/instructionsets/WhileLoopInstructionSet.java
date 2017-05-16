@@ -1,7 +1,6 @@
 package com.github.chrisblutz.trinity.interpreter.instructionsets;
 
 import com.github.chrisblutz.trinity.lang.TYObject;
-import com.github.chrisblutz.trinity.lang.errors.stacktrace.TYStackTrace;
 import com.github.chrisblutz.trinity.lang.procedures.ProcedureAction;
 import com.github.chrisblutz.trinity.lang.scope.TYRuntime;
 import com.github.chrisblutz.trinity.lang.types.bool.TYBoolean;
@@ -36,15 +35,15 @@ public class WhileLoopInstructionSet extends ChainedInstructionSet {
         return action;
     }
     
-    public TYObject evaluate(TYObject thisObj, TYRuntime runtime, TYStackTrace stackTrace) {
+    public TYObject evaluate(TYObject thisObj, TYRuntime runtime) {
         
         TYRuntime newRuntime = runtime.clone();
         
-        TYBoolean expBoolean = TrinityNatives.cast(TYBoolean.class, getExpression().evaluate(TYObject.NONE, newRuntime, stackTrace), stackTrace);
+        TYBoolean expBoolean = TrinityNatives.cast(TYBoolean.class, getExpression().evaluate(TYObject.NONE, newRuntime));
         
         while (expBoolean.getInternalBoolean()) {
             
-            getAction().onAction(newRuntime, stackTrace, null, TYObject.NONE);
+            getAction().onAction(newRuntime, null, TYObject.NONE);
             
             if (newRuntime.isReturning()) {
                 
@@ -57,7 +56,7 @@ public class WhileLoopInstructionSet extends ChainedInstructionSet {
                 
             } else {
                 
-                expBoolean = TrinityNatives.cast(TYBoolean.class, getExpression().evaluate(TYObject.NONE, newRuntime, stackTrace), stackTrace);
+                expBoolean = TrinityNatives.cast(TYBoolean.class, getExpression().evaluate(TYObject.NONE, newRuntime));
             }
         }
         

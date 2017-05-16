@@ -1,7 +1,6 @@
 package com.github.chrisblutz.trinity.interpreter.instructionsets;
 
 import com.github.chrisblutz.trinity.lang.TYObject;
-import com.github.chrisblutz.trinity.lang.errors.stacktrace.TYStackTrace;
 import com.github.chrisblutz.trinity.lang.scope.TYRuntime;
 import com.github.chrisblutz.trinity.parser.tokens.Token;
 
@@ -34,13 +33,13 @@ public class ReturnInstructionSet extends ChainedInstructionSet {
         return expression;
     }
     
-    public TYObject evaluate(TYObject thisObj, TYRuntime runtime, TYStackTrace stackTrace) {
+    public TYObject evaluate(TYObject thisObj, TYRuntime runtime) {
         
         TYObject result = TYObject.NIL;
         
         if (getExpression() != null) {
             
-            result = getExpression().evaluate(TYObject.NONE, runtime, stackTrace);
+            result = getExpression().evaluate(TYObject.NONE, runtime);
         }
         
         runtime.setReturning(true);

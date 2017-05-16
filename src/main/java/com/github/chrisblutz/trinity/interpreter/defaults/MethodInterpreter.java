@@ -9,7 +9,6 @@ import com.github.chrisblutz.trinity.lang.TYClass;
 import com.github.chrisblutz.trinity.lang.TYMethod;
 import com.github.chrisblutz.trinity.lang.TYObject;
 import com.github.chrisblutz.trinity.lang.errors.TYSyntaxError;
-import com.github.chrisblutz.trinity.lang.errors.stacktrace.TYStackTrace;
 import com.github.chrisblutz.trinity.lang.procedures.ProcedureAction;
 import com.github.chrisblutz.trinity.lang.procedures.TYProcedure;
 import com.github.chrisblutz.trinity.lang.scope.TYRuntime;
@@ -162,7 +161,7 @@ public class MethodInterpreter extends DeclarationInterpreter {
                                     
                                     if (value != null) {
                                         
-                                        valueResult = value.evaluate(TYObject.NONE, new TYRuntime(), new TYStackTrace());
+                                        valueResult = value.evaluate(TYObject.NONE, new TYRuntime());
                                     }
                                     
                                     optParams.put(list.get(0).getContents(), valueResult);
@@ -184,7 +183,7 @@ public class MethodInterpreter extends DeclarationInterpreter {
                             
                         } else {
                             
-                            action = (runtime, stackTrace, thisObj, params) -> TYObject.NONE;
+                            action = (runtime, thisObj, params) -> TYObject.NONE;
                         }
                         
                         TYProcedure procedure = new TYProcedure(action, mandatoryParams, optParams, blockParam);

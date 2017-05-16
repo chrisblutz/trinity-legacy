@@ -19,10 +19,10 @@ class NativeKernel {
     
     static void register() {
         
-        TrinityNatives.registerMethod("Kernel", "print", true, new String[]{"str"}, null, null, (runtime, stackTrace, thisObj, params) -> {
+        TrinityNatives.registerMethod("Kernel", "print", true, new String[]{"str"}, null, null, (runtime, thisObj, params) -> {
             
             TYObject obj = runtime.getVariable("str");
-            TYObject strObj = obj.tyInvoke("toString", runtime, stackTrace, null, null);
+            TYObject strObj = obj.tyInvoke("toString", runtime, null, null);
             
             if (strObj instanceof TYString) {
                 
@@ -35,7 +35,7 @@ class NativeKernel {
             
             return TYObject.NONE;
         });
-        TrinityNatives.registerMethod("Kernel", "readln", true, null, null, null, (runtime, stackTrace, thisObj, params) -> {
+        TrinityNatives.registerMethod("Kernel", "readln", true, null, null, null, (runtime, thisObj, params) -> {
             
             if (readlnSc == null) {
                 
@@ -48,13 +48,13 @@ class NativeKernel {
             
             return new TYString(readlnSc.nextLine());
         });
-        TrinityNatives.registerMethod("Kernel", "throw", true, new String[]{"error"}, null, null, (runtime, stackTrace, thisObj, params) -> {
+        TrinityNatives.registerMethod("Kernel", "throw", true, new String[]{"error"}, null, null, (runtime, thisObj, params) -> {
             
             TYObject error = runtime.getVariable("error");
             
             if (error.getObjectClass().isInstanceOf(ClassRegistry.getClass("Trinity.Errors.Error"))) {
                 
-                String errorMessage = TrinityNatives.cast(TYString.class, error.tyInvoke("toString", runtime, stackTrace, null, null), stackTrace).getInternalString();
+                String errorMessage = TrinityNatives.cast(TYString.class, error.tyInvoke("toString", runtime, null, null)).getInternalString();
                 System.err.println(errorMessage);
                 
                 Trinity.exit(1);
@@ -64,10 +64,10 @@ class NativeKernel {
             
             return TYObject.NONE;
         });
-        TrinityNatives.registerMethod("Kernel", "exit", true, new String[]{"code"}, null, null, (runtime, stackTrace, thisObj, params) -> {
+        TrinityNatives.registerMethod("Kernel", "exit", true, new String[]{"code"}, null, null, (runtime, thisObj, params) -> {
             
             TYObject obj = runtime.getVariable("code");
-            Trinity.exit(TrinityNatives.cast(TYInt.class, obj, stackTrace).getInternalInteger());
+            Trinity.exit(TrinityNatives.cast(TYInt.class, obj).getInternalInteger());
             return TYObject.NONE;
         });
     }

@@ -1,7 +1,6 @@
 package com.github.chrisblutz.trinity.interpreter.instructionsets;
 
 import com.github.chrisblutz.trinity.lang.TYObject;
-import com.github.chrisblutz.trinity.lang.errors.stacktrace.TYStackTrace;
 import com.github.chrisblutz.trinity.lang.scope.TYRuntime;
 import com.github.chrisblutz.trinity.lang.types.bool.TYBoolean;
 import com.github.chrisblutz.trinity.natives.TrinityNatives;
@@ -36,19 +35,19 @@ public class BinaryEqualityOperationInstructionSet extends ObjectEvaluator {
         return operand;
     }
     
-    public TYObject evaluate(TYObject thisObj, TYRuntime runtime, TYStackTrace stackTrace) {
+    public TYObject evaluate(TYObject thisObj, TYRuntime runtime) {
         
-        TYObject opObj = getOperand().evaluate(TYObject.NONE, runtime, stackTrace);
+        TYObject opObj = getOperand().evaluate(TYObject.NONE, runtime);
         
         switch (getOperator()) {
             
             case EQUAL_TO:
                 
-                return thisObj.tyInvoke("==", runtime, stackTrace, null, null, opObj);
+                return thisObj.tyInvoke("==", runtime, null, null, opObj);
             
             case NOT_EQUAL_TO:
                 
-                return TYBoolean.valueFor(!TrinityNatives.cast(TYBoolean.class, thisObj.tyInvoke("==", runtime, stackTrace, null, null, opObj), stackTrace).getInternalBoolean());
+                return TYBoolean.valueFor(!TrinityNatives.cast(TYBoolean.class, thisObj.tyInvoke("==", runtime, null, null, opObj)).getInternalBoolean());
         }
         
         return TYBoolean.FALSE;

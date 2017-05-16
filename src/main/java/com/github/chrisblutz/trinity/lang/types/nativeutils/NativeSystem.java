@@ -19,16 +19,16 @@ class NativeSystem {
     
     static void register() {
         
-        TrinityNatives.registerMethod("System", "currentTimeMillis", true, null, null, null, (runtime, stackTrace, thisObj, params) -> new TYLong(System.currentTimeMillis()));
+        TrinityNatives.registerMethod("System", "currentTimeMillis", true, null, null, null, (runtime, thisObj, params) -> new TYLong(System.currentTimeMillis()));
         Map<String, TYObject> params = new HashMap<>();
         params.put("name", TYObject.NIL);
-        TrinityNatives.registerMethod("System", "getEnvironment", true, null, params, null, (runtime, stackTrace, thisObj, params1) -> {
+        TrinityNatives.registerMethod("System", "getEnvironment", true, null, params, null, (runtime, thisObj, params1) -> {
             
             TYObject name = runtime.getVariable("name");
             
             if (name != TYObject.NIL) {
                 
-                String value = System.getenv(TrinityNatives.cast(TYString.class, name, stackTrace).getInternalString());
+                String value = System.getenv(TrinityNatives.cast(TYString.class, name).getInternalString());
                 return value == null ? TYObject.NIL : new TYString(value);
                 
             } else {
@@ -36,7 +36,7 @@ class NativeSystem {
                 return getEnvironmentMap();
             }
         });
-        TrinityNatives.registerMethod("System", "loadProperties", true, null, null, null, (runtime, stackTrace, thisObj, params12) -> {
+        TrinityNatives.registerMethod("System", "loadProperties", true, null, null, null, (runtime, thisObj, params12) -> {
             
             Map<TYObject, TYObject> map = new HashMap<>();
             

@@ -14,13 +14,13 @@ public class TYError {
     
     private TYClass errorClass;
     private String message;
-    private TYStackTrace stackTrace;
+    private TYStackTraceElement[] stackTrace;
     
-    public TYError(String errorClass, String message, TYStackTrace stackTrace) {
+    public TYError(String errorClass, String message) {
         
         this.errorClass = ClassRegistry.getClass(errorClass);
         this.message = message;
-        this.stackTrace = stackTrace;
+        this.stackTrace = TYStackTrace.getStackTrace();
     }
     
     public TYClass getErrorClass() {
@@ -33,7 +33,7 @@ public class TYError {
         return message;
     }
     
-    public TYStackTrace getStackTrace() {
+    public TYStackTraceElement[] getStackTrace() {
         
         return stackTrace;
     }
@@ -48,7 +48,7 @@ public class TYError {
         
         StringBuilder str = new StringBuilder(getErrorClass().getName() + ": " + getMessage());
         
-        for (TYStackTraceElement element : getStackTrace().getStackTrace()) {
+        for (TYStackTraceElement element : getStackTrace()) {
             
             str.append("\n  at ").append(element.toString());
         }
