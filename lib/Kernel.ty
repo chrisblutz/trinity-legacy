@@ -13,3 +13,5 @@ class Kernel
     def static abort(code, message)
         println(message)
         exit(code)
+
+    def native static sleep(millis)

@@ -1,0 +1,24 @@
+module Trinity
+    module Timing
+        class Timer
+            def initialize(&block, delay, begin = 0)
+                @block = block
+                @delay = delay
+                @begin = begin
+
+            def start
+                @running = true
+                sleep(@begin)
+                while isRunning()
+                    pre = System.currentTimeMillis()
+                    @block.call()
+                    dur = System.currentTimeMillis() - pre
+                    wait = @delay - dur
+                    if wait > 0
+                        sleep(wait)
+
+            def stop
+                @running = false
+
+            def isRunning
+                @running
