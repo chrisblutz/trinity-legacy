@@ -97,12 +97,30 @@ class NativeLong {
             if (obj instanceof TYInt) {
                 
                 int newInt = ((TYInt) obj).getInternalInteger();
-                returnVal = new TYLong(longCalculation(thisLong, newInt, operation));
+                
+                if (!operation.contentEquals("/") || thisLong % newInt == 0) {
+                    
+                    returnVal = new TYLong(longCalculation(thisLong, newInt, operation));
+                    
+                } else {
+                    
+                    double result = doubleCalculation(thisLong, newInt, operation);
+                    returnVal = new TYFloat(result);
+                }
                 
             } else if (obj instanceof TYLong) {
                 
                 long newLong = ((TYLong) obj).getInternalLong();
-                returnVal = new TYLong(longCalculation(thisLong, newLong, operation));
+                
+                if (!operation.contentEquals("/") || thisLong % newLong == 0) {
+                    
+                    returnVal = new TYLong(longCalculation(thisLong, newLong, operation));
+                    
+                } else {
+                    
+                    double result = doubleCalculation(thisLong, newLong, operation);
+                    returnVal = new TYFloat(result);
+                }
                 
             } else if (obj instanceof TYFloat) {
                 

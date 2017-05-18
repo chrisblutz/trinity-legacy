@@ -99,16 +99,25 @@ class NativeInt {
             if (obj instanceof TYInt) {
                 
                 int newInt = ((TYInt) obj).getInternalInteger();
-                long result = intCalculation(thisInt, newInt, operation);
                 
-                if (overflow) {
+                if (!operation.contentEquals("/") || thisInt % newInt == 0) {
                     
-                    overflow = false;
-                    returnVal = new TYLong(result);
+                    long result = intCalculation(thisInt, newInt, operation);
+                    
+                    if (overflow) {
+                        
+                        overflow = false;
+                        returnVal = new TYLong(result);
+                        
+                    } else {
+                        
+                        returnVal = new TYInt((int) result);
+                    }
                     
                 } else {
                     
-                    returnVal = new TYInt((int) result);
+                    double result = doubleCalculation(thisInt, newInt, operation);
+                    returnVal = new TYFloat(result);
                 }
                 
             } else if (obj instanceof TYFloat) {
@@ -119,7 +128,16 @@ class NativeInt {
             } else if (obj instanceof TYLong) {
                 
                 long newLong = ((TYLong) obj).getInternalLong();
-                returnVal = new TYLong(longCalculation(thisInt, newLong, operation));
+                
+                if (!operation.contentEquals("/") || thisInt % newLong == 0) {
+                    
+                    returnVal = new TYLong(longCalculation(thisInt, newLong, operation));
+                    
+                } else {
+                    
+                    double result = doubleCalculation(thisInt, newLong, operation);
+                    returnVal = new TYFloat(result);
+                }
                 
             } else {
                 
