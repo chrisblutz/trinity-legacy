@@ -24,3 +24,9 @@ class String
 
     def [](index)
         chars()[0]
+
+    def native toInt
+
+    def native toLong
+
+    def native toFloat

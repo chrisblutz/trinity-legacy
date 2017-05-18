@@ -7,6 +7,8 @@ class Map
 
     def native remove(key)
 
+    def native clear
+
     def native keys
 
     def native values

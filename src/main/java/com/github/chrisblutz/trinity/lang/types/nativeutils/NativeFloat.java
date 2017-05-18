@@ -23,10 +23,10 @@ class NativeFloat {
         TrinityNatives.registerMethod("Float", "*", false, new String[]{"other"}, null, null, getActionForOperation("*"));
         TrinityNatives.registerMethod("Float", "/", false, new String[]{"other"}, null, null, getActionForOperation("/"));
         TrinityNatives.registerMethod("Float", "%", false, new String[]{"other"}, null, null, getActionForOperation("%"));
-        TrinityNatives.registerMethod("Float", "toString", false, null, null, null, (runtime, thisObj, params) -> new TYString(Double.toString(TrinityNatives.cast(TYFloat.class, thisObj).getInternalDouble())));
+        TrinityNatives.registerMethod("Float", "toString", false, null, null, null, (runtime, thisObj, params) -> new TYString(Double.toString(TrinityNatives.toFloat(thisObj))));
         TrinityNatives.registerMethod("Float", "compareTo", false, new String[]{"other"}, null, null, (runtime, thisObj, params) -> {
             
-            double thisDouble = TrinityNatives.cast(TYFloat.class, thisObj).getInternalDouble();
+            double thisDouble = TrinityNatives.toFloat(thisObj);
             TYObject obj = runtime.getVariable("other");
             
             if (obj instanceof TYInt) {
@@ -57,7 +57,7 @@ class NativeFloat {
         });
         TrinityNatives.registerMethod("Float", "==", false, new String[]{"other"}, null, null, (runtime, thisObj, params) -> {
             
-            double thisDouble = TrinityNatives.cast(TYFloat.class, thisObj).getInternalDouble();
+            double thisDouble = TrinityNatives.toFloat(thisObj);
             TYObject obj = runtime.getVariable("other");
             
             if (obj instanceof TYInt) {
@@ -87,7 +87,7 @@ class NativeFloat {
         
         return (runtime, thisObj, params) -> {
             
-            double thisDouble = TrinityNatives.cast(TYFloat.class, thisObj).getInternalDouble();
+            double thisDouble = TrinityNatives.toFloat(thisObj);
             
             TYObject returnVal;
             

@@ -258,4 +258,64 @@ public class TrinityNatives {
             return desiredClass.cast(object);
         }
     }
+    
+    public static int toInt(TYObject tyObject) {
+        
+        if (tyObject instanceof TYLong) {
+            
+            return Math.toIntExact(((TYLong) tyObject).getInternalLong());
+            
+        } else if (tyObject instanceof TYFloat) {
+            
+            return (int) ((TYFloat) tyObject).getInternalDouble();
+            
+        } else if (tyObject instanceof TYString) {
+            
+            return Integer.parseInt(((TYString) tyObject).getInternalString());
+            
+        } else {
+            
+            return TrinityNatives.cast(TYInt.class, tyObject).getInternalInteger();
+        }
+    }
+    
+    public static long toLong(TYObject tyObject) {
+        
+        if (tyObject instanceof TYInt) {
+            
+            return ((TYInt) tyObject).getInternalInteger();
+            
+        } else if (tyObject instanceof TYFloat) {
+            
+            return (long) ((TYFloat) tyObject).getInternalDouble();
+            
+        } else if (tyObject instanceof TYString) {
+            
+            return Long.parseLong(((TYString) tyObject).getInternalString());
+            
+        } else {
+            
+            return TrinityNatives.cast(TYLong.class, tyObject).getInternalLong();
+        }
+    }
+    
+    public static double toFloat(TYObject tyObject) {
+        
+        if (tyObject instanceof TYInt) {
+            
+            return ((TYInt) tyObject).getInternalInteger();
+            
+        } else if (tyObject instanceof TYLong) {
+            
+            return ((TYLong) tyObject).getInternalLong();
+            
+        } else if (tyObject instanceof TYString) {
+            
+            return Double.parseDouble(((TYString) tyObject).getInternalString());
+            
+        } else {
+    
+            return TrinityNatives.cast(TYFloat.class, tyObject).getInternalDouble();
+        }
+    }
 }

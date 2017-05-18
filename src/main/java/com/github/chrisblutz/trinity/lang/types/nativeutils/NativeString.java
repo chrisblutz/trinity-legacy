@@ -3,6 +3,9 @@ package com.github.chrisblutz.trinity.lang.types.nativeutils;
 import com.github.chrisblutz.trinity.lang.TYObject;
 import com.github.chrisblutz.trinity.lang.types.arrays.TYArray;
 import com.github.chrisblutz.trinity.lang.types.bool.TYBoolean;
+import com.github.chrisblutz.trinity.lang.types.numeric.TYFloat;
+import com.github.chrisblutz.trinity.lang.types.numeric.TYInt;
+import com.github.chrisblutz.trinity.lang.types.numeric.TYLong;
 import com.github.chrisblutz.trinity.lang.types.strings.TYString;
 import com.github.chrisblutz.trinity.natives.TrinityNatives;
 
@@ -43,7 +46,7 @@ class NativeString {
         });
         Map<String, TYObject> params = new HashMap<>();
         params.put("options", TrinityNatives.getObjectFor(""));
-        TrinityNatives.registerMethod("String", "match", false, new String[]{"regex"}, params, null, (runtime, thisObj, params12) -> {
+        TrinityNatives.registerMethod("String", "match", false, new String[]{"regex"}, params, null, (runtime, thisObj, params1) -> {
             
             String thisString = TrinityNatives.cast(TYString.class, thisObj).getInternalString();
             String regex = TrinityNatives.cast(TYString.class, runtime.getVariable("regex")).getInternalString();
@@ -119,5 +122,8 @@ class NativeString {
             
             return TrinityNatives.cast(TYBoolean.class, TrinityNatives.getObjectFor(matcher.matches()));
         });
+        TrinityNatives.registerMethod("String", "toInt", false, null, null, null, (runtime, thisObj, params1) -> new TYInt(TrinityNatives.toInt(thisObj)));
+        TrinityNatives.registerMethod("String", "toLong", false, null, null, null, (runtime, thisObj, params1) -> new TYLong(TrinityNatives.toLong(thisObj)));
+        TrinityNatives.registerMethod("String", "toFloat", false, null, null, null, (runtime, thisObj, params1) -> new TYFloat(TrinityNatives.toFloat(thisObj)));
     }
 }

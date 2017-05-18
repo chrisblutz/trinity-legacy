@@ -3,7 +3,6 @@ package com.github.chrisblutz.trinity.interpreter.instructionsets;
 import com.github.chrisblutz.trinity.lang.TYObject;
 import com.github.chrisblutz.trinity.lang.scope.TYRuntime;
 import com.github.chrisblutz.trinity.lang.types.bool.TYBoolean;
-import com.github.chrisblutz.trinity.lang.types.numeric.TYInt;
 import com.github.chrisblutz.trinity.natives.TrinityNatives;
 import com.github.chrisblutz.trinity.parser.tokens.Token;
 
@@ -40,8 +39,7 @@ public class BinaryComparisonOperationInstructionSet extends ObjectEvaluator {
         
         TYObject opObj = getOperand().evaluate(TYObject.NONE, runtime);
         
-        TYInt comparison = TrinityNatives.cast(TYInt.class, thisObj.tyInvoke("compareTo", runtime, null, null, opObj));
-        int comparisonInt = comparison.getInternalInteger();
+        int comparisonInt = TrinityNatives.toInt(thisObj.tyInvoke("compareTo", runtime, null, null, opObj));
         
         switch (getOperator()) {
             

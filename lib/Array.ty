@@ -13,6 +13,8 @@ class Array
 
     def native removeObject(value)
 
+    def native clear
+
     def native length
 
     def toString

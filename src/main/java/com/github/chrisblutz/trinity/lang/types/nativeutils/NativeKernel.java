@@ -3,8 +3,6 @@ package com.github.chrisblutz.trinity.lang.types.nativeutils;
 import com.github.chrisblutz.trinity.Trinity;
 import com.github.chrisblutz.trinity.lang.ClassRegistry;
 import com.github.chrisblutz.trinity.lang.TYObject;
-import com.github.chrisblutz.trinity.lang.types.numeric.TYInt;
-import com.github.chrisblutz.trinity.lang.types.numeric.TYLong;
 import com.github.chrisblutz.trinity.lang.types.strings.TYString;
 import com.github.chrisblutz.trinity.natives.TrinityNatives;
 
@@ -67,24 +65,12 @@ class NativeKernel {
         });
         TrinityNatives.registerMethod("Kernel", "exit", true, new String[]{"code"}, null, null, (runtime, thisObj, params) -> {
             
-            TYObject obj = runtime.getVariable("code");
-            Trinity.exit(TrinityNatives.cast(TYInt.class, obj).getInternalInteger());
+            Trinity.exit(TrinityNatives.toInt(runtime.getVariable("code")));
             return TYObject.NONE;
         });
         TrinityNatives.registerMethod("Kernel", "sleep", true, new String[]{"millis"}, null, null, (runtime, thisObj, params) -> {
             
-            TYObject obj = runtime.getVariable("millis");
-            long wait;
-            if (obj instanceof TYInt) {
-                
-                TYInt tyInt = TrinityNatives.cast(TYInt.class, obj);
-                wait = tyInt.getInternalInteger();
-                
-            } else {
-                
-                TYLong tyLong = TrinityNatives.cast(TYLong.class, obj);
-                wait = tyLong.getInternalLong();
-            }
+            long wait = TrinityNatives.toLong(runtime.getVariable("millis"));
             
             try {
                 

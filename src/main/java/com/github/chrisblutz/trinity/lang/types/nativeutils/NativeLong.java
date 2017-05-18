@@ -23,11 +23,11 @@ class NativeLong {
         TrinityNatives.registerMethod("Long", "*", false, new String[]{"other"}, null, null, getActionForOperation("*"));
         TrinityNatives.registerMethod("Long", "/", false, new String[]{"other"}, null, null, getActionForOperation("/"));
         TrinityNatives.registerMethod("Long", "%", false, new String[]{"other"}, null, null, getActionForOperation("%"));
-        TrinityNatives.registerMethod("Long", "toString", false, null, null, null, (runtime, thisObj, params) -> new TYString(Long.toString(TrinityNatives.cast(TYLong.class, thisObj).getInternalLong())));
-        TrinityNatives.registerMethod("Long", "toHexString", false, null, null, null, (runtime, thisObj, params) -> new TYString(Long.toHexString(TrinityNatives.cast(TYLong.class, thisObj).getInternalLong())));
+        TrinityNatives.registerMethod("Long", "toString", false, null, null, null, (runtime, thisObj, params) -> new TYString(Long.toString(TrinityNatives.toLong(thisObj))));
+        TrinityNatives.registerMethod("Long", "toHexString", false, null, null, null, (runtime, thisObj, params) -> new TYString(Long.toHexString(TrinityNatives.toLong(thisObj))));
         TrinityNatives.registerMethod("Long", "compareTo", false, new String[]{"other"}, null, null, (runtime, thisObj, params) -> {
             
-            long thisLong = TrinityNatives.cast(TYLong.class, thisObj).getInternalLong();
+            long thisLong = TrinityNatives.toLong(thisObj);
             TYObject obj = runtime.getVariable("other");
             
             if (obj instanceof TYInt) {
@@ -58,7 +58,7 @@ class NativeLong {
         });
         TrinityNatives.registerMethod("Long", "==", false, new String[]{"other"}, null, null, (runtime, thisObj, params) -> {
             
-            long thisLong = TrinityNatives.cast(TYLong.class, thisObj).getInternalLong();
+            long thisLong = TrinityNatives.toLong(thisObj);
             TYObject obj = runtime.getVariable("other");
             
             if (obj instanceof TYInt) {
@@ -88,7 +88,7 @@ class NativeLong {
         
         return (runtime, thisObj, params) -> {
             
-            long thisLong = TrinityNatives.cast(TYLong.class, thisObj).getInternalLong();
+            long thisLong = TrinityNatives.toLong(thisObj);
             
             TYObject returnVal;
             
