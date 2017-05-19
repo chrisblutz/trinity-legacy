@@ -88,7 +88,7 @@ class NativeFileSystem {
             TYObject path = runtime.getVariable("path");
             TYObject str = runtime.getVariable("str");
             
-            FileUtils.write(TrinityNatives.cast(TYString.class, path).getInternalString(), TrinityNatives.cast(TYString.class, str).getInternalString());
+            FileUtils.write(TrinityNatives.cast(TYString.class, path).getInternalString(), TrinityNatives.toString(str, runtime));
             
             return TYObject.NONE;
         });

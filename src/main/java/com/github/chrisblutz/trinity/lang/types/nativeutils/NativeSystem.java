@@ -28,7 +28,7 @@ class NativeSystem {
             
             if (name != TYObject.NIL) {
                 
-                String value = System.getenv(TrinityNatives.cast(TYString.class, name).getInternalString());
+                String value = System.getenv(TrinityNatives.toString(name, runtime));
                 return value == null ? TYObject.NIL : new TYString(value);
                 
             } else {

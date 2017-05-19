@@ -29,7 +29,7 @@ class NativeString {
             String thisString = TrinityNatives.cast(TYString.class, thisObj).getInternalString();
             
             TYObject object = runtime.getVariable("other");
-            String objStr = TrinityNatives.cast(TYString.class, object.tyInvoke("toString", runtime, null, null)).getInternalString();
+            String objStr = TrinityNatives.toString(object, runtime);
             
             return new TYString(thisString + objStr);
         });

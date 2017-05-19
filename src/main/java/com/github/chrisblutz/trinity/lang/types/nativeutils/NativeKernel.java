@@ -20,18 +20,7 @@ class NativeKernel {
         
         TrinityNatives.registerMethod("Kernel", "print", true, new String[]{"str"}, null, null, (runtime, thisObj, params) -> {
             
-            TYObject obj = runtime.getVariable("str");
-            TYObject strObj = obj.tyInvoke("toString", runtime, null, null);
-            
-            if (strObj instanceof TYString) {
-                
-                System.out.print(((TYString) strObj).getInternalString());
-                
-            } else if (strObj == null) {
-                
-                System.out.print("nil");
-            }
-            
+            System.out.print(TrinityNatives.toString(runtime.getVariable("str"), runtime));
             return TYObject.NONE;
         });
         TrinityNatives.registerMethod("Kernel", "readln", true, null, null, null, (runtime, thisObj, params) -> {

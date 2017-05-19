@@ -314,8 +314,21 @@ public class TrinityNatives {
             return Double.parseDouble(((TYString) tyObject).getInternalString());
             
         } else {
-    
+            
             return TrinityNatives.cast(TYFloat.class, tyObject).getInternalDouble();
+        }
+    }
+    
+    public static String toString(TYObject tyObject, TYRuntime runtime) {
+        
+        if (tyObject instanceof TYString) {
+            
+            return ((TYString) tyObject).getInternalString();
+            
+        } else {
+            
+            TYString tyString = cast(TYString.class, tyObject.tyInvoke("toString", runtime, null, null));
+            return tyString.getInternalString();
         }
     }
 }
