@@ -5,7 +5,7 @@ module Trinity
                 @matches = matches
                 @groups = groups
 
-            def matches()
+            def matches
                 @matches
 
             def groups
