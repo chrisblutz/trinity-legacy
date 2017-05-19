@@ -278,7 +278,7 @@ public class ExpressionInterpreter {
         } else if (nextBlock != null) {
             
             List<String> mandatoryParams = new ArrayList<>();
-            Map<String, TYObject> optParams = new HashMap<>();
+            Map<String, TYObject> optParams = new TreeMap<>();
             String blockParam = null;
             int end = 0;
             
@@ -401,11 +401,11 @@ public class ExpressionInterpreter {
                 
             } else {
                 
-                if (info.getToken() == Token.LEFT_PARENTHESIS || info.getToken() == Token.LEFT_SQUARE_BRACKET || info.getToken() == Token.LEFT_CURLY_BRACKET) {
+                if (isLevelUpToken(info.getToken())) {
                     
                     level++;
                     
-                } else if (info.getToken() == Token.RIGHT_PARENTHESIS || info.getToken() == Token.RIGHT_SQUARE_BRACKET || info.getToken() == Token.RIGHT_CURLY_BRACKET) {
+                } else if (isLevelDownToken(info.getToken())) {
                     
                     level--;
                 }
@@ -575,11 +575,11 @@ public class ExpressionInterpreter {
                 
             } else {
                 
-                if (info.getToken() == Token.LEFT_PARENTHESIS || info.getToken() == Token.LEFT_SQUARE_BRACKET) {
+                if (isLevelUpToken(info.getToken())) {
                     
                     level++;
                     
-                } else if (info.getToken() == Token.RIGHT_PARENTHESIS || info.getToken() == Token.RIGHT_SQUARE_BRACKET) {
+                } else if (isLevelDownToken(info.getToken())) {
                     
                     level--;
                 }
@@ -609,7 +609,7 @@ public class ExpressionInterpreter {
         return sets.toArray(new ChainedInstructionSet[sets.size()]);
     }
     
-    private static List<List<TokenInfo>> splitByTokenIntoList(TokenInfo[] tokens, Token delimiter, String fileName, int lineNumber) {
+    public static List<List<TokenInfo>> splitByTokenIntoList(TokenInfo[] tokens, Token delimiter, String fileName, int lineNumber) {
         
         List<List<TokenInfo>> infoSets = new ArrayList<>();
         
@@ -626,11 +626,11 @@ public class ExpressionInterpreter {
                 
             } else {
                 
-                if (info.getToken() == Token.LEFT_PARENTHESIS) {
+                if (isLevelUpToken(info.getToken())) {
                     
                     level++;
                     
-                } else if (info.getToken() == Token.RIGHT_PARENTHESIS) {
+                } else if (isLevelDownToken(info.getToken())) {
                     
                     level--;
                 }
@@ -948,7 +948,7 @@ public class ExpressionInterpreter {
     private static ParameterResults parseVerticalBarParameters(List<TokenInfo> tokens, String errorClass, String method, String fileName, File fullFile, int lineNumber) {
         
         List<String> mandatoryParams = new ArrayList<>();
-        Map<String, TYObject> optParams = new HashMap<>();
+        Map<String, TYObject> optParams = new TreeMap<>();
         String blockParam = null;
         
         List<List<TokenInfo>> infoSets = new ArrayList<>();
@@ -965,11 +965,11 @@ public class ExpressionInterpreter {
                 
             } else {
                 
-                if (info.getToken() == Token.LEFT_PARENTHESIS) {
+                if (isLevelUpToken(info.getToken())) {
                     
                     level++;
                     
-                } else if (info.getToken() == Token.RIGHT_PARENTHESIS) {
+                } else if (isLevelDownToken(info.getToken())) {
                     
                     level--;
                 }
@@ -1013,5 +1013,15 @@ public class ExpressionInterpreter {
         }
         
         return new ParameterResults(mandatoryParams, optParams, blockParam);
+    }
+    
+    public static boolean isLevelUpToken(Token t) {
+        
+        return t == Token.LEFT_PARENTHESIS || t == Token.LEFT_SQUARE_BRACKET || t == Token.LEFT_CURLY_BRACKET;
+    }
+    
+    public static boolean isLevelDownToken(Token t) {
+        
+        return t == Token.RIGHT_PARENTHESIS || t == Token.RIGHT_SQUARE_BRACKET || t == Token.RIGHT_CURLY_BRACKET;
     }
 }

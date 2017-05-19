@@ -60,7 +60,7 @@ public class TrinityNatives {
         
         if (optionalParams == null) {
             
-            optionalParams = new HashMap<>();
+            optionalParams = new TreeMap<>();
         }
         
         TYProcedure procedure = new TYProcedure(actionWithStackTrace, mandatoryParamsList, optionalParams, blockParam);

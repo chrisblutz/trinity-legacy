@@ -1,5 +1,6 @@
 package com.github.chrisblutz.trinity.utils;
 
+import com.github.chrisblutz.trinity.interpreter.ExpressionInterpreter;
 import com.github.chrisblutz.trinity.parser.tokens.Token;
 import com.github.chrisblutz.trinity.parser.tokens.TokenInfo;
 
@@ -19,13 +20,13 @@ public class TokenUtils {
         int level = 0;
         for (TokenInfo info : infoSets) {
             
-            if (info.getToken() == Token.LEFT_PARENTHESIS || info.getToken() == Token.LEFT_SQUARE_BRACKET || info.getToken() == Token.LEFT_CURLY_BRACKET) {
+            if (ExpressionInterpreter.isLevelUpToken(info.getToken())) {
                 
-                level += 1;
+                level++;
                 
-            } else if (info.getToken() == Token.RIGHT_PARENTHESIS || info.getToken() == Token.RIGHT_SQUARE_BRACKET || info.getToken() == Token.RIGHT_CURLY_BRACKET) {
+            } else if (ExpressionInterpreter.isLevelDownToken(info.getToken())) {
                 
-                level -= 1;
+                level--;
                 
             } else if (level == 0 && tokenList.contains(info.getToken())) {
                 

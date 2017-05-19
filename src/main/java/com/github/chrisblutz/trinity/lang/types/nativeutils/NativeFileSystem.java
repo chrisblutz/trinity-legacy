@@ -10,9 +10,9 @@ import com.github.chrisblutz.trinity.natives.TrinityNatives;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 
 /**
@@ -53,7 +53,7 @@ class NativeFileSystem {
             
             return TYBoolean.FALSE;
         });
-        Map<String, TYObject> optionalParams = new HashMap<>();
+        Map<String, TYObject> optionalParams = new TreeMap<>();
         optionalParams.put("privileges", new TYString("r"));
         optionalParams.put("append", TYBoolean.FALSE);
         TrinityNatives.registerMethod("Trinity.IO.Files.FileSystem", "open", true, new String[]{"path"}, optionalParams, null, (runtime, thisObj, params) -> {

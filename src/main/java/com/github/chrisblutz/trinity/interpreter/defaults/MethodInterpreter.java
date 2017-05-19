@@ -20,10 +20,7 @@ import com.github.chrisblutz.trinity.parser.lines.Line;
 import com.github.chrisblutz.trinity.parser.tokens.Token;
 import com.github.chrisblutz.trinity.parser.tokens.TokenInfo;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 /**
@@ -103,45 +100,14 @@ public class MethodInterpreter extends DeclarationInterpreter {
                     if (!nativeMethod) {
                         
                         List<String> mandatoryParams = new ArrayList<>();
-                        Map<String, TYObject> optParams = new HashMap<>();
+                        Map<String, TYObject> optParams = new TreeMap<>();
                         String blockParam = null;
                         
                         if (position < l.size() && l.get(position).getToken() == Token.LEFT_PARENTHESIS && l.get(l.size() - 1).getToken() == Token.RIGHT_PARENTHESIS) {
                             
                             position++;
-                            List<List<TokenInfo>> infoSets = new ArrayList<>();
-                            List<TokenInfo> paramInfo = new ArrayList<>();
-                            int level = 0;
-                            for (int pos = position; pos < l.size() - 1; pos++) {
-                                
-                                TokenInfo info = l.get(pos);
-                                
-                                if (level == 0 && info.getToken() == Token.COMMA) {
-                                    
-                                    List<TokenInfo> newList = new ArrayList<>();
-                                    newList.addAll(paramInfo);
-                                    infoSets.add(newList);
-                                    paramInfo.clear();
-                                    
-                                } else {
-                                    
-                                    if (info.getToken() == Token.LEFT_PARENTHESIS) {
-                                        
-                                        level++;
-                                        
-                                    } else if (info.getToken() == Token.RIGHT_PARENTHESIS) {
-                                        
-                                        level--;
-                                    }
-                                    
-                                    paramInfo.add(info);
-                                }
-                            }
-                            
-                            if (!paramInfo.isEmpty()) {
-                                
-                                infoSets.add(paramInfo);
-                            }
+                            TokenInfo[] tokens = Arrays.copyOfRange(l.toArray(new TokenInfo[l.size()]), position, l.size());
+                            List<List<TokenInfo>> infoSets = ExpressionInterpreter.splitByTokenIntoList(tokens, Token.COMMA, block.getFileName(), l.getLineNumber());
                             
                             for (List<TokenInfo> list : infoSets) {
                                 

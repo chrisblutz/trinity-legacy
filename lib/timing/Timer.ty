@@ -1,21 +1,30 @@
 module Trinity
     module Timing
         class Timer
-            def initialize(&block, delay, begin = 0)
+            # Initializes a new Timer instance.
+            #
+            # NOTE: A 'limit' value of 0 implies no limit.
+            def initialize(&block, delay, begin = 0, test2 = 0, test = 0, limit = 0)
                 @block = block
                 @delay = delay
                 @begin = begin
+                @limit = limit
 
             def start
                 @running = true
+                @i = 0
                 sleep(@begin)
                 while isRunning()
                     pre = System.currentTimeMillis()
                     @block.call()
-                    dur = System.currentTimeMillis() - pre
-                    wait = @delay - dur
-                    if wait > 0
-                        sleep(wait)
+                    @i += 1
+                    if @limit != 0 && @i >= @limit
+                        stop()
+                    else
+                        dur = System.currentTimeMillis() - pre
+                        wait = @delay - dur
+                        if wait > 0
+                            sleep(wait)
 
             def stop
                 @running = false
