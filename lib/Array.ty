@@ -18,17 +18,24 @@ class Array
     def native length
 
     def toString
-        str = '['
-        for i = 0; i < length(); i += 1
-            str += this[i]
-            if i < length() - 1
-                str += ', '
-
-        str += ']'
-        str
+        '[' + join(', ') + ']'
 
     def each(&block)
         iterator().iterate(block)
 
     def iterator
         Iterator.new(this)
+
+    def sum
+        sum = 0
+        each() |e|
+            sum += e
+        sum
+
+    def join(delimiter = ' ')
+        str = ''
+        for i = 0; i < length(); i += 1
+            str += this[i]
+            if i < length() - 1
+                str += delimiter
+        str
