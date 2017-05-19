@@ -106,7 +106,7 @@ public class MethodInterpreter extends DeclarationInterpreter {
                         if (position < l.size() && l.get(position).getToken() == Token.LEFT_PARENTHESIS && l.get(l.size() - 1).getToken() == Token.RIGHT_PARENTHESIS) {
                             
                             position++;
-                            TokenInfo[] tokens = Arrays.copyOfRange(l.toArray(new TokenInfo[l.size()]), position, l.size());
+                            TokenInfo[] tokens = Arrays.copyOfRange(l.toArray(new TokenInfo[l.size()]), position, l.size() - 1);
                             List<List<TokenInfo>> infoSets = ExpressionInterpreter.splitByTokenIntoList(tokens, Token.COMMA, block.getFileName(), l.getLineNumber());
                             
                             for (List<TokenInfo> list : infoSets) {

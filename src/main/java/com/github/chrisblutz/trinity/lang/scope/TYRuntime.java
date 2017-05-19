@@ -216,6 +216,16 @@ public class TYRuntime implements Cloneable {
     
     public void dispose(TYRuntime runtime) {
         
+        disposeVariables(runtime);
+        
+        runtime.setBroken(isBroken());
+        
+        runtime.setReturning(isReturning());
+        runtime.setReturnObject(getReturnObject());
+    }
+    
+    public void disposeVariables(TYRuntime runtime) {
+        
         for (String var : runtime.variables.keySet()) {
             
             if (hasVariable(var)) {
@@ -223,10 +233,5 @@ public class TYRuntime implements Cloneable {
                 runtime.setVariable(var, getVariable(var));
             }
         }
-        
-        runtime.setBroken(isBroken());
-        
-        runtime.setReturning(isReturning());
-        runtime.setReturnObject(getReturnObject());
     }
 }

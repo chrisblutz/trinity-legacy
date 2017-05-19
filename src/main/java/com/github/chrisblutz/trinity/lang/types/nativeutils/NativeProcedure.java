@@ -31,7 +31,11 @@ class NativeProcedure {
             TYProcedure proc = obj.getInternalProcedure();
             TYRuntime newRuntime = obj.getProcedureRuntime().clone();
             
-            return proc.call(newRuntime, null, null, TYObject.NONE, params);
+            TYObject result = proc.call(newRuntime, null, null, TYObject.NONE, params);
+            
+            newRuntime.disposeVariables(obj.getProcedureRuntime());
+            
+            return result;
         });
     }
 }
