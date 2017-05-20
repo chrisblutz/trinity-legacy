@@ -4,7 +4,14 @@ import com.github.chrisblutz.trinity.interpreter.defaults.ClassInterpreter;
 import com.github.chrisblutz.trinity.interpreter.defaults.ImportInterpreter;
 import com.github.chrisblutz.trinity.interpreter.defaults.MethodInterpreter;
 import com.github.chrisblutz.trinity.interpreter.defaults.ModuleInterpreter;
+import com.github.chrisblutz.trinity.lang.TYObject;
+import com.github.chrisblutz.trinity.lang.errors.TYSyntaxError;
+import com.github.chrisblutz.trinity.lang.procedures.ProcedureAction;
+import com.github.chrisblutz.trinity.lang.scope.TYRuntime;
 import com.github.chrisblutz.trinity.parser.blocks.Block;
+import com.github.chrisblutz.trinity.parser.blocks.BlockItem;
+import com.github.chrisblutz.trinity.parser.blocks.BlockLine;
+import com.github.chrisblutz.trinity.parser.lines.Line;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +23,7 @@ import java.util.List;
 public class TrinityInterpreter {
     
     private static List<DeclarationInterpreter> declarationInterpreters = new ArrayList<>();
+    private static List<ProcedureAction> preMainInitializationCode = new ArrayList<>();
     
     public static void registerDeclarationInterpreter(DeclarationInterpreter declarationInterpreter) {
         
@@ -43,9 +51,85 @@ public class TrinityInterpreter {
     
     public static void interpret(Block block, InterpretEnvironment env) {
         
-        for (DeclarationInterpreter interpreter : declarationInterpreters) {
+        List<ProcedureAction> initializationActions = new ArrayList<>();
+        Block current = new Block(block.getFileName(), block.getFullFile(), block.getSpaces());
+        
+        for (int i = 0; i < block.size(); i++) {
             
-            interpreter.interpret(block, env);
+            BlockItem item = block.get(i);
+            
+            if (item instanceof Block) {
+                
+                interpret(block, env);
+                
+            } else if (item instanceof BlockLine) {
+                
+                Line line = ((BlockLine) item).getLine();
+                
+                Block nextBlock = null;
+                
+                if (i + 1 < block.size() && block.get(i + 1) instanceof Block) {
+                    
+                    nextBlock = (Block) block.get(++i);
+                }
+                
+                boolean claimed = false;
+                for (DeclarationInterpreter interpreter : declarationInterpreters) {
+                    
+                    if (line.size() > 0 && line.get(0).getToken() == interpreter.getTokenIdentifier()) {
+                        
+                        claimed = true;
+                        interpreter.interpret(line, nextBlock, env, block.getFileName(), block.getFullFile());
+                    }
+                }
+                
+                if (!claimed) {
+                    
+                    if (!env.isInitializable() && env.hasElements()) {
+                        
+                        TYSyntaxError error = new TYSyntaxError("Trinity.Errors.SyntaxError", "Initialization code prohibited here.", block.getFileName(), line.getLineNumber());
+                        error.throwError();
+                    }
+                    
+                    current.add(item);
+                    if (nextBlock != null) {
+                        
+                        current.add(nextBlock);
+                    }
+                    
+                } else if (!current.isEmpty()) {
+                    
+                    initializationActions.add(ExpressionInterpreter.interpret(current, env, env.isInitializable() ? env.getLastClass().getName() : null, null, false));
+                    current.clear();
+                }
+            }
+        }
+        
+        if (!current.isEmpty()) {
+            
+            initializationActions.add(ExpressionInterpreter.interpret(current, env, env.getLastClass().getName(), null, false));
+            current.clear();
+        }
+        
+        // TODO Add to class if classSTack  > 0, otherwise add to init code to run before main()
+        if (!initializationActions.isEmpty()) {
+            
+            if (env.hasElements()) {
+                
+                env.getLastClass().addInitializationActions(initializationActions);
+                
+            } else {
+                
+                preMainInitializationCode.addAll(initializationActions);
+            }
+        }
+    }
+    
+    public static void runPreMainInitializationCode() {
+        
+        for (ProcedureAction action : preMainInitializationCode) {
+            
+            action.onAction(new TYRuntime(), TYObject.NONE);
         }
     }
     

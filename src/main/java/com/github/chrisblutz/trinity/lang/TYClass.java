@@ -2,6 +2,7 @@ package com.github.chrisblutz.trinity.lang;
 
 import com.github.chrisblutz.trinity.lang.errors.TYError;
 import com.github.chrisblutz.trinity.lang.procedures.DefaultProcedures;
+import com.github.chrisblutz.trinity.lang.procedures.ProcedureAction;
 import com.github.chrisblutz.trinity.lang.procedures.TYProcedure;
 import com.github.chrisblutz.trinity.lang.scope.TYRuntime;
 import com.github.chrisblutz.trinity.natives.NativeStorage;
@@ -25,6 +26,8 @@ public class TYClass {
     private List<TYClass> inheritanceTree = new ArrayList<>();
     private Map<String, TYMethod> methods = new HashMap<>();
     private Map<String, TYObject> variables = new HashMap<>();
+    private List<ProcedureAction> initializationActions = new ArrayList<>();
+    private boolean initialized = false;
     
     public TYClass(String name, String shortName) {
         
@@ -269,5 +272,23 @@ public class TYClass {
     public TYMethod getMethod(String name) {
         
         return getMethods().getOrDefault(name, null);
+    }
+    
+    public void addInitializationActions(List<ProcedureAction> actions) {
+        
+        initializationActions.addAll(actions);
+    }
+    
+    public void runInitializationActions(TYRuntime runtime) {
+        
+        if (!initialized) {
+            
+            initialized = true;
+            
+            for (ProcedureAction action : initializationActions) {
+                
+                action.onAction(runtime, TYObject.NONE);
+            }
+        }
     }
 }

@@ -114,4 +114,9 @@ public class InterpretEnvironment {
         
         return str.toString();
     }
+    
+    public boolean isInitializable() {
+        
+        return getClassStack().size() > 0;
+    }
 }

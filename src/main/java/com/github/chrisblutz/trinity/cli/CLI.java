@@ -2,6 +2,7 @@ package com.github.chrisblutz.trinity.cli;
 
 import com.github.chrisblutz.trinity.bootstrap.Bootstrap;
 import com.github.chrisblutz.trinity.info.TrinityInfo;
+import com.github.chrisblutz.trinity.interpreter.TrinityInterpreter;
 import com.github.chrisblutz.trinity.lang.ClassRegistry;
 import com.github.chrisblutz.trinity.lang.TYClass;
 import com.github.chrisblutz.trinity.lang.TYObject;
@@ -64,6 +65,8 @@ public class CLI {
             }
             
             long startMillis = System.currentTimeMillis();
+            
+            TrinityInterpreter.runPreMainInitializationCode();
             
             if (mainClass != null) {
                 
