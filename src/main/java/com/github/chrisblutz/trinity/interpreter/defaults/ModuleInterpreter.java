@@ -5,10 +5,10 @@ import com.github.chrisblutz.trinity.interpreter.InterpretEnvironment;
 import com.github.chrisblutz.trinity.lang.ModuleRegistry;
 import com.github.chrisblutz.trinity.lang.TYModule;
 import com.github.chrisblutz.trinity.parser.blocks.Block;
-import com.github.chrisblutz.trinity.parser.blocks.BlockItem;
-import com.github.chrisblutz.trinity.parser.blocks.BlockLine;
 import com.github.chrisblutz.trinity.parser.lines.Line;
 import com.github.chrisblutz.trinity.parser.tokens.Token;
+
+import java.io.File;
 
 
 /**
@@ -17,40 +17,36 @@ import com.github.chrisblutz.trinity.parser.tokens.Token;
 public class ModuleInterpreter extends DeclarationInterpreter {
     
     @Override
-    public void interpret(Block block, InterpretEnvironment env) {
+    public Token getTokenIdentifier() {
         
-        for (int i = 0; i < block.size(); i++) {
+        return Token.MODULE;
+    }
+    
+    @Override
+    public void interpret(Line line, Block nextBlock, InterpretEnvironment env, String fileName, File fullFile) {
+        
+        if (line.size() >= 2) {
             
-            BlockItem line = block.get(i);
-            
-            if (line instanceof BlockLine && ((BlockLine) line).getLine().size() >= 2) {
+            if (line.get(0).getToken() == Token.MODULE && line.get(1).getToken() == Token.NON_TOKEN_STRING) {
                 
-                Line l = ((BlockLine) line).getLine();
+                String moduleName = line.get(1).getContents();
                 
-                if (l.get(0).getToken() == Token.MODULE && l.get(1).getToken() == Token.NON_TOKEN_STRING) {
+                if (env.hasElements()) {
                     
-                    String moduleName = l.get(1).getContents();
+                    moduleName = env.getEnvironmentString() + "." + moduleName;
+                }
+                
+                TYModule tyModule = ModuleRegistry.getModule(moduleName);
+                if (!env.getModuleStack().isEmpty()) {
                     
-                    if (env.hasElements()) {
-                        
-                        moduleName = env.getEnvironmentString() + "." + moduleName;
-                    }
+                    TYModule topModule = env.getLastModule();
+                    tyModule.setParentModule(topModule);
+                }
+                InterpretEnvironment newEnv = env.append(tyModule);
+                
+                if (nextBlock != null) {
                     
-                    TYModule tyModule = ModuleRegistry.getModule(moduleName);
-                    if (!env.getModuleStack().isEmpty()) {
-                        
-                        TYModule topModule = env.getLastModule();
-                        tyModule.setParentModule(topModule);
-                    }
-                    InterpretEnvironment newEnv = env.append(tyModule);
-                    
-                    if (i + 1 < block.size() && block.get(i + 1) instanceof Block) {
-                        
-                        Block moduleBlock = (Block) block.get(i + 1);
-                        interpretChildren(moduleBlock, newEnv);
-                        
-                        i++;
-                    }
+                    interpretChildren(nextBlock, newEnv);
                 }
             }
         }

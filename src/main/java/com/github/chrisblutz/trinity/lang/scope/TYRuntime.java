@@ -77,6 +77,8 @@ public class TYRuntime implements Cloneable {
     public void setTyClass(TYClass tyClass) {
         
         this.tyClass = tyClass;
+        
+        tyClass.runInitializationActions(this);
     }
     
     public TYProcedure getProcedure() {

@@ -7,10 +7,10 @@ import com.github.chrisblutz.trinity.lang.TYClass;
 import com.github.chrisblutz.trinity.lang.TYModule;
 import com.github.chrisblutz.trinity.lang.errors.TYSyntaxError;
 import com.github.chrisblutz.trinity.parser.blocks.Block;
-import com.github.chrisblutz.trinity.parser.blocks.BlockItem;
-import com.github.chrisblutz.trinity.parser.blocks.BlockLine;
 import com.github.chrisblutz.trinity.parser.lines.Line;
 import com.github.chrisblutz.trinity.parser.tokens.Token;
+
+import java.io.File;
 
 
 /**
@@ -19,75 +19,71 @@ import com.github.chrisblutz.trinity.parser.tokens.Token;
 public class ClassInterpreter extends DeclarationInterpreter {
     
     @Override
-    public void interpret(Block block, InterpretEnvironment env) {
+    public Token getTokenIdentifier() {
         
-        for (int i = 0; i < block.size(); i++) {
+        return Token.CLASS;
+    }
+    
+    @Override
+    public void interpret(Line line, Block nextBlock, InterpretEnvironment env, String fileName, File fullFile) {
+        
+        if (line.size() >= 2) {
             
-            BlockItem line = block.get(i);
-            
-            if (line instanceof BlockLine && ((BlockLine) line).getLine().size() >= 2) {
+            if (line.get(0).getToken() == Token.CLASS) {
                 
-                Line l = ((BlockLine) line).getLine();
+                boolean nativeClass = false;
+                String extension = null;
+                int offset = 1;
                 
-                if (l.get(0).getToken() == Token.CLASS) {
+                if (line.get(offset).getToken() == Token.NATIVE) {
                     
-                    boolean nativeClass = false;
-                    String extension = null;
-                    int offset = 1;
-                    
-                    if (l.get(offset).getToken() == Token.NATIVE) {
-                        
-                        nativeClass = true;
-                        offset++;
-                    }
-                    
-                    String className = l.get(offset).getContents();
+                    nativeClass = true;
                     offset++;
+                }
+                
+                String className = line.get(offset).getContents();
+                offset++;
+                
+                if (line.size() - offset > 1 && line.get(offset).getToken() == Token.CLASS_EXTENSION) {
                     
-                    if (l.size() - offset > 1 && l.get(offset).getToken() == Token.CLASS_EXTENSION) {
+                    offset++;
+                    extension = line.get(offset).getContents();
+                }
+                
+                if (env.hasElements()) {
+                    
+                    className = env.getEnvironmentString() + "." + className;
+                }
+                
+                if (!nativeClass) {
+                    
+                    TYClass tyClass = ClassRegistry.getClass(className);
+                    if (!env.getModuleStack().isEmpty()) {
                         
-                        offset++;
-                        extension = l.get(offset).getContents();
+                        TYModule topModule = env.getLastModule();
+                        tyClass.setModule(topModule);
+                    }
+                    if (extension != null && ClassRegistry.classExists(extension)) {
+                        
+                        TYClass extClass = ClassRegistry.getClass(extension);
+                        tyClass.setSuperclass(extClass);
+                        
+                    } else if (extension != null && !env.getModuleStack().isEmpty() && env.getLastModule().hasClass(extension)) {
+                        
+                        TYClass externalClass = env.getLastModule().getClass(extension);
+                        tyClass.setSuperclass(externalClass);
+                    }
+                    InterpretEnvironment newEnv = env.append(tyClass);
+                    
+                    if (nextBlock != null) {
+                        
+                        interpretChildren(nextBlock, newEnv);
                     }
                     
-                    if (env.hasElements()) {
-                        
-                        className = env.getEnvironmentString() + "." + className;
-                    }
+                } else {
                     
-                    if (!nativeClass) {
-                        
-                        TYClass tyClass = ClassRegistry.getClass(className);
-                        if (!env.getModuleStack().isEmpty()) {
-                            
-                            TYModule topModule = env.getLastModule();
-                            tyClass.setModule(topModule);
-                        }
-                        if (extension != null && ClassRegistry.classExists(extension)) {
-                            
-                            TYClass extClass = ClassRegistry.getClass(extension);
-                            tyClass.setSuperclass(extClass);
-                            
-                        } else if (extension != null && !env.getModuleStack().isEmpty() && env.getLastModule().hasClass(extension)) {
-                            
-                            TYClass externalClass = env.getLastModule().getClass(extension);
-                            tyClass.setSuperclass(externalClass);
-                        }
-                        InterpretEnvironment newEnv = env.append(tyClass);
-                        
-                        if (i + 1 < block.size() && block.get(i + 1) instanceof Block) {
-                            
-                            Block classBlock = (Block) block.get(i + 1);
-                            interpretChildren(classBlock, newEnv);
-                            
-                            i++;
-                        }
-                        
-                    } else {
-                        
-                        TYSyntaxError error = new TYSyntaxError("Trinity.Errors.ParseError", "Native classes are not currently supported.", block.getFileName(), l.getLineNumber());
-                        error.throwError();
-                    }
+                    TYSyntaxError error = new TYSyntaxError("Trinity.Errors.ParseError", "Native classes are not currently supported.", fileName, line.getLineNumber());
+                    error.throwError();
                 }
             }
         }
