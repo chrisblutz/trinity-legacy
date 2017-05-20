@@ -21,6 +21,7 @@ public class NativeHelper {
         NativeModule.register();
         NativeMethod.register();
         
+        NativeNatives.register();
         NativeKernel.register();
         NativeSystem.register();
         

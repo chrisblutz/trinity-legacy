@@ -35,6 +35,8 @@ public class TrinityNatives {
     private static Map<String, String> pendingLoadFiles = new HashMap<>();
     private static Map<String, Integer> pendingLoadLines = new HashMap<>();
     
+    private static Map<String, ProcedureAction> globals = new HashMap<>();
+    
     public static void registerMethod(String className, String methodName, boolean staticMethod, String[] mandatoryParams, Map<String, TYObject> optionalParams, String blockParam, ProcedureAction action) {
         
         ProcedureAction actionWithStackTrace = (runtime, thisObj, params) -> {
@@ -72,6 +74,16 @@ public class TrinityNatives {
     public static void registerMethodPendingLoad(String pendingClassName, String className, String methodName, boolean staticMethod, String[] mandatoryParams, Map<String, TYObject> optionalParams, String blockParam, ProcedureAction action) {
         
         performPendingLoad(pendingClassName, () -> registerMethod(className, methodName, staticMethod, mandatoryParams, optionalParams, blockParam, action));
+    }
+    
+    public static void registerGlobal(String name, ProcedureAction action) {
+        
+        globals.put(name, action);
+    }
+    
+    public static void registerGlobalPendingLoad(String pendingClassName, String name, ProcedureAction action) {
+        
+        performPendingLoad(pendingClassName, () -> registerGlobal(name, action));
     }
     
     public static void performPendingLoad(String className, NativeAction action) {
@@ -142,6 +154,11 @@ public class TrinityNatives {
                 pendingLoadLines.remove(str);
             }
         }
+    }
+    
+    public static ProcedureAction getGlobalProcedureAction(String name) {
+        
+        return globals.get(name);
     }
     
     /**
