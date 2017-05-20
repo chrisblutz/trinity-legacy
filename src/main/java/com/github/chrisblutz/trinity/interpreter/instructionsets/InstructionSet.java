@@ -193,6 +193,20 @@ public class InstructionSet extends ObjectEvaluator {
                     error.throwError();
                 }
                 
+            } else if (tokens[0].getToken() == Token.GLOBAL_VAR && tokens.length > 1 && tokens[1].getToken() == Token.NON_TOKEN_STRING) {
+                
+                String varName = tokens[1].getContents();
+                
+                if (Variables.getGlobalVariables().containsKey(varName)) {
+                    
+                    return Variables.getGlobalVariables().get(varName);
+                    
+                } else {
+                    
+                    TYError error = new TYError("Trinity.Errors.FieldNotFoundError", "Global field '" + varName + "' not found.");
+                    error.throwError();
+                }
+                
             } else if (tokens[0].getToken() == Token.NON_TOKEN_STRING) {
                 
                 String tokenContents = tokens[0].getContents();

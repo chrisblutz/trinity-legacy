@@ -12,6 +12,7 @@ import java.util.Map;
 public class Variables {
     
     private static Map<TYObject, Map<String, TYObject>> instanceVariables = new HashMap<>();
+    private static Map<String, TYObject> globalVariables = new HashMap<>();
     
     public static Map<String, TYObject> getInstanceVariables(TYObject object) {
         
@@ -26,5 +27,15 @@ public class Variables {
     public static Map<TYObject, Map<String, TYObject>> getInstanceVariables() {
         
         return instanceVariables;
+    }
+    
+    public static TYObject getGlobalVariable(String name) {
+        
+        return globalVariables.getOrDefault(name, TYObject.NIL);
+    }
+    
+    public static Map<String, TYObject> getGlobalVariables() {
+        
+        return globalVariables;
     }
 }

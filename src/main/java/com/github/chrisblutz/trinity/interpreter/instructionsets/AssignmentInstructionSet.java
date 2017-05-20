@@ -63,6 +63,10 @@ public class AssignmentInstructionSet extends ObjectEvaluator {
         } else if (getAssignmentTokens().length == 2 && getAssignmentTokens()[0].getToken() == Token.CLASS_VAR && getAssignmentTokens()[1].getToken() == Token.NON_TOKEN_STRING) {
             
             assignObj = runtime.getTyClass().getVariables().getOrDefault(getAssignmentTokens()[1].getContents(), TYObject.NIL);
+            
+        } else if (getAssignmentTokens().length == 2 && getAssignmentTokens()[0].getToken() == Token.GLOBAL_VAR && getAssignmentTokens()[1].getToken() == Token.NON_TOKEN_STRING) {
+            
+            assignObj = Variables.getGlobalVariables().getOrDefault(getAssignmentTokens()[1].getContents(), TYObject.NIL);
         }
         
         if (getOperator() == Token.NIL_ASSIGNMENT_OPERATOR && assignObj != TYObject.NIL) {
@@ -108,6 +112,10 @@ public class AssignmentInstructionSet extends ObjectEvaluator {
         } else if (getAssignmentTokens().length == 2 && getAssignmentTokens()[0].getToken() == Token.CLASS_VAR && getAssignmentTokens()[1].getToken() == Token.NON_TOKEN_STRING) {
             
             runtime.getTyClass().getVariables().put(getAssignmentTokens()[1].getContents(), opObj);
+            
+        } else if (getAssignmentTokens().length == 2 && getAssignmentTokens()[0].getToken() == Token.GLOBAL_VAR && getAssignmentTokens()[1].getToken() == Token.NON_TOKEN_STRING) {
+            
+            Variables.getGlobalVariables().put(getAssignmentTokens()[1].getContents(), opObj);
         }
         
         return opObj;

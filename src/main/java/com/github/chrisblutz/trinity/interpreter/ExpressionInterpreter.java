@@ -389,7 +389,7 @@ public class ExpressionInterpreter {
                         previousNonToken = info;
                     }
                     
-                } else if ((info.getToken() == Token.INSTANCE_VAR || info.getToken() == Token.CLASS_VAR) && i + 1 < tokens.length && tokens[i + 1].getToken() == Token.NON_TOKEN_STRING) {
+                } else if ((info.getToken() == Token.INSTANCE_VAR || info.getToken() == Token.CLASS_VAR || info.getToken() == Token.GLOBAL_VAR) && i + 1 < tokens.length && tokens[i + 1].getToken() == Token.NON_TOKEN_STRING) {
                     
                     evaluators.add(new InstructionSet(new TokenInfo[]{info, tokens[i + 1]}, fileName, fullFile, lineNumber));
                     i++;
