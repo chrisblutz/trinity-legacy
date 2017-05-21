@@ -4,7 +4,7 @@ module Trinity
             # Initializes a new Timer instance.
             #
             # NOTE: A 'limit' value of 0 implies no limit.
-            def initialize(&block, delay, begin = 0, test2 = 0, test = 0, limit = 0)
+            def initialize(&block, delay, begin = 0, limit = 0)
                 @block = block
                 @delay = delay
                 @begin = begin
