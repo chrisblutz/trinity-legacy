@@ -22,6 +22,7 @@ public class TYClass {
     private String name, shortName;
     private TYMethod constructor;
     private TYClass superclass;
+    private String superclassString;
     private TYModule module;
     private List<TYClass> inheritanceTree = new ArrayList<>();
     private Map<String, TYMethod> methods = new HashMap<>();
@@ -87,8 +88,11 @@ public class TYClass {
     public void setSuperclass(TYClass superclass) {
         
         this.superclass = superclass;
-        inheritanceTree = compileInheritanceTree();
-        inheritanceTree.add(this);
+    }
+    
+    public void setSuperclassString(String string) {
+        
+        this.superclassString = string;
     }
     
     public boolean isInstanceOf(TYClass tyClass) {
@@ -289,6 +293,29 @@ public class TYClass {
                 
                 action.onAction(runtime, TYObject.NONE);
             }
+        }
+    }
+    
+    public void performFinalSetup() {
+        
+        if (superclassString != null) {
+            
+            if (module != null && module.hasClass(superclassString)) {
+                
+                superclass = module.getClass(superclassString);
+                
+            } else if (ClassRegistry.classExists(superclassString)) {
+                
+                superclass = ClassRegistry.getClass(superclassString);
+                
+            } else {
+                
+                TYError error = new TYError("Trinity.Errors.ParseError", "Class " + superclassString + " does not exist.");
+                error.throwError();
+            }
+            
+            inheritanceTree = compileInheritanceTree();
+            inheritanceTree.add(this);
         }
     }
 }

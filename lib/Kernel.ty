@@ -1,10 +1,14 @@
+Natives.initGlobalVariable('STDOUT')
+Natives.initGlobalVariable('STDERR')
+
 class Kernel
     def native static readln
 
-    def native static print(str)
+    def static print(str)
+        $STDOUT.print(str)
 
     def static println(str = '')
-        print(str + "\n")
+        $STDOUT.println(str)
 
     def native static throw(error)
 

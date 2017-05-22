@@ -3,6 +3,7 @@ package com.github.chrisblutz.trinity.lang.types.nativeutils;
 import com.github.chrisblutz.trinity.Trinity;
 import com.github.chrisblutz.trinity.lang.ClassRegistry;
 import com.github.chrisblutz.trinity.lang.TYObject;
+import com.github.chrisblutz.trinity.lang.types.io.TYNativeOutputStream;
 import com.github.chrisblutz.trinity.lang.types.strings.TYString;
 import com.github.chrisblutz.trinity.natives.TrinityNatives;
 
@@ -18,11 +19,9 @@ class NativeKernel {
     
     static void register() {
         
-        TrinityNatives.registerMethod("Kernel", "print", true, new String[]{"str"}, null, null, (runtime, thisObj, params) -> {
-            
-            System.out.print(TrinityNatives.toString(runtime.getVariable("str"), runtime));
-            return TYObject.NONE;
-        });
+        TrinityNatives.registerGlobalPendingLoad("Trinity.IO.NativeOutputStream", "STDOUT", (runtime, thisObj, params) -> new TYNativeOutputStream(System.out));
+        TrinityNatives.registerGlobalPendingLoad("Trinity.IO.NativeOutputStream", "STDERR", (runtime, thisObj, params) -> new TYNativeOutputStream(System.err));
+        
         TrinityNatives.registerMethod("Kernel", "readln", true, null, null, null, (runtime, thisObj, params) -> {
             
             if (readlnSc == null) {

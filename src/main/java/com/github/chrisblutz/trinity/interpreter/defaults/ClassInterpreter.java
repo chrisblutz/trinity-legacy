@@ -63,15 +63,9 @@ public class ClassInterpreter extends DeclarationInterpreter {
                         TYModule topModule = env.getLastModule();
                         tyClass.setModule(topModule);
                     }
-                    if (extension != null && ClassRegistry.classExists(extension)) {
+                    if (extension != null) {
                         
-                        TYClass extClass = ClassRegistry.getClass(extension);
-                        tyClass.setSuperclass(extClass);
-                        
-                    } else if (extension != null && !env.getModuleStack().isEmpty() && env.getLastModule().hasClass(extension)) {
-                        
-                        TYClass externalClass = env.getLastModule().getClass(extension);
-                        tyClass.setSuperclass(externalClass);
+                        tyClass.setSuperclassString(extension);
                     }
                     InterpretEnvironment newEnv = env.append(tyClass);
                     

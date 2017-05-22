@@ -59,4 +59,12 @@ public class ClassRegistry {
         
         return mainClasses;
     }
+    
+    public static void finalizeClasses() {
+        
+        for (TYClass tyClass : classes.values()) {
+            
+            tyClass.performFinalSetup();
+        }
+    }
 }

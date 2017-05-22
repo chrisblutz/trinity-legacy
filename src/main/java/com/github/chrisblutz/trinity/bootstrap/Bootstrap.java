@@ -29,6 +29,8 @@ public class Bootstrap {
         
         // Load system properties
         ClassRegistry.getClass("System").tyInvoke("loadProperties", new TYRuntime(), null, null, TYObject.NIL);
+        
+        ClassRegistry.finalizeClasses();
     }
     
     public static void bootstrapUI() {

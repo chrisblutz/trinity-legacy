@@ -28,5 +28,7 @@ public class NativeHelper {
         NativeErrors.register();
         NativeFileSystem.register();
         NativeProcedure.register();
+        
+        NativeOutputStream.register();
     }
 }
