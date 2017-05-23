@@ -18,7 +18,7 @@ public class TYProcedure {
     
     private ProcedureAction procedureAction;
     private List<String> mandatoryParameters = new ArrayList<>();
-    private Map<String, TYObject> optionalParameters = new HashMap<>();
+    private Map<String, ProcedureAction> optionalParameters = new HashMap<>();
     private String blockParameter = null;
     
     public TYProcedure(ProcedureAction procedureAction) {
@@ -26,7 +26,7 @@ public class TYProcedure {
         this(procedureAction, new ArrayList<>(), new HashMap<>(), null);
     }
     
-    public TYProcedure(ProcedureAction procedureAction, List<String> mandatoryParameters, Map<String, TYObject> optionalParameters, String blockParameter) {
+    public TYProcedure(ProcedureAction procedureAction, List<String> mandatoryParameters, Map<String, ProcedureAction> optionalParameters, String blockParameter) {
         
         this.procedureAction = procedureAction;
         this.mandatoryParameters = mandatoryParameters;
@@ -44,7 +44,7 @@ public class TYProcedure {
         return mandatoryParameters;
     }
     
-    public Map<String, TYObject> getOptionalParameters() {
+    public Map<String, ProcedureAction> getOptionalParameters() {
         
         return optionalParameters;
     }
@@ -63,7 +63,8 @@ public class TYProcedure {
         
         for (String opt : getOptionalParameters().keySet()) {
             
-            runtime.setVariable(opt, getOptionalParameters().get(opt));
+            ProcedureAction action = getOptionalParameters().get(opt);
+            runtime.setVariable(opt, action.onAction(runtime, TYObject.NONE));
         }
         
         int mandatoryNum = getMandatoryParameters().size();

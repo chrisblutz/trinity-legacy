@@ -85,7 +85,7 @@ public class BranchingSwitchInstructionSet extends ChainedInstructionSet {
                     result = getAction().onAction(newRuntime, null, TYObject.NONE);
                 }
                 
-                if (!newRuntime.isBroken() && getChild() != null) {
+                if (!newRuntime.isBroken() && !newRuntime.isReturning() && getChild() != null) {
                     
                     result = getChild().evaluate(TYObject.NONE, newRuntime);
                 }

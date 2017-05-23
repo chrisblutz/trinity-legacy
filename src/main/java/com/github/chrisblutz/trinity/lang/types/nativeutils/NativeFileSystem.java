@@ -4,6 +4,7 @@ import com.github.chrisblutz.trinity.files.FilePrivilege;
 import com.github.chrisblutz.trinity.files.FileUtils;
 import com.github.chrisblutz.trinity.lang.TYObject;
 import com.github.chrisblutz.trinity.lang.errors.TYError;
+import com.github.chrisblutz.trinity.lang.procedures.ProcedureAction;
 import com.github.chrisblutz.trinity.lang.types.bool.TYBoolean;
 import com.github.chrisblutz.trinity.lang.types.strings.TYString;
 import com.github.chrisblutz.trinity.natives.TrinityNatives;
@@ -53,9 +54,9 @@ class NativeFileSystem {
             
             return TYBoolean.FALSE;
         });
-        Map<String, TYObject> optionalParams = new TreeMap<>();
-        optionalParams.put("privileges", new TYString("r"));
-        optionalParams.put("append", TYBoolean.FALSE);
+        Map<String, ProcedureAction> optionalParams = new TreeMap<>();
+        optionalParams.put("privileges", (runtime, thisObj, params1) -> new TYString("r"));
+        optionalParams.put("append", (runtime, thisObj, params1) -> TYBoolean.FALSE);
         TrinityNatives.registerMethod("Trinity.IO.Files.FileSystem", "open", true, new String[]{"path"}, optionalParams, null, (runtime, thisObj, params) -> {
             
             TYObject path = runtime.getVariable("path");

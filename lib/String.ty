@@ -16,6 +16,10 @@ class String
     def toString
         this
 
+    def native toUpperCase
+
+    def native toLowerCase
+
     def length
         chars().length()
 

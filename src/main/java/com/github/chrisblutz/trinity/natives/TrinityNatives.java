@@ -37,7 +37,7 @@ public class TrinityNatives {
     
     private static Map<String, ProcedureAction> globals = new HashMap<>();
     
-    public static void registerMethod(String className, String methodName, boolean staticMethod, String[] mandatoryParams, Map<String, TYObject> optionalParams, String blockParam, ProcedureAction action) {
+    public static void registerMethod(String className, String methodName, boolean staticMethod, String[] mandatoryParams, Map<String, ProcedureAction> optionalParams, String blockParam, ProcedureAction action) {
         
         ProcedureAction actionWithStackTrace = (runtime, thisObj, params) -> {
             
@@ -71,7 +71,7 @@ public class TrinityNatives {
         methods.put(fullName, method);
     }
     
-    public static void registerMethodPendingLoad(String pendingClassName, String className, String methodName, boolean staticMethod, String[] mandatoryParams, Map<String, TYObject> optionalParams, String blockParam, ProcedureAction action) {
+    public static void registerMethodPendingLoad(String pendingClassName, String className, String methodName, boolean staticMethod, String[] mandatoryParams, Map<String, ProcedureAction> optionalParams, String blockParam, ProcedureAction action) {
         
         performPendingLoad(pendingClassName, () -> registerMethod(className, methodName, staticMethod, mandatoryParams, optionalParams, blockParam, action));
     }

@@ -1,6 +1,6 @@
 package com.github.chrisblutz.trinity.interpreter;
 
-import com.github.chrisblutz.trinity.lang.TYObject;
+import com.github.chrisblutz.trinity.lang.procedures.ProcedureAction;
 
 import java.util.List;
 import java.util.Map;
@@ -12,10 +12,10 @@ import java.util.Map;
 public class ParameterResults {
     
     private List<String> mandatoryParams;
-    private Map<String, TYObject> optParams;
+    private Map<String, ProcedureAction> optParams;
     private String blockParam;
     
-    public ParameterResults(List<String> mandatoryParams, Map<String, TYObject> optParams, String blockParam) {
+    public ParameterResults(List<String> mandatoryParams, Map<String, ProcedureAction> optParams, String blockParam) {
         
         this.mandatoryParams = mandatoryParams;
         this.optParams = optParams;
@@ -27,7 +27,7 @@ public class ParameterResults {
         return mandatoryParams;
     }
     
-    public Map<String, TYObject> getOptionalParameters() {
+    public Map<String, ProcedureAction> getOptionalParameters() {
         
         return optParams;
     }

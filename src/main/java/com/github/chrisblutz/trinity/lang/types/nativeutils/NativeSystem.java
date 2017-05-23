@@ -3,6 +3,7 @@ package com.github.chrisblutz.trinity.lang.types.nativeutils;
 import com.github.chrisblutz.trinity.info.TrinityInfo;
 import com.github.chrisblutz.trinity.lang.ClassRegistry;
 import com.github.chrisblutz.trinity.lang.TYObject;
+import com.github.chrisblutz.trinity.lang.procedures.ProcedureAction;
 import com.github.chrisblutz.trinity.lang.types.maps.TYMap;
 import com.github.chrisblutz.trinity.lang.types.numeric.TYLong;
 import com.github.chrisblutz.trinity.lang.types.strings.TYString;
@@ -20,8 +21,8 @@ class NativeSystem {
     static void register() {
         
         TrinityNatives.registerMethod("System", "currentTimeMillis", true, null, null, null, (runtime, thisObj, params) -> new TYLong(System.currentTimeMillis()));
-        Map<String, TYObject> params = new HashMap<>();
-        params.put("name", TYObject.NIL);
+        Map<String, ProcedureAction> params = new HashMap<>();
+        params.put("name", (runtime, thisObj, params1) -> TYObject.NIL);
         TrinityNatives.registerMethod("System", "getEnvironment", true, null, params, null, (runtime, thisObj, params1) -> {
             
             TYObject name = runtime.getVariable("name");

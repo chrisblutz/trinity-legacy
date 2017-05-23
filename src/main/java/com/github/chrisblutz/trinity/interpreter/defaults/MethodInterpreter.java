@@ -11,7 +11,6 @@ import com.github.chrisblutz.trinity.lang.TYObject;
 import com.github.chrisblutz.trinity.lang.errors.TYSyntaxError;
 import com.github.chrisblutz.trinity.lang.procedures.ProcedureAction;
 import com.github.chrisblutz.trinity.lang.procedures.TYProcedure;
-import com.github.chrisblutz.trinity.lang.scope.TYRuntime;
 import com.github.chrisblutz.trinity.natives.TrinityNatives;
 import com.github.chrisblutz.trinity.parser.blocks.Block;
 import com.github.chrisblutz.trinity.parser.lines.Line;
@@ -99,7 +98,7 @@ public class MethodInterpreter extends DeclarationInterpreter {
                 if (!nativeMethod) {
                     
                     List<String> mandatoryParams = new ArrayList<>();
-                    Map<String, TYObject> optParams = new TreeMap<>();
+                    Map<String, ProcedureAction> optParams = new TreeMap<>();
                     String blockParam = null;
                     
                     if (position < line.size() && line.get(position).getToken() == Token.LEFT_PARENTHESIS && line.get(line.size() - 1).getToken() == Token.RIGHT_PARENTHESIS) {
@@ -122,14 +121,9 @@ public class MethodInterpreter extends DeclarationInterpreter {
                                 newList.remove(0);
                                 
                                 ChainedInstructionSet value = ExpressionInterpreter.interpret(env.getLastClass().getName(), name, fileName, fullFile, line.getLineNumber(), newList.toArray(new TokenInfo[newList.size()]), null);
-                                TYObject valueResult = TYObject.NIL;
+                                ProcedureAction action = (runtime, thisObj, params) -> value.evaluate(thisObj, runtime);
                                 
-                                if (value != null) {
-                                    
-                                    valueResult = value.evaluate(TYObject.NONE, new TYRuntime());
-                                }
-                                
-                                optParams.put(list.get(0).getContents(), valueResult);
+                                optParams.put(list.get(0).getContents(), action);
                                 
                             } else if (list.size() == 2 && list.get(0).getToken() == Token.BLOCK_PREFIX && list.get(1).getToken() == Token.NON_TOKEN_STRING) {
                                 
