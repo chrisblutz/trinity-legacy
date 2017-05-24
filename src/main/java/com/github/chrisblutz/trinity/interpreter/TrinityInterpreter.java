@@ -98,7 +98,7 @@ public class TrinityInterpreter {
                     
                 } else if (!current.isEmpty()) {
                     
-                    initializationActions.add(ExpressionInterpreter.interpret(current, env, env.isInitializable() ? env.getLastClass().getName() : null, null, false));
+                    initializationActions.add(ExpressionInterpreter.interpret(current, env, env.isInitializable() ? env.getLastClass().getName() : null, null, true));
                     current.clear();
                 }
             }
@@ -106,7 +106,7 @@ public class TrinityInterpreter {
         
         if (!current.isEmpty()) {
             
-            initializationActions.add(ExpressionInterpreter.interpret(current, env, env.getLastClass().getName(), null, false));
+            initializationActions.add(ExpressionInterpreter.interpret(current, env, env.getLastClass().getName(), null, true));
             current.clear();
         }
         
