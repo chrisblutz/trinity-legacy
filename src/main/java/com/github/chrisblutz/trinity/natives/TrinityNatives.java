@@ -4,8 +4,7 @@ import com.github.chrisblutz.trinity.lang.ClassRegistry;
 import com.github.chrisblutz.trinity.lang.TYClass;
 import com.github.chrisblutz.trinity.lang.TYMethod;
 import com.github.chrisblutz.trinity.lang.TYObject;
-import com.github.chrisblutz.trinity.lang.errors.TYError;
-import com.github.chrisblutz.trinity.lang.errors.TYSyntaxError;
+import com.github.chrisblutz.trinity.lang.errors.Errors;
 import com.github.chrisblutz.trinity.lang.errors.stacktrace.TYStackTrace;
 import com.github.chrisblutz.trinity.lang.procedures.ProcedureAction;
 import com.github.chrisblutz.trinity.lang.procedures.TYProcedure;
@@ -128,8 +127,7 @@ public class TrinityNatives {
             
         } else {
             
-            TYSyntaxError error = new TYSyntaxError("Trinity.Errors.ParseError", "Native method " + name + " not found.", fileName, lineNumber);
-            error.throwError();
+            Errors.throwError("Trinity.Errors.ParseError", "Native method " + name + " not found.", fileName, lineNumber);
         }
     }
     
@@ -214,8 +212,7 @@ public class TrinityNatives {
             }
         }
         
-        TYSyntaxError error = new TYSyntaxError("Trinity.Errors.NativeTypeError", "Trinity does not have native type-conversion utilities for " + obj.getClass() + ".", null, 0);
-        error.throwError();
+        Errors.throwError("Trinity.Errors.NativeTypeError", "Trinity does not have native type-conversion utilities for " + obj.getClass() + ".", null, 0);
         
         return TYObject.NIL;
     }
@@ -268,8 +265,7 @@ public class TrinityNatives {
             
         } else {
             
-            TYError error = new TYError("Trinity.Errors.ClassNotFoundError", "Class " + className + " does not exist.");
-            error.throwError();
+            Errors.throwError("Trinity.Errors.ClassNotFoundError", "Class " + className + " does not exist.", runtime);
         }
         
         return TYObject.NIL;
@@ -283,8 +279,7 @@ public class TrinityNatives {
             
         } else {
             
-            TYError error = new TYError("Trinity.Errors.InvalidTypeError", "Unexpected value of type " + object.getObjectClass().getName() + " found.");
-            error.throwError();
+            Errors.throwError("Trinity.Errors.InvalidTypeError", "Unexpected value of type " + object.getObjectClass().getName() + " found.");
             
             // This will throw an error, but the program will exit at the line above, never reaching this point
             return desiredClass.cast(object);

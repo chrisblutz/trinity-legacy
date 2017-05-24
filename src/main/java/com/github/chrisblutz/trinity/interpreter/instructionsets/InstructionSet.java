@@ -2,7 +2,7 @@ package com.github.chrisblutz.trinity.interpreter.instructionsets;
 
 import com.github.chrisblutz.trinity.interpreter.variables.Variables;
 import com.github.chrisblutz.trinity.lang.*;
-import com.github.chrisblutz.trinity.lang.errors.TYError;
+import com.github.chrisblutz.trinity.lang.errors.Errors;
 import com.github.chrisblutz.trinity.lang.scope.TYRuntime;
 import com.github.chrisblutz.trinity.lang.types.TYClassObject;
 import com.github.chrisblutz.trinity.lang.types.TYModuleObject;
@@ -141,8 +141,7 @@ public class InstructionSet extends ObjectEvaluator {
                     
                 } else {
                     
-                    TYError error = new TYError("Trinity.Errors.SyntaxError", "Cannot retrieve a class here.");
-                    error.throwError();
+                    Errors.throwError("Trinity.Errors.SyntaxError", "Cannot retrieve a class here.", runtime);
                 }
                 
             } else if (tokens[0].getToken() == Token.MODULE) {
@@ -153,8 +152,7 @@ public class InstructionSet extends ObjectEvaluator {
                     
                 } else {
                     
-                    TYError error = new TYError("Trinity.Errors.SyntaxError", "Cannot retrieve a module here.");
-                    error.throwError();
+                    Errors.throwError("Trinity.Errors.SyntaxError", "Cannot retrieve a module here.", runtime);
                 }
                 
             } else if (tokens[0].getToken() == Token.INSTANCE_VAR && tokens.length > 1 && tokens[1].getToken() == Token.NON_TOKEN_STRING) {
@@ -169,14 +167,12 @@ public class InstructionSet extends ObjectEvaluator {
                         
                     } else {
                         
-                        TYError error = new TYError("Trinity.Errors.FieldNotFoundError", "Instance variable '" + varName + "' not found.");
-                        error.throwError();
+                        Errors.throwError("Trinity.Errors.FieldNotFoundError", "Instance variable '" + varName + "' not found.", runtime);
                     }
                     
                 } else {
                     
-                    TYError error = new TYError("Trinity.Errors.ScopeError", "Instance variable '" + varName + "' not accessible from a static context.");
-                    error.throwError();
+                    Errors.throwError("Trinity.Errors.ScopeError", "Instance variable '" + varName + "' not accessible from a static context.", runtime);
                 }
                 
             } else if (tokens[0].getToken() == Token.CLASS_VAR && tokens.length > 1 && tokens[1].getToken() == Token.NON_TOKEN_STRING) {
@@ -189,8 +185,7 @@ public class InstructionSet extends ObjectEvaluator {
                     
                 } else {
                     
-                    TYError error = new TYError("Trinity.Errors.FieldNotFoundError", "Class field '" + varName + "' not found.");
-                    error.throwError();
+                    Errors.throwError("Trinity.Errors.FieldNotFoundError", "Class field '" + varName + "' not found.", runtime);
                 }
                 
             } else if (tokens[0].getToken() == Token.GLOBAL_VAR && tokens.length > 1 && tokens[1].getToken() == Token.NON_TOKEN_STRING) {
@@ -203,8 +198,7 @@ public class InstructionSet extends ObjectEvaluator {
                     
                 } else {
                     
-                    TYError error = new TYError("Trinity.Errors.FieldNotFoundError", "Global field '" + varName + "' not found.");
-                    error.throwError();
+                    Errors.throwError("Trinity.Errors.FieldNotFoundError", "Global field '" + varName + "' not found.", runtime);
                 }
                 
             } else if (tokens[0].getToken() == Token.NON_TOKEN_STRING) {

@@ -1,6 +1,6 @@
 package com.github.chrisblutz.trinity.lang;
 
-import com.github.chrisblutz.trinity.lang.errors.TYError;
+import com.github.chrisblutz.trinity.lang.errors.Errors;
 import com.github.chrisblutz.trinity.lang.procedures.TYProcedure;
 import com.github.chrisblutz.trinity.lang.scope.TYRuntime;
 import com.github.chrisblutz.trinity.lang.types.TYNilClass;
@@ -51,8 +51,7 @@ public class TYObject {
                 
                 if (superClass == null) {
                     
-                    TYError error = new TYError("Trinity.Errors.InheritanceError", "Superclass does not exist.");
-                    error.throwError();
+                    Errors.throwError("Trinity.Errors.InheritanceError", "Superclass does not exist.", runtime);
                     break;
                 }
             }

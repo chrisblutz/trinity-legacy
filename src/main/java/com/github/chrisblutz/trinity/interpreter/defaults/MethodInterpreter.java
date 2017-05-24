@@ -8,7 +8,7 @@ import com.github.chrisblutz.trinity.interpreter.instructionsets.ChainedInstruct
 import com.github.chrisblutz.trinity.lang.TYClass;
 import com.github.chrisblutz.trinity.lang.TYMethod;
 import com.github.chrisblutz.trinity.lang.TYObject;
-import com.github.chrisblutz.trinity.lang.errors.TYSyntaxError;
+import com.github.chrisblutz.trinity.lang.errors.Errors;
 import com.github.chrisblutz.trinity.lang.procedures.ProcedureAction;
 import com.github.chrisblutz.trinity.lang.procedures.TYProcedure;
 import com.github.chrisblutz.trinity.natives.TrinityNatives;
@@ -91,8 +91,7 @@ public class MethodInterpreter extends DeclarationInterpreter {
                     
                 } else {
                     
-                    TYSyntaxError error = new TYSyntaxError("Trinity.Errors.ScopeError", "Methods must be declared within a class.", fileName, line.getLineNumber());
-                    error.throwError();
+                    Errors.throwError("Trinity.Errors.ScopeError", "Methods must be declared within a class.", fileName, line.getLineNumber());
                 }
                 
                 if (!nativeMethod) {

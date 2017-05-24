@@ -2,7 +2,7 @@ package com.github.chrisblutz.trinity.interpreter;
 
 import com.github.chrisblutz.trinity.interpreter.instructionsets.*;
 import com.github.chrisblutz.trinity.lang.TYObject;
-import com.github.chrisblutz.trinity.lang.errors.TYSyntaxError;
+import com.github.chrisblutz.trinity.lang.errors.Errors;
 import com.github.chrisblutz.trinity.lang.errors.stacktrace.TYStackTrace;
 import com.github.chrisblutz.trinity.lang.procedures.ProcedureAction;
 import com.github.chrisblutz.trinity.lang.procedures.TYProcedure;
@@ -218,8 +218,7 @@ public class ExpressionInterpreter {
                 
             } else {
                 
-                TYSyntaxError error = new TYSyntaxError("Trinity.Errors.ParseError", "For loops require 3 components.", fileName, lineNumber);
-                error.throwError();
+                Errors.throwError("Trinity.Errors.ParseError", "For loops require 3 components.", fileName, lineNumber);
             }
             
         } else if (tokens[0].getToken() == Token.RETURN) {
@@ -544,8 +543,7 @@ public class ExpressionInterpreter {
         
         if (level != 0) {
             
-            TYSyntaxError error = new TYSyntaxError("Trinity.Errors.SyntaxError", "Unmatched brackets.", fileName, lineNumber);
-            error.throwError();
+            Errors.throwError("Trinity.Errors.SyntaxError", "Unmatched brackets.", fileName, lineNumber);
         }
         
         if (previousNonToken != null) {

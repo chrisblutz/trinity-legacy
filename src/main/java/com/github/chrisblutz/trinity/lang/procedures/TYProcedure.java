@@ -1,7 +1,7 @@
 package com.github.chrisblutz.trinity.lang.procedures;
 
 import com.github.chrisblutz.trinity.lang.TYObject;
-import com.github.chrisblutz.trinity.lang.errors.TYError;
+import com.github.chrisblutz.trinity.lang.errors.Errors;
 import com.github.chrisblutz.trinity.lang.scope.TYRuntime;
 import com.github.chrisblutz.trinity.lang.types.procedures.TYProcedureObject;
 
@@ -114,8 +114,7 @@ public class TYProcedure {
             
         } else {
             
-            TYError error = new TYError("Trinity.Errors.InvalidArgumentNumberError", "Procedure takes " + getMandatoryParameters().size() + " parameter(s).");
-            error.throwError();
+            Errors.throwError("Trinity.Errors.InvalidArgumentNumberError", "Procedure takes " + getMandatoryParameters().size() + " parameter(s).", runtime);
         }
         
         if (getBlockParameter() != null) {

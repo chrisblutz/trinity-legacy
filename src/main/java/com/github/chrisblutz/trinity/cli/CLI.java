@@ -6,7 +6,7 @@ import com.github.chrisblutz.trinity.interpreter.TrinityInterpreter;
 import com.github.chrisblutz.trinity.lang.ClassRegistry;
 import com.github.chrisblutz.trinity.lang.TYClass;
 import com.github.chrisblutz.trinity.lang.TYObject;
-import com.github.chrisblutz.trinity.lang.errors.TYSyntaxError;
+import com.github.chrisblutz.trinity.lang.errors.Errors;
 import com.github.chrisblutz.trinity.lang.scope.TYRuntime;
 import com.github.chrisblutz.trinity.lang.types.arrays.TYArray;
 import com.github.chrisblutz.trinity.lang.types.strings.TYString;
@@ -62,8 +62,7 @@ public class CLI {
             
             if (ClassRegistry.getMainClasses().size() == 0) {
                 
-                TYSyntaxError error = new TYSyntaxError("Trinity.Errors.MethodNotFoundError", "No main method found in found in loaded files.", null, 0);
-                error.throwError();
+                Errors.throwError("Trinity.Errors.MethodNotFoundError", "No main method found in found in loaded files.", null, 0);
             }
             
             long startMillis = System.currentTimeMillis();
@@ -80,8 +79,7 @@ public class CLI {
                     
                 } else {
                     
-                    TYSyntaxError error = new TYSyntaxError("Trinity.Errors.ClassNotFoundError", "Class '" + mainClass + "' not found.", null, 0);
-                    error.throwError();
+                    Errors.throwError("Trinity.Errors.ClassNotFoundError", "Class '" + mainClass + "' not found.", null, 0);
                 }
                 
             } else {
@@ -92,8 +90,7 @@ public class CLI {
                     
                 } else {
                     
-                    TYSyntaxError error = new TYSyntaxError("Trinity.Errors.MethodNotFoundError", "No 'main' methods found.", null, 0);
-                    error.throwError();
+                    Errors.throwError("Trinity.Errors.MethodNotFoundError", "No 'main' methods found.", null, 0);
                 }
             }
             
