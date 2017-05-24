@@ -3,7 +3,6 @@ package com.github.chrisblutz.trinity.interpreter.instructionsets;
 import com.github.chrisblutz.trinity.lang.TYObject;
 import com.github.chrisblutz.trinity.lang.procedures.ProcedureAction;
 import com.github.chrisblutz.trinity.lang.scope.TYRuntime;
-import com.github.chrisblutz.trinity.lang.types.bool.TYBoolean;
 import com.github.chrisblutz.trinity.natives.TrinityNatives;
 import com.github.chrisblutz.trinity.parser.tokens.Token;
 
@@ -76,7 +75,7 @@ public class BranchingSwitchInstructionSet extends ChainedInstructionSet {
             
             TYObject exp = getExpression().evaluate(TYObject.NONE, newRuntime);
             
-            if (chaining || TrinityNatives.cast(TYBoolean.class, runtime.getSwitchObj().tyInvoke("==", runtime, null, null, exp)).getInternalBoolean()) {
+            if (chaining || TrinityNatives.toBoolean(runtime.getSwitchObj().tyInvoke("==", runtime, null, null, exp))) {
                 
                 newRuntime.setChainingSwitch(true);
                 

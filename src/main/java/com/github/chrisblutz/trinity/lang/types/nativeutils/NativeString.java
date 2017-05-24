@@ -74,7 +74,7 @@ class NativeString {
             Pattern pattern = Pattern.compile(regex, flags);
             Matcher matcher = pattern.matcher(thisString);
             
-            TYBoolean bool = TrinityNatives.cast(TYBoolean.class, TrinityNatives.getObjectFor(matcher.matches()));
+            TYObject bool = TrinityNatives.getObjectFor(matcher.matches());
             TYArray array;
             if (matcher.matches()) {
                 
@@ -121,7 +121,7 @@ class NativeString {
             Pattern pattern = Pattern.compile(regex, flags);
             Matcher matcher = pattern.matcher(thisString);
             
-            return TrinityNatives.cast(TYBoolean.class, TrinityNatives.getObjectFor(matcher.matches()));
+            return TrinityNatives.getObjectFor(matcher.matches());
         });
         TrinityNatives.registerMethod("String", "toUpperCase", false, null, null, null, (runtime, thisObj, params13) -> {
             

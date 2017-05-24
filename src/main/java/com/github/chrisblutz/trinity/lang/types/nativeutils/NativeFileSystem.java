@@ -74,7 +74,7 @@ class NativeFileSystem {
                 privileges.add(FilePrivilege.WRITE);
             }
             
-            FileUtils.open(TrinityNatives.cast(TYString.class, path).getInternalString(), privileges, TrinityNatives.cast(TYBoolean.class, append).getInternalBoolean());
+            FileUtils.open(TrinityNatives.cast(TYString.class, path).getInternalString(), privileges, TrinityNatives.toBoolean(append));
             
             return TYObject.NONE;
         });

@@ -3,7 +3,6 @@ package com.github.chrisblutz.trinity.interpreter.instructionsets;
 import com.github.chrisblutz.trinity.lang.TYObject;
 import com.github.chrisblutz.trinity.lang.procedures.ProcedureAction;
 import com.github.chrisblutz.trinity.lang.scope.TYRuntime;
-import com.github.chrisblutz.trinity.lang.types.bool.TYBoolean;
 import com.github.chrisblutz.trinity.natives.TrinityNatives;
 
 import java.io.File;
@@ -53,9 +52,9 @@ public class ForLoopInstructionSet extends ChainedInstructionSet {
         
         getInitial().evaluate(TYObject.NONE, newRuntime);
         
-        TYBoolean expBoolean = TrinityNatives.cast(TYBoolean.class, getExpression().evaluate(TYObject.NONE, newRuntime));
+        boolean expression = TrinityNatives.toBoolean(getExpression().evaluate(TYObject.NONE, newRuntime));
         
-        while (expBoolean.getInternalBoolean()) {
+        while (expression) {
             
             getAction().onAction(newRuntime, null, TYObject.NONE);
             
@@ -71,7 +70,7 @@ public class ForLoopInstructionSet extends ChainedInstructionSet {
             
             getAfter().evaluate(TYObject.NONE, newRuntime);
             
-            expBoolean = TrinityNatives.cast(TYBoolean.class, getExpression().evaluate(TYObject.NONE, newRuntime));
+            expression = TrinityNatives.toBoolean(getExpression().evaluate(TYObject.NONE, newRuntime));
         }
         
         newRuntime.dispose(runtime);

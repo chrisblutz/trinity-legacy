@@ -41,9 +41,9 @@ public class BinaryAndOrInstructionSet extends ObjectEvaluator {
             
             case AND:
                 
-                TYBoolean thisBool = TrinityNatives.cast(TYBoolean.class, thisObj);
+                boolean thisBool = TrinityNatives.toBoolean(thisObj);
                 
-                if (!thisBool.getInternalBoolean()) {
+                if (!thisBool) {
                     
                     return TYBoolean.FALSE;
                     
@@ -51,14 +51,14 @@ public class BinaryAndOrInstructionSet extends ObjectEvaluator {
                     
                     TYObject opObj = getOperand().evaluate(TYObject.NONE, runtime);
                     
-                    return TYBoolean.valueFor(thisBool.getInternalBoolean() && TrinityNatives.cast(TYBoolean.class, opObj).getInternalBoolean());
+                    return TYBoolean.valueFor(thisBool && TrinityNatives.toBoolean(opObj));
                 }
             
             case OR:
                 
-                thisBool = TrinityNatives.cast(TYBoolean.class, thisObj);
+                thisBool = TrinityNatives.toBoolean(thisObj);
                 
-                if (thisBool.getInternalBoolean()) {
+                if (thisBool) {
                     
                     return TYBoolean.TRUE;
                     
@@ -66,7 +66,7 @@ public class BinaryAndOrInstructionSet extends ObjectEvaluator {
                     
                     TYObject opObj = getOperand().evaluate(TYObject.NONE, runtime);
                     
-                    return TYBoolean.valueFor(thisBool.getInternalBoolean() || TrinityNatives.cast(TYBoolean.class, opObj).getInternalBoolean());
+                    return TYBoolean.valueFor(thisBool || TrinityNatives.toBoolean(opObj));
                 }
         }
         

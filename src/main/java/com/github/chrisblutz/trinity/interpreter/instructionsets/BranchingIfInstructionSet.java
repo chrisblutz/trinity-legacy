@@ -3,7 +3,6 @@ package com.github.chrisblutz.trinity.interpreter.instructionsets;
 import com.github.chrisblutz.trinity.lang.TYObject;
 import com.github.chrisblutz.trinity.lang.procedures.ProcedureAction;
 import com.github.chrisblutz.trinity.lang.scope.TYRuntime;
-import com.github.chrisblutz.trinity.lang.types.bool.TYBoolean;
 import com.github.chrisblutz.trinity.natives.TrinityNatives;
 import com.github.chrisblutz.trinity.parser.tokens.Token;
 
@@ -62,9 +61,9 @@ public class BranchingIfInstructionSet extends ChainedInstructionSet {
         
         if (getBranchToken() == Token.IF || getBranchToken() == Token.ELSIF) {
             
-            TYBoolean expBoolean = TrinityNatives.cast(TYBoolean.class, getExpression().evaluate(TYObject.NONE, newRuntime));
+            boolean expression = TrinityNatives.toBoolean(getExpression().evaluate(TYObject.NONE, newRuntime));
             
-            if (expBoolean.getInternalBoolean()) {
+            if (expression) {
                 
                 if (getAction() != null) {
                     

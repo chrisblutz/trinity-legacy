@@ -348,4 +348,32 @@ public class TrinityNatives {
             return tyString.getInternalString();
         }
     }
+    
+    public static boolean toBoolean(TYObject tyObject) {
+        
+        if (tyObject == TYObject.NIL || tyObject == TYObject.NONE) {
+            
+            return false;
+            
+        } else if (tyObject instanceof TYBoolean) {
+            
+            return ((TYBoolean) tyObject).getInternalBoolean();
+            
+        } else if (tyObject instanceof TYInt) {
+            
+            return ((TYInt) tyObject).getInternalInteger() != 0;
+            
+        } else if (tyObject instanceof TYLong) {
+            
+            return ((TYLong) tyObject).getInternalLong() != 0;
+            
+        } else if (tyObject instanceof TYFloat) {
+            
+            return ((TYFloat) tyObject).getInternalDouble() != 0;
+            
+        } else {
+            
+            return true;
+        }
+    }
 }

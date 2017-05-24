@@ -44,7 +44,7 @@ public class UnaryNegationInstructionSet extends ObjectEvaluator {
             
             case NEGATIVE_OPERATOR:
                 
-                return TYBoolean.valueFor(!TrinityNatives.cast(TYBoolean.class, opObj).getInternalBoolean());
+                return TYBoolean.valueFor(!TrinityNatives.toBoolean(opObj));
             
             case MINUS:
                 

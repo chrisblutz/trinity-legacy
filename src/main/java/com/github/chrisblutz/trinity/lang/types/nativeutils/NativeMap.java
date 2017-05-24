@@ -2,7 +2,6 @@ package com.github.chrisblutz.trinity.lang.types.nativeutils;
 
 import com.github.chrisblutz.trinity.lang.TYObject;
 import com.github.chrisblutz.trinity.lang.scope.TYRuntime;
-import com.github.chrisblutz.trinity.lang.types.bool.TYBoolean;
 import com.github.chrisblutz.trinity.lang.types.maps.TYMap;
 import com.github.chrisblutz.trinity.natives.NativeStorage;
 import com.github.chrisblutz.trinity.natives.TrinityNatives;
@@ -52,9 +51,9 @@ class NativeMap {
         
         for (TYObject key : map.keySet()) {
             
-            TYBoolean equal = TrinityNatives.cast(TYBoolean.class, key.tyInvoke("==", runtime, null, null, obj));
+            boolean equal = TrinityNatives.toBoolean(key.tyInvoke("==", runtime, null, null, obj));
             
-            if (equal.getInternalBoolean()) {
+            if (equal) {
                 
                 return map.get(key);
             }
@@ -69,9 +68,9 @@ class NativeMap {
         
         for (TYObject key : map.keySet()) {
             
-            TYBoolean equal = TrinityNatives.cast(TYBoolean.class, key.tyInvoke("==", runtime, null, null, obj));
+            boolean equal = TrinityNatives.toBoolean(key.tyInvoke("==", runtime, null, null, obj));
             
-            if (equal.getInternalBoolean()) {
+            if (equal) {
                 
                 return map.remove(key);
             }
