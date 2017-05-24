@@ -1,6 +1,6 @@
 package com.github.chrisblutz.trinity.lang;
 
-import com.github.chrisblutz.trinity.lang.errors.TYError;
+import com.github.chrisblutz.trinity.lang.errors.Errors;
 import com.github.chrisblutz.trinity.lang.procedures.DefaultProcedures;
 import com.github.chrisblutz.trinity.lang.procedures.ProcedureAction;
 import com.github.chrisblutz.trinity.lang.procedures.TYProcedure;
@@ -174,8 +174,7 @@ public class TYClass {
                 
                 if (newRuntime.isReturning()) {
                     
-                    TYError error = new TYError("Trinity.Errors.ReturnError", "Cannot return a value from a constructor.");
-                    error.throwError();
+                    Errors.throwError("Trinity.Errors.ReturnError", "Cannot return a value from a constructor.", runtime);
                     
                 } else if (obj.getObjectClass().isInstanceOf(ClassRegistry.getClass("Map")) || obj.getObjectClass().isInstanceOf(ClassRegistry.getClass("Procedure"))) {
                     
@@ -207,8 +206,7 @@ public class TYClass {
                 
                 if (thisObj == TYObject.NONE) {
                     
-                    TYError error = new TYError("Trinity.Errors.ScopeError", "Instance method '" + methodName + "' cannot be called from a static context.");
-                    error.throwError();
+                    Errors.throwError("Trinity.Errors.ScopeError", "Instance method '" + methodName + "' cannot be called from a static context.", runtime);
                 }
                 
                 newRuntime.setVariable("this", thisObj);
@@ -234,8 +232,7 @@ public class TYClass {
             
         } else {
             
-            TYError notFoundError = new TYError("Trinity.Errors.MethodNotFoundError", "No method '" + methodName + "' found in '" + originClass.getName() + "'.");
-            notFoundError.throwError();
+            Errors.throwError("Trinity.Errors.MethodNotFoundError", "No method '" + methodName + "' found in '" + originClass.getName() + "'.", runtime);
         }
         
         return TYObject.NONE;
@@ -330,8 +327,7 @@ public class TYClass {
                         
                     } else {
                         
-                        TYError error = new TYError("Trinity.Errors.ParseError", "Class " + superclassString + " does not exist.");
-                        error.throwError();
+                        Errors.throwError("Trinity.Errors.ClassNotFoundError", "Class " + superclassString + " does not exist.");
                     }
                 }
             }

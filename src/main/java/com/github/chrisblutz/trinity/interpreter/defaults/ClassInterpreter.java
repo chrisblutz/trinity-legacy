@@ -6,7 +6,7 @@ import com.github.chrisblutz.trinity.interpreter.TrinityInterpreter;
 import com.github.chrisblutz.trinity.lang.ClassRegistry;
 import com.github.chrisblutz.trinity.lang.TYClass;
 import com.github.chrisblutz.trinity.lang.TYModule;
-import com.github.chrisblutz.trinity.lang.errors.TYSyntaxError;
+import com.github.chrisblutz.trinity.lang.errors.Errors;
 import com.github.chrisblutz.trinity.parser.blocks.Block;
 import com.github.chrisblutz.trinity.parser.lines.Line;
 import com.github.chrisblutz.trinity.parser.tokens.Token;
@@ -77,8 +77,7 @@ public class ClassInterpreter extends DeclarationInterpreter {
                     
                 } else {
                     
-                    TYSyntaxError error = new TYSyntaxError("Trinity.Errors.ParseError", "Native classes are not currently supported.", fileName, line.getLineNumber());
-                    error.throwError();
+                    Errors.throwError("Trinity.Errors.ParseError", "Native classes are not currently supported.", fileName, line.getLineNumber());
                 }
             }
         }

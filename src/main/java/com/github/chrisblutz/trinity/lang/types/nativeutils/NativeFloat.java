@@ -1,7 +1,7 @@
 package com.github.chrisblutz.trinity.lang.types.nativeutils;
 
 import com.github.chrisblutz.trinity.lang.TYObject;
-import com.github.chrisblutz.trinity.lang.errors.TYError;
+import com.github.chrisblutz.trinity.lang.errors.Errors;
 import com.github.chrisblutz.trinity.lang.procedures.ProcedureAction;
 import com.github.chrisblutz.trinity.lang.types.bool.TYBoolean;
 import com.github.chrisblutz.trinity.lang.types.numeric.TYFloat;
@@ -49,8 +49,7 @@ class NativeFloat {
                 
             } else {
                 
-                TYError error = new TYError("Trinity.Errors.InvalidTypeError", "Cannot compare types " + thisObj.getObjectClass().getName() + " and " + obj.getObjectClass().getName() + ".");
-                error.throwError();
+                Errors.throwError("Trinity.Errors.InvalidTypeError", "Cannot compare types " + thisObj.getObjectClass().getName() + " and " + obj.getObjectClass().getName() + ".", runtime);
             }
             
             return new TYInt(-1);
@@ -110,8 +109,7 @@ class NativeFloat {
                 
             } else {
                 
-                TYError error = new TYError("Trinity.Errors.InvalidTypeError", "Invalid type passed to '" + operation + "'.");
-                error.throwError();
+                Errors.throwError("Trinity.Errors.InvalidTypeError", "Invalid type passed to '" + operation + "'.", runtime);
                 
                 returnVal = TYObject.NONE;
             }
@@ -146,8 +144,7 @@ class NativeFloat {
             
             default:
                 
-                TYError error = new TYError("Trinity.Errors.UnsupportedOperationError", "Operation '" + operation + "' not supported.");
-                error.throwError();
+                Errors.throwError("Trinity.Errors.UnsupportedOperationError", "Operation '" + operation + "' not supported.");
                 
                 return double1;
         }
@@ -179,8 +176,7 @@ class NativeFloat {
             
             default:
                 
-                TYError error = new TYError("Trinity.Errors.UnsupportedOperationError", "Operation '" + operation + "' not supported.");
-                error.throwError();
+                Errors.throwError("Trinity.Errors.UnsupportedOperationError", "Operation '" + operation + "' not supported.");
                 
                 return double1;
         }

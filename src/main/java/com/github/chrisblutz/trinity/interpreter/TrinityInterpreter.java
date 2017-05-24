@@ -5,7 +5,7 @@ import com.github.chrisblutz.trinity.interpreter.defaults.ImportInterpreter;
 import com.github.chrisblutz.trinity.interpreter.defaults.MethodInterpreter;
 import com.github.chrisblutz.trinity.interpreter.defaults.ModuleInterpreter;
 import com.github.chrisblutz.trinity.lang.TYObject;
-import com.github.chrisblutz.trinity.lang.errors.TYSyntaxError;
+import com.github.chrisblutz.trinity.lang.errors.Errors;
 import com.github.chrisblutz.trinity.lang.procedures.ProcedureAction;
 import com.github.chrisblutz.trinity.lang.scope.TYRuntime;
 import com.github.chrisblutz.trinity.parser.blocks.Block;
@@ -87,8 +87,7 @@ public class TrinityInterpreter {
                     
                     if (!env.isInitializable() && env.hasElements()) {
                         
-                        TYSyntaxError error = new TYSyntaxError("Trinity.Errors.SyntaxError", "Initialization code prohibited here.", block.getFileName(), line.getLineNumber());
-                        error.throwError();
+                        Errors.throwError("Trinity.Errors.SyntaxError", "Initialization code prohibited here.", block.getFileName(), line.getLineNumber());
                     }
                     
                     current.add(item);

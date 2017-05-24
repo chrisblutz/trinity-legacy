@@ -1,7 +1,7 @@
 package com.github.chrisblutz.trinity.files;
 
 import com.github.chrisblutz.trinity.lang.TYObject;
-import com.github.chrisblutz.trinity.lang.errors.TYError;
+import com.github.chrisblutz.trinity.lang.errors.Errors;
 import com.github.chrisblutz.trinity.lang.types.strings.TYString;
 
 import java.io.File;
@@ -42,8 +42,7 @@ public class FileUtils {
             
         } catch (FileNotFoundException e) {
             
-            TYError error = new TYError("Trinity.Errors.IOError", "File '" + fileName + "' not found.");
-            error.throwError();
+            Errors.throwError("Trinity.Errors.IOError", "File '" + fileName + "' not found.");
         }
     }
     
@@ -58,14 +57,12 @@ public class FileUtils {
                 
             } else {
                 
-                TYError error = new TYError("Trinity.Errors.IOError", "File '" + fileName + "' not open with reading privileges.");
-                error.throwError();
+                Errors.throwError("Trinity.Errors.IOError", "File '" + fileName + "' not open with reading privileges.");
             }
             
         } else {
             
-            TYError error = new TYError("Trinity.Errors.IOError", "File '" + fileName + "' not open.");
-            error.throwError();
+            Errors.throwError("Trinity.Errors.IOError", "File '" + fileName + "' not open.");
         }
         
         return TYObject.NIL;
@@ -91,14 +88,12 @@ public class FileUtils {
                 
             } else {
                 
-                TYError error = new TYError("Trinity.Errors.IOError", "File '" + fileName + "' not open with writing privileges.");
-                error.throwError();
+                Errors.throwError("Trinity.Errors.IOError", "File '" + fileName + "' not open with writing privileges.");
             }
             
         } else {
             
-            TYError error = new TYError("Trinity.Errors.IOError", "File '" + fileName + "' not open.");
-            error.throwError();
+            Errors.throwError("Trinity.Errors.IOError", "File '" + fileName + "' not open.");
         }
     }
     
@@ -117,8 +112,7 @@ public class FileUtils {
                     
                 } catch (FileNotFoundException e) {
                     
-                    TYError error = new TYError("Trinity.Errors.IOError", "File '" + fileName + "' not found.");
-                    error.throwError();
+                    Errors.throwError("Trinity.Errors.IOError", "File '" + fileName + "' not found.");
                 }
             }
             
@@ -129,8 +123,7 @@ public class FileUtils {
             
         } else {
             
-            TYError error = new TYError("Trinity.Errors.IOError", "File '" + fileName + "' not open.");
-            error.throwError();
+            Errors.throwError("Trinity.Errors.IOError", "File '" + fileName + "' not open.");
         }
     }
 }

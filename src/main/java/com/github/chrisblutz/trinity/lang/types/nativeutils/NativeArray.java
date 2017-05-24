@@ -1,7 +1,7 @@
 package com.github.chrisblutz.trinity.lang.types.nativeutils;
 
 import com.github.chrisblutz.trinity.lang.TYObject;
-import com.github.chrisblutz.trinity.lang.errors.TYError;
+import com.github.chrisblutz.trinity.lang.errors.Errors;
 import com.github.chrisblutz.trinity.lang.types.arrays.TYArray;
 import com.github.chrisblutz.trinity.lang.types.bool.TYBoolean;
 import com.github.chrisblutz.trinity.natives.NativeStorage;
@@ -84,8 +84,7 @@ class NativeArray {
             
             if (index >= thisList.size() || index < 0) {
                 
-                TYError error = new TYError("Trinity.Errors.IndexOutOfBoundsError", "Index: " + index + ", Size: " + thisList.size());
-                error.throwError();
+                Errors.throwError("Trinity.Errors.IndexOutOfBoundsError", "Index: " + index + ", Size: " + thisList.size(), runtime);
             }
             
             return thisList.get(index);

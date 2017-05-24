@@ -3,7 +3,7 @@ package com.github.chrisblutz.trinity.lang.types.nativeutils;
 import com.github.chrisblutz.trinity.files.FilePrivilege;
 import com.github.chrisblutz.trinity.files.FileUtils;
 import com.github.chrisblutz.trinity.lang.TYObject;
-import com.github.chrisblutz.trinity.lang.errors.TYError;
+import com.github.chrisblutz.trinity.lang.errors.Errors;
 import com.github.chrisblutz.trinity.lang.procedures.ProcedureAction;
 import com.github.chrisblutz.trinity.lang.types.bool.TYBoolean;
 import com.github.chrisblutz.trinity.lang.types.strings.TYString;
@@ -40,16 +40,14 @@ class NativeFileSystem {
                     
                     if (f.getParentFile().mkdirs()) {
                         
-                        TYError error = new TYError("Trinity.Errors.IOError", "Unable to create parent directories.");
-                        error.throwError();
+                        Errors.throwError("Trinity.Errors.IOError", "Unable to create parent directories.", runtime);
                     }
                 }
                 return TYBoolean.valueFor(f.createNewFile());
                 
             } catch (Exception e) {
                 
-                TYError error = new TYError("Trinity.Errors.IOError", "An error occurred creating a file at '" + ((TYString) object).getInternalString() + "'.");
-                error.throwError();
+                Errors.throwError("Trinity.Errors.IOError", "An error occurred creating a file at '" + ((TYString) object).getInternalString() + "'.", runtime);
             }
             
             return TYBoolean.FALSE;

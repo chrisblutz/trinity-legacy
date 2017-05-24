@@ -1,7 +1,7 @@
 package com.github.chrisblutz.trinity.parser;
 
 import com.github.chrisblutz.trinity.interpreter.TrinityInterpreter;
-import com.github.chrisblutz.trinity.lang.errors.TYSyntaxError;
+import com.github.chrisblutz.trinity.lang.errors.Errors;
 import com.github.chrisblutz.trinity.parser.blocks.Block;
 import com.github.chrisblutz.trinity.parser.blocks.BlockLine;
 import com.github.chrisblutz.trinity.parser.blocks.BlockParseResults;
@@ -442,8 +442,7 @@ public class TrinityParser {
                     
                     if (info.getToken() == Token.WS_TAB) {
                         
-                        TYSyntaxError error = new TYSyntaxError("Trinity.Errors.SyntaxError", "No tabs allowed in leading whitespace.", lines.getFileName(), line.getLineNumber());
-                        error.throwError();
+                        Errors.throwError("Trinity.Errors.SyntaxError", "No tabs allowed in leading whitespace.", lines.getFileName(), line.getLineNumber());
                         
                     } else if (info.getToken() == Token.WS_SPACE) {
                         

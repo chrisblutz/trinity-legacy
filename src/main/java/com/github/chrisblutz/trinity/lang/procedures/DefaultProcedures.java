@@ -1,6 +1,6 @@
 package com.github.chrisblutz.trinity.lang.procedures;
 
-import com.github.chrisblutz.trinity.lang.errors.TYError;
+import com.github.chrisblutz.trinity.lang.errors.Errors;
 
 
 /**
@@ -12,8 +12,7 @@ public class DefaultProcedures {
         
         return new TYProcedure((runtime, thisObj, params) -> {
             
-            TYError error = new TYError("Trinity.Errors.UnsupportedOperationError", "Operation '" + operation + "' not supported.");
-            error.throwError();
+            Errors.throwError("Trinity.Errors.UnsupportedOperationError", "Operation '" + operation + "' not supported.", runtime);
             
             return thisObj;
         });
