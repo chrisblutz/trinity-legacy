@@ -260,6 +260,21 @@ public class TrinityNatives {
         return ClassRegistry.getClass(className).tyInvoke("new", runtime, null, null, TYObject.NONE, args);
     }
     
+    public static TYObject call(String className, String methodName, TYRuntime runtime, TYObject thisObj, TYObject... args) {
+        
+        if (ClassRegistry.classExists(className)) {
+            
+            return ClassRegistry.getClass(className).tyInvoke(methodName, runtime, null, null, thisObj, args);
+            
+        } else {
+            
+            TYError error = new TYError("Trinity.Errors.ClassNotFoundError", "Class " + className + " does not exist.");
+            error.throwError();
+        }
+        
+        return TYObject.NIL;
+    }
+    
     public static <T extends TYObject> T cast(Class<T> desiredClass, TYObject object) {
         
         if (desiredClass.isInstance(object)) {
