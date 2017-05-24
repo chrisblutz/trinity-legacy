@@ -110,7 +110,6 @@ public class TrinityInterpreter {
             current.clear();
         }
         
-        // TODO Add to class if classSTack  > 0, otherwise add to init code to run before main()
         if (!initializationActions.isEmpty()) {
             
             if (env.hasElements()) {
