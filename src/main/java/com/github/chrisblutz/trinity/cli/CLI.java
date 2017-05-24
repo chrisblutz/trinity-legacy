@@ -56,6 +56,8 @@ public class CLI {
             TrinityParser.parse(file);
         }
         
+        ClassRegistry.finalizeClasses();
+        
         if (areAnyFilesLoaded()) {
             
             if (ClassRegistry.getMainClasses().size() == 0) {

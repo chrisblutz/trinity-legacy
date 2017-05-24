@@ -2,6 +2,7 @@ package com.github.chrisblutz.trinity.interpreter.defaults;
 
 import com.github.chrisblutz.trinity.interpreter.DeclarationInterpreter;
 import com.github.chrisblutz.trinity.interpreter.InterpretEnvironment;
+import com.github.chrisblutz.trinity.interpreter.TrinityInterpreter;
 import com.github.chrisblutz.trinity.lang.ClassRegistry;
 import com.github.chrisblutz.trinity.lang.TYClass;
 import com.github.chrisblutz.trinity.lang.TYModule;
@@ -65,7 +66,7 @@ public class ClassInterpreter extends DeclarationInterpreter {
                     }
                     if (extension != null) {
                         
-                        tyClass.setSuperclassString(extension);
+                        tyClass.setSuperclassString(extension, TrinityInterpreter.getImportedModules());
                     }
                     InterpretEnvironment newEnv = env.append(tyClass);
                     

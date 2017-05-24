@@ -23,6 +23,7 @@ public class TYClass {
     private TYMethod constructor;
     private TYClass superclass;
     private String superclassString;
+    private String[] importedForSuperclass;
     private TYModule module;
     private List<TYClass> inheritanceTree = new ArrayList<>();
     private Map<String, TYMethod> methods = new HashMap<>();
@@ -90,9 +91,10 @@ public class TYClass {
         this.superclass = superclass;
     }
     
-    public void setSuperclassString(String string) {
+    public void setSuperclassString(String string, String[] imports) {
         
         this.superclassString = string;
+        this.importedForSuperclass = imports;
     }
     
     public boolean isInstanceOf(TYClass tyClass) {
@@ -302,16 +304,36 @@ public class TYClass {
             
             if (module != null && module.hasClass(superclassString)) {
                 
-                superclass = module.getClass(superclassString);
-                
-            } else if (ClassRegistry.classExists(superclassString)) {
-                
-                superclass = ClassRegistry.getClass(superclassString);
+                setSuperclass(module.getClass(superclassString));
                 
             } else {
                 
-                TYError error = new TYError("Trinity.Errors.ParseError", "Class " + superclassString + " does not exist.");
-                error.throwError();
+                boolean found = false;
+                
+                for (String modStr : importedForSuperclass) {
+                    
+                    TYModule module = ModuleRegistry.getModule(modStr);
+                    
+                    if (module.hasClass(superclassString)) {
+                        
+                        found = true;
+                        setSuperclass(module.getClass(superclassString));
+                        break;
+                    }
+                }
+                
+                if (!found) {
+                    
+                    if (ClassRegistry.classExists(superclassString)) {
+                        
+                        setSuperclass(ClassRegistry.getClass(superclassString));
+                        
+                    } else {
+                        
+                        TYError error = new TYError("Trinity.Errors.ParseError", "Class " + superclassString + " does not exist.");
+                        error.throwError();
+                    }
+                }
             }
             
             inheritanceTree = compileInheritanceTree();
