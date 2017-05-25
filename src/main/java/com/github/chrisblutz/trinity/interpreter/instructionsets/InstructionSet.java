@@ -67,15 +67,15 @@ public class InstructionSet extends ObjectEvaluator {
                 
             } else if (tokens[0].getToken() == Token.NUMERIC_STRING) {
                 
-                if (tokens[0].getContents().matches("[0-9]+l")) {
+                if (tokens[0].getContents().matches("[0-9]+[lL]")) {
                     
                     return new TYLong(Long.parseLong(tokens[0].getContents().substring(0, tokens[0].getContents().length() - 1)));
                     
-                } else if (tokens[0].getContents().matches("[0-9]*\\.[0-9]+[f]?")) {
+                } else if (tokens[0].getContents().matches("[0-9]*\\.?[0-9]+[fF]?")) {
                     
                     String floatStr = tokens[0].getContents();
                     
-                    if (tokens[0].getContents().endsWith("f")) {
+                    if (floatStr.endsWith("f") || floatStr.endsWith("F")) {
                         
                         floatStr = floatStr.substring(0, floatStr.length() - 1);
                     }

@@ -511,11 +511,11 @@ public class TrinityParser {
                         newLine.add(info);
                     }
                     
-                } else if (info.getToken() == Token.NON_TOKEN_STRING && info.getContents().matches("[0-9]+[f|l]?")) {
+                } else if (info.getToken() == Token.NON_TOKEN_STRING && info.getContents().matches("[0-9]+[fFlL]?")) {
                     
                     number = new StringBuilder(info.getContents());
                     
-                } else if (info.getToken() == Token.DOT_OPERATOR && i + 1 < line.size() && line.get(i + 1).getToken() == Token.NON_TOKEN_STRING && line.get(i + 1).getContents().matches("[0-9]+[f|l]?")) {
+                } else if (info.getToken() == Token.DOT_OPERATOR && i + 1 < line.size() && line.get(i + 1).getToken() == Token.NON_TOKEN_STRING && line.get(i + 1).getContents().matches("[0-9]+[fFlL]?")) {
                     
                     number = new StringBuilder("." + line.get(++i).getContents());
                     
