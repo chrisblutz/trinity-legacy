@@ -3,7 +3,7 @@ package com.github.chrisblutz.trinity.interpreter;
 import com.github.chrisblutz.trinity.interpreter.instructionsets.*;
 import com.github.chrisblutz.trinity.lang.TYObject;
 import com.github.chrisblutz.trinity.lang.errors.Errors;
-import com.github.chrisblutz.trinity.lang.errors.stacktrace.TYStackTrace;
+import com.github.chrisblutz.trinity.lang.errors.stacktrace.TrinityStack;
 import com.github.chrisblutz.trinity.lang.procedures.ProcedureAction;
 import com.github.chrisblutz.trinity.lang.procedures.TYProcedure;
 import com.github.chrisblutz.trinity.parser.blocks.Block;
@@ -95,16 +95,16 @@ public class ExpressionInterpreter {
                 
                 if (!includeStackTrace) {
                     
-                    TYStackTrace.pop();
+                    TrinityStack.pop();
                 }
                 
-                TYStackTrace.add(errorClass, method, set.getFileName(), set.getLineNumber());
+                TrinityStack.add(errorClass, method, set.getFileName(), set.getLineNumber());
                 
                 TYObject result = set.evaluate(TYObject.NONE, runtime);
                 
                 if (includeStackTrace) {
                     
-                    TYStackTrace.pop();
+                    TrinityStack.pop();
                 }
                 
                 if (result != null && !runtime.isReturning()) {

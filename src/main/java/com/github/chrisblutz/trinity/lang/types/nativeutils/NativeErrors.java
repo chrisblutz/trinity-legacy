@@ -2,8 +2,8 @@ package com.github.chrisblutz.trinity.lang.types.nativeutils;
 
 import com.github.chrisblutz.trinity.interpreter.variables.Variables;
 import com.github.chrisblutz.trinity.lang.TYObject;
-import com.github.chrisblutz.trinity.lang.errors.stacktrace.TYStackTrace;
-import com.github.chrisblutz.trinity.lang.errors.stacktrace.TYStackTraceElement;
+import com.github.chrisblutz.trinity.lang.errors.stacktrace.TrinityStack;
+import com.github.chrisblutz.trinity.lang.errors.stacktrace.StackElement;
 import com.github.chrisblutz.trinity.lang.types.arrays.TYArray;
 import com.github.chrisblutz.trinity.lang.types.numeric.TYInt;
 import com.github.chrisblutz.trinity.lang.types.strings.TYString;
@@ -23,9 +23,9 @@ class NativeErrors {
             
             TYArray ary = new TYArray(new ArrayList<>());
             
-            for (int i = 2 + thisObj.getSuperStackLevel(); i < TYStackTrace.getStackTrace().length; i++) {
+            for (int i = 2 + thisObj.getSuperStackLevel(); i < TrinityStack.getStack().length; i++) {
                 
-                TYStackTraceElement e = TYStackTrace.getStackTrace()[i];
+                StackElement e = TrinityStack.getStack()[i];
                 
                 TYObject errorClass;
                 if (e.getErrorClass() != null) {

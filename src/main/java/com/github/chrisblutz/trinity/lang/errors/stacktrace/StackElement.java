@@ -3,12 +3,12 @@ package com.github.chrisblutz.trinity.lang.errors.stacktrace;
 /**
  * @author Christopher Lutz
  */
-public class TYStackTraceElement {
+public class StackElement {
     
     private String errorClass, method, file;
     private int line;
     
-    public TYStackTraceElement(String errorClass, String method, String file, int line) {
+    public StackElement(String errorClass, String method, String file, int line) {
         
         this.errorClass = errorClass;
         this.method = method;
@@ -60,8 +60,8 @@ public class TYStackTraceElement {
         }
     }
     
-    public static TYStackTraceElement getNativeInitStackTraceElement() {
+    public static StackElement getNativeInitStackElement() {
         
-        return new TYStackTraceElement(null, "<init>", null, 0);
+        return new StackElement(null, "<init>", null, 0);
     }
 }

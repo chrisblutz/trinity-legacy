@@ -5,7 +5,7 @@ import com.github.chrisblutz.trinity.lang.TYClass;
 import com.github.chrisblutz.trinity.lang.TYMethod;
 import com.github.chrisblutz.trinity.lang.TYObject;
 import com.github.chrisblutz.trinity.lang.errors.Errors;
-import com.github.chrisblutz.trinity.lang.errors.stacktrace.TYStackTrace;
+import com.github.chrisblutz.trinity.lang.errors.stacktrace.TrinityStack;
 import com.github.chrisblutz.trinity.lang.procedures.ProcedureAction;
 import com.github.chrisblutz.trinity.lang.procedures.TYProcedure;
 import com.github.chrisblutz.trinity.lang.scope.TYRuntime;
@@ -40,11 +40,11 @@ public class TrinityNatives {
         
         ProcedureAction actionWithStackTrace = (runtime, thisObj, params) -> {
             
-            TYStackTrace.add(className, methodName, null, 0);
+            TrinityStack.add(className, methodName, null, 0);
             
             TYObject result = action.onAction(runtime, thisObj, params);
             
-            TYStackTrace.pop();
+            TrinityStack.pop();
             
             return result;
         };
