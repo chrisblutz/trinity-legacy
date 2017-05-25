@@ -33,7 +33,7 @@ class String
         length() == 0
 
     def [](index)
-        chars()[0]
+        chars()[index]
 
     def native toInt
 

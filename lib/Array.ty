@@ -39,3 +39,11 @@ class Array
             if i < length() - 1
                 str += delimiter
         str
+
+    def ==(other)
+        if length() != other.length()
+            return false
+        for i = 0; i < length(); i += 1
+            if this[i] != other[i]
+                return false
+        return true
