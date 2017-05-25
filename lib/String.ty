@@ -20,6 +20,12 @@ class String
 
     def native toLowerCase
 
+    def native startsWith(prefix)
+
+    def native endsWith(suffix)
+
+    def native contains(str)
+
     def length
         chars().length()
 

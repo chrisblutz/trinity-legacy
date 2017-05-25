@@ -133,6 +133,24 @@ class NativeString {
             String thisString = TrinityNatives.toString(thisObj, runtime);
             return new TYString(thisString.toLowerCase());
         });
+        TrinityNatives.registerMethod("String", "startsWith", false, new String[]{"prefix"}, null, null, (runtime, thisObj, params12) -> {
+            
+            String thisString = TrinityNatives.toString(thisObj, runtime);
+            String prefix = TrinityNatives.toString(runtime.getVariable("prefix"), runtime);
+            return TYBoolean.valueFor(thisString.startsWith(prefix));
+        });
+        TrinityNatives.registerMethod("String", "endsWith", false, new String[]{"suffix"}, null, null, (runtime, thisObj, params12) -> {
+            
+            String thisString = TrinityNatives.toString(thisObj, runtime);
+            String suffix = TrinityNatives.toString(runtime.getVariable("suffix"), runtime);
+            return TYBoolean.valueFor(thisString.endsWith(suffix));
+        });
+        TrinityNatives.registerMethod("String", "contains", false, new String[]{"str"}, null, null, (runtime, thisObj, params12) -> {
+            
+            String thisString = TrinityNatives.toString(thisObj, runtime);
+            String str = TrinityNatives.toString(runtime.getVariable("str"), runtime);
+            return TYBoolean.valueFor(thisString.contains(str));
+        });
         TrinityNatives.registerMethod("String", "toInt", false, null, null, null, (runtime, thisObj, params1) -> new TYInt(TrinityNatives.toInt(thisObj)));
         TrinityNatives.registerMethod("String", "toLong", false, null, null, null, (runtime, thisObj, params1) -> new TYLong(TrinityNatives.toLong(thisObj)));
         TrinityNatives.registerMethod("String", "toFloat", false, null, null, null, (runtime, thisObj, params1) -> new TYFloat(TrinityNatives.toFloat(thisObj)));
