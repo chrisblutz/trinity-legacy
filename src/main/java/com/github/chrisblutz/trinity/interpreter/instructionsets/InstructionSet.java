@@ -67,30 +67,29 @@ public class InstructionSet extends ObjectEvaluator {
                 
             } else if (tokens[0].getToken() == Token.NUMERIC_STRING) {
                 
-                if (tokens[0].getContents().matches("[0-9]+[lL]")) {
+                String numString = tokens[0].getContents();
+                
+                if (numString.matches("[0-9]+[lL]")) {
                     
-                    return new TYLong(Long.parseLong(tokens[0].getContents().substring(0, tokens[0].getContents().length() - 1)));
+                    return new TYLong(Long.parseLong(numString.substring(0, numString.length() - 1)));
                     
-                } else if (tokens[0].getContents().matches("[0-9]*\\.?[0-9]+[fF]?")) {
+                } else if (numString.matches("[0-9]*\\.[0-9]+")) {
                     
-                    String floatStr = tokens[0].getContents();
+                    return new TYFloat(Double.parseDouble(numString));
                     
-                    if (floatStr.endsWith("f") || floatStr.endsWith("F")) {
-                        
-                        floatStr = floatStr.substring(0, floatStr.length() - 1);
-                    }
+                } else if (numString.matches("[0-9]*\\.?[0-9]+[fF]")) {
                     
-                    return new TYFloat(Double.parseDouble(floatStr));
+                    return new TYFloat(Double.parseDouble(numString.substring(0, numString.length() - 1)));
                     
-                } else if (tokens[0].getContents().matches("[0-9]+")) {
+                } else if (numString.matches("[0-9]+")) {
                     
                     try {
                         
-                        return new TYInt(Integer.parseInt(tokens[0].getContents()));
+                        return new TYInt(Integer.parseInt(numString));
                         
                     } catch (Exception e) {
                         
-                        return new TYLong(Long.parseLong(tokens[0].getContents()));
+                        return new TYLong(Long.parseLong(numString));
                     }
                 }
                 
