@@ -3,6 +3,7 @@ package com.github.chrisblutz.trinity.interpreter.instructionsets;
 import com.github.chrisblutz.trinity.lang.TYObject;
 import com.github.chrisblutz.trinity.lang.procedures.TYProcedure;
 import com.github.chrisblutz.trinity.lang.scope.TYRuntime;
+import com.github.chrisblutz.trinity.runner.Runner;
 
 import java.io.File;
 
@@ -47,6 +48,11 @@ public abstract class ObjectEvaluator {
     public void setProcedure(TYProcedure procedure) {
         
         this.procedure = procedure;
+    }
+    
+    public void updateLocation() {
+        
+        Runner.updateLocation(getFileName(), getLineNumber());
     }
     
     public abstract TYObject evaluate(TYObject thisObj, TYRuntime runtime);

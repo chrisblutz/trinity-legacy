@@ -37,6 +37,8 @@ public class BinaryAndOrInstructionSet extends ObjectEvaluator {
     
     public TYObject evaluate(TYObject thisObj, TYRuntime runtime) {
         
+        updateLocation();
+        
         switch (getOperator()) {
             
             case AND:

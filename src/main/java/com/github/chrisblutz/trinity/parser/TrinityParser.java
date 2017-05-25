@@ -9,6 +9,7 @@ import com.github.chrisblutz.trinity.parser.lines.Line;
 import com.github.chrisblutz.trinity.parser.lines.LineSet;
 import com.github.chrisblutz.trinity.parser.tokens.Token;
 import com.github.chrisblutz.trinity.parser.tokens.TokenInfo;
+import com.github.chrisblutz.trinity.runner.Runner;
 import com.github.chrisblutz.trinity.utils.FileUtils;
 
 import java.io.File;
@@ -100,6 +101,8 @@ public class TrinityParser {
         
         for (String l : lines) {
             
+            Runner.updateLocation(filename, lineNumber);
+            
             Line line = new Line(lineNumber++);
             
             for (char c : l.toCharArray()) {
@@ -182,6 +185,8 @@ public class TrinityParser {
         
         for (Line line : lines) {
             
+            Runner.updateLocation(set.getFileName(), line.getLineNumber());
+            
             Line newLine = new Line(line.getLineNumber());
             
             for (TokenInfo info : line) {
@@ -207,6 +212,8 @@ public class TrinityParser {
         
         for (Line line : lines) {
             
+            Runner.updateLocation(set.getFileName(), line.getLineNumber());
+            
             if (!line.isEmpty()) {
                 
                 set.add(line);
@@ -221,6 +228,8 @@ public class TrinityParser {
         LineSet set = new LineSet(lines.getFileName(), lines.getFullFile());
         
         for (Line line : lines) {
+            
+            Runner.updateLocation(set.getFileName(), line.getLineNumber());
             
             Line newLine = new Line(line.getLineNumber());
             
@@ -293,6 +302,8 @@ public class TrinityParser {
         
         for (Line line : lines) {
             
+            Runner.updateLocation(set.getFileName(), line.getLineNumber());
+            
             Line newLine = new Line(line.getLineNumber());
             
             for (TokenInfo info : line) {
@@ -322,6 +333,8 @@ public class TrinityParser {
         LineSet set = new LineSet(lines.getFileName(), lines.getFullFile());
         
         for (Line line : lines) {
+            
+            Runner.updateLocation(set.getFileName(), line.getLineNumber());
             
             Line newLine = new Line(line.getLineNumber());
             
@@ -398,6 +411,8 @@ public class TrinityParser {
         
         for (Line line : lines) {
             
+            Runner.updateLocation(set.getFileName(), line.getLineNumber());
+            
             Line newLine = new Line(line.getLineNumber());
             
             boolean encounteredFirst = false;
@@ -430,6 +445,8 @@ public class TrinityParser {
         LineSet set = new LineSet(lines.getFileName(), lines.getFullFile());
         
         for (Line line : lines) {
+            
+            Runner.updateLocation(set.getFileName(), line.getLineNumber());
             
             Line newLine = new Line(line.getLineNumber());
             
@@ -472,6 +489,8 @@ public class TrinityParser {
         LineSet set = new LineSet(lines.getFileName(), lines.getFullFile());
         
         for (Line line : lines) {
+            
+            Runner.updateLocation(set.getFileName(), line.getLineNumber());
             
             Line newLine = new Line(line.getLineNumber());
             newLine.setSpaces(line.getSpaces());
@@ -556,6 +575,8 @@ public class TrinityParser {
         for (int i = start; i < lines.size(); i++) {
             
             Line l = lines.get(i);
+            
+            Runner.updateLocation(lines.getFileName(), l.getLineNumber());
             
             if (l.getSpaces() > level.getSpaces()) {
                 

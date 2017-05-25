@@ -55,6 +55,8 @@ public class InstructionSet extends ObjectEvaluator {
     
     public TYObject evaluate(TYObject thisObj, TYRuntime runtime) {
         
+        updateLocation();
+        
         if (tokens.length >= 1) {
             
             if (tokens[0].getToken() == Token.LITERAL_STRING) {

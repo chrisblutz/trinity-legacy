@@ -31,6 +31,8 @@ public class MapInitializationInstructionSet extends ObjectEvaluator {
     
     public TYObject evaluate(TYObject thisObj, TYRuntime runtime) {
         
+        updateLocation();
+        
         Map<TYObject, TYObject> map = new HashMap<>();
         
         for (ChainedInstructionSet[] element : getMapComponents()) {

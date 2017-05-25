@@ -55,6 +55,8 @@ public class BranchingSwitchInstructionSet extends ChainedInstructionSet {
     
     public TYObject evaluate(TYObject thisObj, TYRuntime runtime) {
         
+        updateLocation();
+        
         boolean chaining = runtime.isChainingSwitch();
         runtime.setChainingSwitch(false);
         TYRuntime newRuntime = runtime.clone();

@@ -37,6 +37,8 @@ public class BinaryEqualityOperationInstructionSet extends ObjectEvaluator {
     
     public TYObject evaluate(TYObject thisObj, TYRuntime runtime) {
         
+        updateLocation();
+        
         TYObject opObj = getOperand().evaluate(TYObject.NONE, runtime);
         
         switch (getOperator()) {

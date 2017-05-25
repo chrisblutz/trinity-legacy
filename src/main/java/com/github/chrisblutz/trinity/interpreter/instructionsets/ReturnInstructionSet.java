@@ -35,6 +35,8 @@ public class ReturnInstructionSet extends ChainedInstructionSet {
     
     public TYObject evaluate(TYObject thisObj, TYRuntime runtime) {
         
+        updateLocation();
+        
         TYObject result = TYObject.NIL;
         
         if (getExpression() != null) {

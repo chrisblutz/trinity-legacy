@@ -36,6 +36,8 @@ public class WhileLoopInstructionSet extends ChainedInstructionSet {
     
     public TYObject evaluate(TYObject thisObj, TYRuntime runtime) {
         
+        updateLocation();
+        
         TYRuntime newRuntime = runtime.clone();
         
         boolean expression = TrinityNatives.toBoolean(getExpression().evaluate(TYObject.NONE, newRuntime));

@@ -23,6 +23,8 @@ public class KeyRetrievalInstructionSet extends InstructionSet {
     
     public TYObject evaluate(TYObject thisObj, TYRuntime runtime) {
         
+        updateLocation();
+        
         if (getTokens().length >= 1) {
             
             if (getTokens()[0].getToken() == Token.NON_TOKEN_STRING) {

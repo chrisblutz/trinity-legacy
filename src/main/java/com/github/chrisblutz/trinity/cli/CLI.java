@@ -2,15 +2,7 @@ package com.github.chrisblutz.trinity.cli;
 
 import com.github.chrisblutz.trinity.bootstrap.Bootstrap;
 import com.github.chrisblutz.trinity.info.TrinityInfo;
-import com.github.chrisblutz.trinity.interpreter.TrinityInterpreter;
-import com.github.chrisblutz.trinity.lang.ClassRegistry;
-import com.github.chrisblutz.trinity.lang.TYClass;
-import com.github.chrisblutz.trinity.lang.TYObject;
-import com.github.chrisblutz.trinity.lang.errors.Errors;
-import com.github.chrisblutz.trinity.lang.scope.TYRuntime;
-import com.github.chrisblutz.trinity.lang.types.arrays.TYArray;
-import com.github.chrisblutz.trinity.lang.types.strings.TYString;
-import com.github.chrisblutz.trinity.parser.TrinityParser;
+import com.github.chrisblutz.trinity.runner.Runner;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -51,69 +43,7 @@ public class CLI {
     
     private static void run() {
         
-        for (File file : sourceFiles) {
-            
-            TrinityParser.parse(file);
-        }
-        
-        ClassRegistry.finalizeClasses();
-        
-        if (areAnyFilesLoaded()) {
-            
-            if (ClassRegistry.getMainClasses().size() == 0) {
-                
-                Errors.throwError("Trinity.Errors.MethodNotFoundError", "No main method found in found in loaded files.", null, 0);
-            }
-            
-            long startMillis = System.currentTimeMillis();
-            
-            TrinityInterpreter.runPreMainInitializationCode();
-            
-            if (mainClass != null) {
-                
-                if (ClassRegistry.classExists(mainClass)) {
-                    
-                    TYClass main = ClassRegistry.getClass(mainClass);
-                    
-                    main.tyInvoke("main", new TYRuntime(), null, null, TYObject.NONE, parseIntoStringArray());
-                    
-                } else {
-                    
-                    Errors.throwError("Trinity.Errors.ClassNotFoundError", "Class '" + mainClass + "' not found.", null, 0);
-                }
-                
-            } else {
-                
-                if (ClassRegistry.getMainClasses().size() > 0) {
-                    
-                    ClassRegistry.getMainClasses().get(0).tyInvoke("main", new TYRuntime(), null, null, TYObject.NONE, parseIntoStringArray());
-                    
-                } else {
-                    
-                    Errors.throwError("Trinity.Errors.MethodNotFoundError", "No 'main' methods found.", null, 0);
-                }
-            }
-            
-            long endMillis = System.currentTimeMillis();
-            
-            if (isDebuggingEnabled()) {
-                
-                long total = endMillis - startMillis;
-                System.out.println(String.format("\nExecution took %.3f seconds.", (float) total / 1000f));
-            }
-        }
-    }
-    
-    private static TYArray parseIntoStringArray() {
-        
-        List<TYObject> strings = new ArrayList<>();
-        
-        for (String arg : arguments) {
-            
-            strings.add(new TYString(arg));
-        }
-        
-        return new TYArray(strings);
+        Runner.run(sourceFiles.toArray(new File[sourceFiles.size()]), mainClass, arguments.toArray(new String[arguments.size()]));
     }
     
     private static String currentOption = null;

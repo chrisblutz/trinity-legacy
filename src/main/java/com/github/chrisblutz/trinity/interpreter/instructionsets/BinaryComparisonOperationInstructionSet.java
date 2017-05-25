@@ -37,6 +37,8 @@ public class BinaryComparisonOperationInstructionSet extends ObjectEvaluator {
     
     public TYObject evaluate(TYObject thisObj, TYRuntime runtime) {
         
+        updateLocation();
+        
         TYObject opObj = getOperand().evaluate(TYObject.NONE, runtime);
         
         int comparisonInt = TrinityNatives.toInt(thisObj.tyInvoke("compareTo", runtime, null, null, opObj));

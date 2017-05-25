@@ -30,6 +30,8 @@ public class ArrayInitializationInstructionSet extends ObjectEvaluator {
     
     public TYObject evaluate(TYObject thisObj, TYRuntime runtime) {
         
+        updateLocation();
+        
         List<TYObject> objects = new ArrayList<>();
         
         for (ChainedInstructionSet set : getArrayComponents()) {

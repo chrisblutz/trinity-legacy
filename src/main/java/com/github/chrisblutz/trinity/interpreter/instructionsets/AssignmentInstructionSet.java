@@ -45,6 +45,8 @@ public class AssignmentInstructionSet extends ObjectEvaluator {
     
     public TYObject evaluate(TYObject thisObj, TYRuntime runtime) {
         
+        updateLocation();
+        
         TYObject opObj = getValue().evaluate(TYObject.NONE, runtime);
         TYObject assignObj = TYObject.NIL;
         

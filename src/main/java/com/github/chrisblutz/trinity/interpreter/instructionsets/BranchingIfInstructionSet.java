@@ -55,6 +55,8 @@ public class BranchingIfInstructionSet extends ChainedInstructionSet {
     
     public TYObject evaluate(TYObject thisObj, TYRuntime runtime) {
         
+        updateLocation();
+        
         TYRuntime newRuntime = runtime.clone();
         
         TYObject result = TYObject.NONE;

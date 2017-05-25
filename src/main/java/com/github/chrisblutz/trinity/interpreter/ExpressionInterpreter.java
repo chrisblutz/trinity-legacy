@@ -11,6 +11,7 @@ import com.github.chrisblutz.trinity.parser.blocks.BlockLine;
 import com.github.chrisblutz.trinity.parser.lines.Line;
 import com.github.chrisblutz.trinity.parser.tokens.Token;
 import com.github.chrisblutz.trinity.parser.tokens.TokenInfo;
+import com.github.chrisblutz.trinity.runner.Runner;
 import com.github.chrisblutz.trinity.utils.TokenUtils;
 
 import java.io.File;
@@ -36,6 +37,8 @@ public class ExpressionInterpreter {
         for (int i = 0; i < block.size(); i++) {
             
             Line line = ((BlockLine) block.get(i)).getLine();
+            
+            Runner.updateLocation(block.getFileName(), line.getLineNumber());
             
             Block nextBlock = null;
             

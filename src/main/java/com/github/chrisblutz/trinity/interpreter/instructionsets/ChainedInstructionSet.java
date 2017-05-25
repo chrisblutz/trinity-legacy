@@ -30,6 +30,8 @@ public class ChainedInstructionSet extends ObjectEvaluator {
     
     public TYObject evaluate(TYObject thisObj, TYRuntime runtime) {
         
+        updateLocation();
+        
         for (ObjectEvaluator child : getChildren()) {
             
             thisObj = child.evaluate(thisObj, runtime);
