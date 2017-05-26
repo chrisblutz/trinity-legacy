@@ -1,67 +1,68 @@
 import Trinity.Testing
 
-class IntTest << Test
-    def static testLiterals
-        int = 0
-        assertType(int, Int.class)
-        int = -10
-        assertType(int, Int.class)
+module TrinityTest
+    class IntTest << Test
+        def static testLiterals
+            int = 0
+            assertType(int, Int.class)
+            int = -10
+            assertType(int, Int.class)
 
-    def static testAddition
-        assertEqual(0 + 5, 5)
-        assertEqual(5 + 5, 10)
+        def static testAddition
+            assertEqual(0 + 5, 5)
+            assertEqual(5 + 5, 10)
 
-    def static testSubtraction
-        assertEqual(0 - 5, -5)
-        assertEqual(5 - 5, 0)
-        assertEqual(10 - 5, 5)
+        def static testSubtraction
+            assertEqual(0 - 5, -5)
+            assertEqual(5 - 5, 0)
+            assertEqual(10 - 5, 5)
 
-    def static testMultiplication
-        assertEqual(10 * 0, 0)
-        assertEqual(1 * 5, 5)
-        assertEqual(5 * (-5), -25)
+        def static testMultiplication
+            assertEqual(10 * 0, 0)
+            assertEqual(1 * 5, 5)
+            assertEqual(5 * (-5), -25)
 
-    def static testDivision
-        assertEqual(10 / 1, 10)
-        assertEqual(10 / 10, 1)
-        assertEqual(10 / (-5), -2)
+        def static testDivision
+            assertEqual(10 / 1, 10)
+            assertEqual(10 / 10, 1)
+            assertEqual(10 / (-5), -2)
 
-    def static testModulus
-        assertEqual(10 % 10, 0)
-        assertEqual(10 % 4, 2)
-        assertEqual(10 % 20, 10)
-        assertEqual(10 % (-3), -2)
+        def static testModulus
+            assertEqual(10 % 10, 0)
+            assertEqual(10 % 4, 2)
+            assertEqual(10 % 20, 10)
+            assertEqual(10 % (-3), -2)
 
-    def static testNegatives
-        assertEqual(10 + (-10), 0)
+        def static testNegatives
+            assertEqual(10 + (-10), 0)
 
-    def static testConversions
-        assertType(2147483647, Int.class)
-        assertType(2147483647 + 1, Long.class)
-        assertType(10 + 0.5, Float.class)
+        def static testConversions
+            assertType(2147483647, Int.class)
+            assertType(2147483647 + 1, Long.class)
+            assertType(10 + 0.5, Float.class)
 
-    def static testEquality
-        assertEqual(10, 10)
-        assertEqual(10, 10L)
-        assertEqual(10, 10.0)
+        def static testEquality
+            assertEqual(10, 10)
+            assertEqual(10, 10L)
+            assertEqual(10, 10.0)
 
-    def static testToString
-        assertEqual(0.toString(), '0')
-        assertEqual((-10).toString(), '-10')
+        def static testToString
+            assertEqual(0.toString(), '0')
+            assertEqual((-10).toString(), '-10')
 
-    def static testToHexString
-        assertEqual(0.toHexString(), '0')
-        assertEqual(10.toHexString(), 'a')
-        assertEqual(100.toHexString(), '64')
+        def static testToHexString
+            assertEqual(0.toHexString(), '0')
+            assertEqual(10.toHexString(), 'a')
+            assertEqual(100.toHexString(), '64')
 
-    def static testCompareTo
-        assertEqual(0.compareTo(1), -1)
-        assertEqual(0.compareTo(0), 0)
-        assertEqual(0.compareTo(-1), 1)
+        def static testCompareTo
+            assertEqual(0.compareTo(1), -1)
+            assertEqual(0.compareTo(0), 0)
+            assertEqual(0.compareTo(-1), 1)
 
-        assert(0 < 1)
-        assert(0 > -1)
-        assert(0 >= 0)
-        assert(0 >= -1)
-        assert(0 <= 0)
-        assert(0 <= 1)
+            assert(0 < 1)
+            assert(0 > -1)
+            assert(0 >= 0)
+            assert(0 >= -1)
+            assert(0 <= 0)
+            assert(0 <= 1)

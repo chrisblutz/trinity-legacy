@@ -1,73 +1,74 @@
 import Trinity.Testing
 
-class StringTest << Test
-    def static testLiterals
-        string = 'string'
-        assertType(string, String.class)
-        string = "string"
-        assertType(string, String.class)
-        string = 'string\n'
-        assertEqual(string, "string\\n")
+module TrinityTest
+    class StringTest << Test
+        def static testLiterals
+            string = 'string'
+            assertType(string, String.class)
+            string = "string"
+            assertType(string, String.class)
+            string = 'string\n'
+            assertEqual(string, "string\\n")
 
-    def static testAddition
-        assertEqual('strin' + 'g', 'string')
-        assertEqual('strin' + 10, 'strin10')
+        def static testAddition
+            assertEqual('strin' + 'g', 'string')
+            assertEqual('strin' + 10, 'strin10')
 
-    def static testLiteralEquality
-        assertEqual('string', 'string')
+        def static testLiteralEquality
+            assertEqual('string', 'string')
 
-    def static testChars
-        assertEqual('string'.chars(), ['s', 't', 'r', 'i', 'n', 'g'])
+        def static testChars
+            assertEqual('string'.chars(), ['s', 't', 'r', 'i', 'n', 'g'])
 
-    def static testMatch
-        match = 'string'.match('s(trin)g')
-        assert(match.matches())
-        assertEqual(match.groups().length(), 2)
-        assertEqual(match.groups()[0], 'string')
-        assertEqual(match.groups()[1], 'trin')
+        def static testMatch
+            match = 'string'.match('s(trin)g')
+            assert(match.matches())
+            assertEqual(match.groups().length(), 2)
+            assertEqual(match.groups()[0], 'string')
+            assertEqual(match.groups()[1], 'trin')
 
-    def static testMatches
-        assert('string'.matches('string'))
-        assert('strinh'.matches('string'), false)
+        def static testMatches
+            assert('string'.matches('string'))
+            assert('strinh'.matches('string'), false)
 
-    def static testToString
-        assertEqual('string'.toString(), 'string')
+        def static testToString
+            assertEqual('string'.toString(), 'string')
 
-    def static testToUpperCase
-        assertEqual('string'.toUpperCase(), 'STRING')
+        def static testToUpperCase
+            assertEqual('string'.toUpperCase(), 'STRING')
 
-    def static testToLowerCase
-        assertEqual('STRING'.toLowerCase(), 'string')
+        def static testToLowerCase
+            assertEqual('STRING'.toLowerCase(), 'string')
 
-    def static testStartsWith
-        assert('string'.startsWith('s'))
-        assert('string'.startsWith('t'), false)
+        def static testStartsWith
+            assert('string'.startsWith('s'))
+            assert('string'.startsWith('t'), false)
 
-    def static testEndsWith
-        assert('string'.endsWith('g'))
-        assert('string'.endsWith('h'), false)
+        def static testEndsWith
+            assert('string'.endsWith('g'))
+            assert('string'.endsWith('h'), false)
 
-    def static testContains
-        assert('string'.contains('trin'))
-        assert('string'.contains('trio'), false)
+        def static testContains
+            assert('string'.contains('trin'))
+            assert('string'.contains('trio'), false)
 
-    def static testLength
-        assertEqual(''.length(), 0)
-        assertEqual('string'.length(), 6)
+        def static testLength
+            assertEqual(''.length(), 0)
+            assertEqual('string'.length(), 6)
 
-    def static testIsEmpty
-        assert(''.isEmpty())
-        assert('string'.isEmpty(), false)
+        def static testIsEmpty
+            assert(''.isEmpty())
+            assert('string'.isEmpty(), false)
 
-    def static testRetrieval
-        assertEqual('string'[0], 's')
-        assertEqual('string'[5], 'g')
+        def static testRetrieval
+            assertEqual('string'[0], 's')
+            assertEqual('string'[5], 'g')
 
-    def static testToInt
-        assertEqual('0'.toInt(), 0)
+        def static testToInt
+            assertEqual('0'.toInt(), 0)
 
-    def static testToLong
-        assertEqual('0'.toLong(), 0)
+        def static testToLong
+            assertEqual('0'.toLong(), 0)
 
-    def static testToFloat
-        assertEqual('0.5'.toFloat(), 0.5)
+        def static testToFloat
+            assertEqual('0.5'.toFloat(), 0.5)

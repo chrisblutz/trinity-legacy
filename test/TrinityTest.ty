@@ -2,5 +2,5 @@ import Trinity.Testing
 
 class TrinityTest
     def static main(args)
-        typesSuite = Suite.new('Native Types', [FloatTest.class, IntTest.class, LongTest.class, StringTest.class])
-        typesSuite.run
+        suite = Suite.new('trinity-lang', Module.get('TrinityTest').getInnerClasses())
+        suite.run
