@@ -1,6 +1,7 @@
 .idea/
 out/
-*.iml
+.gradle/
 
+bin/
+build/
 test-ty/
-src/test/java/
