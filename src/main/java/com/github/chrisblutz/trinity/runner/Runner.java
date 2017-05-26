@@ -71,6 +71,8 @@ public class Runner {
     private static void parseAndRun(File[] sourceFiles, String mainClass, String[] args) {
         
         // Parse source
+    
+        long startLoadMillis = System.currentTimeMillis();
         
         for (File file : sourceFiles) {
             
@@ -78,6 +80,8 @@ public class Runner {
         }
         
         ClassRegistry.finalizeClasses();
+    
+        long endLoadMillis = System.currentTimeMillis();
         
         if (sourceFiles.length > 0) {
             
@@ -121,8 +125,9 @@ public class Runner {
             
             if (CLI.isDebuggingEnabled()) {
                 
+                long loadTotal = endLoadMillis - startLoadMillis;
                 long total = endMillis - startMillis;
-                System.out.println(String.format("\nExecution took %.3f seconds.", (float) total / 1000f));
+                System.out.println(String.format("\nExecution took %.3f seconds (files took %.3f seconds to load).", (float) total / 1000f, (float) loadTotal / 1000f));
             }
         }
     }
