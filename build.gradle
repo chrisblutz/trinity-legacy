@@ -24,7 +24,7 @@ jar {
 }
 
 task trinityTest(dependsOn: jar, type: Exec) {
-    commandLine 'java', '-jar', 'bin/TrinityLang.jar', 'test/', '-d'
+    commandLine 'java', '-jar', 'bin/trinity-lang.jar', 'test/', '-d'
     delete file('bin/')
     clean
 }
