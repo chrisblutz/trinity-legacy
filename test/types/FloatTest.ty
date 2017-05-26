@@ -1,0 +1,58 @@
+import Trinity.Testing
+
+class FloatTest << Test
+    def static testLiterals
+        float = 0f
+        assertType(float, Float.class)
+        float = 0.5
+        assertType(float, Float.class)
+
+    def static testAddition
+        assertEqual(0f + 4.5, 4.5)
+        assertEqual(4.5 + 5.5, 10f)
+
+    def static testSubtraction
+        assertEqual(0f - 4.5, -4.5)
+        assertEqual(5.5 - 5.5, 0f)
+        assertEqual(10.5 - 5f, 5.5)
+
+    def static testMultiplication
+        assertEqual(10f * 0f, 0f)
+        assertEqual(1.5 * 5.5, 8.25)
+        assertEqual(1.5 * (-5.5), -8.25)
+
+    def static testDivision
+        assertEqual(10f / 1f, 10f)
+        assertEqual(10.5 / 5.25, 2f)
+        assertEqual(10.5 / (-5f), -2.1)
+
+    def static testModulus
+        assertEqual(10f % 10f, 0f)
+        assertEqual(10.5 % 5f, 0.5)
+        assertEqual(10.5 % 3.5, 0f)
+        assertEqual(10.5 % (-5f), 0.5)
+
+    def static testNegatives
+        assertEqual(10.5 + (-10.5), 0)
+        assertEqual(10f + (-10f), 0)
+
+    def static testEquality
+        assertEqual(10f, 10)
+        assertEqual(10f, 10L)
+        assertEqual(10f, 10.0)
+
+    def static testToString
+        assertEqual(0f.toString(), '0.0')
+        assertEqual((-10.5).toString(), '-10.5')
+
+    def static testCompareTo
+        assertEqual(0f.compareTo(0.5), -1)
+        assertEqual(0f.compareTo(0f), 0)
+        assertEqual(0f.compareTo(-0.5), 1)
+
+        assert(0f < 0.5)
+        assert(0f > -0.5)
+        assert(0f >= 0f)
+        assert(0f >= -0.5)
+        assert(0f <= 0f)
+        assert(0f <= 0.5)
