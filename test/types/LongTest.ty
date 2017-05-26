@@ -1,73 +1,74 @@
 import Trinity.Testing
 
-class LongTest << Test
-    def static testLiterals
-        long = 0L
-        assertType(long, Long.class)
-        long = -2147483648
-        assertType(long, Long.class)
+module TrinityTest
+    class LongTest << Test
+        def static testLiterals
+            long = 0L
+            assertType(long, Long.class)
+            long = -2147483648
+            assertType(long, Long.class)
 
-    def static testAddition
-        assertEqual(0L + 5L, 5L)
-        assertEqual(5L + 5L, 10L)
-        assertEqual(2147483648 + 1L, 2147483649)
+        def static testAddition
+            assertEqual(0L + 5L, 5L)
+            assertEqual(5L + 5L, 10L)
+            assertEqual(2147483648 + 1L, 2147483649)
 
-    def static testSubtraction
-        assertEqual(0L - 5L, -5L)
-        assertEqual(5L - 5L, 0L)
-        assertEqual(10L - 5L, 5L)
-        assertEqual(2147483648 - 1L, 2147483647L)
+        def static testSubtraction
+            assertEqual(0L - 5L, -5L)
+            assertEqual(5L - 5L, 0L)
+            assertEqual(10L - 5L, 5L)
+            assertEqual(2147483648 - 1L, 2147483647L)
 
-    def static testMultiplication
-        assertEqual(10L * 0L, 0L)
-        assertEqual(1L * 5L, 5L)
-        assertEqual(5L * (-5L), -25L)
-        assertEqual(2147483648 * 2L, 4294967296)
+        def static testMultiplication
+            assertEqual(10L * 0L, 0L)
+            assertEqual(1L * 5L, 5L)
+            assertEqual(5L * (-5L), -25L)
+            assertEqual(2147483648 * 2L, 4294967296)
 
-    def static testDivision
-        assertEqual(10L / 1L, 10L)
-        assertEqual(10L / 10L, 1L)
-        assertEqual(10L / (-5L), -2L)
-        assertEqual(2147483648 / 2L, 1073741824L)
+        def static testDivision
+            assertEqual(10L / 1L, 10L)
+            assertEqual(10L / 10L, 1L)
+            assertEqual(10L / (-5L), -2L)
+            assertEqual(2147483648 / 2L, 1073741824L)
 
-    def static testModulus
-        assertEqual(10L % 10L, 0L)
-        assertEqual(10L % 4L, 2L)
-        assertEqual(10L % 20L, 10L)
-        assertEqual(10L % (-3L), 1L)
-        assertEqual(2147483648 % 5L, 3L)
+        def static testModulus
+            assertEqual(10L % 10L, 0L)
+            assertEqual(10L % 4L, 2L)
+            assertEqual(10L % 20L, 10L)
+            assertEqual(10L % (-3L), 1L)
+            assertEqual(2147483648 % 5L, 3L)
 
-    def static testNegatives
-        assertEqual(10L + (-10L), 0L)
-        assertEqual(2147483648 - 2147483648, 0L)
+        def static testNegatives
+            assertEqual(10L + (-10L), 0L)
+            assertEqual(2147483648 - 2147483648, 0L)
 
-    def static testConversions
-        assertType(2147483648 + 0.5, Float.class)
+        def static testConversions
+            assertType(2147483648 + 0.5, Float.class)
 
-    def static testEquality
-        assertEqual(10L, 10)
-        assertEqual(10L, 10L)
-        assertEqual(10L, 10.0)
+        def static testEquality
+            assertEqual(10L, 10)
+            assertEqual(10L, 10L)
+            assertEqual(10L, 10.0)
 
-    def static testToString
-        assertEqual(0L.toString(), '0')
-        assertEqual((-10L).toString(), '-10')
-        assertEqual(2147483648.toString(), '2147483648')
+        def static testToString
+            assertEqual(0L.toString(), '0')
+            assertEqual((-10L).toString(), '-10')
+            assertEqual(2147483648.toString(), '2147483648')
 
-    def static testToHexString
-        assertEqual(0L.toHexString(), '0')
-        assertEqual(10L.toHexString(), 'a')
-        assertEqual(100L.toHexString(), '64')
-        assertEqual(2147483648.toHexString(), '80000000')
+        def static testToHexString
+            assertEqual(0L.toHexString(), '0')
+            assertEqual(10L.toHexString(), 'a')
+            assertEqual(100L.toHexString(), '64')
+            assertEqual(2147483648.toHexString(), '80000000')
 
-    def static testCompareTo
-        assertEqual(0L.compareTo(1L), -1)
-        assertEqual(0L.compareTo(0L), 0)
-        assertEqual(0L.compareTo(-1L), 1)
+        def static testCompareTo
+            assertEqual(0L.compareTo(1L), -1)
+            assertEqual(0L.compareTo(0L), 0)
+            assertEqual(0L.compareTo(-1L), 1)
 
-        assert(0L < 1L)
-        assert(0L > -1L)
-        assert(0L >= 0L)
-        assert(0L >= -1L)
-        assert(0L <= 0L)
-        assert(0L <= 1L)
+            assert(0L < 1L)
+            assert(0L > -1L)
+            assert(0L >= 0L)
+            assert(0L >= -1L)
+            assert(0L <= 0L)
+            assert(0L <= 1L)
