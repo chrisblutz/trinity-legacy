@@ -1,0 +1,24 @@
+import Trinity.Errors
+
+module Trinity
+    module Testing
+        class Test
+            def static assert(bool, expected = true)
+                if bool != expected
+                    throw(AssertionError.new('Value was ' + bool + '.'))
+
+            def static assertNotNil(value)
+                if value == nil
+                    throw(AssertionError.new('Value was nil.'))
+
+            def static assertEqual(value1, value2)
+                if value1 != value2
+                    throw(AssertionError.new('Values were not equal.'))
+
+            def static assertNotEqual(value1, value2)
+                if value1 == value2
+                    throw(AssertionError.new('Values were equal.'))
+
+            def static assertType(value, type)
+                if !value.isInstance(type)
+                    throw(AssertionError.new('Value was not of type ' + type + '.'))
