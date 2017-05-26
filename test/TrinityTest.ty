@@ -1,0 +1,6 @@
+import Trinity.Testing
+
+class TrinityTest
+    def static main(args)
+        typesSuite = Suite.new('Native Types', [IntTest.class, StringTest.class])
+        typesSuite.run

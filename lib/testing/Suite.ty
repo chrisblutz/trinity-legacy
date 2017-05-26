@@ -1,0 +1,22 @@
+module Trinity
+    module Testing
+        class Suite
+            @@SUITE_PREFIX = 'test'
+
+            def initialize(name, classes)
+                @name = name
+                @classes = classes
+
+            def getName
+                @name
+
+            def run
+                println('Running \'' + getName() + "' tests...\n")
+
+                @classes.each() |cl|
+                    if cl.getSuperclass() == Trinity.Testing.Test
+                        println(cl)
+                        cl.getMethods().each() |method|
+                            if method.getName().startsWith(@@SUITE_PREFIX)
+                                println("\t" + method.getName())
+                                method.invoke(nil, [])
