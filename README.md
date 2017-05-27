@@ -1,4 +1,6 @@
-![Trinity Logo](https://raw.githubusercontent.com/chrisblutz/trinity-lang/master/logo/logo-horizontal.png)
+[![Build Status](https://travis-ci.org/chrisblutz/trinity-lang.svg?branch=master)](https://travis-ci.org/chrisblutz/trinity-lang)
+
+[![Trinity Logo](https://raw.githubusercontent.com/chrisblutz/trinity-lang/master/logo/logo-horizontal.png)](https://github.com/chrisblutz/trinity-lang)
 
 Trinity is a dynamically-typed, object-oriented programming language.
 It is heavily influenced by aspects of [Java](https://www.java.com/) and [Ruby](https://www.ruby-lang.org/).
