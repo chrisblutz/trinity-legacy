@@ -29,6 +29,7 @@ public class LibraryCompiler {
     public static final String OUTPUT_DIRECTORY = "out/";
     
     public static final String NATIVE_SOURCES_PROPERTY = "nativeSource";
+    public static final String NATIVE_RESOURCES_PROPERTY = "nativeResource";
     public static final String TRINITY_SOURCES_PROPERTY = "source";
     public static final String LIBRARY_NAME_PROPERTY = "name";
     public static final String LIBRARY_VERSION_PROPERTY = "version";
@@ -77,6 +78,7 @@ public class LibraryCompiler {
         String libName = properties.getProperty(LIBRARY_NAME_PROPERTY);
         String version = properties.getProperty(LIBRARY_VERSION_PROPERTY);
         String nativeSource = properties.getProperty(NATIVE_SOURCES_PROPERTY);
+        String nativeResource = properties.getProperty(NATIVE_RESOURCES_PROPERTY);
         String source = properties.getProperty(TRINITY_SOURCES_PROPERTY);
         
         if (libName == null) {
@@ -129,6 +131,19 @@ public class LibraryCompiler {
             
             File tempDir = new File(TEMPORARY_COMPILE_DIRECTORY);
             collectOnlyFiles(nativeFiles, nativeNames, tempDir, tempDir.getAbsolutePath());
+        }
+        
+        if (nativeResource != null) {
+            
+            File nativeResourceDir = new File(nativeResource);
+            
+            if (!nativeResourceDir.exists()) {
+                
+                System.err.println("Native resource directory " + nativeSource + " does not exist.");
+                return;
+            }
+            
+            collectOnlyFiles(nativeFiles, nativeNames, nativeResourceDir, nativeResourceDir.getAbsolutePath());
         }
         
         if (source != null) {
