@@ -6,6 +6,7 @@ Trinity is a dynamically-typed, object-oriented programming language.
 It is heavily influenced by aspects of [Java](https://www.java.com/) and [Ruby](https://www.ruby-lang.org/).
 
 ### Repository Structure
+- `bin` - Batch/Shell scripts
 - `lib` - Trinity standard library
 - `logo` - PNG/SVG logos for Trinity
 - `src` - Java source code for the Trinity interpreter
