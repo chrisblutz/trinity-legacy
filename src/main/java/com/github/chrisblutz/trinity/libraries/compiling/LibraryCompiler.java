@@ -35,6 +35,11 @@ public class LibraryCompiler {
     
     public static final String JAVA_SOURCE_EXTENSION = ".java";
     
+    public static void main(String[] args) {
+        
+        compile();
+    }
+    
     public static void compile() {
         
         if (!checkSystemEnvironment()) {
