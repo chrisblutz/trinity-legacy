@@ -1,7 +1,7 @@
 package com.github.chrisblutz.trinity.cli;
 
-import com.github.chrisblutz.trinity.bootstrap.Bootstrap;
 import com.github.chrisblutz.trinity.info.TrinityInfo;
+import com.github.chrisblutz.trinity.libraries.Libraries;
 import com.github.chrisblutz.trinity.runner.Runner;
 
 import java.io.File;
@@ -121,13 +121,7 @@ public class CLI {
         
         for (String lib : params) {
             
-            switch (lib) {
-                
-                case "Trinity.UI":
-                    
-                    Bootstrap.bootstrapUI();
-                    break;
-            }
+            Libraries.load(lib);
         }
     }
     

@@ -30,10 +30,4 @@ public class Bootstrap {
         // Load system properties
         ClassRegistry.getClass("System").tyInvoke("loadProperties", new TYRuntime(), null, null, TYObject.NIL);
     }
-    
-    public static void bootstrapUI() {
-        
-        // Load UI library
-        TrinityParser.parse(new File("lib-ui/"));
-    }
 }
