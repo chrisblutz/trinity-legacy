@@ -2,6 +2,6 @@
 out/
 .gradle/
 
-bin/
+bin/trinity.jar
 build/
 test-ty/
