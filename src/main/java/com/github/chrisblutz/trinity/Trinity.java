@@ -2,6 +2,7 @@ package com.github.chrisblutz.trinity;
 
 import com.github.chrisblutz.trinity.bootstrap.Bootstrap;
 import com.github.chrisblutz.trinity.cli.CLI;
+import com.github.chrisblutz.trinity.libraries.Libraries;
 
 
 /**
@@ -26,6 +27,8 @@ public class Trinity {
     public static void main(String[] args) {
         
         Bootstrap.bootstrap();
+        
+        Libraries.loadAll();
         
         CLI.start(args);
     }
