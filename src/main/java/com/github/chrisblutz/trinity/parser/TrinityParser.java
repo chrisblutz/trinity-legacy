@@ -1,5 +1,6 @@
 package com.github.chrisblutz.trinity.parser;
 
+import com.github.chrisblutz.trinity.cli.CLI;
 import com.github.chrisblutz.trinity.interpreter.TrinityInterpreter;
 import com.github.chrisblutz.trinity.lang.errors.Errors;
 import com.github.chrisblutz.trinity.parser.blocks.Block;
@@ -13,6 +14,8 @@ import com.github.chrisblutz.trinity.runner.Runner;
 import com.github.chrisblutz.trinity.utils.FileUtils;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -45,33 +48,45 @@ public class TrinityParser {
             
             if (FileUtils.getExtension(file).equalsIgnoreCase(SOURCE_EXTENSION)) {
                 
-                Block block = parseContents(file);
-                TrinityInterpreter.interpret(block);
+                try {
+                    
+                    FileInputStream inputStream = new FileInputStream(file);
+                    parse(inputStream, file.getName(), file);
+                    inputStream.close();
+                    
+                } catch (Exception e) {
+                    
+                    System.err.println("An error occurred while parsing '" + file.getName() + "'.");
+                    
+                    if (CLI.isDebuggingEnabled()) {
+                        
+                        e.printStackTrace();
+                    }
+                }
             }
         }
     }
     
-    public static Block parseContents(File file) {
+    public static void parse(InputStream stream, String sourceFile, File sourceLocation) {
+        
+        Block block = parseContents(stream, sourceFile, sourceLocation);
+        TrinityInterpreter.interpret(block);
+    }
+    
+    public static Block parseContents(InputStream stream, String sourceFile, File sourceLocation) {
         
         List<String> lines = new ArrayList<>();
         
-        try {
+        Scanner sc = new Scanner(stream);
+        
+        while (sc.hasNextLine()) {
             
-            Scanner sc = new Scanner(file);
-            
-            while (sc.hasNextLine()) {
-                
-                lines.add(sc.nextLine());
-            }
-            
-            sc.close();
-            
-        } catch (Exception e) {
-            
-            e.printStackTrace();
+            lines.add(sc.nextLine());
         }
         
-        return parse(file.getName(), file, lines.toArray(new String[lines.size()]));
+        sc.close();
+        
+        return parse(sourceFile, sourceLocation, lines.toArray(new String[lines.size()]));
     }
     
     private static Block parse(String filename, File fullFile, String[] lines) {
