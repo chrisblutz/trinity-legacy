@@ -1,7 +1,6 @@
 package com.github.chrisblutz.trinity.lang;
 
 import com.github.chrisblutz.trinity.lang.errors.Errors;
-import com.github.chrisblutz.trinity.lang.procedures.DefaultProcedures;
 import com.github.chrisblutz.trinity.lang.procedures.ProcedureAction;
 import com.github.chrisblutz.trinity.lang.procedures.TYProcedure;
 import com.github.chrisblutz.trinity.lang.scope.TYRuntime;
@@ -46,12 +45,6 @@ public class TYClass {
         
         inheritanceTree = compileInheritanceTree();
         inheritanceTree.add(this);
-        
-        registerMethod(new TYMethod("+", false, true, this, DefaultProcedures.getDefaultUOEOperationProcedure("+")));
-        registerMethod(new TYMethod("-", false, true, this, DefaultProcedures.getDefaultUOEOperationProcedure("-")));
-        registerMethod(new TYMethod("*", false, true, this, DefaultProcedures.getDefaultUOEOperationProcedure("*")));
-        registerMethod(new TYMethod("/", false, true, this, DefaultProcedures.getDefaultUOEOperationProcedure("/")));
-        registerMethod(new TYMethod("%", false, true, this, DefaultProcedures.getDefaultUOEOperationProcedure("%")));
     }
     
     private List<TYClass> compileInheritanceTree() {

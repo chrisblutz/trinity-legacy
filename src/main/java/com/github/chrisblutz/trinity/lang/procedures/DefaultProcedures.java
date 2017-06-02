@@ -8,13 +8,13 @@ import com.github.chrisblutz.trinity.lang.errors.Errors;
  */
 public class DefaultProcedures {
     
-    public static TYProcedure getDefaultUOEOperationProcedure(String operation) {
+    public static ProcedureAction getDefaultUOEOperationProcedure(String operation) {
         
-        return new TYProcedure((runtime, thisObj, params) -> {
+        return (runtime, thisObj, params) -> {
             
             Errors.throwError("Trinity.Errors.UnsupportedOperationError", "Operation '" + operation + "' not supported.", runtime);
             
             return thisObj;
-        });
+        };
     }
 }

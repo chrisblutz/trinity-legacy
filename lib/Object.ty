@@ -1,4 +1,14 @@
 class Object
+    def native +(other)
+
+    def native -(other)
+
+    def native *(other)
+
+    def native /(other)
+
+    def native %(other)
+
     def native secure hashCode
 
     def native getClass

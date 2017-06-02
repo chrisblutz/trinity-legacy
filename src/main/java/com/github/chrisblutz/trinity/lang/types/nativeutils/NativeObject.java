@@ -2,6 +2,7 @@ package com.github.chrisblutz.trinity.lang.types.nativeutils;
 
 import com.github.chrisblutz.trinity.lang.TYClass;
 import com.github.chrisblutz.trinity.lang.TYObject;
+import com.github.chrisblutz.trinity.lang.procedures.DefaultProcedures;
 import com.github.chrisblutz.trinity.lang.types.TYClassObject;
 import com.github.chrisblutz.trinity.lang.types.TYStaticClassObject;
 import com.github.chrisblutz.trinity.lang.types.bool.TYBoolean;
@@ -16,6 +17,11 @@ class NativeObject {
     
     static void register() {
         
+        TrinityNatives.registerMethod("Object", "+", false, new String[]{"other"}, null, null, DefaultProcedures.getDefaultUOEOperationProcedure("+"));
+        TrinityNatives.registerMethod("Object", "-", false, new String[]{"other"}, null, null, DefaultProcedures.getDefaultUOEOperationProcedure("-"));
+        TrinityNatives.registerMethod("Object", "*", false, new String[]{"other"}, null, null, DefaultProcedures.getDefaultUOEOperationProcedure("*"));
+        TrinityNatives.registerMethod("Object", "/", false, new String[]{"other"}, null, null, DefaultProcedures.getDefaultUOEOperationProcedure("/"));
+        TrinityNatives.registerMethod("Object", "%", false, new String[]{"other"}, null, null, DefaultProcedures.getDefaultUOEOperationProcedure("%"));
         TrinityNatives.registerMethod("Object", "hashCode", false, null, null, null, (runtime, thisObj, params) -> NativeStorage.getHashCode(thisObj));
         TrinityNatives.registerMethod("Object", "getClass", false, null, null, null, (runtime, thisObj, params) -> NativeStorage.getClassObject(thisObj.getObjectClass()));
         TrinityNatives.registerMethod("Object", "isInstance", false, new String[]{"instClass"}, null, null, (runtime, thisObj, params) -> {
