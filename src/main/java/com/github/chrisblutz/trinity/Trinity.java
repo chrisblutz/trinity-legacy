@@ -3,6 +3,7 @@ package com.github.chrisblutz.trinity;
 import com.github.chrisblutz.trinity.bootstrap.Bootstrap;
 import com.github.chrisblutz.trinity.cli.CLI;
 import com.github.chrisblutz.trinity.libraries.Libraries;
+import com.github.chrisblutz.trinity.plugins.PluginLoader;
 
 
 /**
@@ -26,6 +27,8 @@ public class Trinity {
     
     public static void main(String[] args) {
         
+        PluginLoader.loadAll();
+        
         Bootstrap.bootstrap();
         
         Libraries.loadAll();
@@ -34,6 +37,8 @@ public class Trinity {
     }
     
     public static void exit(int result) {
+        
+        PluginLoader.unloadAll(result);
         
         System.exit(result);
     }

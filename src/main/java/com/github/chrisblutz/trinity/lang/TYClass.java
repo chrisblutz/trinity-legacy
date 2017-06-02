@@ -6,6 +6,8 @@ import com.github.chrisblutz.trinity.lang.procedures.ProcedureAction;
 import com.github.chrisblutz.trinity.lang.procedures.TYProcedure;
 import com.github.chrisblutz.trinity.lang.scope.TYRuntime;
 import com.github.chrisblutz.trinity.natives.NativeStorage;
+import com.github.chrisblutz.trinity.plugins.PluginLoader;
+import com.github.chrisblutz.trinity.plugins.api.Events;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -64,6 +66,23 @@ public class TYClass {
         }
         
         return tree;
+    }
+    
+    public boolean hasVariable(String name) {
+        
+        return getVariables().containsKey(name);
+    }
+    
+    public TYObject getVariable(String name) {
+        
+        return getVariables().getOrDefault(name, TYObject.NIL);
+    }
+    
+    public void setVariable(String name, TYObject object) {
+        
+        getVariables().put(name, object);
+        
+        PluginLoader.triggerEvent(Events.CLASS_VARIABLE_UPDATE, this, name, object);
     }
     
     public Map<String, TYObject> getVariables() {
@@ -260,6 +279,8 @@ public class TYClass {
                 ClassRegistry.registerMainClass(this);
             }
         }
+        
+        PluginLoader.triggerEvent(Events.METHOD_UPDATE, this, method);
     }
     
     public Map<String, TYMethod> getMethods() {

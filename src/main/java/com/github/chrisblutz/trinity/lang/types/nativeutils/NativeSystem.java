@@ -50,7 +50,7 @@ class NativeSystem {
             map.put(new TYString("user.home"), TrinityNatives.getObjectFor(System.getProperty("user.home")));
             map.put(new TYString("user.name"), TrinityNatives.getObjectFor(System.getProperty("user.name")));
             
-            ClassRegistry.getClass("System").getVariables().put("properties", new TYMap(map));
+            ClassRegistry.getClass("System").setVariable("properties", new TYMap(map));
             
             return TYObject.NONE;
         });

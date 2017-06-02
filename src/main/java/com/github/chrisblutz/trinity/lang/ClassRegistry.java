@@ -1,6 +1,8 @@
 package com.github.chrisblutz.trinity.lang;
 
 import com.github.chrisblutz.trinity.natives.TrinityNatives;
+import com.github.chrisblutz.trinity.plugins.PluginLoader;
+import com.github.chrisblutz.trinity.plugins.api.Events;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,6 +37,8 @@ public class ClassRegistry {
             classes.put(className, tyClass);
             
             TrinityNatives.triggerActionsPendingLoad(className);
+            
+            PluginLoader.triggerEvent(Events.CLASS_LOAD, tyClass);
         }
         
         return classes.get(className);
@@ -66,5 +70,10 @@ public class ClassRegistry {
             
             tyClass.performFinalSetup();
         }
+    }
+    
+    public static TYClass[] getClasses() {
+        
+        return classes.values().toArray(new TYClass[classes.size()]);
     }
 }

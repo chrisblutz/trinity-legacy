@@ -5,3 +5,7 @@ out/
 bin/trinity.jar
 build/
 test-ty/
+
+# Generated folders
+/plugins/
+ext-libs/

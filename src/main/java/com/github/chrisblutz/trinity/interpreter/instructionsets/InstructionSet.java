@@ -180,9 +180,9 @@ public class InstructionSet extends ObjectEvaluator {
                 
                 String varName = tokens[1].getContents();
                 
-                if (runtime.getTyClass().getVariables().containsKey(varName)) {
+                if (runtime.getTyClass().hasVariable(varName)) {
                     
-                    return runtime.getTyClass().getVariables().get(varName);
+                    return runtime.getTyClass().getVariable(varName);
                     
                 } else {
                     
@@ -193,9 +193,9 @@ public class InstructionSet extends ObjectEvaluator {
                 
                 String varName = tokens[1].getContents();
                 
-                if (Variables.getGlobalVariables().containsKey(varName)) {
+                if (Variables.hasGlobalVariable(varName)) {
                     
-                    return Variables.getGlobalVariables().get(varName);
+                    return Variables.getGlobalVariable(varName);
                     
                 } else {
                     

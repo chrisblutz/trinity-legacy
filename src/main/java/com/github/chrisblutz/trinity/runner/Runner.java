@@ -1,5 +1,6 @@
 package com.github.chrisblutz.trinity.runner;
 
+import com.github.chrisblutz.trinity.Trinity;
 import com.github.chrisblutz.trinity.cli.CLI;
 import com.github.chrisblutz.trinity.interpreter.TrinityInterpreter;
 import com.github.chrisblutz.trinity.lang.ClassRegistry;
@@ -9,6 +10,8 @@ import com.github.chrisblutz.trinity.lang.errors.Errors;
 import com.github.chrisblutz.trinity.lang.scope.TYRuntime;
 import com.github.chrisblutz.trinity.natives.TrinityNatives;
 import com.github.chrisblutz.trinity.parser.TrinityParser;
+import com.github.chrisblutz.trinity.plugins.PluginLoader;
+import com.github.chrisblutz.trinity.plugins.api.Events;
 
 import java.io.File;
 
@@ -20,6 +23,8 @@ public class Runner {
     
     private static String currentFile;
     private static int currentLine;
+    
+    private static Thread trinityThread;
     
     public static String getCurrentFile() {
         
@@ -49,7 +54,7 @@ public class Runner {
     
     public static void run(File[] sourceFiles, String mainClass, String[] args) {
         
-        Thread trinityThread = new Thread(() -> parseAndRun(sourceFiles, mainClass, args));
+        trinityThread = new Thread(() -> parseAndRun(sourceFiles, mainClass, args));
         trinityThread.setName("Trinity-Main");
         trinityThread.setUncaughtExceptionHandler((t, e) -> {
             
@@ -64,6 +69,8 @@ public class Runner {
                 
                 System.err.println("To view a full trace, enable debugging with the -d/--debug option.");
             }
+            
+            Trinity.exit(1);
         });
         trinityThread.start();
     }
@@ -71,7 +78,7 @@ public class Runner {
     private static void parseAndRun(File[] sourceFiles, String mainClass, String[] args) {
         
         // Parse source
-    
+        
         long startLoadMillis = System.currentTimeMillis();
         
         for (File file : sourceFiles) {
@@ -80,8 +87,10 @@ public class Runner {
         }
         
         ClassRegistry.finalizeClasses();
-    
+        
         long endLoadMillis = System.currentTimeMillis();
+        
+        PluginLoader.triggerEvent(Events.CLASS_FINALIZATION);
         
         if (sourceFiles.length > 0) {
             
@@ -130,5 +139,8 @@ public class Runner {
                 System.out.println(String.format("\nExecution took %.3f seconds (files took %.3f seconds to load).", (float) total / 1000f, (float) loadTotal / 1000f));
             }
         }
+        
+        // Trigger plugin unload, assumes execution succeeded
+        PluginLoader.unloadAll(0);
     }
 }

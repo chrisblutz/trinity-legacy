@@ -10,6 +10,8 @@ import com.github.chrisblutz.trinity.lang.errors.Errors;
 import com.github.chrisblutz.trinity.parser.blocks.Block;
 import com.github.chrisblutz.trinity.parser.lines.Line;
 import com.github.chrisblutz.trinity.parser.tokens.Token;
+import com.github.chrisblutz.trinity.plugins.PluginLoader;
+import com.github.chrisblutz.trinity.plugins.api.Events;
 
 import java.io.File;
 
@@ -75,6 +77,8 @@ public class ClassInterpreter extends DeclarationInterpreter {
                         interpretChildren(nextBlock, newEnv);
                     }
                     
+                    PluginLoader.triggerEvent(Events.FILE_CLASS_LOAD, fileName, tyClass);
+    
                 } else {
                     
                     Errors.throwError("Trinity.Errors.ParseError", "Native classes are not currently supported.", fileName, line.getLineNumber());

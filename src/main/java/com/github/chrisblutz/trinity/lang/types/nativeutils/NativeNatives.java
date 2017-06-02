@@ -29,7 +29,7 @@ class NativeNatives {
                 result = TYObject.NIL;
             }
             
-            Variables.getGlobalVariables().put(globalName, result);
+            Variables.setGlobalVariable(globalName, result);
             
             return TYObject.NONE;
         });
