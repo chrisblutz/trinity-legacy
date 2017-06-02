@@ -52,13 +52,23 @@ public class ForLoopInstructionSet extends ChainedInstructionSet {
         
         TYRuntime newRuntime = runtime.clone();
         
-        getInitial().evaluate(TYObject.NONE, newRuntime);
+        ChainedInstructionSet initial = getInitial();
+        
+        if (initial != null) {
+            
+            initial.evaluate(TYObject.NONE, newRuntime);
+        }
         
         boolean expression = TrinityNatives.toBoolean(getExpression().evaluate(TYObject.NONE, newRuntime));
         
         while (expression) {
             
-            getAction().onAction(newRuntime, null, TYObject.NONE);
+            ProcedureAction action = getAction();
+            
+            if (action != null) {
+                
+                action.onAction(newRuntime, null, TYObject.NONE);
+            }
             
             if (newRuntime.isReturning()) {
                 

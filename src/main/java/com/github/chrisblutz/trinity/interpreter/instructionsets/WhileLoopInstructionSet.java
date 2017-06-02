@@ -44,7 +44,12 @@ public class WhileLoopInstructionSet extends ChainedInstructionSet {
         
         while (expression) {
             
-            getAction().onAction(newRuntime, null, TYObject.NONE);
+            ProcedureAction action = getAction();
+            
+            if (action != null) {
+                
+                action.onAction(newRuntime, null, TYObject.NONE);
+            }
             
             if (newRuntime.isReturning()) {
                 
