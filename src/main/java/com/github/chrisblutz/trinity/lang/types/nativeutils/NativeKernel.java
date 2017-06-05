@@ -1,12 +1,24 @@
 package com.github.chrisblutz.trinity.lang.types.nativeutils;
 
 import com.github.chrisblutz.trinity.Trinity;
+import com.github.chrisblutz.trinity.interpreter.ExpressionInterpreter;
+import com.github.chrisblutz.trinity.interpreter.InterpretEnvironment;
 import com.github.chrisblutz.trinity.lang.ClassRegistry;
 import com.github.chrisblutz.trinity.lang.TYObject;
+import com.github.chrisblutz.trinity.lang.errors.Errors;
+import com.github.chrisblutz.trinity.lang.procedures.ProcedureAction;
+import com.github.chrisblutz.trinity.lang.scope.TYRuntime;
+import com.github.chrisblutz.trinity.lang.types.arrays.TYArray;
 import com.github.chrisblutz.trinity.lang.types.io.TYNativeOutputStream;
+import com.github.chrisblutz.trinity.lang.types.maps.TYMap;
 import com.github.chrisblutz.trinity.lang.types.strings.TYString;
 import com.github.chrisblutz.trinity.natives.TrinityNatives;
+import com.github.chrisblutz.trinity.parser.TrinityParser;
+import com.github.chrisblutz.trinity.parser.blocks.Block;
 
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 
 
@@ -70,6 +82,52 @@ class NativeKernel {
             }
             
             return TYObject.NONE;
+        });
+        Map<String, ProcedureAction> optionalParameters = new HashMap<>();
+        optionalParameters.put("args", (runtime, thisObj, params) -> new TYMap(new HashMap<>()));
+        TrinityNatives.registerMethod("Kernel", "eval", true, new String[]{"code"}, optionalParameters, null, (runtime, thisObj, params) -> {
+            
+            TYObject code = runtime.getVariable("code");
+            TYObject args = runtime.getVariable("args");
+            
+            TYMap argsMap;
+            if (args instanceof TYMap) {
+                
+                argsMap = (TYMap) args;
+                
+            } else {
+                
+                Errors.throwError("Trinity.Errors.InvalidTypeError", "Kernel.eval requires its args argument to be an array.", runtime);
+                argsMap = new TYMap(new HashMap<>());
+            }
+            
+            String[] lines;
+            if (code instanceof TYArray) {
+                
+                TYArray array = (TYArray) code;
+                lines = new String[array.size()];
+                for (int i = 0; i < array.size(); i++) {
+                    
+                    lines[i] = TrinityNatives.toString(array.getInternalList().get(i), runtime);
+                }
+                
+            } else {
+                
+                lines = new String[]{TrinityNatives.toString(code, runtime)};
+            }
+            
+            Block block = TrinityParser.parseStrings(new File("lib/Kernel.ty"), lines);
+            ProcedureAction action = ExpressionInterpreter.interpret(block, new InterpretEnvironment(), "nil", "nil", false);
+            
+            TYRuntime newRuntime = new TYRuntime();
+            Map<TYObject, TYObject> map = argsMap.getInternalMap();
+            for (TYObject name : argsMap.getInternalMap().keySet()) {
+                
+                String nameStr = TrinityNatives.toString(name, runtime);
+                newRuntime.setVariable(nameStr, map.get(name));
+            }
+            
+            return action.onAction(newRuntime, TYObject.NONE);
         });
     }
 }

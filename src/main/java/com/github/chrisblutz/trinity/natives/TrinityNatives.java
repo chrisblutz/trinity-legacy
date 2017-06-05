@@ -210,6 +210,10 @@ public class TrinityNatives {
                 
                 return TYBoolean.FALSE;
             }
+            
+        } else if (obj.getClass().isArray()) {
+            
+            return getArrayFor((Object[]) obj);
         }
         
         Errors.throwError("Trinity.Errors.NativeTypeError", "Trinity does not have native type-conversion utilities for " + obj.getClass() + ".", null, 0);

@@ -91,6 +91,11 @@ public class TrinityParser {
         return parse(sourceFile, sourceLocation, lines.toArray(new String[lines.size()]));
     }
     
+    public static Block parseStrings(File container, String[] lines) {
+        
+        return parse(container.getName(), container, lines);
+    }
+    
     private static Block parse(String filename, File fullFile, String[] lines) {
         
         PluginLoader.triggerEvent(Events.FILE_LOAD, filename, fullFile);

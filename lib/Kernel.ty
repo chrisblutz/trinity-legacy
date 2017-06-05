@@ -19,3 +19,5 @@ class Kernel
         exit(code)
 
     def native static sleep(millis)
+
+    def native static eval(code, args = [])
