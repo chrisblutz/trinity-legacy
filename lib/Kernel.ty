@@ -21,3 +21,5 @@ class Kernel
     def native static sleep(millis)
 
     def native static eval(code, args = [])
+
+    def native static load(file)

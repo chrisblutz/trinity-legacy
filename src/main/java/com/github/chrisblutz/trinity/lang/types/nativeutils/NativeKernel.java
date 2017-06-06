@@ -129,5 +129,23 @@ class NativeKernel {
             
             return action.onAction(newRuntime, TYObject.NONE);
         });
+        TrinityNatives.registerMethod("Kernel", "load", true, new String[]{"file"}, null, null, (runtime, thisObj, params) -> {
+            
+            TYObject fileObj = runtime.getVariable("file");
+            
+            File file;
+            if (fileObj.getObjectClass().isInstanceOf(ClassRegistry.getClass("Trinity.IO.Files.File"))) {
+                
+                String path = TrinityNatives.toString(fileObj.tyInvoke("getPath", runtime, null, null), runtime);
+                file = new File(path);
+                
+            } else {
+                
+                file = new File(TrinityNatives.toString(fileObj, runtime));
+            }
+            
+            TrinityParser.parse(file);
+            return TYObject.NONE;
+        });
     }
 }
