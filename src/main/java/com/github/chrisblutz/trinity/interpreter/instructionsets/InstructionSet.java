@@ -220,10 +220,6 @@ public class InstructionSet extends ObjectEvaluator {
                         
                         return NativeStorage.getStaticClassObject(runtime.getImportedClassWithModule(tokenContents));
                         
-                    } else if (ModuleRegistry.getModule("Trinity").hasClass(tokenContents)) {
-                        
-                        return NativeStorage.getStaticClassObject(ModuleRegistry.getModule("Trinity").getClass(tokenContents));
-                        
                     } else if (ModuleRegistry.moduleExists(tokenContents)) {
                         
                         return NativeStorage.getStaticModuleObject(ModuleRegistry.getModule(tokenContents));
@@ -231,6 +227,10 @@ public class InstructionSet extends ObjectEvaluator {
                     } else if (ClassRegistry.classExists(tokenContents)) {
                         
                         return NativeStorage.getStaticClassObject(ClassRegistry.getClass(tokenContents));
+                        
+                    } else if (ModuleRegistry.getModule("Trinity").hasClass(tokenContents)) {
+                        
+                        return NativeStorage.getStaticClassObject(ModuleRegistry.getModule("Trinity").getClass(tokenContents));
                         
                     } else {
                         
