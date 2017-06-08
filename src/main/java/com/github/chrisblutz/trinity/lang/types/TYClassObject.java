@@ -14,7 +14,7 @@ public class TYClassObject extends TYObject {
     
     public TYClassObject(TYClass internal) {
         
-        super(ClassRegistry.getClass("Class"));
+        super(ClassRegistry.getClass("Trinity.Class"));
         
         this.internalClass = internal;
     }

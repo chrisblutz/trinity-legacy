@@ -1,8 +1,9 @@
-class Boolean
-    def native ==(other)
+module Trinity
+    class Boolean
+        def native ==(other)
 
-    def toString
-        if this == true
-            return 'true'
-        else
-            return 'false'
+        def toString
+            if this == true
+                return 'true'
+            else
+                return 'false'

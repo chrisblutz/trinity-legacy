@@ -1,49 +1,50 @@
 import Trinity.ArrayUtils
 
-class Array
-    def native +(other)
+module Trinity
+    class Array
+        def native +(other)
 
-    def native [](index)
+        def native [](index)
 
-    def native add(value)
+        def native add(value)
 
-    def native insert(index, value)
+        def native insert(index, value)
 
-    def native remove(index)
+        def native remove(index)
 
-    def native removeObject(value)
+        def native removeObject(value)
 
-    def native clear
+        def native clear
 
-    def native length
+        def native length
 
-    def toString
-        '[' + join(', ') + ']'
+        def toString
+            '[' + join(', ') + ']'
 
-    def each(&block)
-        iterator().iterate(block)
+        def each(&block)
+            iterator().iterate(block)
 
-    def iterator
-        Iterator.new(this)
+        def iterator
+            Iterator.new(this)
 
-    def sum
-        sum = 0
-        each() |e|
-            sum += e
-        sum
+        def sum
+            sum = 0
+            each() |e|
+                sum += e
+            sum
 
-    def join(delimiter = ' ')
-        str = ''
-        for i = 0; i < length(); i += 1
-            str += this[i]
-            if i < length() - 1
-                str += delimiter
-        str
+        def join(delimiter = ' ')
+            str = ''
+            for i = 0; i < length(); i += 1
+                str += this[i]
+                if i < length() - 1
+                    str += delimiter
+            str
 
-    def ==(other)
-        if length() != other.length()
-            return false
-        for i = 0; i < length(); i += 1
-            if this[i] != other[i]
+        def ==(other)
+            if length() != other.length()
                 return false
-        return true
+            for i = 0; i < length(); i += 1
+                if this[i] != other[i]
+                    return false
+            return true

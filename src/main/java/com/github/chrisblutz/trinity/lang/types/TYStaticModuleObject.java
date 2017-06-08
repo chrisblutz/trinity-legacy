@@ -14,7 +14,7 @@ public class TYStaticModuleObject extends TYObject {
     
     public TYStaticModuleObject(TYModule internal) {
         
-        super(ClassRegistry.getClass("Module"));
+        super(ClassRegistry.getClass("Trinity.Module"));
         
         this.internalModule = internal;
     }

@@ -15,7 +15,7 @@ public class TYBoolean extends TYObject {
     
     private TYBoolean(boolean internal) {
         
-        super(ClassRegistry.getClass("Boolean"));
+        super(ClassRegistry.getClass("Trinity.Boolean"));
         
         this.internalBoolean = internal;
     }

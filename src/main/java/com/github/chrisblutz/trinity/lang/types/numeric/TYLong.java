@@ -13,7 +13,7 @@ public class TYLong extends TYObject {
     
     public TYLong(long internal) {
         
-        super(ClassRegistry.getClass("Long"));
+        super(ClassRegistry.getClass("Trinity.Long"));
         
         this.internalLong = internal;
     }

@@ -14,7 +14,7 @@ class NativeProcedure {
     
     static void register() {
         
-        TrinityNatives.registerMethod("Procedure", "initialize", false, null, null, "block", (runtime, thisObj, params) -> {
+        TrinityNatives.registerMethod("Trinity.Procedure", "initialize", false, null, null, "block", (runtime, thisObj, params) -> {
             
             if (runtime.hasVariable("block")) {
                 
@@ -25,7 +25,7 @@ class NativeProcedure {
                 return new TYProcedureObject(new TYProcedure((runtime11, thisObj1, params1) -> TYObject.NIL), new TYRuntime());
             }
         });
-        TrinityNatives.registerMethod("Procedure", "call", false, null, null, null, (runtime, thisObj, params) -> {
+        TrinityNatives.registerMethod("Trinity.Procedure", "call", false, null, null, null, (runtime, thisObj, params) -> {
             
             TYProcedureObject obj = (TYProcedureObject) thisObj;
             TYProcedure proc = obj.getInternalProcedure();

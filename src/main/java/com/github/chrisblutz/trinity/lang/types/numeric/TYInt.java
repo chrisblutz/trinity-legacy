@@ -13,7 +13,7 @@ public class TYInt extends TYObject {
     
     public TYInt(int internal) {
         
-        super(ClassRegistry.getClass("Int"));
+        super(ClassRegistry.getClass("Trinity.Int"));
         
         this.internalInteger = internal;
     }

@@ -1,25 +1,26 @@
-class Object
-    def native +(other)
+module Trinity
+    class Object
+        def native +(other)
 
-    def native -(other)
+        def native -(other)
 
-    def native *(other)
+        def native *(other)
 
-    def native /(other)
+        def native /(other)
 
-    def native %(other)
+        def native %(other)
 
-    def native secure hashCode
+        def native secure hashCode
 
-    def native getClass
+        def native getClass
 
-    def native isInstance(instClass)
+        def native isInstance(instClass)
 
-    def toString
-        getClass().toString() + '@' + hashCode().toHexString()
+        def toString
+            getClass().toString() + '@' + hashCode().toHexString()
 
-    def compareTo(other)
-        throw(Trinity.Errors.InvalidTypeError.new('Cannot compare types ' + this.getClass() + ' and ' + other.getClass() + '.'))
+        def compareTo(other)
+            throw(Trinity.Errors.InvalidTypeError.new('Cannot compare types ' + this.getClass() + ' and ' + other.getClass() + '.'))
 
-    def ==(other)
-        hashCode() == other.hashCode()
+        def ==(other)
+            hashCode() == other.hashCode()

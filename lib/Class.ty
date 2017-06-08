@@ -1,25 +1,26 @@
-class Class
-    def native ==(other)
+module Trinity
+    class Class
+        def native ==(other)
 
-    def native getSuperclass
+        def native getSuperclass
 
-    def native getModule
+        def native getModule
 
-    def native getName
+        def native getName
 
-    def native getShortName
+        def native getShortName
 
-    def native construct(args)
+        def native construct(args)
 
-    def native getMethods
+        def native getMethods
 
-    def native getMethod(name)
+        def native getMethod(name)
 
-    def native getInnerClasses
+        def native getInnerClasses
 
-    def native getInnerClass(name)
+        def native getInnerClass(name)
 
-    def native static get(name)
+        def native static get(name)
 
-    def toString
-        getName()
+        def toString
+            getName()

@@ -20,8 +20,9 @@ import java.util.*;
 
 
 /**
- * This class houses the central API for native
- * methods in Trinity.
+ * This class houses the central API for native methods and global variables in Trinity.
+ * It also provides utility methods for object construction, method invocation, and native
+ * type conversion.
  *
  * @author Christopher Lutz
  */
@@ -36,6 +37,35 @@ public class TrinityNatives {
     
     private static Map<String, ProcedureAction> globals = new HashMap<>();
     
+    /**
+     * Registers a native method to be loaded when its container class is loaded.<br>
+     * <br>
+     * This method allows for the definition of argument names, which can be retrieved using
+     * {@code Runtime.getVariable()}:
+     * <pre>
+     *     runtime.getVariable("name");
+     * </pre>
+     * <p>
+     * If there is a block argument defined, this can also be retrieved using this same method.
+     * The resulting {@code TYObject} will be an instance of the Trinity class {@code Procedure}.
+     * It can be invoked by using {@code TrinityNatives.call()}:
+     * <pre>
+     *      TYObject procedure = runtime.getVariable("blockArg")
+     *      TYObject result = TrinityNatives.call(procedure, "call", runtime, [any parameters]);
+     * </pre>
+     *
+     * @param className       The name of the container class for this method
+     * @param methodName      The name of this method
+     * @param staticMethod    Whether or not this method is defined as {@code static}
+     * @param mandatoryParams The mandatory argument names for this method.  This may be {@code null} if there are no mandatory arguments.
+     * @param optionalParams  The optional arguments for this method, defined in the map with the name as the key
+     *                        and a {@code ProcedureAction} that returns the default argument value as the value.  This may be {@code null}
+     *                        if there are no optional arguments.
+     * @param blockParam      The block argument for this method.  This is the equivalent of defining an {@code &block} argument in Trinity
+     *                        source code.  This may be {@code null} if there is no block argument.
+     * @param action          The {@code ProcedureAction} that is called when this method is invoked.  The return value from this action is used as
+     *                        the method's return value.
+     */
     public static void registerMethod(String className, String methodName, boolean staticMethod, String[] mandatoryParams, Map<String, ProcedureAction> optionalParams, String blockParam, ProcedureAction action) {
         
         ProcedureAction actionWithStackTrace = (runtime, thisObj, params) -> {
@@ -70,19 +100,24 @@ public class TrinityNatives {
         methods.put(fullName, method);
     }
     
-    public static void registerMethodPendingLoad(String pendingClassName, String className, String methodName, boolean staticMethod, String[] mandatoryParams, Map<String, ProcedureAction> optionalParams, String blockParam, ProcedureAction action) {
-        
-        performPendingLoad(pendingClassName, () -> registerMethod(className, methodName, staticMethod, mandatoryParams, optionalParams, blockParam, action));
-    }
-    
+    /**
+     * Registers a global variable.  Variables declared using this method are not automatically
+     * available inside Trinity.  In order to maintain source code transparency and avoid confusion
+     * with globals declared invisibly, all globals declared using this method must be initialized
+     * inside Trinity source code using {@code Natives.initGlobalVariable()}:
+     * <pre>
+     *     Natives.initGlobalVariable('name')
+     * </pre>
+     * <p>
+     * It is recommended that this call come in the initializer code for the file, before any
+     * class or module definitions.
+     *
+     * @param name   The name of this variable (will be used in source code as {@code $name}.
+     * @param action The {@code ProcedureAction} that returns the value of this global.
+     */
     public static void registerGlobal(String name, ProcedureAction action) {
         
         globals.put(name, action);
-    }
-    
-    public static void registerGlobalPendingLoad(String pendingClassName, String name, ProcedureAction action) {
-        
-        performPendingLoad(pendingClassName, () -> registerGlobal(name, action));
     }
     
     public static void performPendingLoad(String className, NativeAction action) {
@@ -160,7 +195,7 @@ public class TrinityNatives {
     }
     
     /**
-     * This method wraps native types inside Trinity's
+     * This method wraps Java objects inside Trinity's
      * object format ({@code TYObject}).
      * <br>
      * <br>
@@ -223,7 +258,7 @@ public class TrinityNatives {
     
     
     /**
-     * This method wraps an array of native types inside Trinity's
+     * This method wraps an array of Java objects inside Trinity's
      * array format ({@code TYObject}).  All objects inside are converted
      * into Trinity's native type of them.
      * <br>
@@ -251,14 +286,41 @@ public class TrinityNatives {
         return new TYArray(objects);
     }
     
+    /**
+     * Creates a new instance of the specified Trinity class and passes the specified arguments to the
+     * class's constructor.<br>
+     * <br>
+     * This method is the equivalent of calling:
+     * <pre>
+     *     TrinityNatives.newInstance(className, new TYRuntime(), args);
+     * </pre>
+     *
+     * @param className The name of the Trinity class to instantiate
+     * @param args      Arguments to pass to the class's constructor
+     * @return The constructed {@code TYObject} representing the new instance
+     */
     public static TYObject newInstance(String className, TYObject... args) {
         
         return newInstance(className, new TYRuntime(), args);
     }
     
+    /**
+     * Creates a new instance of the specified Trinity class and passes the specified arguments to the
+     * class's constructor.
+     *
+     * @param className The name of the Trinity class to instantiate
+     * @param args      Arguments to pass to the class's constructor
+     * @param runtime   The {@code TYRuntime} instance representing the runtime state in which this instance was created
+     * @return The constructed {@code TYObject} representing the new instance
+     */
     public static TYObject newInstance(String className, TYRuntime runtime, TYObject... args) {
         
         return ClassRegistry.getClass(className).tyInvoke("new", runtime, null, null, TYObject.NONE, args);
+    }
+    
+    public static TYObject call(TYObject thisObj, String methodName, TYRuntime runtime, TYObject... params) {
+        
+        return call(thisObj.getObjectClass().getName(), methodName, runtime, thisObj, params);
     }
     
     public static TYObject call(String className, String methodName, TYRuntime runtime, TYObject thisObj, TYObject... args) {
@@ -300,7 +362,7 @@ public class TrinityNatives {
             
             return (int) ((TYFloat) tyObject).getInternalDouble();
             
-        } else if (tyObject instanceof TYString) {
+        } else if (tyObject instanceof TYString && ((TYString) tyObject).getInternalString().matches("[0-9]+")) {
             
             return Integer.parseInt(((TYString) tyObject).getInternalString());
             
@@ -320,7 +382,7 @@ public class TrinityNatives {
             
             return (long) ((TYFloat) tyObject).getInternalDouble();
             
-        } else if (tyObject instanceof TYString) {
+        } else if (tyObject instanceof TYString && ((TYString) tyObject).getInternalString().matches("[0-9]+")) {
             
             return Long.parseLong(((TYString) tyObject).getInternalString());
             
@@ -340,7 +402,7 @@ public class TrinityNatives {
             
             return ((TYLong) tyObject).getInternalLong();
             
-        } else if (tyObject instanceof TYString) {
+        } else if (tyObject instanceof TYString && ((TYString) tyObject).getInternalString().matches("[0-9]*\\.?[0-9]+")) {
             
             return Double.parseDouble(((TYString) tyObject).getInternalString());
             

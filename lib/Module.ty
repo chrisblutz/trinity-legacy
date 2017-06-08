@@ -1,19 +1,20 @@
-class Module
-    def native getModule
+module Trinity
+    class Module
+        def native getModule
 
-    def native getName
+        def native getName
 
-    def native getShortName
+        def native getShortName
 
-    def native getInnerModules
+        def native getInnerModules
 
-    def native getInnerModule(name)
+        def native getInnerModule(name)
 
-    def native getInnerClasses
+        def native getInnerClasses
 
-    def native getInnerClass(name)
+        def native getInnerClass(name)
 
-    def native static get(name)
+        def native static get(name)
 
-    def toString
-        getName()
+        def toString
+            getName()

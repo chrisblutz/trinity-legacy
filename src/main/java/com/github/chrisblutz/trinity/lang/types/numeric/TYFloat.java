@@ -13,7 +13,7 @@ public class TYFloat extends TYObject {
     
     public TYFloat(double internal) {
         
-        super(ClassRegistry.getClass("Float"));
+        super(ClassRegistry.getClass("Trinity.Float"));
         
         this.internalDouble = internal;
     }

@@ -1,2 +1,3 @@
-class Natives
-    def native static initGlobalVariable(name)
+module Trinity
+    class Natives
+        def native static initGlobalVariable(name)

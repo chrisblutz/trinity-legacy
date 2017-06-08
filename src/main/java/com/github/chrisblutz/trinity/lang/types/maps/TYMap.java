@@ -16,7 +16,7 @@ public class TYMap extends TYObject {
     
     public TYMap(Map<TYObject, TYObject> internal) {
         
-        super(ClassRegistry.getClass("Map"));
+        super(ClassRegistry.getClass("Trinity.Map"));
         
         this.internalMap = internal;
     }

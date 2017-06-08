@@ -14,7 +14,7 @@ public class TYMethodObject extends TYObject {
     
     public TYMethodObject(TYMethod internal) {
         
-        super(ClassRegistry.getClass("Method"));
+        super(ClassRegistry.getClass("Trinity.Method"));
         
         this.internalMethod = internal;
     }

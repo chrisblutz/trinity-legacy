@@ -15,7 +15,7 @@ public class TYArray extends TYObject {
     
     public TYArray(List<TYObject> internal) {
         
-        super(ClassRegistry.getClass("Array"));
+        super(ClassRegistry.getClass("Trinity.Array"));
         
         this.internalList = internal;
     }

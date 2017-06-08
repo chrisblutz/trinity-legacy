@@ -16,7 +16,7 @@ public class TYProcedureObject extends TYObject {
     
     public TYProcedureObject(TYProcedure internal, TYRuntime procedureRuntime) {
         
-        super(ClassRegistry.getClass("Procedure"));
+        super(ClassRegistry.getClass("Trinity.Procedure"));
         
         this.internalProcedure = internal;
         this.procedureRuntime = procedureRuntime;

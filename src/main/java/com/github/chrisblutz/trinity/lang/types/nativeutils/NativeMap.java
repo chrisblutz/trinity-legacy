@@ -17,11 +17,11 @@ class NativeMap {
     
     static void register() {
         
-        TrinityNatives.registerMethod("Map", "initialize", false, null, null, null, (runtime, thisObj, params) -> new TYMap(new HashMap<>()));
-        TrinityNatives.registerMethod("Map", "length", false, null, null, null, (runtime, thisObj, params) -> NativeStorage.getMapLength(TrinityNatives.cast(TYMap.class, thisObj)));
-        TrinityNatives.registerMethod("Map", "keys", false, null, null, null, (runtime, thisObj, params) -> NativeStorage.getMapKeySet(TrinityNatives.cast(TYMap.class, thisObj)));
-        TrinityNatives.registerMethod("Map", "values", false, null, null, null, (runtime, thisObj, params) -> NativeStorage.getMapValues(TrinityNatives.cast(TYMap.class, thisObj)));
-        TrinityNatives.registerMethod("Map", "put", false, new String[]{"key", "value"}, null, null, (runtime, thisObj, params) -> {
+        TrinityNatives.registerMethod("Trinity.Map", "initialize", false, null, null, null, (runtime, thisObj, params) -> new TYMap(new HashMap<>()));
+        TrinityNatives.registerMethod("Trinity.Map", "length", false, null, null, null, (runtime, thisObj, params) -> NativeStorage.getMapLength(TrinityNatives.cast(TYMap.class, thisObj)));
+        TrinityNatives.registerMethod("Trinity.Map", "keys", false, null, null, null, (runtime, thisObj, params) -> NativeStorage.getMapKeySet(TrinityNatives.cast(TYMap.class, thisObj)));
+        TrinityNatives.registerMethod("Trinity.Map", "values", false, null, null, null, (runtime, thisObj, params) -> NativeStorage.getMapValues(TrinityNatives.cast(TYMap.class, thisObj)));
+        TrinityNatives.registerMethod("Trinity.Map", "put", false, new String[]{"key", "value"}, null, null, (runtime, thisObj, params) -> {
             
             Map<TYObject, TYObject> map = TrinityNatives.cast(TYMap.class, thisObj).getInternalMap();
             map.put(runtime.getVariable("key"), runtime.getVariable("value"));
@@ -30,19 +30,19 @@ class NativeMap {
             
             return TYObject.NONE;
         });
-        TrinityNatives.registerMethod("Map", "remove", false, new String[]{"key"}, null, null, (runtime, thisObj, params) -> {
+        TrinityNatives.registerMethod("Trinity.Map", "remove", false, new String[]{"key"}, null, null, (runtime, thisObj, params) -> {
             
             NativeStorage.clearMapData(TrinityNatives.cast(TYMap.class, thisObj));
             
             return remove(TrinityNatives.cast(TYMap.class, thisObj), runtime.getVariable("key"), runtime);
         });
-        TrinityNatives.registerMethod("Array", "clear", false, null, null, null, (runtime, thisObj, params) -> {
+        TrinityNatives.registerMethod("Trinity.Array", "clear", false, null, null, null, (runtime, thisObj, params) -> {
             
             TrinityNatives.cast(TYMap.class, thisObj).getInternalMap().clear();
             
             return TYObject.NONE;
         });
-        TrinityNatives.registerMethod("Map", "[]", false, new String[]{"key"}, null, null, (runtime, thisObj, params) -> get(TrinityNatives.cast(TYMap.class, thisObj), runtime.getVariable("key"), runtime));
+        TrinityNatives.registerMethod("Trinity.Map", "[]", false, new String[]{"key"}, null, null, (runtime, thisObj, params) -> get(TrinityNatives.cast(TYMap.class, thisObj), runtime.getVariable("key"), runtime));
     }
     
     private static TYObject get(TYMap tyMap, TYObject obj, TYRuntime runtime) {

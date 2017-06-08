@@ -19,7 +19,7 @@ public class Errors {
     public static void throwError(String errorClass, String message, TYRuntime runtime) {
         
         TYObject error = TrinityNatives.newInstance(errorClass, runtime, TrinityNatives.getObjectFor(message));
-        TrinityNatives.call("Kernel", "throw", runtime, TYObject.NONE, error);
+        TrinityNatives.call("Trinity.Kernel", "throw", runtime, TYObject.NONE, error);
     }
     
     public static void throwError(String errorClass, String message, String filename, int line) {

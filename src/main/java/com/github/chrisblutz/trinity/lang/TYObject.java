@@ -11,7 +11,7 @@ import com.github.chrisblutz.trinity.lang.types.TYNilClass;
  */
 public class TYObject {
     
-    public static final TYObject NIL = new TYObject(new TYNilClass()), NONE = new TYObject(ClassRegistry.getClass("Class"));
+    public static final TYObject NIL = new TYObject(new TYNilClass()), NONE = new TYObject(ClassRegistry.getClass("Trinity.Class"));
     
     private TYClass objClass;
     private int superStack = 0;

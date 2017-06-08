@@ -15,6 +15,11 @@ import java.util.*;
 
 
 /**
+ * This class regulates attributes of native classes.  For instance, a call
+ * to {@code object.getClass()} in Trinity source code will always return the same
+ * instance of the native Java class {@code TYClassObject}, instead of recreating
+ * an instance every time the method is called.
+ *
  * @author Christopher Lutz
  */
 public class NativeStorage {

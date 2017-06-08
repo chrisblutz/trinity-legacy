@@ -28,6 +28,6 @@ public class Bootstrap {
         TrinityParser.parse(new File("lib/"));
         
         // Load system properties
-        ClassRegistry.getClass("System").tyInvoke("loadProperties", new TYRuntime(), null, null, TYObject.NIL);
+        ClassRegistry.getClass("Trinity.System").tyInvoke("loadProperties", new TYRuntime(), null, null, TYObject.NIL);
     }
 }

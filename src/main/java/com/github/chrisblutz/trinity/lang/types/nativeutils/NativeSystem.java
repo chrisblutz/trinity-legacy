@@ -20,10 +20,10 @@ class NativeSystem {
     
     static void register() {
         
-        TrinityNatives.registerMethod("System", "currentTimeMillis", true, null, null, null, (runtime, thisObj, params) -> new TYLong(System.currentTimeMillis()));
+        TrinityNatives.registerMethod("Trinity.System", "currentTimeMillis", true, null, null, null, (runtime, thisObj, params) -> new TYLong(System.currentTimeMillis()));
         Map<String, ProcedureAction> params = new HashMap<>();
         params.put("name", (runtime, thisObj, params1) -> TYObject.NIL);
-        TrinityNatives.registerMethod("System", "getEnvironment", true, null, params, null, (runtime, thisObj, params1) -> {
+        TrinityNatives.registerMethod("Trinity.System", "getEnvironment", true, null, params, null, (runtime, thisObj, params1) -> {
             
             TYObject name = runtime.getVariable("name");
             
@@ -37,7 +37,7 @@ class NativeSystem {
                 return getEnvironmentMap();
             }
         });
-        TrinityNatives.registerMethod("System", "loadProperties", true, null, null, null, (runtime, thisObj, params12) -> {
+        TrinityNatives.registerMethod("Trinity.System", "loadProperties", true, null, null, null, (runtime, thisObj, params12) -> {
             
             Map<TYObject, TYObject> map = new HashMap<>();
             
@@ -50,7 +50,7 @@ class NativeSystem {
             map.put(new TYString("user.home"), TrinityNatives.getObjectFor(System.getProperty("user.home")));
             map.put(new TYString("user.name"), TrinityNatives.getObjectFor(System.getProperty("user.name")));
             
-            ClassRegistry.getClass("System").setVariable("properties", new TYMap(map));
+            ClassRegistry.getClass("Trinity.System").setVariable("properties", new TYMap(map));
             
             return TYObject.NONE;
         });

@@ -1,16 +1,17 @@
-class Float
-    def native +(other)
+module Trinity
+    class Float
+        def native +(other)
 
-    def native -(other)
+        def native -(other)
 
-    def native *(other)
+        def native *(other)
 
-    def native /(other)
+        def native /(other)
 
-    def native %(other)
+        def native %(other)
 
-    def native ==(other)
+        def native ==(other)
 
-    def native toString
+        def native toString
 
-    def native compareTo(other)
+        def native compareTo(other)

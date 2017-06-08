@@ -1,25 +1,26 @@
 Natives.initGlobalVariable('STDOUT')
 Natives.initGlobalVariable('STDERR')
 
-class Kernel
-    def native static readln
+module Trinity
+    class Kernel
+        def native static readln
 
-    def static print(str)
-        $STDOUT.print(str)
+        def static print(str)
+            $STDOUT.print(str)
 
-    def static println(str = '')
-        $STDOUT.println(str)
+        def static println(str = '')
+            $STDOUT.println(str)
 
-    def native static throw(error)
+        def native static throw(error)
 
-    def native static exit(code)
+        def native static exit(code)
 
-    def static abort(code, message)
-        $STDERR.println(message)
-        exit(code)
+        def static abort(code, message)
+            $STDERR.println(message)
+            exit(code)
 
-    def native static sleep(millis)
+        def native static sleep(millis)
 
-    def native static eval(code, args = [])
+        def native static eval(code, args = [])
 
-    def native static load(file)
+        def native static load(file)

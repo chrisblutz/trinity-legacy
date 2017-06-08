@@ -12,7 +12,7 @@ class NativeBoolean {
     
     static void register() {
         
-        TrinityNatives.registerMethod("Boolean", "==", false, new String[]{"other"}, null, null, (runtime, thisObj, params) -> {
+        TrinityNatives.registerMethod("Trinity.Boolean", "==", false, new String[]{"other"}, null, null, (runtime, thisObj, params) -> {
             
             TYObject object = runtime.getVariable("other");
             

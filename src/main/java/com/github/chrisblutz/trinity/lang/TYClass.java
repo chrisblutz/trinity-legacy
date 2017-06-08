@@ -34,7 +34,7 @@ public class TYClass {
     
     public TYClass(String name, String shortName) {
         
-        this(name, shortName, name.contentEquals("Object") ? null : ClassRegistry.getClass("Object"));
+        this(name, shortName, name.contentEquals("Trinity.Object") ? null : ClassRegistry.getClass("Trinity.Object"));
     }
     
     public TYClass(String name, String shortName, TYClass superclass) {
@@ -188,7 +188,7 @@ public class TYClass {
                     
                     Errors.throwError("Trinity.Errors.ReturnError", "Cannot return a value from a constructor.", runtime);
                     
-                } else if (obj.getObjectClass().isInstanceOf(ClassRegistry.getClass("Map")) || obj.getObjectClass().isInstanceOf(ClassRegistry.getClass("Procedure"))) {
+                } else if (obj.getObjectClass().isInstanceOf(ClassRegistry.getClass("Trinity.Map")) || obj.getObjectClass().isInstanceOf(ClassRegistry.getClass("Trinity.Procedure"))) {
                     
                     newObj = obj;
                 }
@@ -238,9 +238,9 @@ public class TYClass {
             
             return getSuperclass().tyInvoke(originClass, methodName, runtime, procedure, procedureRuntime, thisObj, params);
             
-        } else if (ClassRegistry.getClass("Kernel").getMethods().containsKey(methodName)) {
+        } else if (ClassRegistry.getClass("Trinity.Kernel").getMethods().containsKey(methodName)) {
             
-            return ClassRegistry.getClass("Kernel").tyInvoke(originClass, methodName, runtime, procedure, procedureRuntime, thisObj, params);
+            return ClassRegistry.getClass("Trinity.Kernel").tyInvoke(originClass, methodName, runtime, procedure, procedureRuntime, thisObj, params);
             
         } else {
             

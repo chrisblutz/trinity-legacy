@@ -1,32 +1,33 @@
-class Method
-    def native getRequiredArguments
+module Trinity
+    class Method
+        def native getRequiredArguments
 
-    def native getOptionalArguments
+        def native getOptionalArguments
 
-    def native getBlockArgument
+        def native getBlockArgument
 
-    def native invoke(obj, args)
+        def native invoke(obj, args)
 
-    def native getName
+        def native getName
 
-    def native isStatic
+        def native isStatic
 
-    def native isNative
+        def native isNative
 
-    def native isSecure
+        def native isSecure
 
-    def toString
-        str = getName()
-        str += '(Args: ' + getRequiredArguments().length() + ' required, '
-        str += getOptionalArguments().length() + ' optional'
-        if getBlockArgument() != nil
-            str += ', 1 block'
-        str += ')'
+        def toString
+            str = getName()
+            str += '(Args: ' + getRequiredArguments().length() + ' required, '
+            str += getOptionalArguments().length() + ' optional'
+            if getBlockArgument() != nil
+                str += ', 1 block'
+            str += ')'
 
-        if isNative()
-            str += ' [native]'
-        if isStatic()
-            str += ' [static]'
-        if isSecure()
-            str += ' [secure]'
-        str
+            if isNative()
+                str += ' [native]'
+            if isStatic()
+                str += ' [static]'
+            if isSecure()
+                str += ' [secure]'
+            str
