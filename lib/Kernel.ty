@@ -15,7 +15,7 @@ class Kernel
     def native static exit(code)
 
     def static abort(code, message)
-        println(message)
+        $STDERR.println(message)
         exit(code)
 
     def native static sleep(millis)
