@@ -61,6 +61,7 @@ public class ClassInterpreter extends DeclarationInterpreter {
                 if (!nativeClass) {
                     
                     TYClass tyClass = ClassRegistry.getClass(className);
+                    tyClass.setLeadingComments(line.getLeadingComments());
                     if (!env.getModuleStack().isEmpty()) {
                         
                         TYModule topModule = env.getLastModule();
@@ -78,7 +79,7 @@ public class ClassInterpreter extends DeclarationInterpreter {
                     }
                     
                     PluginLoader.triggerEvent(Events.FILE_CLASS_LOAD, fileName, tyClass);
-    
+                    
                 } else {
                     
                     Errors.throwError("Trinity.Errors.ParseError", "Native classes are not currently supported.", fileName, line.getLineNumber());

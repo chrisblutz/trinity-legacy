@@ -14,6 +14,8 @@ public class TYMethod {
     private TYProcedure procedure;
     private String[] importedModules = new String[0];
     
+    private String[] leadingComments = null;
+    
     public TYMethod(String name, boolean staticMethod, boolean nativeMethod, TYClass containerClass, TYProcedure procedure) {
         
         this(name, staticMethod, nativeMethod, false, containerClass, procedure);
@@ -72,5 +74,15 @@ public class TYMethod {
     public String[] getImportedModules() {
         
         return importedModules;
+    }
+    
+    public String[] getLeadingComments() {
+        
+        return leadingComments;
+    }
+    
+    public void setLeadingComments(String[] leadingComments) {
+        
+        this.leadingComments = leadingComments;
     }
 }

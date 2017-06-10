@@ -11,6 +11,7 @@ import java.util.ArrayList;
 public class Line extends ArrayList<TokenInfo> {
     
     private int lineNumber, spaces = 0;
+    private String[] leadingComments = null;
     
     public Line(int lineNumber) {
         
@@ -35,6 +36,16 @@ public class Line extends ArrayList<TokenInfo> {
     public TokenInfo[] toArray() {
         
         return toArray(new TokenInfo[size()]);
+    }
+    
+    public String[] getLeadingComments() {
+        
+        return leadingComments;
+    }
+    
+    public void setLeadingComments(String[] leadingComments) {
+        
+        this.leadingComments = leadingComments;
     }
     
     @Override

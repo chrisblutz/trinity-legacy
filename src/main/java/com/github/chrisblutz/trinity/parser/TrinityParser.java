@@ -6,6 +6,7 @@ import com.github.chrisblutz.trinity.lang.errors.Errors;
 import com.github.chrisblutz.trinity.parser.blocks.Block;
 import com.github.chrisblutz.trinity.parser.blocks.BlockLine;
 import com.github.chrisblutz.trinity.parser.blocks.BlockParseResults;
+import com.github.chrisblutz.trinity.parser.comments.CommentUtils;
 import com.github.chrisblutz.trinity.parser.lines.Line;
 import com.github.chrisblutz.trinity.parser.lines.LineSet;
 import com.github.chrisblutz.trinity.parser.tokens.Token;
@@ -102,14 +103,16 @@ public class TrinityParser {
         
         // Parse lines into LineSet
         LineSet lineSet = parseFirstLevel(filename, fullFile, lines);
-        lineSet = parseOutComments(lineSet);
+        lineSet = parseComments(lineSet);
         lineSet = parseOutEscapeCharacters(lineSet);
         lineSet = parseOutTokenStrings(lineSet);
         lineSet = parseLiteralStrings(lineSet);
         lineSet = parseOutSpaces(lineSet);
         lineSet = parseOutLeadingWhitespace(lineSet);
+        lineSet = stripComments(lineSet);
         lineSet = parseOutEmptyLines(lineSet);
         lineSet = parseNumbers(lineSet);
+        lineSet.collapseComments();
         
         // Parse LineSet into Block
         
@@ -203,9 +206,9 @@ public class TrinityParser {
         return set;
     }
     
-    private static LineSet parseOutComments(LineSet lines) {
+    private static LineSet parseComments(LineSet lines) {
         
-        LineSet set = new LineSet(lines.getFileName(), lines.getFullFile());
+        LineSet set = new LineSet(lines);
         
         for (Line line : lines) {
             
@@ -213,15 +216,28 @@ public class TrinityParser {
             
             Line newLine = new Line(line.getLineNumber());
             
+            boolean comment = false;
+            StringBuilder builder = new StringBuilder();
+            
             for (TokenInfo info : line) {
                 
-                if (info.getToken() == Token.SINGLE_LINE_COMMENT) {
+                if (!comment && info.getToken() == Token.SINGLE_LINE_COMMENT) {
                     
-                    break;
+                    comment = true;
                     
+                } else if (comment) {
+                    
+                    builder.append(getAppendableString(info, false, true));
+                    
+                } else {
+                    
+                    newLine.add(info);
                 }
+            }
+            
+            if (comment) {
                 
-                newLine.add(info);
+                newLine.add(new TokenInfo(Token.SINGLE_LINE_COMMENT, builder.toString()));
             }
             
             set.add(newLine);
@@ -232,7 +248,7 @@ public class TrinityParser {
     
     private static LineSet parseOutEmptyLines(LineSet lines) {
         
-        LineSet set = new LineSet(lines.getFileName(), lines.getFullFile());
+        LineSet set = new LineSet(lines);
         
         for (Line line : lines) {
             
@@ -249,7 +265,7 @@ public class TrinityParser {
     
     private static LineSet parseOutEscapeCharacters(LineSet lines) {
         
-        LineSet set = new LineSet(lines.getFileName(), lines.getFullFile());
+        LineSet set = new LineSet(lines);
         
         for (Line line : lines) {
             
@@ -322,7 +338,7 @@ public class TrinityParser {
     
     private static LineSet parseOutTokenStrings(LineSet lines) {
         
-        LineSet set = new LineSet(lines.getFileName(), lines.getFullFile());
+        LineSet set = new LineSet(lines);
         
         for (Line line : lines) {
             
@@ -354,7 +370,7 @@ public class TrinityParser {
     
     private static LineSet parseLiteralStrings(LineSet lines) {
         
-        LineSet set = new LineSet(lines.getFileName(), lines.getFullFile());
+        LineSet set = new LineSet(lines);
         
         for (Line line : lines) {
             
@@ -391,17 +407,9 @@ public class TrinityParser {
                         newLine.add(new TokenInfo(Token.LITERAL_STRING, current.toString()));
                         current = new StringBuilder();
                         
-                    } else if (info.getToken() == Token.NON_TOKEN_STRING) {
-                        
-                        current.append(info.getContents());
-                        
-                    } else if (info.getToken() == Token.BACKSLASH_ESCAPE || info.getToken() == Token.SINGLE_QUOTE_ESCAPE) {
-                        
-                        current.append(info.getToken().getLiteral());
-                        
                     } else {
                         
-                        current.append(info.getToken().getReadable());
+                        current.append(getAppendableString(info, true));
                     }
                     
                 } else {
@@ -412,13 +420,9 @@ public class TrinityParser {
                         newLine.add(new TokenInfo(Token.LITERAL_STRING, current.toString()));
                         current = new StringBuilder();
                         
-                    } else if (info.getToken() == Token.NON_TOKEN_STRING) {
-                        
-                        current.append(info.getContents());
-                        
                     } else {
                         
-                        current.append(info.getToken().getLiteral());
+                        current.append(getAppendableString(info, false));
                     }
                 }
             }
@@ -431,7 +435,7 @@ public class TrinityParser {
     
     private static LineSet parseOutSpaces(LineSet lines) {
         
-        LineSet set = new LineSet(lines.getFileName(), lines.getFullFile());
+        LineSet set = new LineSet(lines);
         
         for (Line line : lines) {
             
@@ -466,7 +470,7 @@ public class TrinityParser {
     
     private static LineSet parseOutLeadingWhitespace(LineSet lines) {
         
-        LineSet set = new LineSet(lines.getFileName(), lines.getFullFile());
+        LineSet set = new LineSet(lines);
         
         for (Line line : lines) {
             
@@ -508,9 +512,40 @@ public class TrinityParser {
         return set;
     }
     
+    private static LineSet stripComments(LineSet lines) {
+        
+        LineSet set = new LineSet(lines);
+        
+        for (Line line : lines) {
+            
+            Runner.updateLocation(set.getFileName(), line.getLineNumber());
+            
+            Line newLine = new Line(line.getLineNumber());
+            newLine.setSpaces(line.getSpaces());
+            
+            for (TokenInfo info : line) {
+                
+                if (info.getToken() == Token.SINGLE_LINE_COMMENT) {
+                    
+                    String comment = CommentUtils.stripCommentSymbol(info.getContents());
+                    set.addComment(line.getLineNumber(), comment, line.getSpaces());
+                    break;
+                    
+                } else {
+                    
+                    newLine.add(info);
+                }
+            }
+            
+            set.add(newLine);
+        }
+        
+        return set;
+    }
+    
     private static LineSet parseNumbers(LineSet lines) {
         
-        LineSet set = new LineSet(lines.getFileName(), lines.getFullFile());
+        LineSet set = new LineSet(lines);
         
         for (Line line : lines) {
             
@@ -602,6 +637,12 @@ public class TrinityParser {
             
             Runner.updateLocation(lines.getFileName(), l.getLineNumber());
             
+            int commentLine = l.getLineNumber() - 1;
+            if (lines.hasCollapsedComment(commentLine) && lines.getCollapsedCommentLeading(commentLine) == l.getSpaces()) {
+                
+                l.setLeadingComments(lines.getCollapsedComment(commentLine));
+            }
+            
             if (l.getSpaces() > level.getSpaces()) {
                 
                 BlockParseResults results = parseBlock(l.getSpaces(), lines, i);
@@ -619,5 +660,26 @@ public class TrinityParser {
         }
         
         return new BlockParseResults(level, lines.size());
+    }
+    
+    public static String getAppendableString(TokenInfo info, boolean escape) {
+        
+        return getAppendableString(info, escape, false);
+    }
+    
+    public static String getAppendableString(TokenInfo info, boolean escape, boolean alwaysReadable) {
+        
+        if (info.getToken() == Token.NON_TOKEN_STRING) {
+            
+            return info.getContents();
+            
+        } else if (alwaysReadable || (escape && !(info.getToken() == Token.BACKSLASH_ESCAPE || info.getToken() == Token.SINGLE_QUOTE_ESCAPE))) {
+            
+            return info.getToken().getReadable();
+            
+        } else {
+            
+            return info.getToken().getLiteral();
+        }
     }
 }

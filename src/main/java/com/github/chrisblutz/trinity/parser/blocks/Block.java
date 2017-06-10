@@ -13,6 +13,8 @@ public class Block extends ArrayList<BlockItem> implements BlockItem {
     private File fullFile;
     private int spaces;
     
+    private String leadingComment;
+    
     public Block(String fileName, File fullFile, int spaces) {
         
         this.fileName = fileName;
@@ -33,6 +35,16 @@ public class Block extends ArrayList<BlockItem> implements BlockItem {
     public int getSpaces() {
         
         return spaces;
+    }
+    
+    public String getLeadingComment() {
+        
+        return leadingComment;
+    }
+    
+    public void setLeadingComment(String leadingComment) {
+    
+        this.leadingComment = leadingComment;
     }
     
     @Override

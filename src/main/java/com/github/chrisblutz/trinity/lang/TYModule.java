@@ -14,6 +14,8 @@ public class TYModule {
     private String name, shortName;
     private TYModule parentModule;
     
+    private String[] leadingComments = null;
+    
     public TYModule(String name, String shortName) {
         
         this.name = name;
@@ -72,7 +74,7 @@ public class TYModule {
     }
     
     public void setParentModule(TYModule parentModule) {
-    
+        
         this.parentModule = parentModule;
     }
     
@@ -110,5 +112,15 @@ public class TYModule {
         }
         
         return null;
+    }
+    
+    public String[] getLeadingComments() {
+        
+        return leadingComments;
+    }
+    
+    public void setLeadingComments(String[] leadingComments) {
+        
+        this.leadingComments = leadingComments;
     }
 }

@@ -32,6 +32,8 @@ public class TYClass {
     private List<ProcedureAction> initializationActions = new ArrayList<>();
     private boolean initialized = false;
     
+    private String[] leadingComments = null;
+    
     public TYClass(String name, String shortName) {
         
         this(name, shortName, name.contentEquals("Trinity.Object") ? null : ClassRegistry.getClass("Trinity.Object"));
@@ -289,6 +291,16 @@ public class TYClass {
     public TYMethod getMethod(String name) {
         
         return getMethods().getOrDefault(name, null);
+    }
+    
+    public String[] getLeadingComments() {
+        
+        return leadingComments;
+    }
+    
+    public void setLeadingComments(String[] leadingComments) {
+        
+        this.leadingComments = leadingComments;
     }
     
     public void addInitializationActions(List<ProcedureAction> actions) {

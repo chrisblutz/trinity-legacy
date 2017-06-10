@@ -37,6 +37,7 @@ public class ModuleInterpreter extends DeclarationInterpreter {
                 }
                 
                 TYModule tyModule = ModuleRegistry.getModule(moduleName);
+                tyModule.setLeadingComments(line.getLeadingComments());
                 if (!env.getModuleStack().isEmpty()) {
                     
                     TYModule topModule = env.getLastModule();

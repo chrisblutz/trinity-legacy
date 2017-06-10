@@ -16,6 +16,8 @@ module Trinity
 
         def native isSecure
 
+        def native getComments
+
         def toString
             str = getName()
             str += '(Args: ' + getRequiredArguments().length() + ' required, '

@@ -20,6 +20,8 @@ module Trinity
 
         def native getInnerClass(name)
 
+        def native getComments
+
         def native static get(name)
 
         def toString

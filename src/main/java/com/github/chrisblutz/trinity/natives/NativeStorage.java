@@ -52,6 +52,10 @@ public class NativeStorage {
     
     private static Map<TYObject, TYInt> hashCodes = new HashMap<>();
     
+    private static Map<TYClass, TYObject> classLeadingComments = new HashMap<>();
+    private static Map<TYModule, TYObject> moduleLeadingComments = new HashMap<>();
+    private static Map<TYMethod, TYObject> methodLeadingComments = new HashMap<>();
+    
     private static TYString nilString = null;
     
     public static TYClassObject getClassObject(TYClass tyClass) {
@@ -292,5 +296,38 @@ public class NativeStorage {
         }
         
         return nilString;
+    }
+    
+    public static TYObject getLeadingComments(TYClass tyClass) {
+        
+        if (!classLeadingComments.containsKey(tyClass)) {
+            
+            String[] c = tyClass.getLeadingComments();
+            classLeadingComments.put(tyClass, TrinityNatives.getObjectFor(c));
+        }
+        
+        return classLeadingComments.get(tyClass);
+    }
+    
+    public static TYObject getLeadingComments(TYModule tyModule) {
+        
+        if (!moduleLeadingComments.containsKey(tyModule)) {
+            
+            String[] c = tyModule.getLeadingComments();
+            moduleLeadingComments.put(tyModule, TrinityNatives.getObjectFor(c));
+        }
+        
+        return moduleLeadingComments.get(tyModule);
+    }
+    
+    public static TYObject getLeadingComments(TYMethod tyMethod) {
+        
+        if (!methodLeadingComments.containsKey(tyMethod)) {
+            
+            String[] c = tyMethod.getLeadingComments();
+            methodLeadingComments.put(tyMethod, TrinityNatives.getObjectFor(c));
+        }
+        
+        return methodLeadingComments.get(tyMethod);
     }
 }

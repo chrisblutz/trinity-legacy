@@ -144,6 +144,7 @@ public class MethodInterpreter extends DeclarationInterpreter {
                     TYProcedure procedure = new TYProcedure(action, mandatoryParams, optParams, blockParam);
                     
                     TYMethod method = new TYMethod(name, staticMethod, false, secureMethod, containerClass, procedure);
+                    method.setLeadingComments(line.getLeadingComments());
                     method.importModules(TrinityInterpreter.getImportedModules());
                     containerClass.registerMethod(method);
                     
