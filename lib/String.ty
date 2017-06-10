@@ -36,6 +36,15 @@ module Trinity
         def [](index)
             chars()[index]
 
+        def *(other)
+            if other.isNumeric()
+                str = ""
+                for i = 0; i < other; i += 1
+                    str += this
+                return str
+            else
+                return super * other
+
         def native toInt
 
         def native toLong

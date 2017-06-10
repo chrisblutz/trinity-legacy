@@ -24,3 +24,6 @@ module Trinity
 
         def ==(other)
             hashCode() == other.hashCode()
+
+        def isNumeric
+            this.isInstance(Int) || this.isInstance(Long) || this.isInstance(Float)
