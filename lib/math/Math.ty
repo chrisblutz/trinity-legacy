@@ -1,8 +1,57 @@
 module Trinity
-    module Math
-        class Math
-            def static pow(x, n)
-                result = 1
-                for(i = 0; i < n; i+=1)
-                    result *= x
-                result
+    class Math
+        def native static E
+
+        def native static PI
+
+        def native static pow(x, n)
+
+        def native static abs(a, b)
+
+        def native static sqrt(x)
+
+        def native static cbrt(x)
+
+        def native static sin(rad)
+
+        def native static cos(rad)
+
+        def native static tan(rad)
+
+        def native static arcsin(rad)
+
+        def native static arccos(rad)
+
+        def native static arctan(rad)
+
+        def native static toDegrees(rad)
+
+        def native static toRadians(deg)
+
+        def native static log(x, base = 10)
+
+        def native static ln(x)
+
+        def native static round(x)
+
+        def native static ceil(x)
+
+        def native static floor(x)
+
+        def static signum(x)
+            if x == 0
+                return 0
+            else
+                return abs(x) / x
+
+        def static min(a, b)
+            if a < b
+                return a
+            else
+                return b
+
+        def static max(a, b)
+            if a > b
+                return a
+            else
+                return b

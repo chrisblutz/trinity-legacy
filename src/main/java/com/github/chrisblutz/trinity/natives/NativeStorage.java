@@ -8,6 +8,7 @@ import com.github.chrisblutz.trinity.lang.types.*;
 import com.github.chrisblutz.trinity.lang.types.arrays.TYArray;
 import com.github.chrisblutz.trinity.lang.types.bool.TYBoolean;
 import com.github.chrisblutz.trinity.lang.types.maps.TYMap;
+import com.github.chrisblutz.trinity.lang.types.numeric.TYFloat;
 import com.github.chrisblutz.trinity.lang.types.numeric.TYInt;
 import com.github.chrisblutz.trinity.lang.types.strings.TYString;
 
@@ -57,6 +58,7 @@ public class NativeStorage {
     private static Map<TYMethod, TYObject> methodLeadingComments = new HashMap<>();
     
     private static TYString nilString = null;
+    private static TYFloat e = null, pi = null;
     
     public static TYClassObject getClassObject(TYClass tyClass) {
         
@@ -329,5 +331,25 @@ public class NativeStorage {
         }
         
         return methodLeadingComments.get(tyMethod);
+    }
+    
+    public static TYFloat getE() {
+        
+        if (e == null) {
+            
+            e = new TYFloat(Math.E);
+        }
+        
+        return e;
+    }
+    
+    public static TYFloat getPi() {
+        
+        if (pi == null) {
+            
+            pi = new TYFloat(Math.PI);
+        }
+        
+        return pi;
     }
 }

@@ -452,4 +452,23 @@ public class TrinityNatives {
             return true;
         }
     }
+    
+    public static TYObject wrapNumber(double d) {
+        
+        if (d % 1 == 0) {
+            
+            if (d > Integer.MAX_VALUE || d < Integer.MIN_VALUE) {
+                
+                return new TYLong((long) d);
+                
+            } else {
+                
+                return new TYInt((int) d);
+            }
+            
+        } else {
+            
+            return new TYFloat(d);
+        }
+    }
 }
