@@ -1,6 +1,7 @@
 package com.github.chrisblutz.trinity.utils;
 
 import com.github.chrisblutz.trinity.Trinity;
+import com.github.chrisblutz.trinity.cli.CLI;
 
 import java.io.File;
 
@@ -52,7 +53,13 @@ public class FileUtils {
                 
             } catch (Exception e) {
                 
-                e.printStackTrace();
+                System.err.println("An error occurred while determining Trinity's home location.");
+                
+                if (CLI.isDebuggingEnabled()) {
+                    
+                    e.printStackTrace();
+                }
+                
                 Trinity.exit(50);
             }
         }
