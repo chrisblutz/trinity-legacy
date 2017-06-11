@@ -3,7 +3,6 @@ package com.github.chrisblutz.trinity.utils;
 import com.github.chrisblutz.trinity.Trinity;
 
 import java.io.File;
-import java.net.URISyntaxException;
 
 
 /**
@@ -48,8 +47,10 @@ public class FileUtils {
             try {
                 
                 trinityHome = new File(new File(Trinity.class.getProtectionDomain().getCodeSource().getLocation().toURI()), "../..");
+                // Resolve '../..' out of path
+                trinityHome = trinityHome.getCanonicalFile();
                 
-            } catch (URISyntaxException e) {
+            } catch (Exception e) {
                 
                 e.printStackTrace();
                 Trinity.exit(50);
