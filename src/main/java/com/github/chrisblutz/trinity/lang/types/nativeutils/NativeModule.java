@@ -4,8 +4,6 @@ import com.github.chrisblutz.trinity.lang.ModuleRegistry;
 import com.github.chrisblutz.trinity.lang.TYClass;
 import com.github.chrisblutz.trinity.lang.TYModule;
 import com.github.chrisblutz.trinity.lang.TYObject;
-import com.github.chrisblutz.trinity.lang.procedures.ProcedureAction;
-import com.github.chrisblutz.trinity.lang.scope.TYRuntime;
 import com.github.chrisblutz.trinity.lang.types.TYModuleObject;
 import com.github.chrisblutz.trinity.lang.types.arrays.TYArray;
 import com.github.chrisblutz.trinity.lang.types.strings.TYString;
@@ -86,15 +84,11 @@ class NativeModule {
                 return TYObject.NIL;
             }
         });
-        TrinityNatives.registerMethod("Trinity.Module", "getComments", false, null, null, null, new ProcedureAction() {
+        TrinityNatives.registerMethod("Trinity.Module", "getComments", false, null, null, null, (runtime, thisObj, params) -> {
             
-            @Override
-            public TYObject onAction(TYRuntime runtime, TYObject thisObj, TYObject... params) {
-                
-                TYModule m = TrinityNatives.cast(TYModuleObject.class, thisObj).getInternalModule();
-                
-                return NativeStorage.getLeadingComments(m);
-            }
+            TYModule m = TrinityNatives.cast(TYModuleObject.class, thisObj).getInternalModule();
+            
+            return NativeStorage.getLeadingComments(m);
         });
         TrinityNatives.registerMethod("Trinity.Module", "get", true, new String[]{"name"}, null, null, (runtime, thisObj, params) -> {
             

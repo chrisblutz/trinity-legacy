@@ -1,8 +1,6 @@
 package com.github.chrisblutz.trinity.lang.types.nativeutils;
 
 import com.github.chrisblutz.trinity.lang.*;
-import com.github.chrisblutz.trinity.lang.procedures.ProcedureAction;
-import com.github.chrisblutz.trinity.lang.scope.TYRuntime;
 import com.github.chrisblutz.trinity.lang.types.TYClassObject;
 import com.github.chrisblutz.trinity.lang.types.TYStaticClassObject;
 import com.github.chrisblutz.trinity.lang.types.arrays.TYArray;
@@ -121,15 +119,11 @@ class NativeClass {
                 return TYObject.NIL;
             }
         });
-        TrinityNatives.registerMethod("Trinity.Class", "getComments", false, null, null, null, new ProcedureAction() {
+        TrinityNatives.registerMethod("Trinity.Class", "getComments", false, null, null, null, (runtime, thisObj, params) -> {
             
-            @Override
-            public TYObject onAction(TYRuntime runtime, TYObject thisObj, TYObject... params) {
-                
-                TYClass c = TrinityNatives.cast(TYClassObject.class, thisObj).getInternalClass();
-                
-                return NativeStorage.getLeadingComments(c);
-            }
+            TYClass c = TrinityNatives.cast(TYClassObject.class, thisObj).getInternalClass();
+            
+            return NativeStorage.getLeadingComments(c);
         });
         TrinityNatives.registerMethod("Trinity.Class", "get", true, new String[]{"name"}, null, null, (runtime, thisObj, params) -> {
             
