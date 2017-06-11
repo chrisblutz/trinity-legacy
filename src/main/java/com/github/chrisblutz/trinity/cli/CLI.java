@@ -22,7 +22,9 @@ public class CLI {
     
     private static List<String> arguments = new ArrayList<>();
     
-    public static void start(String[] args) {
+    private static List<String> libraries = new ArrayList<>();
+    
+    public static void parse(String[] args) {
         
         for (String arg : args) {
             
@@ -37,11 +39,11 @@ public class CLI {
             
             parseArguments(params);
         }
-        
-        run();
     }
     
-    private static void run() {
+    public static void start() {
+        
+        handleLibraries(libraries);
         
         Runner.run(sourceFiles.toArray(new File[sourceFiles.size()]), mainClass, arguments.toArray(new String[arguments.size()]));
     }
@@ -112,7 +114,7 @@ public class CLI {
             case "-l":
             case "--lib":
                 
-                handleLibraries(params);
+                libraries.addAll(params);
                 break;
         }
     }

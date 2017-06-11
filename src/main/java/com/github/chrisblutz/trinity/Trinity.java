@@ -27,13 +27,15 @@ public class Trinity {
     
     public static void main(String[] args) {
         
+        CLI.parse(args);
+        
         PluginLoader.loadAll();
         
         Bootstrap.bootstrap();
         
         Libraries.loadAll();
         
-        CLI.start(args);
+        CLI.start();
     }
     
     public static void exit(int result) {
