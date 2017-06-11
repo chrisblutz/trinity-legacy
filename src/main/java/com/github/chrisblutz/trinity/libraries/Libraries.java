@@ -36,7 +36,7 @@ public class Libraries {
     
     public static void loadAll() {
         
-        File dir = new File(LIBRARY_DIRECTORY);
+        File dir = new File(FileUtils.getTrinityHome(), LIBRARY_DIRECTORY);
         
         if (dir.exists() && dir.isDirectory()) {
             
@@ -141,7 +141,7 @@ public class Libraries {
                 try {
                     
                     is = file.getInputStream(entry);
-                    File output = new File("temp-" + entry.getName());
+                    File output = new File(FileUtils.getTrinityHome(), "temp-" + entry.getName());
                     if (output.getParentFile() != null) {
                         
                         output.getParentFile().mkdirs();
@@ -162,7 +162,7 @@ public class Libraries {
             }
         }
         
-        File extFiles = new File("temp-ext/");
+        File extFiles = new File(FileUtils.getTrinityHome(), "temp-ext/");
         URL url = extFiles.toURI().toURL();
         URLClassLoader loader = URLClassLoader.newInstance(new URL[]{url});
         

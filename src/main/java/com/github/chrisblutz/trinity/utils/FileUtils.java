@@ -1,6 +1,9 @@
 package com.github.chrisblutz.trinity.utils;
 
+import com.github.chrisblutz.trinity.Trinity;
+
 import java.io.File;
+import java.net.URISyntaxException;
 
 
 /**
@@ -34,5 +37,25 @@ public class FileUtils {
         }
         
         file.delete();
+    }
+    
+    private static File trinityHome = null;
+    
+    public static File getTrinityHome() {
+        
+        if (trinityHome == null) {
+            
+            try {
+                
+                trinityHome = new File(new File(Trinity.class.getProtectionDomain().getCodeSource().getLocation().toURI()), "../..");
+                
+            } catch (URISyntaxException e) {
+                
+                e.printStackTrace();
+                Trinity.exit(50);
+            }
+        }
+        
+        return trinityHome;
     }
 }

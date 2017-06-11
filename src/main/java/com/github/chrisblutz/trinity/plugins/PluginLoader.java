@@ -2,6 +2,7 @@ package com.github.chrisblutz.trinity.plugins;
 
 import com.github.chrisblutz.trinity.cli.CLI;
 import com.github.chrisblutz.trinity.plugins.api.Plugin;
+import com.github.chrisblutz.trinity.utils.FileUtils;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -33,7 +34,7 @@ public class PluginLoader {
     
     public static void loadAll() {
         
-        File pluginDir = new File(PLUGIN_FOLDER);
+        File pluginDir = new File(FileUtils.getTrinityHome(), PLUGIN_FOLDER);
         
         if (pluginDir.exists()) {
             

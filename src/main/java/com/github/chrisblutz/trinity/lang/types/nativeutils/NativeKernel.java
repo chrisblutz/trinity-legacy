@@ -15,6 +15,7 @@ import com.github.chrisblutz.trinity.lang.types.strings.TYString;
 import com.github.chrisblutz.trinity.natives.TrinityNatives;
 import com.github.chrisblutz.trinity.parser.TrinityParser;
 import com.github.chrisblutz.trinity.parser.blocks.Block;
+import com.github.chrisblutz.trinity.utils.FileUtils;
 
 import java.io.File;
 import java.util.HashMap;
@@ -116,7 +117,7 @@ class NativeKernel {
                 lines = new String[]{TrinityNatives.toString(code, runtime)};
             }
             
-            Block block = TrinityParser.parseStrings(new File("lib/Kernel.ty"), lines);
+            Block block = TrinityParser.parseStrings(new File(FileUtils.getTrinityHome(), "lib/Kernel.ty"), lines);
             ProcedureAction action = ExpressionInterpreter.interpret(block, new InterpretEnvironment(), "nil", "nil", false);
             
             TYRuntime newRuntime = new TYRuntime();
