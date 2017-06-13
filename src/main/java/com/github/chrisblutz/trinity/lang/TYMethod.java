@@ -1,5 +1,6 @@
 package com.github.chrisblutz.trinity.lang;
 
+import com.github.chrisblutz.trinity.interpreter.Scope;
 import com.github.chrisblutz.trinity.lang.procedures.TYProcedure;
 
 
@@ -13,6 +14,7 @@ public class TYMethod {
     private TYClass containerClass;
     private TYProcedure procedure;
     private String[] importedModules = new String[0];
+    private Scope scope = Scope.PUBLIC;
     
     private String[] leadingComments = null;
     
@@ -74,6 +76,16 @@ public class TYMethod {
     public String[] getImportedModules() {
         
         return importedModules;
+    }
+    
+    public Scope getScope() {
+        
+        return scope;
+    }
+    
+    public void setScope(Scope scope) {
+    
+        this.scope = scope;
     }
     
     public String[] getLeadingComments() {

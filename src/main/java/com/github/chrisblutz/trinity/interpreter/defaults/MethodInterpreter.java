@@ -144,13 +144,14 @@ public class MethodInterpreter extends DeclarationInterpreter {
                     TYProcedure procedure = new TYProcedure(action, mandatoryParams, optParams, blockParam);
                     
                     TYMethod method = new TYMethod(name, staticMethod, false, secureMethod, containerClass, procedure);
+                    method.setScope(env.getScope());
                     method.setLeadingComments(line.getLeadingComments());
                     method.importModules(TrinityInterpreter.getImportedModules());
                     containerClass.registerMethod(method);
                     
                 } else {
                     
-                    TrinityNatives.doLoad(env.getEnvironmentString() + "." + name, secureMethod, containerClass, fileName, line.getLineNumber());
+                    TrinityNatives.doLoad(env.getEnvironmentString() + "." + name, secureMethod, containerClass, fileName, line.getLineNumber(), env.getScope());
                 }
             }
         }

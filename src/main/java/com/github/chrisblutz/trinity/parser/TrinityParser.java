@@ -112,6 +112,7 @@ public class TrinityParser {
         lineSet = stripComments(lineSet);
         lineSet = parseOutEmptyLines(lineSet);
         lineSet = parseNumbers(lineSet);
+        lineSet = parseScopes(lineSet);
         lineSet.collapseComments();
         
         // Parse LineSet into Block
@@ -620,6 +621,62 @@ public class TrinityParser {
         }
         
         return set;
+    }
+    
+    private static LineSet parseScopes(LineSet lines) {
+        
+        LineSet set = new LineSet(lines);
+        
+        for (Line line : lines) {
+            
+            Runner.updateLocation(set.getFileName(), line.getLineNumber());
+            
+            Line newLine = new Line(line.getLineNumber());
+            newLine.setSpaces(line.getSpaces());
+            
+            for (int i = 0; i < line.size(); i++) {
+                
+                TokenInfo info = line.get(i);
+                
+                if (info.getToken() == Token.MODULE && i < line.size() - 2 && line.get(i + 1).getToken() == Token.MINUS && line.get(i + 2).getToken() == Token.PROTECTED_SCOPE) {
+                    
+                    i += 2;
+                    newLine.add(new TokenInfo(Token.MODULE_PROTECTED_SCOPE, Token.MODULE_PROTECTED_SCOPE.getReadable()));
+                    
+                } else {
+                    
+                    newLine.add(info);
+                }
+            }
+            
+            set.add(newLine);
+        }
+        
+        LineSet finalSet = new LineSet(set);
+        
+        for (Line line : set) {
+            
+            Runner.updateLocation(finalSet.getFileName(), line.getLineNumber());
+            
+            Line newLine = new Line(line.getLineNumber());
+            newLine.setSpaces(line.getSpaces());
+            
+            for (TokenInfo info : line) {
+                
+                if (info.getToken() == Token.PRIVATE_SCOPE || info.getToken() == Token.PROTECTED_SCOPE || info.getToken() == Token.MODULE_PROTECTED_SCOPE || info.getToken() == Token.PUBLIC_SCOPE) {
+                    
+                    newLine.add(new TokenInfo(Token.SCOPE_MODIFIER, info.getContents()));
+                    
+                } else {
+                    
+                    newLine.add(info);
+                }
+            }
+            
+            finalSet.add(newLine);
+        }
+        
+        return finalSet;
     }
     
     private static Block parseToBlock(LineSet lines) {

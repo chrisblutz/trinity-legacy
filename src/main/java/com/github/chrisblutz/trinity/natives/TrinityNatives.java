@@ -1,5 +1,6 @@
 package com.github.chrisblutz.trinity.natives;
 
+import com.github.chrisblutz.trinity.interpreter.Scope;
 import com.github.chrisblutz.trinity.lang.ClassRegistry;
 import com.github.chrisblutz.trinity.lang.TYClass;
 import com.github.chrisblutz.trinity.lang.TYMethod;
@@ -34,6 +35,7 @@ public class TrinityNatives {
     private static Map<String, Boolean> pendingSecure = new HashMap<>();
     private static Map<String, String> pendingLoadFiles = new HashMap<>();
     private static Map<String, Integer> pendingLoadLines = new HashMap<>();
+    private static Map<String, Scope> pendingScope = new HashMap<>();
     
     private static Map<String, ProcedureAction> globals = new HashMap<>();
     
@@ -137,11 +139,11 @@ public class TrinityNatives {
         }
     }
     
-    public static void doLoad(String name, boolean secureMethod, TYClass current, String fileName, int lineNumber) {
+    public static void doLoad(String name, boolean secureMethod, TYClass current, String fileName, int lineNumber, Scope scope) {
         
         if (methods.containsKey(name)) {
             
-            addToClass(name, secureMethod, current, fileName, lineNumber);
+            addToClass(name, secureMethod, current, fileName, lineNumber, scope);
             
         } else {
             
@@ -149,14 +151,16 @@ public class TrinityNatives {
             pendingSecure.put(name, secureMethod);
             pendingLoadFiles.put(name, fileName);
             pendingLoadLines.put(name, lineNumber);
+            pendingScope.put(name, scope);
         }
     }
     
-    private static void addToClass(String name, boolean secureMethod, TYClass current, String fileName, int lineNumber) {
+    private static void addToClass(String name, boolean secureMethod, TYClass current, String fileName, int lineNumber, Scope scope) {
         
         if (methods.containsKey(name)) {
             
             TYMethod method = methods.get(name);
+            method.setScope(scope);
             method.setSecureMethod(secureMethod);
             current.registerMethod(method);
             
@@ -180,11 +184,12 @@ public class TrinityNatives {
             
             if (methods.containsKey(str)) {
                 
-                addToClass(str, pendingSecure.get(str), pendingLoads.get(str), pendingLoadFiles.get(str), pendingLoadLines.get(str));
+                addToClass(str, pendingSecure.get(str), pendingLoads.get(str), pendingLoadFiles.get(str), pendingLoadLines.get(str), pendingScope.get(str));
                 pendingLoads.remove(str);
                 pendingSecure.remove(str);
                 pendingLoadFiles.remove(str);
                 pendingLoadLines.remove(str);
+                pendingScope.remove(str);
             }
         }
     }
