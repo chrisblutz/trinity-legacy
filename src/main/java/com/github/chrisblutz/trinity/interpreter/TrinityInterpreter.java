@@ -1,9 +1,6 @@
 package com.github.chrisblutz.trinity.interpreter;
 
-import com.github.chrisblutz.trinity.interpreter.defaults.ClassInterpreter;
-import com.github.chrisblutz.trinity.interpreter.defaults.ImportInterpreter;
-import com.github.chrisblutz.trinity.interpreter.defaults.MethodInterpreter;
-import com.github.chrisblutz.trinity.interpreter.defaults.ModuleInterpreter;
+import com.github.chrisblutz.trinity.interpreter.defaults.*;
 import com.github.chrisblutz.trinity.lang.TYObject;
 import com.github.chrisblutz.trinity.lang.errors.Errors;
 import com.github.chrisblutz.trinity.lang.procedures.ProcedureAction;
@@ -137,5 +134,6 @@ public class TrinityInterpreter {
         registerDeclarationInterpreter(new ModuleInterpreter());
         registerDeclarationInterpreter(new ClassInterpreter());
         registerDeclarationInterpreter(new MethodInterpreter());
+        registerDeclarationInterpreter(new ScopeInterpreter());
     }
 }

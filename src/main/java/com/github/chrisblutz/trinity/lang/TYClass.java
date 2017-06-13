@@ -1,5 +1,6 @@
 package com.github.chrisblutz.trinity.lang;
 
+import com.github.chrisblutz.trinity.interpreter.Scope;
 import com.github.chrisblutz.trinity.lang.errors.Errors;
 import com.github.chrisblutz.trinity.lang.procedures.ProcedureAction;
 import com.github.chrisblutz.trinity.lang.procedures.TYProcedure;
@@ -173,29 +174,41 @@ public class TYClass {
             
             if (constructor != null) {
                 
-                TYRuntime newRuntime = runtime.clone();
-                newRuntime.clearVariables();
+                Scope scope = constructor.getScope();
+                boolean run = checkScope(scope, constructor, runtime);
                 
-                TYObject newObj = new TYObject(this);
-                
-                newRuntime.setVariable("this", newObj);
-                newRuntime.setScope(newObj, false);
-                newRuntime.setModule(getModule());
-                newRuntime.setTyClass(this);
-                newRuntime.importModules(constructor.getImportedModules());
-                
-                TYObject obj = constructor.getProcedure().call(newRuntime, procedure, procedureRuntime, newObj, params);
-                
-                if (newRuntime.isReturning()) {
+                if (run) {
                     
-                    Errors.throwError("Trinity.Errors.ReturnError", "Cannot return a value from a constructor.", runtime);
+                    TYRuntime newRuntime = runtime.clone();
+                    newRuntime.clearVariables();
                     
-                } else if (obj.getObjectClass().isInstanceOf(ClassRegistry.getClass("Trinity.Map")) || obj.getObjectClass().isInstanceOf(ClassRegistry.getClass("Trinity.Procedure"))) {
+                    TYObject newObj = new TYObject(this);
                     
-                    newObj = obj;
+                    newRuntime.setVariable("this", newObj);
+                    newRuntime.setScope(newObj, false);
+                    newRuntime.setModule(getModule());
+                    newRuntime.setTyClass(this);
+                    newRuntime.importModules(constructor.getImportedModules());
+                    
+                    TYObject obj = constructor.getProcedure().call(newRuntime, procedure, procedureRuntime, newObj, params);
+                    
+                    if (newRuntime.isReturning()) {
+                        
+                        Errors.throwError("Trinity.Errors.ReturnError", "Cannot return a value from a constructor.", runtime);
+                        
+                    } else if (obj.getObjectClass().isInstanceOf(ClassRegistry.getClass("Trinity.Map")) || obj.getObjectClass().isInstanceOf(ClassRegistry.getClass("Trinity.Procedure"))) {
+                        
+                        newObj = obj;
+                    }
+                    
+                    return newObj;
+                    
+                } else {
+                    
+                    Errors.throwError("Trinity.Errors.ScopeError", "Constructor cannot be accessed from this context because it is marked '" + scope.toString() + "'.", runtime);
+                    
+                    return TYObject.NONE;
                 }
-                
-                return newObj;
                 
             } else {
                 
@@ -206,35 +219,47 @@ public class TYClass {
             
             TYMethod method = methods.get(methodName);
             
-            TYRuntime newRuntime = runtime.clone();
-            newRuntime.setModule(getModule());
-            newRuntime.setTyClass(this);
-            newRuntime.importModules(method.getImportedModules());
-            newRuntime.clearVariables();
+            Scope scope = method.getScope();
+            boolean run = checkScope(scope, method, runtime);
             
-            if (method.isStaticMethod()) {
+            if (run) {
                 
-                newRuntime.setScope(NativeStorage.getClassObject(this), true);
+                TYRuntime newRuntime = runtime.clone();
+                newRuntime.setModule(getModule());
+                newRuntime.setTyClass(this);
+                newRuntime.importModules(method.getImportedModules());
+                newRuntime.clearVariables();
+                
+                if (method.isStaticMethod()) {
+                    
+                    newRuntime.setScope(NativeStorage.getClassObject(this), true);
+                    
+                } else {
+                    
+                    if (thisObj == TYObject.NONE) {
+                        
+                        Errors.throwError("Trinity.Errors.ScopeError", "Instance method '" + methodName + "' cannot be called from a static context.", runtime);
+                    }
+                    
+                    newRuntime.setVariable("this", thisObj);
+                    newRuntime.setScope(thisObj, false);
+                }
+                
+                TYObject result = method.getProcedure().call(newRuntime, procedure, procedureRuntime, thisObj, params);
+                
+                if (newRuntime.isReturning()) {
+                    
+                    return newRuntime.getReturnObject();
+                }
+                
+                return result;
                 
             } else {
                 
-                if (thisObj == TYObject.NONE) {
-                    
-                    Errors.throwError("Trinity.Errors.ScopeError", "Instance method '" + methodName + "' cannot be called from a static context.", runtime);
-                }
+                Errors.throwError("Trinity.Errors.ScopeError", "Method '" + methodName + "' cannot be accessed from this context because it is marked '" + scope.toString() + "'.", runtime);
                 
-                newRuntime.setVariable("this", thisObj);
-                newRuntime.setScope(thisObj, false);
+                return TYObject.NONE;
             }
-            
-            TYObject result = method.getProcedure().call(newRuntime, procedure, procedureRuntime, thisObj, params);
-            
-            if (newRuntime.isReturning()) {
-                
-                return newRuntime.getReturnObject();
-            }
-            
-            return result;
             
         } else if (getSuperclass() != null) {
             
@@ -250,6 +275,32 @@ public class TYClass {
         }
         
         return TYObject.NONE;
+    }
+    
+    private boolean checkScope(Scope scope, TYMethod method, TYRuntime runtime) {
+        
+        switch (scope) {
+            
+            case PUBLIC:
+                
+                return true;
+            
+            case MODULE_PROTECTED:
+                
+                return method.getContainerClass().getModule() == runtime.getModule();
+            
+            case PROTECTED:
+                
+                return runtime.getTyClass().isInstanceOf(method.getContainerClass());
+            
+            case PRIVATE:
+                
+                return method.getContainerClass() == runtime.getTyClass();
+            
+            default:
+                
+                return false;
+        }
     }
     
     public void registerMethod(TYMethod method) {

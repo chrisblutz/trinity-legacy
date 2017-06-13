@@ -17,7 +17,7 @@ public enum Token {
     CLASS_EXTENSION("<<"), GLOBAL_VAR("$"),
     
     // Modifiers
-    STATIC("static"), SECURE("secure"),
+    STATIC("static"), SECURE("secure"), SCOPE_MODIFIER("\0"), PUBLIC_SCOPE("public"), PROTECTED_SCOPE("protected"), MODULE_PROTECTED_SCOPE("module-protected"), PRIVATE_SCOPE("private"),
     
     // Operators
     NEGATIVE_OPERATOR("!"), ASSIGNMENT_OPERATOR("="), NIL_ASSIGNMENT_OPERATOR("||="), DOT_OPERATOR("."), EQUAL_TO("=="), NOT_EQUAL_TO("!="), GREATER_THAN(">"), GREATER_THAN_OR_EQUAL_TO(">="), LESS_THAN("<"), LESS_THAN_OR_EQUAL_TO("<="),

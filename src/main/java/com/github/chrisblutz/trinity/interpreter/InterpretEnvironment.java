@@ -15,6 +15,8 @@ public class InterpretEnvironment {
     private List<TYModule> moduleStack;
     private List<TYClass> classStack;
     
+    private Scope scope = Scope.PUBLIC;
+    
     public InterpretEnvironment() {
         
         this(new ArrayList<>(), new ArrayList<>());
@@ -51,6 +53,16 @@ public class InterpretEnvironment {
         return !(getModuleStack().isEmpty() && getClassStack().isEmpty());
     }
     
+    public Scope getScope() {
+        
+        return scope;
+    }
+    
+    public void setScope(Scope scope) {
+        
+        this.scope = scope;
+    }
+    
     public InterpretEnvironment append(TYClass tyClass) {
         
         List<TYClass> classes = new ArrayList<>();
@@ -81,6 +93,13 @@ public class InterpretEnvironment {
         }
         
         return new InterpretEnvironment(modules, new ArrayList<>());
+    }
+    
+    public InterpretEnvironment append(Scope scope) {
+        
+        InterpretEnvironment env = new InterpretEnvironment(getModuleStack(), getClassStack());
+        env.setScope(scope);
+        return env;
     }
     
     public String getEnvironmentString() {
