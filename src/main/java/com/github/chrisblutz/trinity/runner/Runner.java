@@ -58,17 +58,7 @@ public class Runner {
         trinityThread.setName("Trinity-Main");
         trinityThread.setUncaughtExceptionHandler((t, e) -> {
             
-            System.err.println("An error occurred in the Trinity interpreter in file '" + getCurrentFile() + "' at line " + getCurrentLine() + ".");
-            
-            if (CLI.isDebuggingEnabled()) {
-                
-                System.err.println("\n== FULL ERROR ==\n");
-                e.printStackTrace();
-                
-            } else {
-                
-                System.err.println("To view a full trace, enable debugging with the -d/--debug option.");
-            }
+            Errors.throwUncaughtJavaException(e, getCurrentFile(), getCurrentLine());
             
             Trinity.exit(1);
         });
