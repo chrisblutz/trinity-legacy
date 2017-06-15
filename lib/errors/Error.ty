@@ -23,4 +23,5 @@ module Trinity
                     str += "\n\tat " + getStackTrace()[i].toString()
                 str
 
-            def native populateStackTrace
+            private
+                def native populateStackTrace
