@@ -6,6 +6,9 @@ module Trinity
 
         def native loadProperties
 
+        # Returns the hash code for an object
+        def native identify(obj)
+
         def static getProperty(name)
             @@properties[name]
 

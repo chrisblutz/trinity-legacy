@@ -7,6 +7,7 @@ import com.github.chrisblutz.trinity.lang.procedures.ProcedureAction;
 import com.github.chrisblutz.trinity.lang.types.maps.TYMap;
 import com.github.chrisblutz.trinity.lang.types.numeric.TYLong;
 import com.github.chrisblutz.trinity.lang.types.strings.TYString;
+import com.github.chrisblutz.trinity.natives.NativeStorage;
 import com.github.chrisblutz.trinity.natives.TrinityNatives;
 
 import java.util.HashMap;
@@ -21,9 +22,9 @@ class NativeSystem {
     static void register() {
         
         TrinityNatives.registerMethod("Trinity.System", "currentTimeMillis", true, null, null, null, (runtime, thisObj, params) -> new TYLong(System.currentTimeMillis()));
-        Map<String, ProcedureAction> params = new HashMap<>();
-        params.put("name", (runtime, thisObj, params1) -> TYObject.NIL);
-        TrinityNatives.registerMethod("Trinity.System", "getEnvironment", true, null, params, null, (runtime, thisObj, params1) -> {
+        Map<String, ProcedureAction> optionalParams = new HashMap<>();
+        optionalParams.put("name", (runtime, thisObj, params) -> TYObject.NIL);
+        TrinityNatives.registerMethod("Trinity.System", "getEnvironment", true, null, optionalParams, null, (runtime, thisObj, params) -> {
             
             TYObject name = runtime.getVariable("name");
             
@@ -37,7 +38,7 @@ class NativeSystem {
                 return getEnvironmentMap();
             }
         });
-        TrinityNatives.registerMethod("Trinity.System", "loadProperties", true, null, null, null, (runtime, thisObj, params12) -> {
+        TrinityNatives.registerMethod("Trinity.System", "loadProperties", true, null, null, null, (runtime, thisObj, params) -> {
             
             Map<TYObject, TYObject> map = new HashMap<>();
             
@@ -53,6 +54,11 @@ class NativeSystem {
             ClassRegistry.getClass("Trinity.System").setVariable("properties", new TYMap(map));
             
             return TYObject.NONE;
+        });
+        TrinityNatives.registerMethod("Trinity.System", "identify", true, new String[]{"obj"}, null, null, (runtime, thisObj, params) -> {
+            
+            TYObject object = runtime.getVariable("obj");
+            return NativeStorage.getHashCode(object);
         });
     }
     

@@ -10,11 +10,12 @@ module Trinity
 
         def native %(other)
 
-        def native secure hashCode
-
         def native getClass
 
         def native isInstance(instClass)
+
+        def secure hashCode
+            System.identify(this)
 
         def toString
             getClass().toString() + '@' + hashCode().toHexString()
