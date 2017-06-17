@@ -22,7 +22,7 @@ module Trinity
 
         def toString
             str = getName()
-            str += '(Args: ' + getRequiredArguments().length() + ' required, '
+            str += ' (Args: ' + getRequiredArguments().length() + ' required, '
             str += getOptionalArguments().length() + ' optional'
             if getBlockArgument() != nil
                 str += ', 1 block'
