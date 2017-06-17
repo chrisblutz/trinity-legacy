@@ -4,6 +4,7 @@ import com.github.chrisblutz.trinity.lang.TYClass;
 import com.github.chrisblutz.trinity.lang.TYMethod;
 import com.github.chrisblutz.trinity.lang.TYModule;
 import com.github.chrisblutz.trinity.lang.TYObject;
+import com.github.chrisblutz.trinity.lang.procedures.TYProcedure;
 import com.github.chrisblutz.trinity.lang.types.*;
 import com.github.chrisblutz.trinity.lang.types.arrays.TYArray;
 import com.github.chrisblutz.trinity.lang.types.bool.TYBoolean;
@@ -41,10 +42,11 @@ public class NativeStorage {
     private static Map<TYMethod, TYBoolean> methodStatic = new HashMap<>();
     private static Map<TYMethod, TYBoolean> methodNative = new HashMap<>();
     private static Map<TYMethod, TYBoolean> methodSecure = new HashMap<>();
-    private static Map<TYMethod, TYArray> mandatoryArguments = new HashMap<>();
-    private static Map<TYMethod, TYArray> optionalArguments = new HashMap<>();
-    private static Map<TYMethod, TYObject> blockArguments = new HashMap<>();
-    private static Map<TYMethod, TYObject> overflowArguments = new HashMap<>();
+    
+    private static Map<TYProcedure, TYArray> mandatoryArguments = new HashMap<>();
+    private static Map<TYProcedure, TYArray> optionalArguments = new HashMap<>();
+    private static Map<TYProcedure, TYObject> blockArguments = new HashMap<>();
+    private static Map<TYProcedure, TYObject> overflowArguments = new HashMap<>();
     
     private static Map<TYArray, TYInt> arrayLengths = new HashMap<>();
     
@@ -191,48 +193,48 @@ public class NativeStorage {
         return methodSecure.get(tyMethod);
     }
     
-    public static TYArray getMandatoryArguments(TYMethod tyMethod) {
+    public static TYArray getMandatoryArguments(TYProcedure tyProcedure) {
         
-        if (!mandatoryArguments.containsKey(tyMethod)) {
+        if (!mandatoryArguments.containsKey(tyProcedure)) {
             
-            List<String> arguments = tyMethod.getProcedure().getMandatoryParameters();
+            List<String> arguments = tyProcedure.getMandatoryParameters();
             
-            mandatoryArguments.put(tyMethod, TrinityNatives.getArrayFor(arguments.toArray(new String[arguments.size()])));
+            mandatoryArguments.put(tyProcedure, TrinityNatives.getArrayFor(arguments.toArray(new String[arguments.size()])));
         }
         
-        return mandatoryArguments.get(tyMethod);
+        return mandatoryArguments.get(tyProcedure);
     }
     
-    public static TYArray getOptionalArguments(TYMethod tyMethod) {
+    public static TYArray getOptionalArguments(TYProcedure tyProcedure) {
         
-        if (!optionalArguments.containsKey(tyMethod)) {
+        if (!optionalArguments.containsKey(tyProcedure)) {
             
-            Set<String> arguments = tyMethod.getProcedure().getOptionalParameters().keySet();
+            Set<String> arguments = tyProcedure.getOptionalParameters().keySet();
             
-            optionalArguments.put(tyMethod, TrinityNatives.getArrayFor(arguments.toArray(new String[arguments.size()])));
+            optionalArguments.put(tyProcedure, TrinityNatives.getArrayFor(arguments.toArray(new String[arguments.size()])));
         }
         
-        return optionalArguments.get(tyMethod);
+        return optionalArguments.get(tyProcedure);
     }
     
-    public static TYObject getBlockArgument(TYMethod tyMethod) {
+    public static TYObject getBlockArgument(TYProcedure tyProcedure) {
         
-        if (!blockArguments.containsKey(tyMethod)) {
+        if (!blockArguments.containsKey(tyProcedure)) {
             
-            blockArguments.put(tyMethod, tyMethod.getProcedure().getBlockParameter() == null ? TYObject.NIL : new TYString(tyMethod.getProcedure().getBlockParameter()));
+            blockArguments.put(tyProcedure, tyProcedure.getBlockParameter() == null ? TYObject.NIL : new TYString(tyProcedure.getBlockParameter()));
         }
         
-        return blockArguments.get(tyMethod);
+        return blockArguments.get(tyProcedure);
     }
     
-    public static TYObject getOverflowArgument(TYMethod tyMethod) {
+    public static TYObject getOverflowArgument(TYProcedure tyProcedure) {
         
-        if (!overflowArguments.containsKey(tyMethod)) {
+        if (!overflowArguments.containsKey(tyProcedure)) {
             
-            overflowArguments.put(tyMethod, tyMethod.getProcedure().getOverflowParameter() == null ? TYObject.NIL : new TYString(tyMethod.getProcedure().getOverflowParameter()));
+            overflowArguments.put(tyProcedure, tyProcedure.getOverflowParameter() == null ? TYObject.NIL : new TYString(tyProcedure.getOverflowParameter()));
         }
         
-        return overflowArguments.get(tyMethod);
+        return overflowArguments.get(tyProcedure);
     }
     
     public static TYInt getArrayLength(TYArray tyArray) {
