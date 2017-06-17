@@ -2,4 +2,4 @@ module Trinity
     class Procedure
         def native initialize(&block)
 
-        def native call(args)
+        def native call(...args)

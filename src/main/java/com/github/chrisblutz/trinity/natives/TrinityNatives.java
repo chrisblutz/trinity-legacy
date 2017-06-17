@@ -65,10 +65,14 @@ public class TrinityNatives {
      *                        if there are no optional arguments.
      * @param blockParam      The block argument for this method.  This is the equivalent of defining an {@code &block} argument in Trinity
      *                        source code.  This may be {@code null} if there is no block argument.
+     * @param overflowParam   The overflow argument for this method.  If any additional arguments are passed to this method beyond the specified
+     *                        mandatory, optional, and block arguments, they will be placed in an array and passed in as this overflow argument.
+     *                        This is the equivalent of defining an {@code ...args} argument in Trinity source code.  This may be {@code null}
+     *                        if there is no overflow argument.
      * @param action          The {@code ProcedureAction} that is called when this method is invoked.  The return value from this action is used as
      *                        the method's return value.
      */
-    public static void registerMethod(String className, String methodName, boolean staticMethod, String[] mandatoryParams, Map<String, ProcedureAction> optionalParams, String blockParam, ProcedureAction action) {
+    public static void registerMethod(String className, String methodName, boolean staticMethod, String[] mandatoryParams, Map<String, ProcedureAction> optionalParams, String blockParam, String overflowParam, ProcedureAction action) {
         
         ProcedureAction actionWithStackTrace = (runtime, thisObj, params) -> {
             
@@ -96,7 +100,7 @@ public class TrinityNatives {
             optionalParams = new TreeMap<>();
         }
         
-        TYProcedure procedure = new TYProcedure(actionWithStackTrace, mandatoryParamsList, optionalParams, blockParam);
+        TYProcedure procedure = new TYProcedure(actionWithStackTrace, mandatoryParamsList, optionalParams, blockParam, overflowParam);
         TYMethod method = new TYMethod(methodName, staticMethod, true, ClassRegistry.getClass(className), procedure);
         String fullName = className + "." + methodName;
         methods.put(fullName, method);

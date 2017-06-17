@@ -20,7 +20,7 @@ class NativeClass {
     
     static void register() {
         
-        TrinityNatives.registerMethod("Trinity.Class", "==", false, new String[]{"other"}, null, null, (runtime, thisObj, params) -> {
+        TrinityNatives.registerMethod("Trinity.Class", "==", false, new String[]{"other"}, null, null, null, (runtime, thisObj, params) -> {
             
             TYClass thisClass = TrinityNatives.cast(TYClassObject.class, thisObj).getInternalClass();
             TYClass otherClass;
@@ -42,7 +42,7 @@ class NativeClass {
             
             return TYBoolean.valueFor(thisClass == otherClass);
         });
-        TrinityNatives.registerMethod("Trinity.Class", "getSuperclass", false, null, null, null, (runtime, thisObj, params) -> {
+        TrinityNatives.registerMethod("Trinity.Class", "getSuperclass", false, null, null, null, null, (runtime, thisObj, params) -> {
             
             TYClass superclass = TrinityNatives.cast(TYClassObject.class, thisObj).getInternalClass().getSuperclass();
             
@@ -55,7 +55,7 @@ class NativeClass {
                 return NativeStorage.getClassObject(superclass);
             }
         });
-        TrinityNatives.registerMethod("Trinity.Class", "getModule", false, null, null, null, (runtime, thisObj, params) -> {
+        TrinityNatives.registerMethod("Trinity.Class", "getModule", false, null, null, null, null, (runtime, thisObj, params) -> {
             
             TYModule module = TrinityNatives.cast(TYClassObject.class, thisObj).getInternalClass().getModule();
             
@@ -68,10 +68,10 @@ class NativeClass {
                 return TYObject.NIL;
             }
         });
-        TrinityNatives.registerMethod("Trinity.Class", "getName", false, null, null, null, (runtime, thisObj, params) -> NativeStorage.getClassName(TrinityNatives.cast(TYClassObject.class, thisObj).getInternalClass()));
-        TrinityNatives.registerMethod("Trinity.Class", "getShortName", false, null, null, null, (runtime, thisObj, params) -> NativeStorage.getClassShortName(TrinityNatives.cast(TYClassObject.class, thisObj).getInternalClass()));
-        TrinityNatives.registerMethod("Trinity.Class", "construct", false, null, null, null, (runtime, thisObj, params) -> TrinityNatives.newInstance(TrinityNatives.cast(TYClassObject.class, thisObj).getInternalClass().getName(), runtime, params));
-        TrinityNatives.registerMethod("Trinity.Class", "getMethods", false, null, null, null, (runtime, thisObj, params) -> {
+        TrinityNatives.registerMethod("Trinity.Class", "getName", false, null, null, null, null, (runtime, thisObj, params) -> NativeStorage.getClassName(TrinityNatives.cast(TYClassObject.class, thisObj).getInternalClass()));
+        TrinityNatives.registerMethod("Trinity.Class", "getShortName", false, null, null, null, null, (runtime, thisObj, params) -> NativeStorage.getClassShortName(TrinityNatives.cast(TYClassObject.class, thisObj).getInternalClass()));
+        TrinityNatives.registerMethod("Trinity.Class", "construct", false, null, null, null, null, (runtime, thisObj, params) -> TrinityNatives.newInstance(TrinityNatives.cast(TYClassObject.class, thisObj).getInternalClass().getName(), runtime, params));
+        TrinityNatives.registerMethod("Trinity.Class", "getMethods", false, null, null, null, null, (runtime, thisObj, params) -> {
             
             List<TYObject> methods = new ArrayList<>();
             
@@ -82,7 +82,7 @@ class NativeClass {
             
             return new TYArray(methods);
         });
-        TrinityNatives.registerMethod("Trinity.Class", "getMethod", false, new String[]{"name"}, null, null, (runtime, thisObj, params) -> {
+        TrinityNatives.registerMethod("Trinity.Class", "getMethod", false, new String[]{"name"}, null, null, null, (runtime, thisObj, params) -> {
             
             TYMethod method = TrinityNatives.cast(TYClassObject.class, thisObj).getInternalClass().getMethod(TrinityNatives.cast(TYString.class, runtime.getVariable("name")).getInternalString());
             
@@ -95,7 +95,7 @@ class NativeClass {
                 return TYObject.NIL;
             }
         });
-        TrinityNatives.registerMethod("Trinity.Class", "getInnerClasses", false, null, null, null, (runtime, thisObj, params) -> {
+        TrinityNatives.registerMethod("Trinity.Class", "getInnerClasses", false, null, null, null, null, (runtime, thisObj, params) -> {
             
             List<TYObject> classes = new ArrayList<>();
             
@@ -106,7 +106,7 @@ class NativeClass {
             
             return new TYArray(classes);
         });
-        TrinityNatives.registerMethod("Trinity.Class", "getInnerClass", false, new String[]{"name"}, null, null, (runtime, thisObj, params) -> {
+        TrinityNatives.registerMethod("Trinity.Class", "getInnerClass", false, new String[]{"name"}, null, null, null, (runtime, thisObj, params) -> {
             
             TYClass c = TrinityNatives.cast(TYClassObject.class, thisObj).getInternalClass().getClass(TrinityNatives.cast(TYString.class, runtime.getVariable("name")).getInternalString());
             
@@ -119,13 +119,13 @@ class NativeClass {
                 return TYObject.NIL;
             }
         });
-        TrinityNatives.registerMethod("Trinity.Class", "getComments", false, null, null, null, (runtime, thisObj, params) -> {
+        TrinityNatives.registerMethod("Trinity.Class", "getComments", false, null, null, null, null, (runtime, thisObj, params) -> {
             
             TYClass c = TrinityNatives.cast(TYClassObject.class, thisObj).getInternalClass();
             
             return NativeStorage.getLeadingComments(c);
         });
-        TrinityNatives.registerMethod("Trinity.Class", "get", true, new String[]{"name"}, null, null, (runtime, thisObj, params) -> {
+        TrinityNatives.registerMethod("Trinity.Class", "get", true, new String[]{"name"}, null, null, null, (runtime, thisObj, params) -> {
             
             String name = TrinityNatives.cast(TYString.class, runtime.getVariable("name")).getInternalString();
             

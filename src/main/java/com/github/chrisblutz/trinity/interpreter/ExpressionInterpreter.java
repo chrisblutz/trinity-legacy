@@ -280,7 +280,7 @@ public class ExpressionInterpreter {
             
             List<String> mandatoryParams = new ArrayList<>();
             Map<String, ProcedureAction> optParams = new TreeMap<>();
-            String blockParam = null;
+            String blockParam = null, overflowParam = null;
             int end = 0;
             
             if (tokens[tokens.length - 1].getToken() == Token.VERTICAL_BAR) {
@@ -298,11 +298,12 @@ public class ExpressionInterpreter {
                 mandatoryParams = results.getMandatoryParameters();
                 optParams = results.getOptionalParameters();
                 blockParam = results.getBlockParam();
+                overflowParam = results.getOverflowParam();
             }
             
             ProcedureAction action = interpret(nextBlock, environment, errorClass, method, true);
             
-            TYProcedure procedure = new TYProcedure(action, mandatoryParams, optParams, blockParam);
+            TYProcedure procedure = new TYProcedure(action, mandatoryParams, optParams, blockParam, overflowParam);
             
             TokenInfo[] newTokens = Arrays.copyOf(tokens, tokens.length - end);
             
@@ -949,7 +950,7 @@ public class ExpressionInterpreter {
         
         List<String> mandatoryParams = new ArrayList<>();
         Map<String, ProcedureAction> optParams = new TreeMap<>();
-        String blockParam = null;
+        String blockParam = null, overflowParam = null;
         
         List<List<TokenInfo>> infoSets = new ArrayList<>();
         List<TokenInfo> paramInfo = new ArrayList<>();
@@ -1004,10 +1005,14 @@ public class ExpressionInterpreter {
             } else if (list.size() == 2 && list.get(0).getToken() == Token.BLOCK_PREFIX && list.get(1).getToken() == Token.NON_TOKEN_STRING) {
                 
                 blockParam = list.get(1).getContents();
+                
+            } else if (list.size() == 2 && list.get(0).getToken() == Token.TRIPLE_DOT && list.get(1).getToken() == Token.NON_TOKEN_STRING) {
+                
+                overflowParam = list.get(1).getContents();
             }
         }
         
-        return new ParameterResults(mandatoryParams, optParams, blockParam);
+        return new ParameterResults(mandatoryParams, optParams, blockParam, overflowParam);
     }
     
     public static boolean isLevelUpToken(Token t) {

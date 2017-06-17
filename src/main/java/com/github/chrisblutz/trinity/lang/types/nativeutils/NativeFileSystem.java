@@ -23,13 +23,13 @@ class NativeFileSystem {
     
     static void register() {
         
-        TrinityNatives.registerMethod("Trinity.IO.Files.FileSystem", "normalize", true, new String[]{"path"}, null, null, (runtime, thisObj, params) -> {
+        TrinityNatives.registerMethod("Trinity.IO.Files.FileSystem", "normalize", true, new String[]{"path"}, null, null, null, (runtime, thisObj, params) -> {
             
             TYObject object = runtime.getVariable("path");
             
             return new TYString(new File(TrinityNatives.cast(TYString.class, object).getInternalString()).getAbsolutePath());
         });
-        TrinityNatives.registerMethod("Trinity.IO.Files.FileSystem", "create", true, new String[]{"path"}, null, null, (runtime, thisObj, params) -> {
+        TrinityNatives.registerMethod("Trinity.IO.Files.FileSystem", "create", true, new String[]{"path"}, null, null, null, (runtime, thisObj, params) -> {
             
             TYObject object = runtime.getVariable("path");
             
@@ -55,7 +55,7 @@ class NativeFileSystem {
         Map<String, ProcedureAction> optionalParams = new TreeMap<>();
         optionalParams.put("privileges", (runtime, thisObj, params1) -> new TYString("r"));
         optionalParams.put("append", (runtime, thisObj, params1) -> TYBoolean.FALSE);
-        TrinityNatives.registerMethod("Trinity.IO.Files.FileSystem", "open", true, new String[]{"path"}, optionalParams, null, (runtime, thisObj, params) -> {
+        TrinityNatives.registerMethod("Trinity.IO.Files.FileSystem", "open", true, new String[]{"path"}, optionalParams, null, null, (runtime, thisObj, params) -> {
             
             TYObject path = runtime.getVariable("path");
             TYObject privilege = runtime.getVariable("privileges");
@@ -76,13 +76,13 @@ class NativeFileSystem {
             
             return TYObject.NONE;
         });
-        TrinityNatives.registerMethod("Trinity.IO.Files.FileSystem", "read", true, new String[]{"path"}, null, null, (runtime, thisObj, params) -> {
+        TrinityNatives.registerMethod("Trinity.IO.Files.FileSystem", "read", true, new String[]{"path"}, null, null, null, (runtime, thisObj, params) -> {
             
             TYObject path = runtime.getVariable("path");
             
             return FileUtils.read(TrinityNatives.cast(TYString.class, path).getInternalString());
         });
-        TrinityNatives.registerMethod("Trinity.IO.Files.FileSystem", "write", true, new String[]{"path", "str"}, null, null, (runtime, thisObj, params) -> {
+        TrinityNatives.registerMethod("Trinity.IO.Files.FileSystem", "write", true, new String[]{"path", "str"}, null, null, null, (runtime, thisObj, params) -> {
             
             TYObject path = runtime.getVariable("path");
             TYObject str = runtime.getVariable("str");
@@ -91,7 +91,7 @@ class NativeFileSystem {
             
             return TYObject.NONE;
         });
-        TrinityNatives.registerMethod("Trinity.IO.Files.FileSystem", "close", true, new String[]{"path"}, null, null, (runtime, thisObj, params) -> {
+        TrinityNatives.registerMethod("Trinity.IO.Files.FileSystem", "close", true, new String[]{"path"}, null, null, null, (runtime, thisObj, params) -> {
             
             TYObject path = runtime.getVariable("path");
             

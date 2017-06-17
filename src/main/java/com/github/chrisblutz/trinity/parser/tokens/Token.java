@@ -36,7 +36,7 @@ public enum Token {
     
     // Punctuation
     LEFT_PARENTHESIS("("), RIGHT_PARENTHESIS(")"), LEFT_SQUARE_BRACKET("["), RIGHT_SQUARE_BRACKET("]"), LEFT_CURLY_BRACKET("{"), RIGHT_CURLY_BRACKET("}"),
-    COMMA(","), COLON(":"), SEMICOLON(";"), VERTICAL_BAR("|"), BLOCK_PREFIX("&"),
+    COMMA(","), COLON(":"), SEMICOLON(";"), VERTICAL_BAR("|"), BLOCK_PREFIX("&"), DOUBLE_DOT(".."), TRIPLE_DOT("..."),
     
     // Comments
     SINGLE_LINE_COMMENT("#"),

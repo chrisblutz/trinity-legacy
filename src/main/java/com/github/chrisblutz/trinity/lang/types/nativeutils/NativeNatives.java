@@ -13,7 +13,7 @@ class NativeNatives {
     
     static void register() {
         
-        TrinityNatives.registerMethod("Trinity.Natives", "initGlobalVariable", true, new String[]{"name"}, null, null, (runtime, thisObj, params) -> {
+        TrinityNatives.registerMethod("Trinity.Natives", "initGlobalVariable", true, new String[]{"name"}, null, null, null, (runtime, thisObj, params) -> {
             
             String globalName = TrinityNatives.toString(runtime.getVariable("name"), runtime);
             

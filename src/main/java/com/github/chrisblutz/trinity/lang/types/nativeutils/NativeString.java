@@ -24,8 +24,8 @@ class NativeString {
     
     static void register() {
         
-        TrinityNatives.registerMethod("Trinity.String", "chars", false, null, null, null, (runtime, thisObj, params) -> TrinityNatives.cast(TYString.class, thisObj).getCharacterArray());
-        TrinityNatives.registerMethod("Trinity.String", "+", false, new String[]{"other"}, null, null, (runtime, thisObj, params) -> {
+        TrinityNatives.registerMethod("Trinity.String", "chars", false, null, null, null, null, (runtime, thisObj, params) -> TrinityNatives.cast(TYString.class, thisObj).getCharacterArray());
+        TrinityNatives.registerMethod("Trinity.String", "+", false, new String[]{"other"}, null, null, null, (runtime, thisObj, params) -> {
             
             String thisString = TrinityNatives.cast(TYString.class, thisObj).getInternalString();
             
@@ -34,7 +34,7 @@ class NativeString {
             
             return new TYString(thisString + objStr);
         });
-        TrinityNatives.registerMethod("Trinity.String", "==", false, new String[]{"other"}, null, null, (runtime, thisObj, params) -> {
+        TrinityNatives.registerMethod("Trinity.String", "==", false, new String[]{"other"}, null, null, null, (runtime, thisObj, params) -> {
             
             TYObject object = runtime.getVariable("other");
             
@@ -45,9 +45,9 @@ class NativeString {
             
             return TYBoolean.valueFor(TrinityNatives.cast(TYString.class, thisObj).getInternalString().contentEquals(TrinityNatives.cast(TYString.class, object).getInternalString()));
         });
-        Map<String, ProcedureAction> params = new HashMap<>();
-        params.put("options", (runtime, thisObj, params1) -> TrinityNatives.getObjectFor(""));
-        TrinityNatives.registerMethod("Trinity.String", "match", false, new String[]{"regex"}, params, null, (runtime, thisObj, params1) -> {
+        Map<String, ProcedureAction> optionalParams = new HashMap<>();
+        optionalParams.put("options", (runtime, thisObj, params1) -> TrinityNatives.getObjectFor(""));
+        TrinityNatives.registerMethod("Trinity.String", "match", false, new String[]{"regex"}, optionalParams, null, null, (runtime, thisObj, params) -> {
             
             String thisString = TrinityNatives.cast(TYString.class, thisObj).getInternalString();
             String regex = TrinityNatives.cast(TYString.class, runtime.getVariable("regex")).getInternalString();
@@ -92,9 +92,9 @@ class NativeString {
             
             return TrinityNatives.newInstance("Trinity.StringUtils.Regex", runtime, bool, array);
         });
-        params = new HashMap<>();
-        params.put("options", (runtime, thisObj, params1) -> TrinityNatives.getObjectFor(""));
-        TrinityNatives.registerMethod("Trinity.String", "matches", false, new String[]{"regex"}, params, null, (runtime, thisObj, params1) -> {
+        optionalParams = new HashMap<>();
+        optionalParams.put("options", (runtime, thisObj, params1) -> TrinityNatives.getObjectFor(""));
+        TrinityNatives.registerMethod("Trinity.String", "matches", false, new String[]{"regex"}, optionalParams, null, null, (runtime, thisObj, params) -> {
             
             String thisString = TrinityNatives.cast(TYString.class, thisObj).getInternalString();
             String regex = TrinityNatives.cast(TYString.class, runtime.getVariable("regex")).getInternalString();
@@ -123,36 +123,36 @@ class NativeString {
             
             return TrinityNatives.getObjectFor(matcher.matches());
         });
-        TrinityNatives.registerMethod("Trinity.String", "toUpperCase", false, null, null, null, (runtime, thisObj, params13) -> {
+        TrinityNatives.registerMethod("Trinity.String", "toUpperCase", false, null, null, null, null, (runtime, thisObj, params) -> {
             
             String thisString = TrinityNatives.toString(thisObj, runtime);
             return new TYString(thisString.toUpperCase());
         });
-        TrinityNatives.registerMethod("Trinity.String", "toLowerCase", false, null, null, null, (runtime, thisObj, params12) -> {
+        TrinityNatives.registerMethod("Trinity.String", "toLowerCase", false, null, null, null, null, (runtime, thisObj, params) -> {
             
             String thisString = TrinityNatives.toString(thisObj, runtime);
             return new TYString(thisString.toLowerCase());
         });
-        TrinityNatives.registerMethod("Trinity.String", "startsWith", false, new String[]{"prefix"}, null, null, (runtime, thisObj, params12) -> {
+        TrinityNatives.registerMethod("Trinity.String", "startsWith", false, new String[]{"prefix"}, null, null, null, (runtime, thisObj, params) -> {
             
             String thisString = TrinityNatives.toString(thisObj, runtime);
             String prefix = TrinityNatives.toString(runtime.getVariable("prefix"), runtime);
             return TYBoolean.valueFor(thisString.startsWith(prefix));
         });
-        TrinityNatives.registerMethod("Trinity.String", "endsWith", false, new String[]{"suffix"}, null, null, (runtime, thisObj, params12) -> {
+        TrinityNatives.registerMethod("Trinity.String", "endsWith", false, new String[]{"suffix"}, null, null, null, (runtime, thisObj, params) -> {
             
             String thisString = TrinityNatives.toString(thisObj, runtime);
             String suffix = TrinityNatives.toString(runtime.getVariable("suffix"), runtime);
             return TYBoolean.valueFor(thisString.endsWith(suffix));
         });
-        TrinityNatives.registerMethod("Trinity.String", "contains", false, new String[]{"str"}, null, null, (runtime, thisObj, params12) -> {
+        TrinityNatives.registerMethod("Trinity.String", "contains", false, new String[]{"str"}, null, null, null, (runtime, thisObj, params) -> {
             
             String thisString = TrinityNatives.toString(thisObj, runtime);
             String str = TrinityNatives.toString(runtime.getVariable("str"), runtime);
             return TYBoolean.valueFor(thisString.contains(str));
         });
-        TrinityNatives.registerMethod("Trinity.String", "toInt", false, null, null, null, (runtime, thisObj, params1) -> new TYInt(TrinityNatives.toInt(thisObj)));
-        TrinityNatives.registerMethod("Trinity.String", "toLong", false, null, null, null, (runtime, thisObj, params1) -> new TYLong(TrinityNatives.toLong(thisObj)));
-        TrinityNatives.registerMethod("Trinity.String", "toFloat", false, null, null, null, (runtime, thisObj, params1) -> new TYFloat(TrinityNatives.toFloat(thisObj)));
+        TrinityNatives.registerMethod("Trinity.String", "toInt", false, null, null, null, null, (runtime, thisObj, params) -> new TYInt(TrinityNatives.toInt(thisObj)));
+        TrinityNatives.registerMethod("Trinity.String", "toLong", false, null, null, null, null, (runtime, thisObj, params) -> new TYLong(TrinityNatives.toLong(thisObj)));
+        TrinityNatives.registerMethod("Trinity.String", "toFloat", false, null, null, null, null, (runtime, thisObj, params) -> new TYFloat(TrinityNatives.toFloat(thisObj)));
     }
 }

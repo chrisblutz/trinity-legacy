@@ -18,14 +18,14 @@ class NativeInt {
     
     static void register() {
         
-        TrinityNatives.registerMethod("Trinity.Int", "+", false, new String[]{"other"}, null, null, getActionForOperation("+"));
-        TrinityNatives.registerMethod("Trinity.Int", "-", false, new String[]{"other"}, null, null, getActionForOperation("-"));
-        TrinityNatives.registerMethod("Trinity.Int", "*", false, new String[]{"other"}, null, null, getActionForOperation("*"));
-        TrinityNatives.registerMethod("Trinity.Int", "/", false, new String[]{"other"}, null, null, getActionForOperation("/"));
-        TrinityNatives.registerMethod("Trinity.Int", "%", false, new String[]{"other"}, null, null, getActionForOperation("%"));
-        TrinityNatives.registerMethod("Trinity.Int", "toString", false, null, null, null, (runtime, thisObj, params) -> new TYString(Integer.toString(TrinityNatives.toInt(thisObj))));
-        TrinityNatives.registerMethod("Trinity.Int", "toHexString", false, null, null, null, (runtime, thisObj, params) -> new TYString(Integer.toHexString(TrinityNatives.toInt(thisObj))));
-        TrinityNatives.registerMethod("Trinity.Int", "compareTo", false, new String[]{"other"}, null, null, (runtime, thisObj, params) -> {
+        TrinityNatives.registerMethod("Trinity.Int", "+", false, new String[]{"other"}, null, null, null, getActionForOperation("+"));
+        TrinityNatives.registerMethod("Trinity.Int", "-", false, new String[]{"other"}, null, null, null, getActionForOperation("-"));
+        TrinityNatives.registerMethod("Trinity.Int", "*", false, new String[]{"other"}, null, null, null, getActionForOperation("*"));
+        TrinityNatives.registerMethod("Trinity.Int", "/", false, new String[]{"other"}, null, null, null, getActionForOperation("/"));
+        TrinityNatives.registerMethod("Trinity.Int", "%", false, new String[]{"other"}, null, null, null, getActionForOperation("%"));
+        TrinityNatives.registerMethod("Trinity.Int", "toString", false, null, null, null, null, (runtime, thisObj, params) -> new TYString(Integer.toString(TrinityNatives.toInt(thisObj))));
+        TrinityNatives.registerMethod("Trinity.Int", "toHexString", false, null, null, null, null, (runtime, thisObj, params) -> new TYString(Integer.toHexString(TrinityNatives.toInt(thisObj))));
+        TrinityNatives.registerMethod("Trinity.Int", "compareTo", false, new String[]{"other"}, null, null, null, (runtime, thisObj, params) -> {
             
             int thisInt = TrinityNatives.toInt(thisObj);
             TYObject obj = runtime.getVariable("other");
@@ -55,7 +55,7 @@ class NativeInt {
             
             return new TYInt(-1);
         });
-        TrinityNatives.registerMethod("Trinity.Int", "==", false, new String[]{"other"}, null, null, (runtime, thisObj, params) -> {
+        TrinityNatives.registerMethod("Trinity.Int", "==", false, new String[]{"other"}, null, null, null, (runtime, thisObj, params) -> {
             
             int thisInt = TrinityNatives.toInt(thisObj);
             TYObject obj = runtime.getVariable("other");

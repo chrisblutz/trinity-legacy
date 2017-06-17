@@ -13,13 +13,14 @@ public class ParameterResults {
     
     private List<String> mandatoryParams;
     private Map<String, ProcedureAction> optParams;
-    private String blockParam;
+    private String blockParam, overflowParam;
     
-    public ParameterResults(List<String> mandatoryParams, Map<String, ProcedureAction> optParams, String blockParam) {
+    public ParameterResults(List<String> mandatoryParams, Map<String, ProcedureAction> optParams, String blockParam, String overflowParam) {
         
         this.mandatoryParams = mandatoryParams;
         this.optParams = optParams;
         this.blockParam = blockParam;
+        this.overflowParam = overflowParam;
     }
     
     public List<String> getMandatoryParameters() {
@@ -35,5 +36,10 @@ public class ParameterResults {
     public String getBlockParam() {
     
         return blockParam;
+    }
+    
+    public String getOverflowParam() {
+        
+        return overflowParam;
     }
 }

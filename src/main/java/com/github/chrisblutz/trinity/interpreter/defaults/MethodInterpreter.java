@@ -99,6 +99,7 @@ public class MethodInterpreter extends DeclarationInterpreter {
                     List<String> mandatoryParams = new ArrayList<>();
                     Map<String, ProcedureAction> optParams = new TreeMap<>();
                     String blockParam = null;
+                    String overflowParam = null;
                     
                     if (position < line.size() && line.get(position).getToken() == Token.LEFT_PARENTHESIS && line.get(line.size() - 1).getToken() == Token.RIGHT_PARENTHESIS) {
                         
@@ -127,6 +128,10 @@ public class MethodInterpreter extends DeclarationInterpreter {
                             } else if (list.size() == 2 && list.get(0).getToken() == Token.BLOCK_PREFIX && list.get(1).getToken() == Token.NON_TOKEN_STRING) {
                                 
                                 blockParam = list.get(1).getContents();
+                                
+                            } else if (list.size() == 2 && list.get(0).getToken() == Token.TRIPLE_DOT && list.get(1).getToken() == Token.NON_TOKEN_STRING) {
+    
+                                overflowParam = list.get(1).getContents();
                             }
                         }
                     }
@@ -141,7 +146,7 @@ public class MethodInterpreter extends DeclarationInterpreter {
                         action = (runtime, thisObj, params) -> TYObject.NONE;
                     }
                     
-                    TYProcedure procedure = new TYProcedure(action, mandatoryParams, optParams, blockParam);
+                    TYProcedure procedure = new TYProcedure(action, mandatoryParams, optParams, blockParam, overflowParam);
                     
                     TYMethod method = new TYMethod(name, staticMethod, false, secureMethod, containerClass, procedure);
                     method.setScope(env.getScope());

@@ -18,13 +18,13 @@ class NativeFloat {
     
     static void register() {
         
-        TrinityNatives.registerMethod("Trinity.Float", "+", false, new String[]{"other"}, null, null, getActionForOperation("+"));
-        TrinityNatives.registerMethod("Trinity.Float", "-", false, new String[]{"other"}, null, null, getActionForOperation("-"));
-        TrinityNatives.registerMethod("Trinity.Float", "*", false, new String[]{"other"}, null, null, getActionForOperation("*"));
-        TrinityNatives.registerMethod("Trinity.Float", "/", false, new String[]{"other"}, null, null, getActionForOperation("/"));
-        TrinityNatives.registerMethod("Trinity.Float", "%", false, new String[]{"other"}, null, null, getActionForOperation("%"));
-        TrinityNatives.registerMethod("Trinity.Float", "toString", false, null, null, null, (runtime, thisObj, params) -> new TYString(Double.toString(TrinityNatives.toFloat(thisObj))));
-        TrinityNatives.registerMethod("Trinity.Float", "compareTo", false, new String[]{"other"}, null, null, (runtime, thisObj, params) -> {
+        TrinityNatives.registerMethod("Trinity.Float", "+", false, new String[]{"other"}, null, null, null, getActionForOperation("+"));
+        TrinityNatives.registerMethod("Trinity.Float", "-", false, new String[]{"other"}, null, null, null, getActionForOperation("-"));
+        TrinityNatives.registerMethod("Trinity.Float", "*", false, new String[]{"other"}, null, null, null, getActionForOperation("*"));
+        TrinityNatives.registerMethod("Trinity.Float", "/", false, new String[]{"other"}, null, null, null, getActionForOperation("/"));
+        TrinityNatives.registerMethod("Trinity.Float", "%", false, new String[]{"other"}, null, null, null, getActionForOperation("%"));
+        TrinityNatives.registerMethod("Trinity.Float", "toString", false, null, null, null, null, (runtime, thisObj, params) -> new TYString(Double.toString(TrinityNatives.toFloat(thisObj))));
+        TrinityNatives.registerMethod("Trinity.Float", "compareTo", false, new String[]{"other"}, null, null, null, (runtime, thisObj, params) -> {
             
             double thisDouble = TrinityNatives.toFloat(thisObj);
             TYObject obj = runtime.getVariable("other");
@@ -54,7 +54,7 @@ class NativeFloat {
             
             return new TYInt(-1);
         });
-        TrinityNatives.registerMethod("Trinity.Float", "==", false, new String[]{"other"}, null, null, (runtime, thisObj, params) -> {
+        TrinityNatives.registerMethod("Trinity.Float", "==", false, new String[]{"other"}, null, null, null, (runtime, thisObj, params) -> {
             
             double thisDouble = TrinityNatives.toFloat(thisObj);
             TYObject obj = runtime.getVariable("other");
