@@ -6,6 +6,8 @@ module Trinity
 
         def native getBlockArgument
 
+        def native getOverflowArgument
+
         def native invoke(obj, ...args)
 
         def native getName
@@ -24,6 +26,8 @@ module Trinity
             str += getOptionalArguments().length() + ' optional'
             if getBlockArgument() != nil
                 str += ', 1 block'
+            if getOverflowArgument() != nil
+                str += ', allows overflow'
             str += ')'
 
             if isNative()

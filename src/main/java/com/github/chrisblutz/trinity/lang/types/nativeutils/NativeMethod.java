@@ -21,6 +21,7 @@ class NativeMethod {
         TrinityNatives.registerMethod("Trinity.Method", "getRequiredArguments", false, null, null, null, null, (runtime, thisObj, params) -> NativeStorage.getMandatoryArguments(TrinityNatives.cast(TYMethodObject.class, thisObj).getInternalMethod()));
         TrinityNatives.registerMethod("Trinity.Method", "getOptionalArguments", false, null, null, null, null, (runtime, thisObj, params) -> NativeStorage.getOptionalArguments(TrinityNatives.cast(TYMethodObject.class, thisObj).getInternalMethod()));
         TrinityNatives.registerMethod("Trinity.Method", "getBlockArgument", false, null, null, null, null, (runtime, thisObj, params) -> NativeStorage.getBlockArgument(TrinityNatives.cast(TYMethodObject.class, thisObj).getInternalMethod()));
+        TrinityNatives.registerMethod("Trinity.Method", "getOverflowArgument", false, null, null, null, null, (runtime, thisObj, params) -> NativeStorage.getOverflowArgument(TrinityNatives.cast(TYMethodObject.class, thisObj).getInternalMethod()));
         TrinityNatives.registerMethod("Trinity.Method", "invoke", false, new String[]{"obj"}, null, null, "args", (runtime, thisObj, params) -> {
             
             TYObject invokeThis = runtime.getVariable("obj");

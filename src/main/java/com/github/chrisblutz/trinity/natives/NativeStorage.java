@@ -44,6 +44,7 @@ public class NativeStorage {
     private static Map<TYMethod, TYArray> mandatoryArguments = new HashMap<>();
     private static Map<TYMethod, TYArray> optionalArguments = new HashMap<>();
     private static Map<TYMethod, TYObject> blockArguments = new HashMap<>();
+    private static Map<TYMethod, TYObject> overflowArguments = new HashMap<>();
     
     private static Map<TYArray, TYInt> arrayLengths = new HashMap<>();
     
@@ -222,6 +223,16 @@ public class NativeStorage {
         }
         
         return blockArguments.get(tyMethod);
+    }
+    
+    public static TYObject getOverflowArgument(TYMethod tyMethod) {
+        
+        if (!overflowArguments.containsKey(tyMethod)) {
+            
+            overflowArguments.put(tyMethod, tyMethod.getProcedure().getOverflowParameter() == null ? TYObject.NIL : new TYString(tyMethod.getProcedure().getOverflowParameter()));
+        }
+        
+        return overflowArguments.get(tyMethod);
     }
     
     public static TYInt getArrayLength(TYArray tyArray) {
