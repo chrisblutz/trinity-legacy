@@ -6,7 +6,7 @@ module Trinity
 
         def native getBlockArgument
 
-        def native invoke(obj, args)
+        def native invoke(obj, ...args)
 
         def native getName
 
