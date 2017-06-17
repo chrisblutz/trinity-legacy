@@ -108,6 +108,7 @@ public class TYProcedure {
         List<String> varNames = new ArrayList<>();
         varNames.addAll(getMandatoryParameters());
         varNames.addAll(getOptionalParameters().keySet());
+        int optSize = getOptionalParameters().size();
         
         List<TYObject> overflow = new ArrayList<>();
         
@@ -124,6 +125,10 @@ public class TYProcedure {
                 
                 runtime.setVariable(varNames.get(nameIndex++), param);
                 
+            } else if (paramPos == params.length - 1 && overflow.isEmpty() && param instanceof TYArray) {
+                
+                overflow.addAll(((TYArray) param).getInternalList());
+                
             } else if (getOverflowParameter() != null) {
                 
                 overflow.add(param);
@@ -134,7 +139,7 @@ public class TYProcedure {
             }
         }
         
-        if (varNames.size() > nameIndex) {
+        if (varNames.size() - optSize > nameIndex) {
             
             Errors.throwError("Trinity.Errors.InvalidArgumentNumberError", "Procedure takes " + getMandatoryParameters().size() + " parameter(s).", runtime);
         }
