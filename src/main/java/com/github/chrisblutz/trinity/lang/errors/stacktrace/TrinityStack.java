@@ -26,6 +26,19 @@ public class TrinityStack {
         stack.remove(0);
     }
     
+    public static int size() {
+        
+        return stack.size();
+    }
+    
+    public static void popToSize(int size) {
+        
+        while (size() > size) {
+            
+            pop();
+        }
+    }
+    
     public static StackElement[] getStack() {
         
         return stack.toArray(new StackElement[stack.size()]);

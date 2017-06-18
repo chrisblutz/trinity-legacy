@@ -33,6 +33,7 @@ public class ExpressionInterpreter {
         
         BranchingIfInstructionSet ifSet = null;
         BranchingSwitchInstructionSet switchSet = null;
+        TryInstructionSet trySet = null;
         
         for (int i = 0; i < block.size(); i++) {
             
@@ -53,6 +54,7 @@ public class ExpressionInterpreter {
             if (set instanceof BranchingIfInstructionSet) {
                 
                 switchSet = null;
+                trySet = null;
                 BranchingIfInstructionSet newIfSet = ((BranchingIfInstructionSet) set);
                 
                 if (newIfSet.getBranchToken() != Token.IF && ifSet != null) {
@@ -69,6 +71,7 @@ public class ExpressionInterpreter {
             } else if (set instanceof BranchingSwitchInstructionSet) {
                 
                 ifSet = null;
+                trySet = null;
                 BranchingSwitchInstructionSet newSwitchSet = ((BranchingSwitchInstructionSet) set);
                 
                 if (newSwitchSet.getBranchToken() != Token.SWITCH && switchSet != null) {
@@ -82,10 +85,40 @@ public class ExpressionInterpreter {
                 
                 switchSet = newSwitchSet;
                 
+            } else if (set instanceof TryInstructionSet) {
+                
+                ifSet = null;
+                switchSet = null;
+                trySet = (TryInstructionSet) set;
+                sets.add(set);
+                
+            } else if (set instanceof CatchInstructionSet) {
+                
+                if (trySet == null) {
+                    
+                    Errors.throwError("Trinity.Errors.ParseError", "All 'catch' blocks must accompany a 'try' block.", set.getFileName(), set.getLineNumber());
+                    
+                } else {
+                    
+                    trySet.setCatchSet((CatchInstructionSet) set);
+                }
+                
+            } else if (set instanceof FinallyInstructionSet) {
+                
+                if (trySet == null) {
+                    
+                    Errors.throwError("Trinity.Errors.ParseError", "All 'finally' blocks must accompany a 'try' block.", set.getFileName(), set.getLineNumber());
+                    
+                } else {
+                    
+                    trySet.setFinallySet((FinallyInstructionSet) set);
+                }
+                
             } else {
                 
                 ifSet = null;
                 switchSet = null;
+                trySet = null;
                 sets.add(set);
             }
         }
@@ -238,6 +271,49 @@ public class ExpressionInterpreter {
             }
             
             return new ReturnInstructionSet(tokens[0].getToken(), expression, fileName, fullFile, lineNumber);
+            
+        } else if (tokens[0].getToken() == Token.TRY) {
+            
+            ProcedureAction action = null;
+            
+            if (nextBlock != null) {
+                
+                action = interpret(nextBlock, environment, errorClass, method, false);
+            }
+            
+            return new TryInstructionSet(action, fileName, fullFile, lineNumber);
+            
+        } else if (tokens[0].getToken() == Token.CATCH) {
+            
+            String variable = null;
+            if (tokens.length == 2 && tokens[1].getToken() == Token.NON_TOKEN_STRING) {
+                
+                variable = tokens[1].getContents();
+                
+            } else {
+                
+                Errors.throwError("Trinity.Errors.ParseError", "All 'catch' blocks must provide a variable.", fileName, lineNumber);
+            }
+            
+            ProcedureAction action = null;
+            
+            if (nextBlock != null) {
+                
+                action = interpret(nextBlock, environment, errorClass, method, false);
+            }
+            
+            return new CatchInstructionSet(action, variable, fileName, fullFile, lineNumber);
+            
+        } else if (tokens[0].getToken() == Token.FINALLY) {
+            
+            ProcedureAction action = null;
+            
+            if (nextBlock != null) {
+                
+                action = interpret(nextBlock, environment, errorClass, method, false);
+            }
+            
+            return new FinallyInstructionSet(action, fileName, fullFile, lineNumber);
             
         } else if (TokenUtils.containsOnFirstLevel(tokens, Token.ASSIGNMENT_OPERATOR, Token.NIL_ASSIGNMENT_OPERATOR, Token.PLUS, Token.PLUS_EQUAL, Token.MINUS, Token.MINUS_EQUAL,
                 Token.MULTIPLY, Token.MULTIPLY_EQUAL, Token.DIVIDE, Token.DIVIDE_EQUAL, Token.MODULUS, Token.MODULUS_EQUAL, Token.EQUAL_TO, Token.NOT_EQUAL_TO, Token.GREATER_THAN, Token.GREATER_THAN_OR_EQUAL_TO,

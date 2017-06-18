@@ -4,6 +4,7 @@ import com.github.chrisblutz.trinity.lang.TYObject;
 import com.github.chrisblutz.trinity.lang.errors.Errors;
 import com.github.chrisblutz.trinity.lang.procedures.ProcedureAction;
 import com.github.chrisblutz.trinity.lang.types.bool.TYBoolean;
+import com.github.chrisblutz.trinity.lang.types.numeric.NumericHelper;
 import com.github.chrisblutz.trinity.lang.types.numeric.TYFloat;
 import com.github.chrisblutz.trinity.lang.types.numeric.TYInt;
 import com.github.chrisblutz.trinity.lang.types.numeric.TYLong;
@@ -99,7 +100,7 @@ class NativeInt {
                 
                 int newInt = ((TYInt) obj).getInternalInteger();
                 
-                if (!operation.contentEquals("/") || thisInt % newInt == 0) {
+                if (!operation.contentEquals("/") || modulusZero(thisInt, newInt)) {
                     
                     long result = intCalculation(thisInt, newInt, operation);
                     
@@ -149,6 +150,13 @@ class NativeInt {
         };
     }
     
+    private static boolean modulusZero(int thisInt, int newInt) {
+        
+        NumericHelper.checkDivision(thisInt, newInt);
+        
+        return thisInt % newInt == 0;
+    }
+    
     private static long intCalculation(int int1, int int2, String operation) {
         
         try {
@@ -168,6 +176,8 @@ class NativeInt {
                     return Math.multiplyExact(int1, int2);
                 
                 case "/":
+                    
+                    NumericHelper.checkDivision(int1, int2);
                     
                     return Math.floorDiv(int1, int2);
                 
@@ -208,6 +218,8 @@ class NativeInt {
             
             case "/":
                 
+                NumericHelper.checkDivision(int1, double1);
+                
                 return int1 / double1;
             
             case "%":
@@ -239,6 +251,8 @@ class NativeInt {
                 return int1 * long1;
             
             case "/":
+                
+                NumericHelper.checkDivision(int1, long1);
                 
                 return int1 / long1;
             

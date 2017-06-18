@@ -4,6 +4,7 @@ import com.github.chrisblutz.trinity.lang.TYObject;
 import com.github.chrisblutz.trinity.lang.errors.Errors;
 import com.github.chrisblutz.trinity.lang.procedures.ProcedureAction;
 import com.github.chrisblutz.trinity.lang.types.bool.TYBoolean;
+import com.github.chrisblutz.trinity.lang.types.numeric.NumericHelper;
 import com.github.chrisblutz.trinity.lang.types.numeric.TYFloat;
 import com.github.chrisblutz.trinity.lang.types.numeric.TYInt;
 import com.github.chrisblutz.trinity.lang.types.numeric.TYLong;
@@ -136,6 +137,8 @@ class NativeFloat {
             
             case "/":
                 
+                NumericHelper.checkDivision(double1, int1);
+                
                 return double1 / int1;
             
             case "%":
@@ -167,6 +170,8 @@ class NativeFloat {
                 return double1 * double2;
             
             case "/":
+                
+                NumericHelper.checkDivision(double1, double2);
                 
                 return double1 / double2;
             
