@@ -3,6 +3,7 @@ package com.github.chrisblutz.trinity.lang.types.nativeutils;
 import com.github.chrisblutz.trinity.Trinity;
 import com.github.chrisblutz.trinity.interpreter.ExpressionInterpreter;
 import com.github.chrisblutz.trinity.interpreter.InterpretEnvironment;
+import com.github.chrisblutz.trinity.interpreter.errors.TrinityErrorException;
 import com.github.chrisblutz.trinity.lang.ClassRegistry;
 import com.github.chrisblutz.trinity.lang.TYObject;
 import com.github.chrisblutz.trinity.lang.errors.Errors;
@@ -54,12 +55,7 @@ class NativeKernel {
             
             if (error.getObjectClass().isInstanceOf(ClassRegistry.getClass("Trinity.Errors.Error"))) {
                 
-                String errorMessage = TrinityNatives.cast(TYString.class, error.tyInvoke("toString", runtime, null, null)).getInternalString();
-                System.err.println(errorMessage);
-                
-                Trinity.exit(1);
-                
-                // TODO allow for catching errors
+                throw new TrinityErrorException(error);
             }
             
             return TYObject.NONE;

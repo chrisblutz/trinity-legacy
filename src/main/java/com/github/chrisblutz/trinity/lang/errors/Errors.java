@@ -2,8 +2,10 @@ package com.github.chrisblutz.trinity.lang.errors;
 
 import com.github.chrisblutz.trinity.Trinity;
 import com.github.chrisblutz.trinity.cli.CLI;
+import com.github.chrisblutz.trinity.interpreter.errors.TrinityErrorException;
 import com.github.chrisblutz.trinity.lang.TYObject;
 import com.github.chrisblutz.trinity.lang.scope.TYRuntime;
+import com.github.chrisblutz.trinity.lang.types.strings.TYString;
 import com.github.chrisblutz.trinity.natives.TrinityNatives;
 
 
@@ -45,9 +47,12 @@ public class Errors {
     
     public static void throwUncaughtJavaException(Throwable error, String file, int line) {
         
-        if (error instanceof ArithmeticException) {
+        if (error instanceof TrinityErrorException) {
             
-            throwError("Trinity.Errors.ArithmeticError", error.getMessage());
+            TYObject tyError = ((TrinityErrorException) error).getErrorObject();
+            String errorMessage = TrinityNatives.cast(TYString.class, tyError.tyInvoke("toString", new TYRuntime(), null, null)).getInternalString();
+            
+            System.err.println(errorMessage);
             
         } else {
             

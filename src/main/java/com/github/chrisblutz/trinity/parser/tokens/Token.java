@@ -30,6 +30,7 @@ public enum Token {
     
     // Loops
     IF("if"), ELSIF("elsif"), ELSE("else"), WHILE("while"), FOR("for"), SWITCH("switch"), CASE("case"), DEFAULT("default"), BREAK("break"),
+    TRY("try"), CATCH("catch"), FINALLY("finally"),
     
     // Other
     RETURN("return"),
