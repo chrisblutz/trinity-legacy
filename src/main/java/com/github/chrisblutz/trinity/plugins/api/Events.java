@@ -23,4 +23,8 @@ public class Events {
     
     // Method update events
     public static final int METHOD_UPDATE = 30;
+    
+    // Error events
+    public static final int ERROR_THROWN = 100;
+    public static final int ERROR_CAUGHT = 101;
 }

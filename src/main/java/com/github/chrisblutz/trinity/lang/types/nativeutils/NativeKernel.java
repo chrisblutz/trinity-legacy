@@ -16,6 +16,8 @@ import com.github.chrisblutz.trinity.lang.types.strings.TYString;
 import com.github.chrisblutz.trinity.natives.TrinityNatives;
 import com.github.chrisblutz.trinity.parser.TrinityParser;
 import com.github.chrisblutz.trinity.parser.blocks.Block;
+import com.github.chrisblutz.trinity.plugins.PluginLoader;
+import com.github.chrisblutz.trinity.plugins.api.Events;
 import com.github.chrisblutz.trinity.utils.FileUtils;
 
 import java.io.File;
@@ -55,6 +57,7 @@ class NativeKernel {
             
             if (error.getObjectClass().isInstanceOf(ClassRegistry.getClass("Trinity.Errors.Error"))) {
                 
+                PluginLoader.triggerEvent(Events.ERROR_THROWN, error);
                 throw new TrinityErrorException(error);
             }
             

@@ -6,6 +6,8 @@ import com.github.chrisblutz.trinity.lang.errors.Errors;
 import com.github.chrisblutz.trinity.lang.errors.stacktrace.TrinityStack;
 import com.github.chrisblutz.trinity.lang.procedures.ProcedureAction;
 import com.github.chrisblutz.trinity.lang.scope.TYRuntime;
+import com.github.chrisblutz.trinity.plugins.PluginLoader;
+import com.github.chrisblutz.trinity.plugins.api.Events;
 
 import java.io.File;
 
@@ -74,6 +76,8 @@ public class TryInstructionSet extends ChainedInstructionSet {
             // but since this instruction set exited with an error, its
             // corresponding stack elements were not removed.
             TrinityStack.popToSize(stackDepth);
+            
+            PluginLoader.triggerEvent(Events.ERROR_CAUGHT, e.getErrorObject(), getFileName(), getLineNumber());
             
             CatchInstructionSet catchSet = getCatchSet();
             
