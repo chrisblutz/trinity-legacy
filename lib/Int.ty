@@ -17,3 +17,6 @@ module Trinity
         def native toHexString
 
         def native compareTo(other)
+
+        def next
+            this + 1

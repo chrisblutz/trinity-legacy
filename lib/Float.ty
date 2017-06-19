@@ -15,3 +15,6 @@ module Trinity
         def native toString
 
         def native compareTo(other)
+
+        def next
+            this + 1
