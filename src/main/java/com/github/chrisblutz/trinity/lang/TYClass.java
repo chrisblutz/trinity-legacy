@@ -9,10 +9,7 @@ import com.github.chrisblutz.trinity.natives.NativeStorage;
 import com.github.chrisblutz.trinity.plugins.PluginLoader;
 import com.github.chrisblutz.trinity.plugins.api.Events;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 /**
@@ -32,6 +29,8 @@ public class TYClass {
     private Map<String, TYObject> variables = new HashMap<>();
     private List<ProcedureAction> initializationActions = new ArrayList<>();
     private boolean initialized = false;
+    
+    private List<String> callableMethods = new ArrayList<>();
     
     private String[] leadingComments = null;
     
@@ -62,6 +61,20 @@ public class TYClass {
         }
         
         return tree;
+    }
+    
+    private Set<String> compileCallableMethods() {
+        
+        Set<String> methods = new LinkedHashSet<>();
+        
+        methods.addAll(getMethodNames());
+        
+        if (superclass != null) {
+            
+            methods.addAll(superclass.compileCallableMethods());
+        }
+        
+        return methods;
     }
     
     public boolean hasVariable(String name) {
@@ -344,6 +357,16 @@ public class TYClass {
         return getMethods().getOrDefault(name, null);
     }
     
+    public Collection<String> getMethodNames() {
+        
+        return methods.keySet();
+    }
+    
+    public boolean respondsTo(String method) {
+        
+        return callableMethods.contains(method);
+    }
+    
     public String[] getLeadingComments() {
         
         return leadingComments;
@@ -412,5 +435,10 @@ public class TYClass {
             inheritanceTree = compileInheritanceTree();
             inheritanceTree.add(this);
         }
+        
+        
+        Set<String> callables = compileCallableMethods();
+        callableMethods = new ArrayList<>(callables);
+        Collections.sort(callableMethods);
     }
 }
