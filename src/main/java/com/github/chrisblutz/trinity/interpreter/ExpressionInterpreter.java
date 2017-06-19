@@ -352,6 +352,10 @@ public class ExpressionInterpreter {
                 return interpretUnaryNegation(errorClass, method, fileName, fullFile, lineNumber, tokens, nextBlock);
             }
             
+        } else if (TokenUtils.containsOnFirstLevel(tokens, Token.DOUBLE_DOT, Token.TRIPLE_DOT)) {
+            
+            return interpretRange(errorClass, method, fileName, fullFile, lineNumber, tokens, nextBlock);
+            
         } else if (nextBlock != null) {
             
             List<String> mandatoryParams = new ArrayList<>();
@@ -912,6 +916,25 @@ public class ExpressionInterpreter {
         return new ChainedInstructionSet(evaluators.toArray(new ObjectEvaluator[evaluators.size()]), fileName, fullFile, lineNumber);
     }
     
+    private static ChainedInstructionSet interpretRange(String errorClass, String method, String fileName, File fullFile, int lineNumber, TokenInfo[] tokens, Block nextBlock) {
+        
+        ChainedInstructionSet[] sets = new ChainedInstructionSet[2];
+        Token delimiter = Token.DOUBLE_DOT;
+        
+        if (TokenUtils.containsOnFirstLevel(tokens, Token.DOUBLE_DOT)) {
+            
+            delimiter = Token.DOUBLE_DOT;
+            sets = splitByToken(errorClass, method, fileName, fullFile, lineNumber, tokens, Token.DOUBLE_DOT, nextBlock);
+            
+        } else if (TokenUtils.containsOnFirstLevel(tokens, Token.TRIPLE_DOT)) {
+            
+            delimiter = Token.TRIPLE_DOT;
+            sets = splitByToken(errorClass, method, fileName, fullFile, lineNumber, tokens, Token.TRIPLE_DOT, nextBlock);
+        }
+        
+        return new ChainedInstructionSet(new ObjectEvaluator[]{new DoubleSetInstructionSet(DoubleSetInstructionSet.TokenSet.RANGE, sets[0], sets[1], delimiter, fileName, fullFile, lineNumber)}, fileName, fullFile, lineNumber);
+    }
+    
     private static class SplitResults {
         
         private TokenInfo[] tokens;
@@ -932,7 +955,6 @@ public class ExpressionInterpreter {
             
             return value;
         }
-        
     }
     
     private static SplitResults splitIntoTokensAndValue(String errorClass, String method, String fileName, File fullFile, int lineNumber, TokenInfo[] tokens, Token delimiter, Block nextBlock) {
