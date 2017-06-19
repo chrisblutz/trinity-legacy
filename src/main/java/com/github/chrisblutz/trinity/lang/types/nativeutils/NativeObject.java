@@ -3,6 +3,8 @@ package com.github.chrisblutz.trinity.lang.types.nativeutils;
 import com.github.chrisblutz.trinity.lang.TYClass;
 import com.github.chrisblutz.trinity.lang.TYObject;
 import com.github.chrisblutz.trinity.lang.procedures.DefaultProcedures;
+import com.github.chrisblutz.trinity.lang.procedures.ProcedureAction;
+import com.github.chrisblutz.trinity.lang.scope.TYRuntime;
 import com.github.chrisblutz.trinity.lang.types.TYClassObject;
 import com.github.chrisblutz.trinity.lang.types.TYStaticClassObject;
 import com.github.chrisblutz.trinity.lang.types.bool.TYBoolean;
@@ -43,6 +45,15 @@ class NativeObject {
             } else {
                 
                 return TYBoolean.FALSE;
+            }
+        });
+        TrinityNatives.registerMethod("Trinity.Object", "respondsTo", false, new String[]{"method"}, null, null, null, new ProcedureAction() {
+            
+            @Override
+            public TYObject onAction(TYRuntime runtime, TYObject thisObj, TYObject... params) {
+                
+                String method = TrinityNatives.toString(runtime.getVariable("method"), runtime);
+                return TrinityNatives.getObjectFor(thisObj.getObjectClass().respondsTo(method));
             }
         });
     }
