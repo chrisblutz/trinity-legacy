@@ -16,7 +16,7 @@ module Trinity
 
         def each(&block)
             if !getBegin().respondsTo('next')
-                throw(Trinity.Errors.InvalidTypeError.new("Instances of '" + getBegin().getClass() + "' cannot be used to iterate over a " + getClass() + " instance because it does not define a 'next()' method."))
+                throw(Trinity.Errors.InvalidTypeError.new("Instances of '" + getBegin().getClass() + "' cannot be used to iterate over a " + getClass() + " instance because '" + getBegin().getClass() + "' does not define a 'next()' method."))
 
             if block?
                 next = getBegin()
