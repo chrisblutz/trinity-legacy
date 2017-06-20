@@ -156,7 +156,7 @@ public class MethodInterpreter extends DeclarationInterpreter {
                     
                 } else {
                     
-                    TrinityNatives.doLoad(env.getEnvironmentString() + "." + name, secureMethod, containerClass, fileName, line.getLineNumber(), env.getScope());
+                    TrinityNatives.doLoad(env.getEnvironmentString() + "." + name, secureMethod, containerClass, fileName, line.getLineNumber(), env.getScope(), line.getLeadingComments());
                 }
             }
         }

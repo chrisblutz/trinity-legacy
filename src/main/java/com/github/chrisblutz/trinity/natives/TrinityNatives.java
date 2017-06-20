@@ -36,6 +36,7 @@ public class TrinityNatives {
     private static Map<String, String> pendingLoadFiles = new HashMap<>();
     private static Map<String, Integer> pendingLoadLines = new HashMap<>();
     private static Map<String, Scope> pendingScope = new HashMap<>();
+    private static Map<String, String[]> pendingLeadingComments = new HashMap<>();
     
     private static Map<String, ProcedureAction> globals = new HashMap<>();
     
@@ -143,11 +144,11 @@ public class TrinityNatives {
         }
     }
     
-    public static void doLoad(String name, boolean secureMethod, TYClass current, String fileName, int lineNumber, Scope scope) {
+    public static void doLoad(String name, boolean secureMethod, TYClass current, String fileName, int lineNumber, Scope scope, String[] leadingComments) {
         
         if (methods.containsKey(name)) {
             
-            addToClass(name, secureMethod, current, fileName, lineNumber, scope);
+            addToClass(name, secureMethod, current, fileName, lineNumber, scope, leadingComments);
             
         } else {
             
@@ -156,15 +157,17 @@ public class TrinityNatives {
             pendingLoadFiles.put(name, fileName);
             pendingLoadLines.put(name, lineNumber);
             pendingScope.put(name, scope);
+            pendingLeadingComments.put(name, leadingComments);
         }
     }
     
-    private static void addToClass(String name, boolean secureMethod, TYClass current, String fileName, int lineNumber, Scope scope) {
+    private static void addToClass(String name, boolean secureMethod, TYClass current, String fileName, int lineNumber, Scope scope, String[] leadingComments) {
         
         if (methods.containsKey(name)) {
             
             TYMethod method = methods.get(name);
             method.setScope(scope);
+            method.setLeadingComments(leadingComments);
             method.setSecureMethod(secureMethod);
             current.registerMethod(method);
             
@@ -188,12 +191,13 @@ public class TrinityNatives {
             
             if (methods.containsKey(str)) {
                 
-                addToClass(str, pendingSecure.get(str), pendingLoads.get(str), pendingLoadFiles.get(str), pendingLoadLines.get(str), pendingScope.get(str));
+                addToClass(str, pendingSecure.get(str), pendingLoads.get(str), pendingLoadFiles.get(str), pendingLoadLines.get(str), pendingScope.get(str), pendingLeadingComments.get(str));
                 pendingLoads.remove(str);
                 pendingSecure.remove(str);
                 pendingLoadFiles.remove(str);
                 pendingLoadLines.remove(str);
                 pendingScope.remove(str);
+                pendingLeadingComments.remove(str);
             }
         }
     }
