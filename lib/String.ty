@@ -33,8 +33,14 @@ module Trinity
         def isEmpty
             length() == 0
 
-        def [](index)
-            chars()[index]
+        def [](obj)
+            if obj.isInstance(Range)
+                str = ''
+                obj.each() |e|
+                    str += chars()[e]
+                str
+            else
+                chars()[obj]
 
         def *(other)
             if other.isNumeric()
