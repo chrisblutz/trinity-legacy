@@ -206,7 +206,7 @@ public class TrinityNatives {
         
         for (String str : pendingLoads.keySet()) {
             
-            Errors.throwSyntaxErrorDelayExit("Trinity.Errors.ParseError", "Native method " + str + " not found.", pendingLoadFiles.get(str), pendingLoadLines.get(str));
+            Errors.throwSyntaxErrorDelayExit("Trinity.Errors.ParseError", "Native method " + str + " not implemented.", pendingLoadFiles.get(str), pendingLoadLines.get(str));
         }
         
         Errors.exit();
