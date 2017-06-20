@@ -96,7 +96,7 @@ public class ExpressionInterpreter {
                 
                 if (trySet == null) {
                     
-                    Errors.throwError("Trinity.Errors.ParseError", "All 'catch' blocks must accompany a 'try' block.", set.getFileName(), set.getLineNumber());
+                    Errors.throwSyntaxError("Trinity.Errors.ParseError", "All 'catch' blocks must accompany a 'try' block.", set.getFileName(), set.getLineNumber());
                     
                 } else {
                     
@@ -107,7 +107,7 @@ public class ExpressionInterpreter {
                 
                 if (trySet == null) {
                     
-                    Errors.throwError("Trinity.Errors.ParseError", "All 'finally' blocks must accompany a 'try' block.", set.getFileName(), set.getLineNumber());
+                    Errors.throwSyntaxError("Trinity.Errors.ParseError", "All 'finally' blocks must accompany a 'try' block.", set.getFileName(), set.getLineNumber());
                     
                 } else {
                     
@@ -254,7 +254,7 @@ public class ExpressionInterpreter {
                 
             } else {
                 
-                Errors.throwError("Trinity.Errors.ParseError", "For loops require 3 components.", fileName, lineNumber);
+                Errors.throwSyntaxError("Trinity.Errors.ParseError", "For loops require 3 components.", fileName, lineNumber);
             }
             
         } else if (tokens[0].getToken() == Token.RETURN) {
@@ -292,7 +292,7 @@ public class ExpressionInterpreter {
                 
             } else {
                 
-                Errors.throwError("Trinity.Errors.ParseError", "All 'catch' blocks must provide a variable.", fileName, lineNumber);
+                Errors.throwSyntaxError("Trinity.Errors.ParseError", "All 'catch' blocks must provide a variable.", fileName, lineNumber);
             }
             
             ProcedureAction action = null;
@@ -627,7 +627,7 @@ public class ExpressionInterpreter {
         
         if (level != 0) {
             
-            Errors.throwError("Trinity.Errors.SyntaxError", "Unmatched brackets.", fileName, lineNumber);
+            Errors.throwSyntaxError("Trinity.Errors.SyntaxError", "Unmatched brackets.", fileName, lineNumber);
         }
         
         if (previousNonToken != null) {

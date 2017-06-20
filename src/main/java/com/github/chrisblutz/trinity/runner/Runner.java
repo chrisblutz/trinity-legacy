@@ -88,7 +88,7 @@ public class Runner {
             
             if (ClassRegistry.getMainClasses().size() == 0) {
                 
-                Errors.throwError("Trinity.Errors.MethodNotFoundError", "No main method found in found in loaded files.", null, 0);
+                Errors.throwSyntaxError("Trinity.Errors.MethodNotFoundError", "No main method found in found in loaded files.", null, 0);
             }
             
             long startMillis = System.currentTimeMillis();
@@ -105,7 +105,7 @@ public class Runner {
                     
                 } else {
                     
-                    Errors.throwError("Trinity.Errors.ClassNotFoundError", "Class '" + mainClass + "' not found.", null, 0);
+                    Errors.throwSyntaxError("Trinity.Errors.ClassNotFoundError", "Class '" + mainClass + "' not found.", null, 0);
                 }
                 
             } else {
@@ -116,7 +116,7 @@ public class Runner {
                     
                 } else {
                     
-                    Errors.throwError("Trinity.Errors.MethodNotFoundError", "No 'main' methods found.", null, 0);
+                    Errors.throwSyntaxError("Trinity.Errors.MethodNotFoundError", "No 'main' methods found.", null, 0);
                 }
             }
             

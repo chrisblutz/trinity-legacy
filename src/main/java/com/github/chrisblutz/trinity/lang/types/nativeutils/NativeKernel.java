@@ -97,7 +97,7 @@ class NativeKernel {
                 
             } else {
                 
-                Errors.throwError("Trinity.Errors.InvalidTypeError", "Kernel.eval requires its args argument to be an array.", runtime);
+                Errors.throwError("Trinity.Errors.InvalidTypeError", runtime, "Kernel.eval requires its args argument to be an array.");
                 argsMap = new TYMap(new HashMap<>());
             }
             

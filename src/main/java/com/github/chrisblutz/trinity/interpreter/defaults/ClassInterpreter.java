@@ -82,7 +82,7 @@ public class ClassInterpreter extends DeclarationInterpreter {
                     
                 } else {
                     
-                    Errors.throwError("Trinity.Errors.ParseError", "Native classes are not currently supported.", fileName, line.getLineNumber());
+                    Errors.throwSyntaxError("Trinity.Errors.ParseError", "Native classes are not currently supported.", fileName, line.getLineNumber());
                 }
             }
         }

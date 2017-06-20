@@ -51,7 +51,7 @@ public class TYObject {
                 
                 if (superClass == null) {
                     
-                    Errors.throwError("Trinity.Errors.InheritanceError", "Superclass does not exist.", runtime);
+                    Errors.throwError("Trinity.Errors.InheritanceError", runtime, "Superclass does not exist.");
                     break;
                 }
             }

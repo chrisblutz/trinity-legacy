@@ -1,5 +1,5 @@
 module Trinity
     module Errors
         class StackOverflowError << Error
-            def initialize(message = '')
-                super.initialize(message)
+            def initialize
+                super.initialize('')

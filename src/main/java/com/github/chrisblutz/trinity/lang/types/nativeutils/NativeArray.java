@@ -84,7 +84,7 @@ class NativeArray {
             
             if (index >= thisList.size() || index < 0) {
                 
-                Errors.throwError("Trinity.Errors.IndexOutOfBoundsError", "Index: " + index + ", Size: " + thisList.size(), runtime);
+                Errors.throwError("Trinity.Errors.IndexOutOfBoundsError", runtime, "Index: " + index + ", Size: " + thisList.size());
             }
             
             return thisList.get(index);

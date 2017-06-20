@@ -207,7 +207,7 @@ public class TYClass {
                     
                     if (newRuntime.isReturning()) {
                         
-                        Errors.throwError("Trinity.Errors.ReturnError", "Cannot return a value from a constructor.", runtime);
+                        Errors.throwError("Trinity.Errors.ReturnError", runtime, "Cannot return a value from a constructor.");
                         
                     } else if (obj.getObjectClass().isInstanceOf(ClassRegistry.getClass("Trinity.Map")) || obj.getObjectClass().isInstanceOf(ClassRegistry.getClass("Trinity.Procedure"))) {
                         
@@ -218,7 +218,7 @@ public class TYClass {
                     
                 } else {
                     
-                    Errors.throwError("Trinity.Errors.ScopeError", "Constructor cannot be accessed from this context because it is marked '" + scope.toString() + "'.", runtime);
+                    Errors.throwError("Trinity.Errors.ScopeError", runtime, "Constructor cannot be accessed from this context because it is marked '" + scope.toString() + "'.");
                     
                     return TYObject.NONE;
                 }
@@ -251,7 +251,7 @@ public class TYClass {
                     
                     if (thisObj == TYObject.NONE) {
                         
-                        Errors.throwError("Trinity.Errors.ScopeError", "Instance method '" + methodName + "' cannot be called from a static context.", runtime);
+                        Errors.throwError("Trinity.Errors.ScopeError", runtime, "Instance method '" + methodName + "' cannot be called from a static context.");
                     }
                     
                     newRuntime.setVariable("this", thisObj);
@@ -269,7 +269,7 @@ public class TYClass {
                 
             } else {
                 
-                Errors.throwError("Trinity.Errors.ScopeError", "Method '" + methodName + "' cannot be accessed from this context because it is marked '" + scope.toString() + "'.", runtime);
+                Errors.throwError("Trinity.Errors.ScopeError", runtime, "Method '" + methodName + "' cannot be accessed from this context because it is marked '" + scope.toString() + "'.");
                 
                 return TYObject.NONE;
             }
@@ -284,7 +284,7 @@ public class TYClass {
             
         } else {
             
-            Errors.throwError("Trinity.Errors.MethodNotFoundError", "No method '" + methodName + "' found in '" + originClass.getName() + "'.", runtime);
+            Errors.throwError("Trinity.Errors.MethodNotFoundError", runtime, "No method '" + methodName + "' found in '" + originClass.getName() + "'.");
         }
         
         return TYObject.NONE;

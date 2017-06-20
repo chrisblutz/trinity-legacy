@@ -98,7 +98,7 @@ public class AssignmentInstructionSet extends ObjectEvaluator {
         
         if (opObj == TYObject.NONE) {
             
-            Errors.throwError("Trinity.Errors.AssignmentError", "Right-hand side of assignment expression must return a value.", runtime);
+            Errors.throwError("Trinity.Errors.AssignmentError", runtime, "Right-hand side of assignment expression must return a value.");
         }
         
         if (getAssignmentTokens().length == 1 && getAssignmentTokens()[0].getToken() == Token.NON_TOKEN_STRING) {

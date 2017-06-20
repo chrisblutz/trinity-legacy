@@ -91,7 +91,7 @@ public class MethodInterpreter extends DeclarationInterpreter {
                     
                 } else {
                     
-                    Errors.throwError("Trinity.Errors.ScopeError", "Methods must be declared within a class.", fileName, line.getLineNumber());
+                    Errors.throwSyntaxError("Trinity.Errors.ScopeError", "Methods must be declared within a class.", fileName, line.getLineNumber());
                 }
                 
                 if (!nativeMethod) {

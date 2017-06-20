@@ -170,7 +170,7 @@ public class TrinityNatives {
             
         } else {
             
-            Errors.throwError("Trinity.Errors.ParseError", "Native method " + name + " not found.", fileName, lineNumber);
+            Errors.throwSyntaxError("Trinity.Errors.ParseError", "Native method " + name + " not found.", fileName, lineNumber);
         }
     }
     
@@ -260,7 +260,7 @@ public class TrinityNatives {
             return getArrayFor((Object[]) obj);
         }
         
-        Errors.throwError("Trinity.Errors.NativeTypeError", "Trinity does not have native type-conversion utilities for " + obj.getClass() + ".", null, 0);
+        Errors.throwSyntaxError("Trinity.Errors.NativeTypeError", "Trinity does not have native type-conversion utilities for " + obj.getClass() + ".", null, 0);
         
         return TYObject.NIL;
     }
@@ -340,7 +340,7 @@ public class TrinityNatives {
             
         } else {
             
-            Errors.throwError("Trinity.Errors.ClassNotFoundError", "Class " + className + " does not exist.", runtime);
+            Errors.throwError("Trinity.Errors.ClassNotFoundError", runtime, "Class " + className + " does not exist.");
         }
         
         return TYObject.NIL;

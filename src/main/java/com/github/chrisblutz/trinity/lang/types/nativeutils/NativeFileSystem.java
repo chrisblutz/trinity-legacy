@@ -40,14 +40,14 @@ class NativeFileSystem {
                     
                     if (f.getParentFile().mkdirs()) {
                         
-                        Errors.throwError("Trinity.Errors.IOError", "Unable to create parent directories.", runtime);
+                        Errors.throwError("Trinity.Errors.IOError", runtime, "Unable to create parent directories.");
                     }
                 }
                 return TYBoolean.valueFor(f.createNewFile());
                 
             } catch (Exception e) {
                 
-                Errors.throwError("Trinity.Errors.IOError", "An error occurred creating a file at '" + ((TYString) object).getInternalString() + "'.", runtime);
+                Errors.throwError("Trinity.Errors.IOError", runtime, "An error occurred creating a file at '" + ((TYString) object).getInternalString() + "'.");
             }
             
             return TYBoolean.FALSE;

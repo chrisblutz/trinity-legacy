@@ -84,7 +84,7 @@ public class TrinityInterpreter {
                     
                     if (!env.isInitializable() && env.hasElements()) {
                         
-                        Errors.throwError("Trinity.Errors.SyntaxError", "Initialization code prohibited here.", block.getFileName(), line.getLineNumber());
+                        Errors.throwSyntaxError("Trinity.Errors.SyntaxError", "Initialization code prohibited here.", block.getFileName(), line.getLineNumber());
                     }
                     
                     current.add(item);

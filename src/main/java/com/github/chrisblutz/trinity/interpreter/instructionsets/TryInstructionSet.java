@@ -88,7 +88,7 @@ public class TryInstructionSet extends ChainedInstructionSet {
                 
             } else {
                 
-                Errors.throwError("Trinity.Errors.ParseError", "All 'try' blocks must be accompanied by a 'catch' block.", runtime);
+                Errors.throwError("Trinity.Errors.ParseError", runtime, "All 'try' blocks must be accompanied by a 'catch' block.");
             }
             
         } finally {

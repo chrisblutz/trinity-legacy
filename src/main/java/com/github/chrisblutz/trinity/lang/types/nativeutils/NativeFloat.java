@@ -50,7 +50,7 @@ class NativeFloat {
                 
             } else {
                 
-                Errors.throwError("Trinity.Errors.InvalidTypeError", "Cannot compare types " + thisObj.getObjectClass().getName() + " and " + obj.getObjectClass().getName() + ".", runtime);
+                Errors.throwError("Trinity.Errors.InvalidTypeError", runtime, "Cannot compare types " + thisObj.getObjectClass().getName() + " and " + obj.getObjectClass().getName() + ".");
             }
             
             return new TYInt(-1);
@@ -110,7 +110,7 @@ class NativeFloat {
                 
             } else {
                 
-                Errors.throwError("Trinity.Errors.InvalidTypeError", "Invalid type passed to '" + operation + "'.", runtime);
+                Errors.throwError("Trinity.Errors.InvalidTypeError", runtime, "Invalid type passed to '" + operation + "'.");
                 
                 returnVal = TYObject.NONE;
             }

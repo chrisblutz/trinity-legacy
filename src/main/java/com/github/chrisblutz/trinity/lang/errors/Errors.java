@@ -14,18 +14,18 @@ import com.github.chrisblutz.trinity.natives.TrinityNatives;
  */
 public class Errors {
     
-    public static void throwError(String errorClass, String message) {
+    public static void throwError(String errorClass, Object... args) {
         
-        throwError(errorClass, message, new TYRuntime());
+        throwError(errorClass, new TYRuntime(), args);
     }
     
-    public static void throwError(String errorClass, String message, TYRuntime runtime) {
+    public static void throwError(String errorClass, TYRuntime runtime, Object... args) {
         
-        TYObject error = TrinityNatives.newInstance(errorClass, runtime, TrinityNatives.getObjectFor(message));
+        TYObject error = constructError(errorClass, runtime, args);
         TrinityNatives.call("Trinity.Kernel", "throw", runtime, TYObject.NONE, error);
     }
     
-    public static void throwError(String errorClass, String message, String filename, int line) {
+    public static void throwSyntaxError(String errorClass, String message, String filename, int line) {
         
         // Mimic toString() method of Error class
         String str = errorClass;
@@ -45,10 +45,30 @@ public class Errors {
         Trinity.exit(1);
     }
     
-    public static void throwUnrecoverable(String errorClass, String message) {
+    public static void throwUnrecoverable(String errorClass, Object... args) {
         
-        TYObject error = TrinityNatives.newInstance(errorClass, new TYRuntime(), TrinityNatives.getObjectFor(message));
+        TYObject error = constructError(errorClass, new TYRuntime(), args);
         throwUncaughtJavaException(new TrinityErrorException(error), null, 0);
+    }
+    
+    private static TYObject constructError(String errorClass, TYRuntime runtime, Object... args) {
+        
+        TYObject[] tyArgs = new TYObject[args.length];
+        for (int i = 0; i < args.length; i++) {
+            
+            Object o = args[i];
+            
+            if (o instanceof TYObject) {
+                
+                tyArgs[i] = (TYObject) o;
+                
+            } else {
+                
+                tyArgs[i] = TrinityNatives.getObjectFor(o);
+            }
+        }
+        
+        return TrinityNatives.newInstance(errorClass, runtime, tyArgs);
     }
     
     public static void throwUncaughtJavaException(Throwable error, String file, int line) {
@@ -62,7 +82,7 @@ public class Errors {
             
         } else if (error instanceof StackOverflowError) {
             
-            throwUnrecoverable("Trinity.Errors.StackOverflowError", "");
+            throwUnrecoverable("Trinity.Errors.StackOverflowError");
             
         } else {
             
