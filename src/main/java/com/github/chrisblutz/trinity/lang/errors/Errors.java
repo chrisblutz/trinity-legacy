@@ -27,6 +27,13 @@ public class Errors {
     
     public static void throwSyntaxError(String errorClass, String message, String filename, int line) {
         
+        throwSyntaxErrorDelayExit(errorClass, message, filename, line);
+        
+        exit();
+    }
+    
+    public static void throwSyntaxErrorDelayExit(String errorClass, String message, String filename, int line) {
+        
         // Mimic toString() method of Error class
         String str = errorClass;
         
@@ -41,6 +48,9 @@ public class Errors {
         }
         
         System.err.println(str);
+    }
+    
+    public static void exit() {
         
         Trinity.exit(1);
     }

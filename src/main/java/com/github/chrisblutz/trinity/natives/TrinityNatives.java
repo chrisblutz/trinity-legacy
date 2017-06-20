@@ -202,6 +202,16 @@ public class TrinityNatives {
         }
     }
     
+    public static void checkAllLoaded() {
+        
+        for (String str : pendingLoads.keySet()) {
+            
+            Errors.throwSyntaxErrorDelayExit("Trinity.Errors.ParseError", "Native method " + str + " not found.", pendingLoadFiles.get(str), pendingLoadLines.get(str));
+        }
+        
+        Errors.exit();
+    }
+    
     public static ProcedureAction getGlobalProcedureAction(String name) {
         
         return globals.get(name);

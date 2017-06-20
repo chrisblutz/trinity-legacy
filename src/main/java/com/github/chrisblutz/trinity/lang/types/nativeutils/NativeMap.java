@@ -36,7 +36,7 @@ class NativeMap {
             
             return remove(TrinityNatives.cast(TYMap.class, thisObj), runtime.getVariable("key"), runtime);
         });
-        TrinityNatives.registerMethod("Trinity.Array", "clear", false, null, null, null, null, (runtime, thisObj, params) -> {
+        TrinityNatives.registerMethod("Trinity.Map", "clear", false, null, null, null, null, (runtime, thisObj, params) -> {
             
             TrinityNatives.cast(TYMap.class, thisObj).getInternalMap().clear();
             

@@ -2,7 +2,7 @@ module Trinity
     class System
         def native static currentTimeMillis
 
-        def native getEnv(name = nil)
+        def native getEnvironment(name = nil)
 
         def native loadProperties
 
