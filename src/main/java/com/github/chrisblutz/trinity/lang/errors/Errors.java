@@ -45,6 +45,12 @@ public class Errors {
         Trinity.exit(1);
     }
     
+    public static void throwUnrecoverable(String errorClass, String message) {
+        
+        TYObject error = TrinityNatives.newInstance(errorClass, new TYRuntime(), TrinityNatives.getObjectFor(message));
+        throwUncaughtJavaException(new TrinityErrorException(error), null, 0);
+    }
+    
     public static void throwUncaughtJavaException(Throwable error, String file, int line) {
         
         if (error instanceof TrinityErrorException) {
@@ -53,6 +59,10 @@ public class Errors {
             String errorMessage = TrinityNatives.cast(TYString.class, tyError.tyInvoke("toString", new TYRuntime(), null, null)).getInternalString();
             
             System.err.println(errorMessage);
+            
+        } else if (error instanceof StackOverflowError) {
+            
+            throwUnrecoverable("Trinity.Errors.StackOverflowError", "");
             
         } else {
             
