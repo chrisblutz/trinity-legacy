@@ -209,7 +209,10 @@ public class TrinityNatives {
             Errors.throwSyntaxErrorDelayExit("Trinity.Errors.ParseError", "Native method " + str + " not implemented.", pendingLoadFiles.get(str), pendingLoadLines.get(str));
         }
         
-        Errors.exit();
+        if (pendingLoads.size() > 0) {
+            
+            Errors.exit();
+        }
     }
     
     public static ProcedureAction getGlobalProcedureAction(String name) {
