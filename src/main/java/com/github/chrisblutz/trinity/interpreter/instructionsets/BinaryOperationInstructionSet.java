@@ -66,7 +66,14 @@ public class BinaryOperationInstructionSet extends ObjectEvaluator {
             
             case MULTIPLY:
                 
-                return thisObj.tyInvoke("*", runtime, null, null, opObj);
+                if (opObj instanceof TYString) {
+                    
+                    return opObj.tyInvoke("*", runtime, null, null, thisObj);
+                    
+                } else {
+                    
+                    return thisObj.tyInvoke("*", runtime, null, null, opObj);
+                }
             
             case DIVIDE:
                 

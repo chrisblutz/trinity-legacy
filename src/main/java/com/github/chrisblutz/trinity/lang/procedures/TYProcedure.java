@@ -5,6 +5,7 @@ import com.github.chrisblutz.trinity.lang.errors.Errors;
 import com.github.chrisblutz.trinity.lang.scope.TYRuntime;
 import com.github.chrisblutz.trinity.lang.types.arrays.TYArray;
 import com.github.chrisblutz.trinity.lang.types.procedures.TYProcedureObject;
+import com.github.chrisblutz.trinity.utils.ArrayUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -125,7 +126,7 @@ public class TYProcedure {
                 
                 runtime.setVariable(varNames.get(nameIndex++), param);
                 
-            } else if (paramPos == params.length - 1 && overflow.isEmpty() && param instanceof TYArray) {
+            } else if (paramPos == params.length - 1 && overflow.isEmpty() && param instanceof TYArray && !ArrayUtils.isSolid((TYArray) param, runtime)) {
                 
                 overflow.addAll(((TYArray) param).getInternalList());
                 

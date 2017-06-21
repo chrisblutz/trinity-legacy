@@ -14,8 +14,8 @@ module Trinity
 
         def native add(value)
 
-        def addAll(array)
-            array.each() |e|
+        def addAll(...obj)
+            obj.each() |e|
                 add(e)
 
         def native insert(index, value)
@@ -66,12 +66,30 @@ module Trinity
                     return false
             return true
 
+        def reverse
+            array = []
+            for i = length() - 1; i >= 0; i -= 1
+                array.add(this[i])
+            array
+
+        def solidify
+            @solid = true
+
+        def liquefy
+            @solid = true
+
+        def isSolid
+            @solid ||= false
+            @solid
+
         def native static copyOf(array)
 
-        def static forSize(size)
+        def static forSize(size, value = nil)
             array = []
+            if size < 0
+                throw(Trinity.Errors.InvalidArgumentError.new('Size should be a positive integer (or 0)'))
             if size == 0
                 return array
             (1..size).each() |e|
-                array.add(nil)
+                array.add(value)
             array

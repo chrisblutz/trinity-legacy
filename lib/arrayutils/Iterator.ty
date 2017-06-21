@@ -16,7 +16,10 @@ module Trinity
             def iterate(&block)
                 @i = 0
                 while hasNext()
-                    block.call(next())
+                    obj = next()
+                    if obj.isInstance(Array)
+                        obj.solidify
+                    block.call(obj)
 
             def reset
                 @i = 0
