@@ -67,3 +67,11 @@ module Trinity
             return true
 
         def native static copyOf(array)
+
+        def static forSize(size)
+            array = []
+            if size == 0
+                return array
+            (1..size).each() |e|
+                array.add(nil)
+            array
