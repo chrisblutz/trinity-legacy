@@ -2,17 +2,34 @@ import Trinity.ArrayUtils
 
 module Trinity
     class Array
-        def native +(other)
+        def +(other)
+            newArray = copyOf(this)
+            if other.isInstance(Array)
+                newArray.addAll(other)
+            else
+                newArray.add(other)
+            newArray
 
         def native [](index)
 
         def native add(value)
 
+        def addAll(array)
+            array.each() |e|
+                add(e)
+
         def native insert(index, value)
 
         def native remove(index)
 
-        def native removeObject(value)
+        def removeObject(value)
+            flag = false
+            for i = 0; i < length(); i += 1
+                if this[i] == value
+                    remove(i)
+                    i -= 1
+                    flag = true
+            flag
 
         def native clear
 
@@ -48,3 +65,5 @@ module Trinity
                 if this[i] != other[i]
                     return false
             return true
+
+        def native static copyOf(array)
