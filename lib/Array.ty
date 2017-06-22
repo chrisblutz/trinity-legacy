@@ -36,7 +36,10 @@ module Trinity
         def native length
 
         def toString
-            '[' + join(', ') + ']'
+            str = '[' + join(', ') + ']'
+            if isSolid()
+                str += ' (solid)'
+            str
 
         def each(&block)
             iterator().iterate(block)
@@ -76,7 +79,7 @@ module Trinity
             @solid = true
 
         def liquefy
-            @solid = true
+            @solid = false
 
         def isSolid
             @solid ||= false
