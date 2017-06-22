@@ -146,7 +146,7 @@ public class MethodInterpreter extends DeclarationInterpreter {
                         action = (runtime, thisObj, params) -> TYObject.NONE;
                     }
                     
-                    TYProcedure procedure = new TYProcedure(action, mandatoryParams, optParams, blockParam, overflowParam);
+                    TYProcedure procedure = new TYProcedure(action, mandatoryParams, optParams, blockParam, overflowParam, true);
                     
                     TYMethod method = new TYMethod(name, staticMethod, false, secureMethod, containerClass, procedure);
                     method.setScope(env.getScope());

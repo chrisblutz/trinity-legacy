@@ -383,7 +383,7 @@ public class ExpressionInterpreter {
             
             ProcedureAction action = interpret(nextBlock, environment, errorClass, method, true);
             
-            TYProcedure procedure = new TYProcedure(action, mandatoryParams, optParams, blockParam, overflowParam);
+            TYProcedure procedure = new TYProcedure(action, mandatoryParams, optParams, blockParam, overflowParam, false);
             
             TokenInfo[] newTokens = Arrays.copyOf(tokens, tokens.length - end);
             

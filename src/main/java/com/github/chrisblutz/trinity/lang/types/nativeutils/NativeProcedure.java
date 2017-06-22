@@ -27,7 +27,7 @@ class NativeProcedure {
                 
             } else {
                 
-                return new TYProcedureObject(new TYProcedure((runtime11, thisObj1, params1) -> TYObject.NIL), new TYRuntime());
+                return new TYProcedureObject(new TYProcedure((runtime11, thisObj1, params1) -> TYObject.NIL, false), new TYRuntime());
             }
         });
         TrinityNatives.registerMethod("Trinity.Procedure", "getRequiredArguments", false, null, null, null, null, (runtime, thisObj, params) -> NativeStorage.getMandatoryArguments(TrinityNatives.cast(TYProcedureObject.class, thisObj).getInternalProcedure()));

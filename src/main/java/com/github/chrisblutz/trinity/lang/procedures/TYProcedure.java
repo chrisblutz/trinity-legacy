@@ -22,24 +22,26 @@ public class TYProcedure {
     private List<String> mandatoryParameters = new ArrayList<>();
     private Map<String, ProcedureAction> optionalParameters = new HashMap<>();
     private String blockParameter = null, overflowParameter = null;
+    private boolean rigidParameters = true;
     
-    public TYProcedure(ProcedureAction procedureAction) {
+    public TYProcedure(ProcedureAction procedureAction, boolean rigidParameters) {
         
-        this(procedureAction, new ArrayList<>(), new HashMap<>(), null);
+        this(procedureAction, new ArrayList<>(), new HashMap<>(), null, rigidParameters);
     }
     
-    public TYProcedure(ProcedureAction procedureAction, List<String> mandatoryParameters, Map<String, ProcedureAction> optionalParameters, String blockParameter) {
+    public TYProcedure(ProcedureAction procedureAction, List<String> mandatoryParameters, Map<String, ProcedureAction> optionalParameters, String blockParameter, boolean rigidParameters) {
         
-        this(procedureAction, mandatoryParameters, optionalParameters, blockParameter, null);
+        this(procedureAction, mandatoryParameters, optionalParameters, blockParameter, null, rigidParameters);
     }
     
-    public TYProcedure(ProcedureAction procedureAction, List<String> mandatoryParameters, Map<String, ProcedureAction> optionalParameters, String blockParameter, String overflowParameter) {
+    public TYProcedure(ProcedureAction procedureAction, List<String> mandatoryParameters, Map<String, ProcedureAction> optionalParameters, String blockParameter, String overflowParameter, boolean rigidParameters) {
         
         this.procedureAction = procedureAction;
         this.mandatoryParameters = mandatoryParameters;
         this.optionalParameters = optionalParameters;
         this.blockParameter = blockParameter;
         this.overflowParameter = overflowParameter;
+        this.rigidParameters = rigidParameters;
     }
     
     public ProcedureAction getProcedureAction() {
@@ -77,6 +79,11 @@ public class TYProcedure {
         this.overflowParameter = overflowParameter;
     }
     
+    public boolean hasRigidParameters() {
+        
+        return rigidParameters;
+    }
+    
     public TYObject call(TYRuntime runtime, TYProcedure subProcedure, TYRuntime procedureRuntime, TYObject thisObj, TYObject... params) {
         
         for (String opt : getOptionalParameters().keySet()) {
@@ -99,7 +106,7 @@ public class TYProcedure {
                 
             } else if (!runtime.hasVariable(getBlockParameter())) {
                 
-                obj = new TYProcedureObject(new TYProcedure((runtime1, thisObj1, params1) -> TYObject.NONE), new TYRuntime());
+                obj = new TYProcedureObject(new TYProcedure((runtime1, thisObj1, params1) -> TYObject.NONE, false), new TYRuntime());
                 runtime.setVariable(getBlockParameter(), obj);
             }
         }
@@ -134,7 +141,7 @@ public class TYProcedure {
                 
                 overflow.add(param);
                 
-            } else {
+            } else if (hasRigidParameters()) {
                 
                 Errors.throwError("Trinity.Errors.InvalidArgumentNumberError", runtime, "Procedure takes " + getMandatoryParameters().size() + " parameter(s).");
             }

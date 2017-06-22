@@ -101,7 +101,7 @@ public class TrinityNatives {
             optionalParams = new TreeMap<>();
         }
         
-        TYProcedure procedure = new TYProcedure(actionWithStackTrace, mandatoryParamsList, optionalParams, blockParam, overflowParam);
+        TYProcedure procedure = new TYProcedure(actionWithStackTrace, mandatoryParamsList, optionalParams, blockParam, overflowParam, true);
         TYMethod method = new TYMethod(methodName, staticMethod, true, ClassRegistry.getClass(className), procedure);
         String fullName = className + "." + methodName;
         methods.put(fullName, method);
