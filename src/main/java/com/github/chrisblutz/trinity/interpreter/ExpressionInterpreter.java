@@ -315,23 +315,27 @@ public class ExpressionInterpreter {
             
             return new FinallyInstructionSet(action, fileName, fullFile, lineNumber);
             
-        } else if (TokenUtils.containsOnFirstLevel(tokens, Token.ASSIGNMENT_OPERATOR, Token.NIL_ASSIGNMENT_OPERATOR, Token.PLUS, Token.PLUS_EQUAL, Token.MINUS, Token.MINUS_EQUAL,
-                Token.MULTIPLY, Token.MULTIPLY_EQUAL, Token.DIVIDE, Token.DIVIDE_EQUAL, Token.MODULUS, Token.MODULUS_EQUAL, Token.EQUAL_TO, Token.NOT_EQUAL_TO, Token.GREATER_THAN, Token.GREATER_THAN_OR_EQUAL_TO,
+        } else if (TokenUtils.containsOnFirstLevel(tokens, Token.ASSIGNMENT_OPERATOR, Token.NIL_ASSIGNMENT_OPERATOR, Token.PLUS_EQUAL, Token.MINUS_EQUAL, Token.MULTIPLY_EQUAL, Token.DIVIDE_EQUAL, Token.MODULUS_EQUAL)) {
+            
+            
+            if (TokenUtils.containsOnFirstLevel(tokens, Token.COMMA)) {
+                
+                ChainedInstructionSet[] sets = interpretListOfChainedInstructionSets(errorClass, method, fileName, fullFile, lineNumber, tokens, Token.COMMA, nextBlock);
+                return new ChainedInstructionSet(sets, fileName, fullFile, lineNumber);
+                
+            } else {
+                
+                return interpretAssignment(errorClass, method, fileName, fullFile, lineNumber, tokens, nextBlock);
+            }
+            
+        } else if (TokenUtils.containsOnFirstLevelSequentially(tokens, Token.QUESTION_MARK, Token.COLON)) {
+            
+            return interpretTernary(errorClass, method, fileName, fullFile, lineNumber, tokens, nextBlock);
+            
+        } else if (TokenUtils.containsOnFirstLevel(tokens, Token.PLUS, Token.MINUS, Token.MULTIPLY, Token.DIVIDE, Token.MODULUS, Token.EQUAL_TO, Token.NOT_EQUAL_TO, Token.GREATER_THAN, Token.GREATER_THAN_OR_EQUAL_TO,
                 Token.LESS_THAN, Token.LESS_THAN_OR_EQUAL_TO, Token.NEGATIVE_OPERATOR, Token.AND, Token.OR)) {
             
-            if (TokenUtils.containsOnFirstLevel(tokens, Token.ASSIGNMENT_OPERATOR, Token.NIL_ASSIGNMENT_OPERATOR, Token.PLUS_EQUAL, Token.MINUS_EQUAL, Token.MULTIPLY_EQUAL, Token.DIVIDE_EQUAL, Token.MODULUS_EQUAL)) {
-                
-                if (TokenUtils.containsOnFirstLevel(tokens, Token.COMMA)) {
-                    
-                    ChainedInstructionSet[] sets = interpretListOfChainedInstructionSets(errorClass, method, fileName, fullFile, lineNumber, tokens, Token.COMMA, nextBlock);
-                    return new ChainedInstructionSet(sets, fileName, fullFile, lineNumber);
-                    
-                } else {
-                    
-                    return interpretAssignment(errorClass, method, fileName, fullFile, lineNumber, tokens, nextBlock);
-                }
-                
-            } else if (TokenUtils.containsOnFirstLevel(tokens, Token.AND, Token.OR)) {
+            if (TokenUtils.containsOnFirstLevel(tokens, Token.AND, Token.OR)) {
                 
                 return interpretBinaryAndOrOperator(errorClass, method, fileName, fullFile, lineNumber, tokens, nextBlock);
                 
@@ -933,6 +937,19 @@ public class ExpressionInterpreter {
         }
         
         return new ChainedInstructionSet(new ObjectEvaluator[]{new DoubleSetInstructionSet(DoubleSetInstructionSet.TokenSet.RANGE, sets[0], sets[1], delimiter, fileName, fullFile, lineNumber)}, fileName, fullFile, lineNumber);
+    }
+    
+    private static ChainedInstructionSet interpretTernary(String errorClass, String method, String fileName, File fullFile, int lineNumber, TokenInfo[] tokens, Block nextBlock) {
+        
+        List<List<TokenInfo>> firstSplit = splitByTokenIntoList(tokens, Token.QUESTION_MARK, fileName, lineNumber);
+        List<TokenInfo> firstHalfList = firstSplit.get(0);
+        TokenInfo[] firstHalf = firstHalfList.toArray(new TokenInfo[firstHalfList.size()]);
+        ChainedInstructionSet first = interpret(errorClass, method, fileName, fullFile, lineNumber, firstHalf, null);
+        List<TokenInfo> secondHalfList = firstSplit.get(1);
+        TokenInfo[] secondHalf = secondHalfList.toArray(new TokenInfo[secondHalfList.size()]);
+        ChainedInstructionSet[] secondSplit = splitByToken(errorClass, method, fileName, fullFile, lineNumber, secondHalf, Token.COLON, nextBlock);
+        
+        return new ChainedInstructionSet(new ObjectEvaluator[]{new TripleSetInstructionSet(TripleSetInstructionSet.TokenSet.TERNARY_OP, first, secondSplit[0], secondSplit[1], Token.QUESTION_MARK, Token.COLON, fileName, fullFile, lineNumber)}, fileName, fullFile, lineNumber);
     }
     
     private static class SplitResults {

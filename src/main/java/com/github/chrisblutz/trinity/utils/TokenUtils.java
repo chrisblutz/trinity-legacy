@@ -36,4 +36,32 @@ public class TokenUtils {
         
         return false;
     }
+    
+    public static boolean containsOnFirstLevelSequentially(TokenInfo[] infoSets, Token first, Token second) {
+        
+        boolean foundFirst = false;
+        
+        int level = 0;
+        for (TokenInfo info : infoSets) {
+            
+            if (ExpressionInterpreter.isLevelUpToken(info.getToken())) {
+                
+                level++;
+                
+            } else if (ExpressionInterpreter.isLevelDownToken(info.getToken())) {
+                
+                level--;
+                
+            } else if (level == 0 && !foundFirst && info.getToken() == first) {
+                
+                foundFirst = true;
+                
+            } else if (level == 0 && foundFirst && info.getToken() == second) {
+                
+                return true;
+            }
+        }
+        
+        return false;
+    }
 }

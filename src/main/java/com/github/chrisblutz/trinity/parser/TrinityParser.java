@@ -347,7 +347,9 @@ public class TrinityParser {
             
             Line newLine = new Line(line.getLineNumber());
             
-            for (TokenInfo info : line) {
+            for (int i = 0; i < line.size(); i++) {
+                
+                TokenInfo info = line.get(i);
                 
                 if (info.getToken() == Token.NON_TOKEN_STRING && info.getContents().contentEquals(Token.__FILE__.getReadable())) {
                     
@@ -356,6 +358,11 @@ public class TrinityParser {
                 } else if (info.getToken() == Token.NON_TOKEN_STRING && info.getContents().contentEquals(Token.__LINE__.getReadable())) {
                     
                     newLine.add(new TokenInfo(Token.__LINE__, Token.__LINE__.getReadable()));
+                    
+                } else if (info.getToken() == Token.NON_TOKEN_STRING && info.getContents().contentEquals("block") && i < line.size() - 1 && line.get(i + 1).getToken() == Token.QUESTION_MARK) {
+                    
+                    newLine.add(new TokenInfo(Token.BLOCK_CHECK, Token.BLOCK_CHECK.getReadable()));
+                    i++;
                     
                 } else {
                     

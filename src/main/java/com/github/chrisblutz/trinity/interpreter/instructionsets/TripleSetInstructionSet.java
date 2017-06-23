@@ -11,25 +11,27 @@ import java.io.File;
 /**
  * @author Christopher Lutz
  */
-public class DoubleSetInstructionSet extends ObjectEvaluator {
+public class TripleSetInstructionSet extends ObjectEvaluator {
     
     public enum TokenSet {
         
-        RANGE
+        TERNARY_OP
     }
     
     private TokenSet set;
-    private ChainedInstructionSet leftSet, rightSet;
-    private Token divider;
+    private ChainedInstructionSet leftSet, middleSet, rightSet;
+    private Token leftDivider, rightDivider;
     
-    public DoubleSetInstructionSet(TokenSet set, ChainedInstructionSet leftSet, ChainedInstructionSet rightSet, Token divider, String fileName, File fullFile, int lineNumber) {
+    public TripleSetInstructionSet(TokenSet set, ChainedInstructionSet leftSet, ChainedInstructionSet middleSet, ChainedInstructionSet rightSet, Token leftDivider, Token rightDivider, String fileName, File fullFile, int lineNumber) {
         
         super(fileName, fullFile, lineNumber);
         
         this.set = set;
         this.leftSet = leftSet;
+        this.middleSet = middleSet;
         this.rightSet = rightSet;
-        this.divider = divider;
+        this.leftDivider = leftDivider;
+        this.rightDivider = rightDivider;
     }
     
     public TokenSet getSet() {
@@ -42,14 +44,24 @@ public class DoubleSetInstructionSet extends ObjectEvaluator {
         return leftSet;
     }
     
+    public ChainedInstructionSet getMiddleSet() {
+        
+        return middleSet;
+    }
+    
     public ChainedInstructionSet getRightSet() {
         
         return rightSet;
     }
     
-    public Token getDivider() {
+    public Token getLeftDivider() {
         
-        return divider;
+        return leftDivider;
+    }
+    
+    public Token getRightDivider() {
+        
+        return rightDivider;
     }
     
     @Override
@@ -59,13 +71,17 @@ public class DoubleSetInstructionSet extends ObjectEvaluator {
         
         switch (set) {
             
-            case RANGE:
+            case TERNARY_OP:
                 
                 TYObject leftObj = getLeftSet().evaluate(TYObject.NONE, runtime);
-                TYObject rightObj = getRightSet().evaluate(TYObject.NONE, runtime);
-                boolean exclude = getDivider() == Token.TRIPLE_DOT;
-                
-                return TrinityNatives.newInstance("Trinity.Range", runtime, leftObj, rightObj, TrinityNatives.getObjectFor(exclude));
+                if (TrinityNatives.toBoolean(leftObj)) {
+                    
+                    return getMiddleSet().evaluate(TYObject.NONE, runtime);
+                    
+                } else {
+                    
+                    return getRightSet().evaluate(TYObject.NONE, runtime);
+                }
         }
         
         return TYObject.NONE;
@@ -74,6 +90,6 @@ public class DoubleSetInstructionSet extends ObjectEvaluator {
     @Override
     public String toString(String indent) {
         
-        return "DoubleSetInstructionSet [" + getSet() + "]";
+        return "TripleSetInstructionSet [" + getSet() + "]";
     }
 }
