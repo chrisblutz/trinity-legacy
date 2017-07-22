@@ -1,7 +1,6 @@
 package com.github.chrisblutz.trinity.natives;
 
 import com.github.chrisblutz.trinity.info.TrinityInfo;
-import com.github.chrisblutz.trinity.lang.ClassRegistry;
 import com.github.chrisblutz.trinity.lang.TYObject;
 import com.github.chrisblutz.trinity.lang.errors.Errors;
 import com.github.chrisblutz.trinity.lang.types.maps.TYMap;
@@ -70,7 +69,7 @@ public class TrinityProperties {
      *     user.name
      * </pre>
      */
-    public static void load() {
+    public static TYMap load() {
         
         setProperty("trinity.name", TrinityNatives.getObjectFor(TrinityInfo.get("trinity.name")));
         setProperty("trinity.version", TrinityNatives.getObjectFor(TrinityInfo.get("trinity.version")));
@@ -90,6 +89,6 @@ public class TrinityProperties {
             Errors.throwError("Trinity.Errors.IOError", "Unable to determine Trinity's home directory.");
         }
         
-        ClassRegistry.getClass("Trinity.System").setVariable("properties", new TYMap(map));
+        return new TYMap(map);
     }
 }

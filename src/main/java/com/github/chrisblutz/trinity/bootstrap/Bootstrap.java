@@ -1,9 +1,6 @@
 package com.github.chrisblutz.trinity.bootstrap;
 
 import com.github.chrisblutz.trinity.info.TrinityInfo;
-import com.github.chrisblutz.trinity.lang.ClassRegistry;
-import com.github.chrisblutz.trinity.lang.TYObject;
-import com.github.chrisblutz.trinity.lang.scope.TYRuntime;
 import com.github.chrisblutz.trinity.lang.types.nativeutils.NativeHelper;
 import com.github.chrisblutz.trinity.parser.TrinityParser;
 import com.github.chrisblutz.trinity.utils.FileUtils;
@@ -27,8 +24,5 @@ public class Bootstrap {
         // Load default library
         TrinityParser.parse(new File(FileUtils.getTrinityHome(), "lib/Object.ty"));
         TrinityParser.parse(new File(FileUtils.getTrinityHome(), "lib/"));
-        
-        // Load system properties
-        ClassRegistry.getClass("Trinity.System").tyInvoke("loadProperties", new TYRuntime(), null, null, TYObject.NIL);
     }
 }

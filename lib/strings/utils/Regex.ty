@@ -1,15 +1,19 @@
 module Trinity
     module StringUtils
         class Regex
-            def initialize(matches, groups)
-                @matches = matches
-                @groups = groups
+            private
+                var matches, groups
 
-            def matches
-                @matches
+            public
+                def initialize(matches, groups)
+                    this.matches = matches
+                    this.groups = groups
 
-            def groups
-                @groups
+                def matches
+                    matches
 
-            def toString
-                str = getClass().toString() + '[Matches: ' + matches() + ', ' + groups().length() + ' group(s)]'
+                def groups
+                    groups
+
+                def toString
+                    str = getClass().toString() + '[Matches: ' + matches() + ', ' + groups().length() + ' group(s)]'

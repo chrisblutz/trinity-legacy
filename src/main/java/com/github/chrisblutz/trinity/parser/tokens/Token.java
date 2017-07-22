@@ -14,7 +14,7 @@ public enum Token {
     
     // Definitions
     IMPORT("import"), MODULE("module"), CLASS("class"), DEF("def"), NATIVE("native"), INSTANCE_VAR("@"), CLASS_VAR("@@"),
-    CLASS_EXTENSION("<<"), GLOBAL_VAR("$"),
+    CLASS_EXTENSION("<<"), GLOBAL_VAR("$"), VAL("val"), VAR("var"),
     
     // Modifiers
     STATIC("static"), SECURE("secure"), SCOPE_MODIFIER("\0"), PUBLIC_SCOPE("public"), PROTECTED_SCOPE("protected"), MODULE_PROTECTED_SCOPE("module-protected"), PRIVATE_SCOPE("private"),

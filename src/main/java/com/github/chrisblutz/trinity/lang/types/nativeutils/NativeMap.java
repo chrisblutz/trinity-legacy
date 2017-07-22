@@ -23,8 +23,7 @@ class NativeMap {
         TrinityNatives.registerMethod("Trinity.Map", "values", false, null, null, null, null, (runtime, thisObj, params) -> NativeStorage.getMapValues(TrinityNatives.cast(TYMap.class, thisObj)));
         TrinityNatives.registerMethod("Trinity.Map", "put", false, new String[]{"key", "value"}, null, null, null, (runtime, thisObj, params) -> {
             
-            Map<TYObject, TYObject> map = TrinityNatives.cast(TYMap.class, thisObj).getInternalMap();
-            map.put(runtime.getVariable("key"), runtime.getVariable("value"));
+            put(TrinityNatives.cast(TYMap.class, thisObj), runtime.getVariable("key"), runtime.getVariable("value"), runtime);
             
             NativeStorage.clearMapData(TrinityNatives.cast(TYMap.class, thisObj));
             
@@ -43,6 +42,14 @@ class NativeMap {
             return TYObject.NONE;
         });
         TrinityNatives.registerMethod("Trinity.Map", "[]", false, new String[]{"key"}, null, null, null, (runtime, thisObj, params) -> get(TrinityNatives.cast(TYMap.class, thisObj), runtime.getVariable("key"), runtime));
+        TrinityNatives.registerMethod("Trinity.Map", "[]=", false, new String[]{"key", "value"}, null, null, null, (runtime, thisObj, params) -> {
+            
+            put(TrinityNatives.cast(TYMap.class, thisObj), runtime.getVariable("key"), runtime.getVariable("value"), runtime);
+            
+            NativeStorage.clearMapData(TrinityNatives.cast(TYMap.class, thisObj));
+            
+            return TYObject.NONE;
+        });
     }
     
     private static TYObject get(TYMap tyMap, TYObject obj, TYRuntime runtime) {
@@ -57,6 +64,30 @@ class NativeMap {
                 
                 return map.get(key);
             }
+        }
+        
+        return TYObject.NIL;
+    }
+    
+    private static TYObject put(TYMap tyMap, TYObject obj, TYObject value, TYRuntime runtime) {
+        
+        Map<TYObject, TYObject> map = tyMap.getInternalMap();
+        
+        boolean exists = false;
+        for (TYObject key : map.keySet()) {
+            
+            boolean equal = TrinityNatives.toBoolean(key.tyInvoke("==", runtime, null, null, obj));
+            
+            if (equal) {
+                
+                exists = true;
+                map.put(key, value);
+            }
+        }
+        
+        if (!exists) {
+            
+            map.put(obj, value);
         }
         
         return TYObject.NIL;

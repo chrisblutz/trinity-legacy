@@ -1,41 +1,45 @@
 module Trinity
     class Range
-        def initialize(begin, end, excludeEnd = false)
-            @begin = begin
-            @end = end
-            @excludeEnd = excludeEnd
+        private
+            var begin, end, excludeEnd
 
-        def getBegin
-            @begin
+        public
+            def initialize(begin, end, excludeEnd = false)
+                this.begin = begin
+                this.end = end
+                this.excludeEnd = excludeEnd
 
-        def getEnd
-            @end
+            def getBegin
+                begin
 
-        def getExcludeEnd
-            @excludeEnd
+            def getEnd
+                end
 
-        def each(&block)
-            if !getBegin().respondsTo('next')
-                throw(Trinity.Errors.InvalidTypeError.new("Instances of '" + getBegin().getClass() + "' cannot be used to iterate over a " + getClass() + " instance because '" + getBegin().getClass() + "' does not define a 'next()' method."))
+            def getExcludeEnd
+                excludeEnd
 
-            if block?
-                next = getBegin()
-                while next != getEnd()
-                    &block.call(next)
-                    next = next.next()
-                if !getExcludeEnd()
-                    &block.call(next)
+            def each(&block)
+                if !getBegin().respondsTo('next')
+                    throw(Trinity.Errors.InvalidTypeError.new("Instances of '" + getBegin().getClass() + "' cannot be used to iterate over a " + getClass() + " instance because '" + getBegin().getClass() + "' does not define a 'next()' method."))
 
-        def ==(other)
-            if !other.isInstance(Range)
-                return false
-            getBegin() == other.getBegin() && getEnd() == other.getEnd() && getExcludeEnd() == other.getExcludeEnd()
+                if block?
+                    next = getBegin()
+                    while next != getEnd()
+                        &block.call(next)
+                        next = next.next()
+                    if !getExcludeEnd()
+                        &block.call(next)
 
-        def toString
-            str = '(' + getBegin()
-            if getExcludeEnd()
-                str += '...'
-            else
-                str += '..'
-            str += getEnd() + ')'
-            str
+            def ==(other)
+                if !other.isInstance(Range)
+                    return false
+                getBegin() == other.getBegin() && getEnd() == other.getEnd() && getExcludeEnd() == other.getExcludeEnd()
+
+            def toString
+                str = '(' + getBegin()
+                if getExcludeEnd()
+                    str += '...'
+                else
+                    str += '..'
+                str += getEnd() + ')'
+                str

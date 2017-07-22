@@ -1,6 +1,8 @@
 package com.github.chrisblutz.trinity.interpreter.variables;
 
 import com.github.chrisblutz.trinity.lang.TYObject;
+import com.github.chrisblutz.trinity.lang.variables.VariableLoc;
+import com.github.chrisblutz.trinity.lang.variables.VariableManager;
 import com.github.chrisblutz.trinity.plugins.PluginLoader;
 import com.github.chrisblutz.trinity.plugins.api.Events;
 
@@ -13,42 +15,31 @@ import java.util.Map;
  */
 public class Variables {
     
-    private static Map<TYObject, Map<String, TYObject>> instanceVariables = new HashMap<>();
-    private static Map<String, TYObject> globalVariables = new HashMap<>();
-    
-    public static Map<String, TYObject> getInstanceVariables(TYObject object) {
-        
-        if (!getInstanceVariables().containsKey(object)) {
-            
-            getInstanceVariables().put(object, new HashMap<>());
-        }
-        
-        return getInstanceVariables().get(object);
-    }
-    
-    public static Map<TYObject, Map<String, TYObject>> getInstanceVariables() {
-        
-        return instanceVariables;
-    }
+    private static Map<String, VariableLoc> globalVariables = new HashMap<>();
     
     public static boolean hasGlobalVariable(String name) {
         
         return getGlobalVariables().containsKey(name);
     }
     
-    public static TYObject getGlobalVariable(String name) {
+    public static VariableLoc getGlobalVariable(String name) {
         
-        return globalVariables.getOrDefault(name, TYObject.NIL);
+        return globalVariables.get(name);
     }
     
     public static void setGlobalVariable(String name, TYObject object) {
         
-        getGlobalVariables().put(name, object);
+        if (!globalVariables.containsKey(name)) {
+            
+            getGlobalVariables().put(name, new VariableLoc());
+        }
+        
+        VariableManager.put(getGlobalVariables().get(name), object);
         
         PluginLoader.triggerEvent(Events.GLOBAL_VARIABLE_UPDATE, name, object);
     }
     
-    public static Map<String, TYObject> getGlobalVariables() {
+    public static Map<String, VariableLoc> getGlobalVariables() {
         
         return globalVariables;
     }

@@ -5,6 +5,8 @@ import com.github.chrisblutz.trinity.lang.errors.Errors;
 import com.github.chrisblutz.trinity.lang.procedures.ProcedureAction;
 import com.github.chrisblutz.trinity.lang.procedures.TYProcedure;
 import com.github.chrisblutz.trinity.lang.scope.TYRuntime;
+import com.github.chrisblutz.trinity.lang.variables.VariableLoc;
+import com.github.chrisblutz.trinity.lang.variables.VariableManager;
 import com.github.chrisblutz.trinity.natives.NativeStorage;
 import com.github.chrisblutz.trinity.plugins.PluginLoader;
 import com.github.chrisblutz.trinity.plugins.api.Events;
@@ -26,11 +28,21 @@ public class TYClass {
     private TYModule module;
     private List<TYClass> inheritanceTree = new ArrayList<>();
     private Map<String, TYMethod> methods = new HashMap<>();
-    private Map<String, TYObject> variables = new HashMap<>();
     private List<ProcedureAction> initializationActions = new ArrayList<>();
     private boolean initialized = false;
     
     private List<String> callableMethods = new ArrayList<>();
+    
+    private Map<String, Scope> classVariableScopes = new HashMap<>();
+    private Map<String, Boolean> classVariableConstant = new HashMap<>();
+    private Map<String, String[]> classVariableImports = new HashMap<>();
+    private Map<String, ProcedureAction> classVariableActions = new HashMap<>();
+    private Map<String, VariableLoc> classVariables = new HashMap<>();
+    private Map<String, Scope> instanceVariableScopes = new HashMap<>();
+    private Map<String, Boolean> instanceVariableConstant = new HashMap<>();
+    private Map<String, String[]> instanceVariableImports = new HashMap<>();
+    private Map<String, ProcedureAction> instanceVariableActions = new HashMap<>();
+    private Map<TYObject, Map<String, VariableLoc>> instanceVariables = new WeakHashMap<>();
     
     private String[] leadingComments = null;
     
@@ -77,26 +89,171 @@ public class TYClass {
         return methods;
     }
     
+    public void registerClassVariable(String name, ProcedureAction action, Scope scope, boolean constant, String[] importedModules) {
+        
+        classVariableActions.put(name, action);
+        classVariableScopes.put(name, scope);
+        classVariableConstant.put(name, constant);
+        classVariableImports.put(name, importedModules);
+    }
+    
+    public void initializeClassFields(TYRuntime runtime) {
+        
+        for (String str : classVariableActions.keySet()) {
+            
+            ProcedureAction action = classVariableActions.get(str);
+            
+            TYObject val = TYObject.NIL;
+            if (action != null) {
+                
+                TYRuntime newRuntime = runtime.clone();
+                newRuntime.clearVariables();
+                
+                newRuntime.setScope(NativeStorage.getClassObject(this), true);
+                newRuntime.setScopeClass(this);
+                newRuntime.setModule(getModule());
+                newRuntime.setTyClass(this);
+                newRuntime.importModules(classVariableImports.get(str));
+                
+                val = classVariableActions.get(str).onAction(newRuntime, TYObject.NONE);
+            }
+            
+            VariableLoc loc = new VariableLoc();
+            loc.setContainerClass(this);
+            loc.setScope(classVariableScopes.get(str));
+            loc.setConstant(classVariableConstant.get(str));
+            VariableManager.put(loc, val);
+            classVariables.put(str, loc);
+        }
+    }
+    
+    public void registerInstanceVariable(String name, ProcedureAction action, Scope scope, boolean constant, String[] importedModules) {
+        
+        instanceVariableActions.put(name, action);
+        instanceVariableScopes.put(name, scope);
+        instanceVariableConstant.put(name, constant);
+        instanceVariableImports.put(name, importedModules);
+    }
+    
+    public void initializeInstanceFields(TYObject object, TYRuntime runtime) {
+        
+        instanceVariables.put(object, new HashMap<>());
+        Map<String, VariableLoc> varMap = instanceVariables.get(object);
+        
+        for (String str : instanceVariableActions.keySet()) {
+            
+            ProcedureAction action = instanceVariableActions.get(str);
+            
+            TYObject val = TYObject.NIL;
+            if (action != null) {
+                
+                TYRuntime newRuntime = runtime.clone();
+                newRuntime.clearVariables();
+                newRuntime.setThis(object);
+                newRuntime.setScope(object, false);
+                newRuntime.setModule(getModule());
+                newRuntime.setTyClass(this);
+                newRuntime.importModules(instanceVariableImports.get(str));
+                
+                val = instanceVariableActions.get(str).onAction(newRuntime, TYObject.NONE);
+            }
+            
+            VariableLoc loc = new VariableLoc();
+            loc.setContainerClass(this);
+            loc.setScope(instanceVariableScopes.get(str));
+            loc.setConstant(instanceVariableConstant.get(str));
+            VariableManager.put(loc, val);
+            varMap.put(str, loc);
+        }
+        
+        if (superclass != null) {
+            
+            superclass.initializeInstanceFields(object, runtime);
+        }
+    }
+    
     public boolean hasVariable(String name) {
         
-        return getVariables().containsKey(name);
+        for (String var : classVariables.keySet()) {
+            
+            if (var.contentEquals(name)) {
+                
+                return true;
+            }
+        }
+        
+        return superclass != null && superclass.hasVariable(name);
     }
     
-    public TYObject getVariable(String name) {
+    public VariableLoc getVariable(String name) {
         
-        return getVariables().getOrDefault(name, TYObject.NIL);
+        for (String var : classVariables.keySet()) {
+            
+            if (var.contentEquals(name)) {
+                
+                return classVariables.get(var);
+            }
+        }
+        
+        if (superclass != null) {
+            
+            return superclass.getVariable(name);
+        }
+        
+        return null;
     }
     
-    public void setVariable(String name, TYObject object) {
+    public boolean hasVariable(String name, TYObject thisObj) {
         
-        getVariables().put(name, object);
+        if (instanceVariables.containsKey(thisObj)) {
+            
+            for (String var : instanceVariables.get(thisObj).keySet()) {
+                
+                if (var.contentEquals(name)) {
+                    
+                    return true;
+                }
+            }
+        }
         
-        PluginLoader.triggerEvent(Events.CLASS_VARIABLE_UPDATE, this, name, object);
+        for (String var : classVariables.keySet()) {
+            
+            if (var.contentEquals(name)) {
+                
+                return true;
+            }
+        }
+        
+        return superclass != null && superclass.hasVariable(name, thisObj);
     }
     
-    public Map<String, TYObject> getVariables() {
+    public VariableLoc getVariable(String name, TYObject thisObj) {
         
-        return variables;
+        if (instanceVariables.containsKey(thisObj)) {
+            
+            for (String var : instanceVariables.get(thisObj).keySet()) {
+                
+                if (var.contentEquals(name)) {
+                    
+                    return instanceVariables.get(thisObj).get(var);
+                }
+            }
+        }
+        
+        for (String var : classVariables.keySet()) {
+            
+            if (var.contentEquals(name)) {
+                
+                return classVariables.get(var);
+            }
+        }
+        
+        if (superclass != null) {
+            
+            return superclass.getVariable(name, thisObj);
+        }
+        
+        return null;
     }
     
     public String getName() {
@@ -183,6 +340,8 @@ public class TYClass {
     
     public TYObject tyInvoke(TYClass originClass, String methodName, TYRuntime runtime, TYProcedure procedure, TYRuntime procedureRuntime, TYObject thisObj, TYObject... params) {
         
+        runInitializationActions();
+        
         if (methodName.contentEquals("new")) {
             
             if (constructor != null) {
@@ -197,11 +356,13 @@ public class TYClass {
                     
                     TYObject newObj = new TYObject(this);
                     
-                    newRuntime.setVariable("this", newObj);
+                    newRuntime.setThis(newObj);
                     newRuntime.setScope(newObj, false);
                     newRuntime.setModule(getModule());
                     newRuntime.setTyClass(this);
                     newRuntime.importModules(constructor.getImportedModules());
+                    
+                    initializeInstanceFields(newObj, newRuntime);
                     
                     TYObject obj = constructor.getProcedure().call(newRuntime, procedure, procedureRuntime, newObj, params);
                     
@@ -225,7 +386,19 @@ public class TYClass {
                 
             } else {
                 
-                return new TYObject(this);
+                TYRuntime newRuntime = runtime.clone();
+                newRuntime.clearVariables();
+                
+                TYObject newObj = new TYObject(this);
+                
+                newRuntime.setThis(newObj);
+                newRuntime.setScope(newObj, false);
+                newRuntime.setModule(getModule());
+                newRuntime.setTyClass(this);
+                
+                initializeInstanceFields(newObj, newRuntime);
+                
+                return newObj;
             }
             
         } else if (methods.containsKey(methodName)) {
@@ -246,6 +419,7 @@ public class TYClass {
                 if (method.isStaticMethod()) {
                     
                     newRuntime.setScope(NativeStorage.getClassObject(this), true);
+                    newRuntime.setScopeClass(this);
                     
                 } else {
                     
@@ -254,7 +428,7 @@ public class TYClass {
                         Errors.throwError("Trinity.Errors.ScopeError", runtime, "Instance method '" + methodName + "' cannot be called from a static context.");
                     }
                     
-                    newRuntime.setVariable("this", thisObj);
+                    newRuntime.setThis(thisObj);
                     newRuntime.setScope(thisObj, false);
                 }
                 
@@ -309,6 +483,37 @@ public class TYClass {
             case PRIVATE:
                 
                 return method.getContainerClass() == runtime.getTyClass();
+            
+            default:
+                
+                return false;
+        }
+    }
+    
+    public boolean checkScope(VariableLoc loc, TYRuntime runtime) {
+        
+        if (loc.getContainerClass() == null) {
+            
+            return true;
+        }
+        
+        switch (loc.getScope()) {
+            
+            case PUBLIC:
+                
+                return true;
+            
+            case MODULE_PROTECTED:
+                
+                return loc.getContainerClass().getModule() == runtime.getModule();
+            
+            case PROTECTED:
+                
+                return runtime.getTyClass().isInstanceOf(loc.getContainerClass());
+            
+            case PRIVATE:
+                
+                return loc.getContainerClass() == runtime.getTyClass();
             
             default:
                 
@@ -382,11 +587,15 @@ public class TYClass {
         initializationActions.addAll(actions);
     }
     
-    public void runInitializationActions(TYRuntime runtime) {
+    public void runInitializationActions() {
         
         if (!initialized) {
             
             initialized = true;
+            
+            TYRuntime runtime = new TYRuntime();
+            
+            initializeClassFields(runtime);
             
             for (ProcedureAction action : initializationActions) {
                 

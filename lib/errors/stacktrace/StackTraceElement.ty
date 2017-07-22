@@ -1,34 +1,38 @@
 module Trinity
     module Errors
         class StackTraceElement
-            def initialize(errorClass, method, file, line)
-                @errorClass = errorClass
-                @method = method
-                @file = file
-                @line = line
+            private
+                var errorClass, method, file, line
 
-            def getErrorClass
-                @errorClass
+            public
+                def initialize(errorClass, method, file, line)
+                    this.errorClass = errorClass
+                    this.method = method
+                    this.file = file
+                    this.line = line
 
-            def getMethod
-                @method
+                def getErrorClass
+                    errorClass
 
-            def getFile
-                @file
+                def getMethod
+                    method
 
-            def getLine
-                @line
+                def getFile
+                    file
 
-            def toString
-                str = ''
-                if getFile() != nil
-                    str = getErrorClass() + '.' + getMethod() + ' in file \'' + getFile() + '\''
+                def getLine
+                    line
 
-                    if getLine() > 0
-                        str += ' at line ' + getLine()
+                def toString
+                    str = ''
+                    if getFile() != nil
+                        str = getErrorClass() + '.' + getMethod() + ' in file \'' + getFile() + '\''
 
-                elsif getErrorClass() != nil
-                    str = getErrorClass() + '.' + getMethod() + ' (native)'
-                else
-                    str = 'native method \'' + getMethod() + '\''
-                str
+                        if getLine() > 0
+                            str += ' at line ' + getLine()
+
+                    elsif getErrorClass() != nil
+                        str = getErrorClass() + '.' + getMethod() + ' (native)'
+                    else
+                        str = 'native method \'' + getMethod() + '\''
+                    str

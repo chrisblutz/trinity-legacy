@@ -43,18 +43,18 @@ public class NativeStorage {
     private static Map<TYMethod, TYBoolean> methodNative = new HashMap<>();
     private static Map<TYMethod, TYBoolean> methodSecure = new HashMap<>();
     
-    private static Map<TYProcedure, TYArray> mandatoryArguments = new HashMap<>();
-    private static Map<TYProcedure, TYArray> optionalArguments = new HashMap<>();
-    private static Map<TYProcedure, TYObject> blockArguments = new HashMap<>();
-    private static Map<TYProcedure, TYObject> overflowArguments = new HashMap<>();
+    private static Map<TYProcedure, TYArray> mandatoryArguments = new WeakHashMap<>();
+    private static Map<TYProcedure, TYArray> optionalArguments = new WeakHashMap<>();
+    private static Map<TYProcedure, TYObject> blockArguments = new WeakHashMap<>();
+    private static Map<TYProcedure, TYObject> overflowArguments = new WeakHashMap<>();
     
     private static Map<TYArray, TYInt> arrayLengths = new HashMap<>();
     
-    private static Map<TYMap, TYArray> mapKeySets = new HashMap<>();
-    private static Map<TYMap, TYArray> mapValues = new HashMap<>();
-    private static Map<TYMap, TYInt> mapLengths = new HashMap<>();
+    private static Map<TYMap, TYArray> mapKeySets = new WeakHashMap<>();
+    private static Map<TYMap, TYArray> mapValues = new WeakHashMap<>();
+    private static Map<TYMap, TYInt> mapLengths = new WeakHashMap<>();
     
-    private static Map<TYObject, TYInt> hashCodes = new HashMap<>();
+    private static Map<TYObject, TYInt> hashCodes = new WeakHashMap<>();
     
     private static Map<TYClass, TYObject> classLeadingComments = new HashMap<>();
     private static Map<TYModule, TYObject> moduleLeadingComments = new HashMap<>();

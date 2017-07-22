@@ -1,27 +1,30 @@
 module Trinity
     module Errors
         class Error
-            def initialize(message)
-                @message = message
+            private
+                var message, stackTrace
 
-                @stackTrace = []
-                populateStackTrace()
+            public
+                def initialize(message)
+                    this.message = message
 
-            def getMessage
-                @message
+                    stackTrace = populateStackTrace()
 
-            def getStackTrace
-                @stackTrace
+                def getMessage
+                    message
 
-            def toString
-                str = getClass().toString()
+                def getStackTrace
+                    stackTrace
 
-                if !getMessage().isEmpty()
-                    str += ': ' + getMessage()
+                def toString
+                    str = getClass().toString()
 
-                for (i = 0; i < getStackTrace().length(); i += 1)
-                    str += "\n\tat " + getStackTrace()[i].toString()
-                str
+                    if !getMessage().isEmpty()
+                        str += ': ' + getMessage()
+
+                    for (i = 0; i < getStackTrace().length(); i += 1)
+                        str += "\n\tat " + getStackTrace()[i].toString()
+                    str
 
             private
                 def native populateStackTrace

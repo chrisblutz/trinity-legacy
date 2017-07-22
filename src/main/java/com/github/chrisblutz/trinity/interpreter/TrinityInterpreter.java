@@ -135,5 +135,7 @@ public class TrinityInterpreter {
         registerDeclarationInterpreter(new ClassInterpreter());
         registerDeclarationInterpreter(new MethodInterpreter());
         registerDeclarationInterpreter(new ScopeInterpreter());
+        registerDeclarationInterpreter(new VarInterpreter());
+        registerDeclarationInterpreter(new ValInterpreter());
     }
 }
