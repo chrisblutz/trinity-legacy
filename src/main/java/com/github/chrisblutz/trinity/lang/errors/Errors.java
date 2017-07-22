@@ -4,6 +4,8 @@ import com.github.chrisblutz.trinity.Trinity;
 import com.github.chrisblutz.trinity.cli.CLI;
 import com.github.chrisblutz.trinity.interpreter.errors.TrinityErrorException;
 import com.github.chrisblutz.trinity.lang.TYObject;
+import com.github.chrisblutz.trinity.lang.errors.stacktrace.StackElement;
+import com.github.chrisblutz.trinity.lang.errors.stacktrace.TrinityStack;
 import com.github.chrisblutz.trinity.lang.scope.TYRuntime;
 import com.github.chrisblutz.trinity.lang.types.strings.TYString;
 import com.github.chrisblutz.trinity.natives.TrinityNatives;
@@ -102,6 +104,12 @@ public class Errors {
                 
                 System.err.println("\n== FULL ERROR ==\n");
                 error.printStackTrace();
+                
+                System.err.println("\n== FULL TRINITY STACK ==\n");
+                for(StackElement element : TrinityStack.getStack()){
+                    
+                    System.err.println(element);
+                }
                 
             } else {
                 

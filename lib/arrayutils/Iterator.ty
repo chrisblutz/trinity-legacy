@@ -1,28 +1,32 @@
 module Trinity
     module ArrayUtils
         class Iterator
-            def initialize(values)
-                @values = values
-                @i = 0
+            private
+                var values, i
 
-            def next
-                n = @values[@i]
-                @i += 1
-                n
+            public
+                def initialize(values)
+                    this.values = values
+                    this.i = 0
 
-            def hasNext
-                @i < @values.length()
+                def next
+                    n = values[i]
+                    i += 1
+                    n
 
-            def iterate(&block)
-                @i = 0
-                while hasNext()
-                    obj = next()
-                    if obj.isInstance(Array)
-                        obj.solidify
-                    block.call(obj)
+                def hasNext
+                    i < values.length()
 
-            def reset
-                @i = 0
+                def iterate(&block)
+                    i = 0
+                    while hasNext()
+                        obj = next()
+                        if obj.isInstance(Array)
+                            obj.solidify
+                        block.call(obj)
 
-            def toString
-                getClass().toString() + @values.toString()
+                def reset
+                    i = 0
+
+                def toString
+                    getClass().toString() + values.toString()

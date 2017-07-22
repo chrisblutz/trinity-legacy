@@ -4,17 +4,12 @@ import com.github.chrisblutz.trinity.interpreter.variables.Variables;
 import com.github.chrisblutz.trinity.lang.*;
 import com.github.chrisblutz.trinity.lang.errors.Errors;
 import com.github.chrisblutz.trinity.lang.scope.TYRuntime;
-import com.github.chrisblutz.trinity.lang.types.TYClassObject;
 import com.github.chrisblutz.trinity.lang.types.TYModuleObject;
 import com.github.chrisblutz.trinity.lang.types.TYStaticClassObject;
 import com.github.chrisblutz.trinity.lang.types.TYStaticModuleObject;
-import com.github.chrisblutz.trinity.lang.types.bool.TYBoolean;
-import com.github.chrisblutz.trinity.lang.types.numeric.TYFloat;
-import com.github.chrisblutz.trinity.lang.types.numeric.TYInt;
-import com.github.chrisblutz.trinity.lang.types.numeric.TYLong;
-import com.github.chrisblutz.trinity.lang.types.strings.TYString;
+import com.github.chrisblutz.trinity.lang.variables.VariableLoc;
+import com.github.chrisblutz.trinity.lang.variables.VariableManager;
 import com.github.chrisblutz.trinity.natives.NativeStorage;
-import com.github.chrisblutz.trinity.natives.TrinityNatives;
 import com.github.chrisblutz.trinity.parser.tokens.Token;
 import com.github.chrisblutz.trinity.parser.tokens.TokenInfo;
 
@@ -34,7 +29,6 @@ public class InstructionSet extends ObjectEvaluator {
     public InstructionSet(TokenInfo[] tokens, String fileName, File fullFile, int lineNumber) {
         
         super(fileName, fullFile, lineNumber);
-        
         this.tokens = tokens;
     }
     
@@ -59,143 +53,13 @@ public class InstructionSet extends ObjectEvaluator {
         
         if (tokens.length >= 1) {
             
-            if (tokens[0].getToken() == Token.LITERAL_STRING) {
-                
-                return new TYString(tokens[0].getContents());
-                
-            } else if (tokens[0].getToken() == Token.NIL) {
-                
-                return TYObject.NIL;
-                
-            } else if (tokens[0].getToken() == Token.NUMERIC_STRING) {
-                
-                String numString = tokens[0].getContents();
-                
-                if (numString.matches("[0-9]+[lL]")) {
-                    
-                    return new TYLong(Long.parseLong(numString.substring(0, numString.length() - 1)));
-                    
-                } else if (numString.matches("[0-9]*\\.[0-9]+")) {
-                    
-                    return new TYFloat(Double.parseDouble(numString));
-                    
-                } else if (numString.matches("[0-9]*\\.?[0-9]+[fF]")) {
-                    
-                    return new TYFloat(Double.parseDouble(numString.substring(0, numString.length() - 1)));
-                    
-                } else if (numString.matches("[0-9]+")) {
-                    
-                    try {
-                        
-                        return new TYInt(Integer.parseInt(numString));
-                        
-                    } catch (Exception e) {
-                        
-                        return new TYLong(Long.parseLong(numString));
-                    }
-                }
-                
-            } else if (tokens[0].getToken() == Token.TRUE) {
-                
-                return TYBoolean.TRUE;
-                
-            } else if (tokens[0].getToken() == Token.FALSE) {
-                
-                return TYBoolean.FALSE;
-                
-            } else if (tokens[0].getToken() == Token.SUPER) {
-                
-                if (runtime.isStaticScope()) {
-                    
-                    TYClass thisClass = runtime.getTyClass();
-                    return NativeStorage.getStaticClassObject(thisClass.getSuperclass());
-                    
-                } else {
-                    
-                    TYObject thisPointer = runtime.getVariable("this");
-                    thisPointer.incrementStackLevel();
-                    return thisPointer;
-                }
-                
-            } else if (tokens[0].getToken() == Token.__FILE__) {
-                
-                return new TYString(getFullFile().getAbsolutePath());
-                
-            } else if (tokens[0].getToken() == Token.__LINE__) {
-                
-                return new TYInt(getLineNumber());
-                
-            } else if (tokens[0].getToken() == Token.BLOCK_CHECK) {
-                
-                return TYBoolean.valueFor(runtime.getProcedure() != null);
-                
-            } else if (tokens[0].getToken() == Token.BREAK) {
-                
-                runtime.setBroken(true);
-                return null;
-                
-            } else if (tokens[0].getToken() == Token.CLASS) {
-                
-                if (thisObj instanceof TYStaticClassObject) {
-                    
-                    return NativeStorage.getClassObject(((TYStaticClassObject) thisObj).getInternalClass());
-                    
-                } else {
-                    
-                    Errors.throwError("Trinity.Errors.SyntaxError", runtime, "Cannot retrieve a class here.");
-                }
-                
-            } else if (tokens[0].getToken() == Token.MODULE) {
-                
-                if (thisObj instanceof TYStaticModuleObject) {
-                    
-                    return NativeStorage.getModuleObject(((TYStaticModuleObject) thisObj).getInternalModule());
-                    
-                } else {
-                    
-                    Errors.throwError("Trinity.Errors.SyntaxError", runtime, "Cannot retrieve a module here.");
-                }
-                
-            } else if (tokens[0].getToken() == Token.INSTANCE_VAR && tokens.length > 1 && tokens[1].getToken() == Token.NON_TOKEN_STRING) {
-                
-                String varName = tokens[1].getContents();
-                
-                if (!runtime.isStaticScope()) {
-                    
-                    if (Variables.getInstanceVariables(runtime.getScope()).containsKey(varName)) {
-                        
-                        return Variables.getInstanceVariables(runtime.getScope()).get(varName);
-                        
-                    } else {
-                        
-                        Errors.throwError("Trinity.Errors.FieldNotFoundError", runtime, "Instance variable '" + varName + "' not found.");
-                    }
-                    
-                } else {
-                    
-                    Errors.throwError("Trinity.Errors.ScopeError", runtime, "Instance variable '" + varName + "' not accessible from a static context.");
-                }
-                
-            } else if (tokens[0].getToken() == Token.CLASS_VAR && tokens.length > 1 && tokens[1].getToken() == Token.NON_TOKEN_STRING) {
-                
-                String varName = tokens[1].getContents();
-                
-                if (runtime.getTyClass().hasVariable(varName)) {
-                    
-                    return runtime.getTyClass().getVariable(varName);
-                    
-                } else {
-                    
-                    Errors.throwError("Trinity.Errors.FieldNotFoundError", runtime, "Class field '" + varName + "' not found.");
-                }
-                
-            } else if (tokens[0].getToken() == Token.GLOBAL_VAR && tokens.length > 1 && tokens[1].getToken() == Token.NON_TOKEN_STRING) {
+            if (tokens[0].getToken() == Token.GLOBAL_VAR && tokens.length > 1 && tokens[1].getToken() == Token.NON_TOKEN_STRING) {
                 
                 String varName = tokens[1].getContents();
                 
                 if (Variables.hasGlobalVariable(varName)) {
                     
-                    return Variables.getGlobalVariable(varName);
+                    return VariableManager.getVariable(Variables.getGlobalVariable(varName));
                     
                 } else {
                     
@@ -208,9 +72,41 @@ public class InstructionSet extends ObjectEvaluator {
                 
                 if (thisObj == TYObject.NONE) {
                     
-                    if (runtime.hasVariable(tokenContents)) {
+                    if (tokenContents.contentEquals("this")) {
+                        
+                        return runtime.getThis();
+                        
+                    } else if (runtime.hasVariable(tokenContents)) {
                         
                         return runtime.getVariable(tokenContents);
+                        
+                    } else if (runtime.getThis() != TYObject.NONE && runtime.getThis().getObjectClass().hasVariable(tokenContents, runtime.getThis())) {
+                        
+                        TYClass tyClass = runtime.getTyClass();
+                        VariableLoc loc = tyClass.getVariable(tokenContents, runtime.getThis());
+                        
+                        if (tyClass.checkScope(loc, runtime)) {
+                            
+                            return VariableManager.getVariable(loc);
+                            
+                        } else {
+                            
+                            Errors.throwError("Trinity.Errors.ScopeError", "Cannot access value of field marked '" + loc.getScope().toString() + "' here.");
+                        }
+                        
+                    } else if (runtime.isStaticScope() && runtime.getScopeClass().hasVariable(tokenContents)) {
+                        
+                        TYClass tyClass = runtime.getScopeClass();
+                        VariableLoc loc = tyClass.getVariable(tokenContents);
+                        
+                        if (tyClass.checkScope(loc, runtime)) {
+                            
+                            return VariableManager.getVariable(loc);
+                            
+                        } else {
+                            
+                            Errors.throwError("Trinity.Errors.ScopeError", "Cannot access value of field marked '" + loc.getScope().toString() + "' here.");
+                        }
                         
                     } else if (runtime.getModule() != null && runtime.getModule().hasClass(tokenContents)) {
                         
@@ -250,7 +146,7 @@ public class InstructionSet extends ObjectEvaluator {
                         
                         if (runtime.isStaticScope()) {
                             
-                            return TrinityNatives.cast(TYClassObject.class, runtime.getScope()).getInternalClass().tyInvoke(tokenContents, runtime, getProcedure(), runtime, TYObject.NONE, params.toArray(new TYObject[params.size()]));
+                            return runtime.getScopeClass().tyInvoke(tokenContents, runtime, getProcedure(), runtime, TYObject.NONE, params.toArray(new TYObject[params.size()]));
                             
                         } else {
                             
@@ -293,7 +189,27 @@ public class InstructionSet extends ObjectEvaluator {
                     TYStaticClassObject classObject = (TYStaticClassObject) thisObj;
                     TYClass tyClass = classObject.getInternalClass();
                     
-                    if (tyClass.hasClass(tokenContents)) {
+                    tyClass.runInitializationActions();
+                    
+                    if (tyClass.hasVariable(tokenContents)) {
+                        
+                        VariableLoc loc = tyClass.getVariable(tokenContents);
+                        
+                        if (tyClass.checkScope(loc, runtime)) {
+                            
+                            if (loc == null) {
+                                
+                                Errors.throwError("Trinity.Errors.FieldNotFoundError", "No field '" + tokenContents + "' found.", runtime);
+                            }
+                            
+                            return loc.getValue();
+                            
+                        } else {
+                            
+                            Errors.throwError("Trinity.Errors.ScopeError", "Cannot access value of field marked '" + loc.getScope().toString() + "' here.");
+                        }
+                        
+                    } else if (tyClass.hasClass(tokenContents)) {
                         
                         return NativeStorage.getStaticClassObject(tyClass.getClass(tokenContents));
                         
@@ -314,36 +230,45 @@ public class InstructionSet extends ObjectEvaluator {
                         return classObject.getInternalClass().tyInvoke(tokenContents, runtime, getProcedure(), runtime, TYObject.NONE, params.toArray(new TYObject[params.size()]));
                     }
                     
-                } else if (thisObj instanceof TYClassObject) {
-                    
-                    List<TYObject> params = new ArrayList<>();
-                    for (ChainedInstructionSet set : getChildren()) {
-                        
-                        TYObject obj = set.evaluate(TYObject.NONE, runtime);
-                        
-                        if (obj != TYObject.NONE) {
-                            
-                            params.add(obj);
-                        }
-                    }
-                    
-                    return thisObj.tyInvoke(tokenContents, runtime, getProcedure(), runtime, params.toArray(new TYObject[params.size()]));
-                    
                 } else {
                     
-                    List<TYObject> params = new ArrayList<>();
-                    
-                    for (ChainedInstructionSet set : getChildren()) {
+                    if (thisObj != TYObject.NONE) {
                         
-                        TYObject obj = set.evaluate(TYObject.NONE, runtime);
-                        
-                        if (obj != TYObject.NONE) {
+                        TYClass tyClass = thisObj.getObjectClass();
+                        if (tyClass.hasVariable(tokenContents, thisObj)) {
                             
-                            params.add(obj);
+                            VariableLoc loc = tyClass.getVariable(tokenContents, thisObj);
+                            
+                            if (tyClass.checkScope(loc, runtime)) {
+                                
+                                if (loc == null) {
+                                    
+                                    Errors.throwError("Trinity.Errors.FieldNotFoundError", "No field '" + tokenContents + "' found.", runtime);
+                                }
+                                
+                                return loc.getValue();
+                                
+                            } else {
+                                
+                                Errors.throwError("Trinity.Errors.ScopeError", "Cannot access value of field marked '" + loc.getScope().toString() + "' here.");
+                            }
+                            
+                        } else {
+                            
+                            List<TYObject> params = new ArrayList<>();
+                            for (ChainedInstructionSet set : getChildren()) {
+                                
+                                TYObject obj = set.evaluate(TYObject.NONE, runtime);
+                                
+                                if (obj != TYObject.NONE) {
+                                    
+                                    params.add(obj);
+                                }
+                            }
+                            
+                            return thisObj.tyInvoke(tokenContents, runtime, getProcedure(), runtime, params.toArray(new TYObject[params.size()]));
                         }
                     }
-                    
-                    return thisObj.tyInvoke(tokenContents, runtime, getProcedure(), runtime, params.toArray(new TYObject[params.size()]));
                 }
             }
         }

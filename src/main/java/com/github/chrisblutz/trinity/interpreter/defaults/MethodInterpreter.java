@@ -72,6 +72,11 @@ public class MethodInterpreter extends DeclarationInterpreter {
                     name = nameInfo.getContents();
                     position++;
                     
+                } else if (nameInfo.getToken() == Token.LEFT_SQUARE_BRACKET && position + 1 < line.size() && line.get(position + 1).getToken() == Token.RIGHT_SQUARE_BRACKET && position + 2 < line.size() && line.get(position + 2).getToken() == Token.ASSIGNMENT_OPERATOR) {
+                    
+                    name = "[]=";
+                    position += 3;
+                    
                 } else if (nameInfo.getToken() == Token.LEFT_SQUARE_BRACKET && position + 1 < line.size() && line.get(position + 1).getToken() == Token.RIGHT_SQUARE_BRACKET) {
                     
                     name = "[]";
@@ -130,7 +135,7 @@ public class MethodInterpreter extends DeclarationInterpreter {
                                 blockParam = list.get(1).getContents();
                                 
                             } else if (list.size() == 2 && list.get(0).getToken() == Token.TRIPLE_DOT && list.get(1).getToken() == Token.NON_TOKEN_STRING) {
-    
+                                
                                 overflowParam = list.get(1).getContents();
                             }
                         }

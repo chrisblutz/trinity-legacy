@@ -1,19 +1,24 @@
 module Trinity
     class System
-        def native static currentTimeMillis
+        private
+            var static properties = loadProperties()
 
-        def native getEnvironment(name = nil)
+        public
+            def native static currentTimeMillis
 
-        def native loadProperties
+            def native static getEnvironment(name = nil)
 
-        # Returns the hash code for an object
-        def native identify(obj)
+            # Returns the hash code for an object
+            def native static identify(obj)
 
-        def static getProperty(name)
-            @@properties[name]
+            def static getProperty(name)
+                properties[name]
 
-        def static setProperty(name, value)
-            @@properties.put(name, value)
+            def static setProperty(name, value)
+                properties.put(name, value)
 
-        def static clearProperty(name)
-            @@properties.remove(name)
+            def static clearProperty(name)
+                properties.remove(name)
+
+        private
+            def native static loadProperties

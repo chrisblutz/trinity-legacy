@@ -16,8 +16,8 @@ class NativeMath {
     
     static void register() {
         
-        TrinityNatives.registerMethod("Trinity.Math", "E", true, null, null, null, null, (runtime, thisObj, params) -> NativeStorage.getE());
-        TrinityNatives.registerMethod("Trinity.Math", "PI", true, null, null, null, null, (runtime, thisObj, params) -> NativeStorage.getPi());
+        TrinityNatives.registerField("Trinity.Math", "E", (runtime, thisObj, params) -> NativeStorage.getE());
+        TrinityNatives.registerField("Trinity.Math", "PI", (runtime, thisObj, params) -> NativeStorage.getPi());
         TrinityNatives.registerMethod("Trinity.Math", "pow", true, new String[]{"x", "n"}, null, null, null, (runtime, thisObj, params) -> {
             
             double x = TrinityNatives.toFloat(runtime.getVariable("x"));

@@ -21,7 +21,7 @@ import java.util.*;
 
 
 /**
- * This class houses the central API for native methods and global variables in Trinity.
+ * This class houses the central API for native methods and fields in Trinity.
  * It also provides utility methods for object construction, method invocation, and native
  * type conversion.
  *
@@ -29,31 +29,29 @@ import java.util.*;
  */
 public class TrinityNatives {
     
-    private static Map<String, List<NativeAction>> pendingActions = new HashMap<>();
     private static Map<String, TYMethod> methods = new HashMap<>();
     private static Map<String, TYClass> pendingLoads = new HashMap<>();
-    private static Map<String, Boolean> pendingSecure = new HashMap<>();
     private static Map<String, String> pendingLoadFiles = new HashMap<>();
     private static Map<String, Integer> pendingLoadLines = new HashMap<>();
-    private static Map<String, Scope> pendingScope = new HashMap<>();
-    private static Map<String, String[]> pendingLeadingComments = new HashMap<>();
     
     private static Map<String, ProcedureAction> globals = new HashMap<>();
+    
+    private static Map<String, Map<String, ProcedureAction>> fields = new HashMap<>();
     
     /**
      * Registers a native method to be loaded when its container class is loaded.<br>
      * <br>
      * This method allows for the definition of argument names, which can be retrieved using
-     * {@code Runtime.getVariable()}:
+     * {@code Runtime.getVariableLoc()}:
      * <pre>
-     *     runtime.getVariable("name");
+     *     runtime.getVariableLoc("name");
      * </pre>
      * <p>
      * If there is a block argument defined, this can also be retrieved using this same method.
      * The resulting {@code TYObject} will be an instance of the Trinity class {@code Procedure}.
      * It can be invoked by using {@code TrinityNatives.call()}:
      * <pre>
-     *      TYObject procedure = runtime.getVariable("blockArg")
+     *      TYObject procedure = runtime.getVariableLoc("blockArg")
      *      TYObject result = TrinityNatives.call(procedure, "call", runtime, [any parameters]);
      * </pre>
      *
@@ -127,21 +125,14 @@ public class TrinityNatives {
         globals.put(name, action);
     }
     
-    public static void performPendingLoad(String className, NativeAction action) {
+    public static void registerField(String className, String varName, ProcedureAction action) {
         
-        if (ClassRegistry.classExists(className)) {
+        if (!fields.containsKey(className)) {
             
-            action.onAction();
-            
-        } else {
-            
-            if (!pendingActions.containsKey(className)) {
-                
-                pendingActions.put(className, new ArrayList<>());
-            }
-            
-            pendingActions.get(className).add(action);
+            fields.put(className, new HashMap<>());
         }
+        
+        fields.get(className).put(varName, action);
     }
     
     public static void doLoad(String name, boolean secureMethod, TYClass current, String fileName, int lineNumber, Scope scope, String[] leadingComments) {
@@ -153,11 +144,8 @@ public class TrinityNatives {
         } else {
             
             pendingLoads.put(name, current);
-            pendingSecure.put(name, secureMethod);
             pendingLoadFiles.put(name, fileName);
             pendingLoadLines.put(name, lineNumber);
-            pendingScope.put(name, scope);
-            pendingLeadingComments.put(name, leadingComments);
         }
     }
     
@@ -177,31 +165,6 @@ public class TrinityNatives {
         }
     }
     
-    public static void triggerActionsPendingLoad(String className) {
-        
-        if (pendingActions.containsKey(className)) {
-            
-            for (NativeAction action : pendingActions.get(className)) {
-                
-                action.onAction();
-            }
-        }
-        
-        for (String str : pendingLoads.keySet()) {
-            
-            if (methods.containsKey(str)) {
-                
-                addToClass(str, pendingSecure.get(str), pendingLoads.get(str), pendingLoadFiles.get(str), pendingLoadLines.get(str), pendingScope.get(str), pendingLeadingComments.get(str));
-                pendingLoads.remove(str);
-                pendingSecure.remove(str);
-                pendingLoadFiles.remove(str);
-                pendingLoadLines.remove(str);
-                pendingScope.remove(str);
-                pendingLeadingComments.remove(str);
-            }
-        }
-    }
-    
     public static void checkAllLoaded() {
         
         for (String str : pendingLoads.keySet()) {
@@ -218,6 +181,19 @@ public class TrinityNatives {
     public static ProcedureAction getGlobalProcedureAction(String name) {
         
         return globals.get(name);
+    }
+    
+    public static ProcedureAction getFieldProcedureAction(String className, String varName, String fileName, int lineNumber) {
+        
+        if (fields.containsKey(className) && fields.get(className).containsKey(varName)) {
+            
+            return fields.get(className).get(varName);
+            
+        } else {
+            
+            Errors.throwSyntaxError("Trinity.Errors.ParseError", "Native field " + className + "." + varName + " not found.", fileName, lineNumber);
+            return null;
+        }
     }
     
     /**
@@ -370,7 +346,7 @@ public class TrinityNatives {
             return desiredClass.cast(object);
             
         } else {
-            
+    
             Errors.throwError("Trinity.Errors.InvalidTypeError", "Unexpected value of type " + object.getObjectClass().getName() + " found.");
             
             // This will throw an error, but the program will exit at the line above, never reaching this point

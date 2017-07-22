@@ -2,7 +2,7 @@ package com.github.chrisblutz.trinity.interpreter.instructionsets;
 
 import com.github.chrisblutz.trinity.lang.TYObject;
 import com.github.chrisblutz.trinity.lang.scope.TYRuntime;
-import com.github.chrisblutz.trinity.lang.types.bool.TYBoolean;
+import com.github.chrisblutz.trinity.lang.variables.VariableManager;
 import com.github.chrisblutz.trinity.parser.tokens.Token;
 import com.github.chrisblutz.trinity.parser.tokens.TokenInfo;
 
@@ -37,6 +37,18 @@ public class KeyRetrievalInstructionSet extends InstructionSet {
                     if (runtime.hasVariable(tokenContents)) {
                         
                         keyObject = runtime.getVariable(tokenContents);
+                        
+                    } else if (runtime.getThis() != TYObject.NONE && runtime.getThis().getObjectClass().hasVariable(tokenContents, runtime.getThis())) {
+                        
+                        keyObject = VariableManager.getVariable(runtime.getThis().getObjectClass().getVariable(tokenContents, runtime.getThis()));
+                        
+                    } else if (runtime.isStaticScope() && runtime.getScopeClass().hasVariable(tokenContents)) {
+                        
+                        keyObject = VariableManager.getVariable(runtime.getScopeClass().getVariable(tokenContents));
+                        
+                    } else if (tokenContents.contentEquals("this")) {
+                        
+                        keyObject = runtime.getThis();
                     }
                 }
                 
@@ -75,7 +87,7 @@ public class KeyRetrievalInstructionSet extends InstructionSet {
             return thisObj.tyInvoke("[]", runtime, null, null, params.toArray(new TYObject[params.size()]));
         }
         
-        return TYBoolean.NONE;
+        return TYObject.NONE;
     }
     
     @Override

@@ -14,7 +14,8 @@ import java.util.List;
 public class TYString extends TYObject {
     
     private String internalString;
-    private TYArray charArray;
+    private List<TYObject> chars;
+    private TYArray charArray = null;
     
     public TYString(String internal) {
         
@@ -22,7 +23,7 @@ public class TYString extends TYObject {
         
         this.internalString = internal;
         
-        List<TYObject> chars = new ArrayList<>();
+        chars = new ArrayList<>();
         
         if (internal.length() == 1) {
             
@@ -35,8 +36,6 @@ public class TYString extends TYObject {
                 chars.add(new TYString(Character.toString(c)));
             }
         }
-        
-        charArray = new TYArray(chars);
     }
     
     public String getInternalString() {
@@ -45,6 +44,11 @@ public class TYString extends TYObject {
     }
     
     public TYArray getCharacterArray() {
+        
+        if (charArray == null) {
+            
+            charArray = new TYArray(chars);
+        }
         
         return charArray;
     }

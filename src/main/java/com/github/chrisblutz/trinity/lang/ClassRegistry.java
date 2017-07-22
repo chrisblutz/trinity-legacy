@@ -1,6 +1,5 @@
 package com.github.chrisblutz.trinity.lang;
 
-import com.github.chrisblutz.trinity.natives.TrinityNatives;
 import com.github.chrisblutz.trinity.plugins.PluginLoader;
 import com.github.chrisblutz.trinity.plugins.api.Events;
 
@@ -35,8 +34,6 @@ public class ClassRegistry {
             
             TYClass tyClass = new TYClass(className, shortClassName);
             classes.put(className, tyClass);
-            
-            TrinityNatives.triggerActionsPendingLoad(className);
             
             PluginLoader.triggerEvent(Events.CLASS_LOAD, tyClass);
         }

@@ -37,12 +37,7 @@ class NativeSystem {
                 return getEnvironmentMap();
             }
         });
-        TrinityNatives.registerMethod("Trinity.System", "loadProperties", true, null, null, null, null, (runtime, thisObj, params) -> {
-            
-            TrinityProperties.load();
-            
-            return TYObject.NONE;
-        });
+        TrinityNatives.registerMethod("Trinity.System", "loadProperties", true, null, null, null, null, (runtime, thisObj, params) -> TrinityProperties.load());
         TrinityNatives.registerMethod("Trinity.System", "identify", true, new String[]{"obj"}, null, null, null, (runtime, thisObj, params) -> {
             
             TYObject object = runtime.getVariable("obj");

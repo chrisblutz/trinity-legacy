@@ -2,8 +2,6 @@ package com.github.chrisblutz.trinity.lang.types.nativeutils;
 
 import com.github.chrisblutz.trinity.lang.TYObject;
 import com.github.chrisblutz.trinity.lang.errors.Errors;
-import com.github.chrisblutz.trinity.lang.procedures.ProcedureAction;
-import com.github.chrisblutz.trinity.lang.scope.TYRuntime;
 import com.github.chrisblutz.trinity.lang.types.arrays.TYArray;
 import com.github.chrisblutz.trinity.lang.types.bool.TYBoolean;
 import com.github.chrisblutz.trinity.natives.NativeStorage;
@@ -36,6 +34,7 @@ class NativeArray {
             NativeStorage.clearArrayData(thisArray);
             
             thisArray.getInternalList().add(TrinityNatives.toInt(runtime.getVariable("index")), runtime.getVariable("value"));
+            
             return TYObject.NONE;
         });
         TrinityNatives.registerMethod("Trinity.Array", "remove", false, new String[]{"index"}, null, null, null, (runtime, thisObj, params) -> {
@@ -64,14 +63,25 @@ class NativeArray {
             
             return thisList.get(index);
         });
-        TrinityNatives.registerMethod("Trinity.Array", "copyOf", true, new String[]{"array"}, null, null, null, new ProcedureAction() {
+        TrinityNatives.registerMethod("Trinity.Array", "[]=", false, new String[]{"index", "value"}, null, null, null, (runtime, thisObj, params) -> {
             
-            @Override
-            public TYObject onAction(TYRuntime runtime, TYObject thisObj, TYObject... params) {
+            int index = TrinityNatives.toInt(runtime.getVariable("index"));
+            TYObject value = runtime.getVariable("value");
+            List<TYObject> thisList = TrinityNatives.cast(TYArray.class, thisObj).getInternalList();
+            
+            if (index >= thisList.size() || index < 0) {
                 
-                TYArray thisArray = TrinityNatives.cast(TYArray.class, runtime.getVariable("array"));
-                return new TYArray(new ArrayList<>(thisArray.getInternalList()));
+                Errors.throwError("Trinity.Errors.IndexOutOfBoundsError", runtime, "Index: " + index + ", Size: " + thisList.size());
             }
+            
+            thisList.set(index, value);
+            
+            return TYObject.NONE;
+        });
+        TrinityNatives.registerMethod("Trinity.Array", "copyOf", true, new String[]{"array"}, null, null, null, (runtime, thisObj, params) -> {
+            
+            TYArray thisArray = TrinityNatives.cast(TYArray.class, runtime.getVariable("array"));
+            return new TYArray(new ArrayList<>(thisArray.getInternalList()));
         });
     }
 }

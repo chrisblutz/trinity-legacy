@@ -1,8 +1,6 @@
 module Trinity
     class Math
-        def native static E
-
-        def native static PI
+        val native static E, PI
 
         def native static pow(x, n)
 
@@ -24,9 +22,11 @@ module Trinity
 
         def native static arctan(rad)
 
-        def native static toDegrees(rad)
+        def static toDegrees(rad)
+            rad * (180 / PI)
 
         def native static toRadians(deg)
+            deg * (PI / 180)
 
         def native static log(x, base = 10)
 

@@ -2,28 +2,32 @@ module Trinity
     module IO
         module Files
             class File
-                def initialize(name)
-                    @path = FileSystem.normalize(name)
+                private
+                    var path
 
-                def getPath
-                    @path
+                public
+                    def initialize(name)
+                        path = FileSystem.normalize(name)
 
-                def create
-                    FileSystem.create(getPath())
+                    def getPath
+                        path
 
-                def open(&block, privileges = 'r', append = false)
-                    if block?
-                        open(privileges, append)
-                        block.call(this)
-                        close()
-                    else
-                        FileSystem.open(getPath(), privileges, append)
+                    def create
+                        FileSystem.create(getPath())
 
-                def read
-                    FileSystem.read(getPath())
+                    def open(&block, privileges = 'r', append = false)
+                        if block?
+                            open(privileges, append)
+                            block.call(this)
+                            close()
+                        else
+                            FileSystem.open(getPath(), privileges, append)
 
-                def write(str)
-                    FileSystem.write(getPath(), str)
+                    def read
+                        FileSystem.read(getPath())
 
-                def close
-                    FileSystem.close(getPath())
+                    def write(str)
+                        FileSystem.write(getPath(), str)
+
+                    def close
+                        FileSystem.close(getPath())

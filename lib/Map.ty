@@ -4,6 +4,8 @@ module Trinity
 
         def native [](key)
 
+        def native []=(key, value)
+
         def native put(key, value)
 
         def native remove(key)

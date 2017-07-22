@@ -1,22 +1,26 @@
 module Trinity
     module Testing
         class Suite
-            @@SUITE_PREFIX = 'test'
+            private
+                val static SUITE_PREFIX = 'test'
 
-            def initialize(name, classes)
-                @name = name
-                @classes = classes
+                var name, classes
 
-            def getName
-                @name
+            public
+                def initialize(name, classes)
+                    this.name = name
+                    this.classes = classes
 
-            def run
-                println('Running \'' + getName() + "' tests...\n")
+                def getName
+                    name
 
-                @classes.each() |cl|
-                    if cl.getSuperclass() == Trinity.Testing.Test
-                        println(cl)
-                        cl.getMethods().each() |method|
-                            if method.getName().startsWith(@@SUITE_PREFIX)
-                                println("\t" + method.getName())
-                                method.invoke(nil, [])
+                def run
+                    println('Running \'' + getName() + "' tests...\n")
+
+                    classes.each() |cl|
+                        if cl.getSuperclass() == Trinity.Testing.Test
+                            println(cl)
+                            cl.getMethods().each() |method|
+                                if method.getName().startsWith(SUITE_PREFIX)
+                                    println("\t" + method.getName())
+                                    method.invoke(nil, [])

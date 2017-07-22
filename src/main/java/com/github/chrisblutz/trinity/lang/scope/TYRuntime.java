@@ -5,10 +5,10 @@ import com.github.chrisblutz.trinity.lang.TYClass;
 import com.github.chrisblutz.trinity.lang.TYModule;
 import com.github.chrisblutz.trinity.lang.TYObject;
 import com.github.chrisblutz.trinity.lang.procedures.TYProcedure;
+import com.github.chrisblutz.trinity.lang.variables.VariableLoc;
+import com.github.chrisblutz.trinity.lang.variables.VariableManager;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 
 /**
@@ -16,8 +16,11 @@ import java.util.Map;
  */
 public class TYRuntime implements Cloneable {
     
-    private Map<String, TYObject> variables = new HashMap<>();
+    private Map<String, VariableLoc> variables = new HashMap<>();
+    private List<VariableLoc> clonedVars = new ArrayList<>();
+    private TYObject thisKeywordObject = TYObject.NONE;
     private TYObject scope = TYObject.NONE;
+    private TYClass scopeClass = null;
     private boolean staticScope = false;
     private TYModule module = null;
     private TYClass tyClass = null;
@@ -28,14 +31,26 @@ public class TYRuntime implements Cloneable {
     private TYObject returnObject = TYObject.NONE;
     private TYModule[] importedModules = new TYModule[0];
     
-    public void setVariable(String variable, TYObject value) {
+    public void setVariableLoc(String variable, VariableLoc value) {
         
         variables.put(variable, value);
     }
     
+    public void setVariable(String variable, TYObject value) {
+        
+        VariableLoc loc = new VariableLoc();
+        setVariableLoc(variable, loc);
+        VariableManager.put(loc, value);
+    }
+    
+    public VariableLoc getVariableLoc(String variable) {
+        
+        return variables.get(variable);
+    }
+    
     public TYObject getVariable(String variable) {
         
-        return variables.getOrDefault(variable, TYObject.NIL);
+        return VariableManager.getVariable(getVariableLoc(variable));
     }
     
     public boolean hasVariable(String variable) {
@@ -59,6 +74,16 @@ public class TYRuntime implements Cloneable {
         this.staticScope = staticScope;
     }
     
+    public TYClass getScopeClass() {
+        
+        return scopeClass;
+    }
+    
+    public void setScopeClass(TYClass scopeClass) {
+        
+        this.scopeClass = scopeClass;
+    }
+    
     public TYModule getModule() {
         
         return module;
@@ -77,8 +102,6 @@ public class TYRuntime implements Cloneable {
     public void setTyClass(TYClass tyClass) {
         
         this.tyClass = tyClass;
-        
-        tyClass.runInitializationActions(this);
     }
     
     public TYProcedure getProcedure() {
@@ -187,10 +210,32 @@ public class TYRuntime implements Cloneable {
         return null;
     }
     
+    public void setThis(TYObject thisObj) {
+        
+        this.thisKeywordObject = thisObj;
+    }
+    
+    public TYObject getThis() {
+        
+        return thisKeywordObject;
+    }
+    
     public void clearVariables() {
         
         variables.clear();
     }
+    
+    /*@Override
+    public void finalize() {
+        
+        for (VariableLoc loc : variables.values()) {
+            
+            if (!clonedVars.contains(loc)) {
+                
+                VariableManager.clearVariable(loc);
+            }
+        }
+    }*/
     
     @Override
     public TYRuntime clone() {
@@ -198,10 +243,12 @@ public class TYRuntime implements Cloneable {
         try {
             
             TYRuntime runtime = (TYRuntime) super.clone();
-            Map<String, TYObject> varCopy = new HashMap<>();
+            Map<String, VariableLoc> varCopy = new HashMap<>();
             varCopy.putAll(variables);
             runtime.variables = varCopy;
+            runtime.clonedVars = new ArrayList<>(varCopy.values());
             runtime.scope = scope;
+            runtime.scopeClass = scopeClass;
             runtime.staticScope = staticScope;
             runtime.module = module;
             runtime.procedure = procedure;
@@ -232,7 +279,15 @@ public class TYRuntime implements Cloneable {
             
             if (hasVariable(var)) {
                 
-                runtime.setVariable(var, getVariable(var));
+                runtime.setVariableLoc(var, getVariableLoc(var));
+            }
+        }
+        
+        for (VariableLoc loc : variables.values()) {
+            
+            if (!clonedVars.contains(loc)) {
+                
+                VariableManager.clearVariable(loc);
             }
         }
     }

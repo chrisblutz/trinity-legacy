@@ -2,97 +2,102 @@ import Trinity.ArrayUtils
 
 module Trinity
     class Array
-        def +(other)
-            newArray = copyOf(this)
-            if other.isInstance(Array)
-                newArray.addAll(other)
-            else
-                newArray.add(other)
-            newArray
+        private
+            var solid = false
 
-        def native [](index)
+        public
+            def +(other)
+                newArray = copyOf(this)
+                if other.isInstance(Array)
+                    newArray.addAll(other)
+                else
+                    newArray.add(other)
+                newArray
 
-        def native add(value)
+            def native [](index)
 
-        def addAll(...obj)
-            obj.each() |e|
-                add(e)
+            def native []=(index, value)
 
-        def native insert(index, value)
+            def native add(value)
 
-        def native remove(index)
+            def addAll(...obj)
+                obj.each() |e|
+                    add(e)
 
-        def removeObject(value)
-            flag = false
-            for i = 0; i < length(); i += 1
-                if this[i] == value
-                    remove(i)
-                    i -= 1
-                    flag = true
-            flag
+            def native insert(index, value)
 
-        def native clear
+            def native remove(index)
 
-        def native length
+            def removeObject(value)
+                flag = false
+                for i = 0; i < length(); i += 1
+                    if this[i] == value
+                        remove(i)
+                        i -= 1
+                        flag = true
+                flag
 
-        def toString
-            str = '[' + join(', ') + ']'
-            if isSolid()
-                str += ' (solid)'
-            str
+            def native clear
 
-        def each(&block)
-            iterator().iterate(block)
+            def native length
 
-        def iterator
-            Iterator.new(this)
+            def toString
+                str = '[' + join(', ') + ']'
+                if isSolid()
+                    str += ' (solid)'
+                str
 
-        def sum
-            sum = 0
-            each() |e|
-                sum += e
-            sum
+            def each(&block)
+                iterator().iterate(block)
 
-        def join(delimiter = ' ')
-            str = ''
-            for i = 0; i < length(); i += 1
-                str += this[i]
-                if i < length() - 1
-                    str += delimiter
-            str
+            def iterator
+                Iterator.new(this)
 
-        def ==(other)
-            if length() != other.length()
-                return false
-            for i = 0; i < length(); i += 1
-                if this[i] != other[i]
+            def sum
+                sum = 0
+                each() |e|
+                    sum += e
+                sum
+
+            def join(delimiter = ' ')
+                str = ''
+                for i = 0; i < length(); i += 1
+                    str += this[i]
+                    if i < length() - 1
+                        str += delimiter
+                str
+
+            def ==(other)
+                if length() != other.length()
                     return false
-            return true
+                for i = 0; i < length(); i += 1
+                    if this[i] != other[i]
+                        return false
+                return true
 
-        def reverse
-            array = []
-            for i = length() - 1; i >= 0; i -= 1
-                array.add(this[i])
-            array
+            def reverse
+                array = []
+                for i = length() - 1; i >= 0; i -= 1
+                    array.add(this[i])
+                array
 
-        def solidify
-            @solid = true
+            def solidify
+                solid = true
 
-        def liquefy
-            @solid = false
+            def liquefy
+                solid = false
 
-        def isSolid
-            @solid ||= false
-            @solid
+            def isSolid
+                solid
 
-        def native static copyOf(array)
+            def native static copyOf(array)
 
-        def static forSize(size, value = nil)
-            array = []
-            if size < 0
-                throw(Trinity.Errors.InvalidArgumentError.new('Size should be a positive integer (or 0)'))
-            if size == 0
-                return array
-            (1..size).each() |e|
-                array.add(value)
-            array
+            def static forSize(size, value = nil)
+                array = []
+                if size < 0
+                    throw(Trinity.Errors.InvalidArgumentError.new('Size should be a positive integer (or 0)'))
+                if size == 0
+                    return array
+                (1..size).each() |e|
+                    array.add(value)
+                array

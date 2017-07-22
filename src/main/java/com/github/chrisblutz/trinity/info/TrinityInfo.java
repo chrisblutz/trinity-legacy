@@ -26,8 +26,12 @@ public class TrinityInfo {
                 
             } catch (IOException e) {
                 
-                // Hide errors
+                System.err.println("INFO: Unable to load information on the Trinity interpreter.");
             }
+            
+        } else {
+            
+            System.err.println("INFO: Information on the Trinity interpreter is missing.");
         }
     }
     

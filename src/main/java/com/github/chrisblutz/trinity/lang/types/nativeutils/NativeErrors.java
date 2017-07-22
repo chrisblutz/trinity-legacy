@@ -1,9 +1,8 @@
 package com.github.chrisblutz.trinity.lang.types.nativeutils;
 
-import com.github.chrisblutz.trinity.interpreter.variables.Variables;
 import com.github.chrisblutz.trinity.lang.TYObject;
-import com.github.chrisblutz.trinity.lang.errors.stacktrace.TrinityStack;
 import com.github.chrisblutz.trinity.lang.errors.stacktrace.StackElement;
+import com.github.chrisblutz.trinity.lang.errors.stacktrace.TrinityStack;
 import com.github.chrisblutz.trinity.lang.types.arrays.TYArray;
 import com.github.chrisblutz.trinity.lang.types.numeric.TYInt;
 import com.github.chrisblutz.trinity.lang.types.strings.TYString;
@@ -62,9 +61,7 @@ class NativeErrors {
                 ary.getInternalList().add(stackTraceInstance);
             }
             
-            Variables.getInstanceVariables(runtime.getScope()).put("stackTrace", ary);
-            
-            return TYObject.NONE;
+            return ary;
         });
     }
 }
