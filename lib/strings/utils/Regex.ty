@@ -2,18 +2,18 @@ module Trinity
     module StringUtils
         class Regex
             private
-                var matches, groups
+                var m, g
 
             public
                 def initialize(matches, groups)
-                    this.matches = matches
-                    this.groups = groups
+                    this.m = matches
+                    this.g = groups
 
                 def matches
-                    matches
+                    m
 
                 def groups
-                    groups
+                    g
 
                 def toString
                     str = getClass().toString() + '[Matches: ' + matches() + ', ' + groups().length() + ' group(s)]'
