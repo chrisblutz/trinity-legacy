@@ -19,6 +19,12 @@ class NativeFloat {
     
     static void register() {
         
+        TrinityNatives.registerField("Trinity.Float", "NaN", (runtime, thisObj, params) -> TrinityNatives.wrapNumber(Double.NaN));
+        TrinityNatives.registerField("Trinity.Float", "POSITIVE_INFINITY", (runtime, thisObj, params) -> TrinityNatives.wrapNumber(Double.POSITIVE_INFINITY));
+        TrinityNatives.registerField("Trinity.Float", "NEGATIVE_INFINITY", (runtime, thisObj, params) -> TrinityNatives.wrapNumber(Double.NEGATIVE_INFINITY));
+        TrinityNatives.registerField("Trinity.Float", "MIN_VALUE", (runtime, thisObj, params) -> TrinityNatives.wrapNumber(Double.MIN_VALUE));
+        TrinityNatives.registerField("Trinity.Float", "MAX_VALUE", (runtime, thisObj, params) -> TrinityNatives.wrapNumber(Double.MAX_VALUE));
+        
         TrinityNatives.registerMethod("Trinity.Float", "+", false, new String[]{"other"}, null, null, null, getActionForOperation("+"));
         TrinityNatives.registerMethod("Trinity.Float", "-", false, new String[]{"other"}, null, null, null, getActionForOperation("-"));
         TrinityNatives.registerMethod("Trinity.Float", "*", false, new String[]{"other"}, null, null, null, getActionForOperation("*"));
@@ -80,6 +86,21 @@ class NativeFloat {
             }
             
             return TYBoolean.FALSE;
+        });
+        TrinityNatives.registerMethod("Trinity.Float", "isNaN", false, null, null, null, null, (runtime, thisObj, params) -> {
+            
+            double thisDouble = TrinityNatives.toFloat(thisObj);
+            return TYBoolean.valueFor(Double.isNaN(thisDouble));
+        });
+        TrinityNatives.registerMethod("Trinity.Float", "isFinite", false, null, null, null, null, (runtime, thisObj, params) -> {
+            
+            double thisDouble = TrinityNatives.toFloat(thisObj);
+            return TYBoolean.valueFor(Double.isFinite(thisDouble));
+        });
+        TrinityNatives.registerMethod("Trinity.Float", "isInfinite", false, null, null, null, null, (runtime, thisObj, params) -> {
+            
+            double thisDouble = TrinityNatives.toFloat(thisObj);
+            return TYBoolean.valueFor(Double.isInfinite(thisDouble));
         });
     }
     

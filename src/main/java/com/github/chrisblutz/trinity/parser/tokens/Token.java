@@ -13,7 +13,7 @@ public enum Token {
     __FILE__("__FILE__"), __LINE__("__LINE__"),
     
     // Definitions
-    IMPORT("import"), MODULE("module"), CLASS("class"), DEF("def"), NATIVE("native"), INSTANCE_VAR("@"), CLASS_VAR("@@"),
+    IMPORT("import"), MODULE("module"), CLASS("class"), DEF("def"), NATIVE("native"),
     CLASS_EXTENSION("<<"), GLOBAL_VAR("$"), VAL("val"), VAR("var"),
     
     // Modifiers

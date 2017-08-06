@@ -19,6 +19,9 @@ class NativeLong {
     
     static void register() {
         
+        TrinityNatives.registerField("Trinity.Long", "MIN_VALUE", (runtime, thisObj, params) -> TrinityNatives.wrapNumber(Long.MIN_VALUE));
+        TrinityNatives.registerField("Trinity.Long", "MAX_VALUE", (runtime, thisObj, params) -> TrinityNatives.wrapNumber(Long.MAX_VALUE));
+        
         TrinityNatives.registerMethod("Trinity.Long", "+", false, new String[]{"other"}, null, null, null, getActionForOperation("+"));
         TrinityNatives.registerMethod("Trinity.Long", "-", false, new String[]{"other"}, null, null, null, getActionForOperation("-"));
         TrinityNatives.registerMethod("Trinity.Long", "*", false, new String[]{"other"}, null, null, null, getActionForOperation("*"));

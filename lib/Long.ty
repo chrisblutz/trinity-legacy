@@ -1,5 +1,7 @@
 module Trinity
     class Long
+        val native static MIN_VALUE, MAX_VALUE
+
         def native +(other)
 
         def native -(other)

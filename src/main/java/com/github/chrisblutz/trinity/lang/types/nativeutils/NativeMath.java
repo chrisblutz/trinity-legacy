@@ -35,7 +35,14 @@ class NativeMath {
             
             double x = TrinityNatives.toFloat(runtime.getVariable("x"));
             
-            return TrinityNatives.wrapNumber(Math.sqrt(x));
+            if (x < 0) {
+                
+                return TrinityNatives.wrapComplexNumber(0, Math.sqrt(Math.abs(x)));
+                
+            } else {
+                
+                return TrinityNatives.wrapNumber(Math.sqrt(x));
+            }
         });
         TrinityNatives.registerMethod("Trinity.Math", "cbrt", true, new String[]{"x"}, null, null, null, (runtime, thisObj, params) -> {
             

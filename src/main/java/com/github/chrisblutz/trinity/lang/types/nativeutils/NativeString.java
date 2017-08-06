@@ -46,7 +46,7 @@ class NativeString {
             return TYBoolean.valueFor(TrinityNatives.cast(TYString.class, thisObj).getInternalString().contentEquals(TrinityNatives.cast(TYString.class, object).getInternalString()));
         });
         Map<String, ProcedureAction> optionalParams = new HashMap<>();
-        optionalParams.put("options", (runtime, thisObj, params1) -> TrinityNatives.getObjectFor(""));
+        optionalParams.put("options", (runtime, thisObj, params) -> TrinityNatives.getObjectFor(""));
         TrinityNatives.registerMethod("Trinity.String", "match", false, new String[]{"regex"}, optionalParams, null, null, (runtime, thisObj, params) -> {
             
             String thisString = TrinityNatives.cast(TYString.class, thisObj).getInternalString();

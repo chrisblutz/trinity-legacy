@@ -1,0 +1,54 @@
+module Trinity
+    module Math
+        class ComplexNumber
+            private
+                var realComponent, imagComponent
+
+            public
+                val static I = cmplx(0, 1)
+
+                def initialize(real, imag)
+                    this.realComponent = real
+                    this.imagComponent = imag
+
+                def real
+                    realComponent
+
+                def imaginary
+                    imagComponent
+
+                def conjugate
+                    ComplexNumber.new(real(), -imaginary())
+
+                def toString
+                    real() + (imaginary() >= 0 ? '+' : '') + imaginary() + 'i'
+
+                def ==(other)
+                    real() == other.real() && imaginary() == other.imaginary()
+
+                def +(other)
+                    if other.isInstance(ComplexNumber)
+                        return ComplexNumber.new(real() + other.real(), imaginary + other.imaginary())
+                    else
+                        return ComplexNumber.new(real() + other, imaginary())
+
+                def -(other)
+                    if other.isInstance(ComplexNumber)
+                        return ComplexNumber.new(real() - other.real(), imaginary - other.imaginary())
+                    else
+                        return ComplexNumber.new(real() - other, imaginary())
+
+                def *(other)
+                    if other.isInstance(ComplexNumber)
+                        r = (real() * other.real()) - (imaginary() * other.imaginary())
+                        i = (real() * other.imaginary) + (imaginary() * other.real())
+                        return ComplexNumber.new(r, i)
+                    else
+                        return ComplexNumber.new(real() * other, imaginary() * other)
+
+                def /(other)
+                    if other.isInstance(ComplexNumber)
+                        denom = Math.pow(other.real(), 2) + Math.pow(other.imaginary(), 2)
+                        return (this * other.conjugate()) * (1 / denom)
+                    else
+                        return this * (1 / other)

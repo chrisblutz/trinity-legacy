@@ -19,6 +19,9 @@ class NativeInt {
     
     static void register() {
         
+        TrinityNatives.registerField("Trinity.Int", "MIN_VALUE", (runtime, thisObj, params) -> TrinityNatives.wrapNumber(Integer.MIN_VALUE));
+        TrinityNatives.registerField("Trinity.Int", "MAX_VALUE", (runtime, thisObj, params) -> TrinityNatives.wrapNumber(Integer.MAX_VALUE));
+        
         TrinityNatives.registerMethod("Trinity.Int", "+", false, new String[]{"other"}, null, null, null, getActionForOperation("+"));
         TrinityNatives.registerMethod("Trinity.Int", "-", false, new String[]{"other"}, null, null, null, getActionForOperation("-"));
         TrinityNatives.registerMethod("Trinity.Int", "*", false, new String[]{"other"}, null, null, null, getActionForOperation("*"));

@@ -24,3 +24,6 @@ module Trinity
         def native static eval(code, args = [])
 
         def native static load(file)
+
+        def static cmplx(real, imag)
+            Trinity.Math.ComplexNumber.new(real, imag)

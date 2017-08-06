@@ -346,7 +346,7 @@ public class TrinityNatives {
             return desiredClass.cast(object);
             
         } else {
-    
+            
             Errors.throwError("Trinity.Errors.InvalidTypeError", "Unexpected value of type " + object.getObjectClass().getName() + " found.");
             
             // This will throw an error, but the program will exit at the line above, never reaching this point
@@ -370,6 +370,20 @@ public class TrinityNatives {
             
         } else {
             
+            if (tyObject.getObjectClass().isInstanceOf(ClassRegistry.getClass("Trinity.Math.ComplexNumber"))) {
+                
+                if (getImaginaryComplexComponent(tyObject) == 0) {
+                    
+                    return (int) getRealComplexComponent(tyObject);
+                    
+                } else {
+                    
+                    TYRuntime runtime = new TYRuntime();
+                    String str = toString(tyObject, runtime);
+                    Errors.throwError("Trinity.Errors.ComplexNumberError", "Real number required. Found: " + str);
+                }
+            }
+            
             return TrinityNatives.cast(TYInt.class, tyObject).getInternalInteger();
         }
     }
@@ -389,6 +403,20 @@ public class TrinityNatives {
             return Long.parseLong(((TYString) tyObject).getInternalString());
             
         } else {
+            
+            if (tyObject.getObjectClass().isInstanceOf(ClassRegistry.getClass("Trinity.Math.ComplexNumber"))) {
+                
+                if (getImaginaryComplexComponent(tyObject) == 0) {
+                    
+                    return (long) getRealComplexComponent(tyObject);
+                    
+                } else {
+                    
+                    TYRuntime runtime = new TYRuntime();
+                    String str = toString(tyObject, runtime);
+                    Errors.throwError("Trinity.Errors.ComplexNumberError", "Real number required. Found: " + str);
+                }
+            }
             
             return TrinityNatives.cast(TYLong.class, tyObject).getInternalLong();
         }
@@ -410,8 +438,32 @@ public class TrinityNatives {
             
         } else {
             
+            if (tyObject.getObjectClass().isInstanceOf(ClassRegistry.getClass("Trinity.Math.ComplexNumber"))) {
+                
+                if (getImaginaryComplexComponent(tyObject) == 0) {
+                    
+                    return getRealComplexComponent(tyObject);
+                    
+                } else {
+                    
+                    TYRuntime runtime = new TYRuntime();
+                    String str = toString(tyObject, runtime);
+                    Errors.throwError("Trinity.Errors.ComplexNumberError", "Real number required. Found: " + str);
+                }
+            }
+            
             return TrinityNatives.cast(TYFloat.class, tyObject).getInternalDouble();
         }
+    }
+    
+    private static double getImaginaryComplexComponent(TYObject object) {
+        
+        return toFloat(object.tyInvoke("imaginary", new TYRuntime(), null, null));
+    }
+    
+    private static double getRealComplexComponent(TYObject object) {
+        
+        return toFloat(object.tyInvoke("real", new TYRuntime(), null, null));
     }
     
     public static String toString(TYObject tyObject, TYRuntime runtime) {
@@ -455,6 +507,18 @@ public class TrinityNatives {
         }
     }
     
+    /**
+     * Wraps a Java number inside of Trinity's number types.  This method
+     * only accepts a double, but will return any of Trinity's types
+     * ({@code Int}, {@code Long}, and {@code Float}).  If the value is
+     * an integer, this method will return an {@code Int}.  If that integer
+     * overflows Java's primitive {@code int} type, this method will return
+     * a {@code Long}.  If the value is a decimal, this method will return
+     * a {@code Float}.
+     *
+     * @param d The number to wrap
+     * @return The wrapped object, contained within a {@code TYObject} instance
+     */
     public static TYObject wrapNumber(double d) {
         
         if (d % 1 == 0) {
@@ -472,5 +536,10 @@ public class TrinityNatives {
             
             return new TYFloat(d);
         }
+    }
+    
+    public static TYObject wrapComplexNumber(double real, double imaginary) {
+        
+        return ClassRegistry.getClass("Trinity.Kernel").tyInvoke("cmplx", new TYRuntime(), null, null, null, wrapNumber(real), wrapNumber(imaginary));
     }
 }

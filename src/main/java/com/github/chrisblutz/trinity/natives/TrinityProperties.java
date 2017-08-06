@@ -55,8 +55,8 @@ public class TrinityProperties {
     }
     
     /**
-     * Loads Trinity's default system properties into the Trinity {@code System} class's {@code @@properties} variable.
-     * These include the following:
+     * Loads Trinity's default system properties into an instance of {@code Trinity.Map}.
+     * These properties include the following:
      * <pre>
      *     trinity.home
      *     trinity.name
