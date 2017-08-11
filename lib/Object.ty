@@ -10,6 +10,8 @@ module Trinity
 
         def native %(other)
 
+        def native ==(other)
+
         def native getClass
 
         def native isInstance(instClass)
@@ -24,9 +26,6 @@ module Trinity
 
         def compareTo(other)
             throw(Trinity.Errors.InvalidTypeError.new('Cannot compare types ' + this.getClass() + ' and ' + other.getClass() + '.'))
-
-        def ==(other)
-            hashCode() == other.hashCode()
 
         def isNumeric
             this.isInstance(Int) || this.isInstance(Long) || this.isInstance(Float) || this.isInstance(Trinity.Math.ComplexNumber)

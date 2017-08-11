@@ -22,6 +22,11 @@ class NativeObject {
         TrinityNatives.registerMethod("Trinity.Object", "*", false, new String[]{"other"}, null, null, null, DefaultProcedures.getDefaultUOEOperationProcedure("*"));
         TrinityNatives.registerMethod("Trinity.Object", "/", false, new String[]{"other"}, null, null, null, DefaultProcedures.getDefaultUOEOperationProcedure("/"));
         TrinityNatives.registerMethod("Trinity.Object", "%", false, new String[]{"other"}, null, null, null, DefaultProcedures.getDefaultUOEOperationProcedure("%"));
+        TrinityNatives.registerMethod("Trinity.Object", "==", false, new String[]{"other"}, null, null, null, (runtime, thisObj, params) -> {
+            
+            TYObject other = runtime.getVariable("other");
+            return TYBoolean.valueFor(thisObj == other);
+        });
         TrinityNatives.registerMethod("Trinity.Object", "hashCode", false, null, null, null, null, (runtime, thisObj, params) -> NativeStorage.getHashCode(thisObj));
         TrinityNatives.registerMethod("Trinity.Object", "getClass", false, null, null, null, null, (runtime, thisObj, params) -> NativeStorage.getClassObject(thisObj.getObjectClass()));
         TrinityNatives.registerMethod("Trinity.Object", "isInstance", false, new String[]{"instClass"}, null, null, null, (runtime, thisObj, params) -> {
