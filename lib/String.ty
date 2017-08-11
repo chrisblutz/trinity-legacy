@@ -51,8 +51,8 @@ module Trinity
             else
                 return super * other
 
-        def native toInt
+        def native toInt(radix = 10)
 
-        def native toLong
+        def native toLong(radix = 10)
 
         def native toFloat

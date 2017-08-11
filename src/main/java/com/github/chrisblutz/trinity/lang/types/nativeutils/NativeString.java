@@ -1,12 +1,11 @@
 package com.github.chrisblutz.trinity.lang.types.nativeutils;
 
 import com.github.chrisblutz.trinity.lang.TYObject;
+import com.github.chrisblutz.trinity.lang.errors.Errors;
 import com.github.chrisblutz.trinity.lang.procedures.ProcedureAction;
 import com.github.chrisblutz.trinity.lang.types.arrays.TYArray;
 import com.github.chrisblutz.trinity.lang.types.bool.TYBoolean;
 import com.github.chrisblutz.trinity.lang.types.numeric.TYFloat;
-import com.github.chrisblutz.trinity.lang.types.numeric.TYInt;
-import com.github.chrisblutz.trinity.lang.types.numeric.TYLong;
 import com.github.chrisblutz.trinity.lang.types.strings.TYString;
 import com.github.chrisblutz.trinity.natives.TrinityNatives;
 
@@ -151,8 +150,40 @@ class NativeString {
             String str = TrinityNatives.toString(runtime.getVariable("str"), runtime);
             return TYBoolean.valueFor(thisString.contains(str));
         });
-        TrinityNatives.registerMethod("Trinity.String", "toInt", false, null, null, null, null, (runtime, thisObj, params) -> new TYInt(TrinityNatives.toInt(thisObj)));
-        TrinityNatives.registerMethod("Trinity.String", "toLong", false, null, null, null, null, (runtime, thisObj, params) -> new TYLong(TrinityNatives.toLong(thisObj)));
+        optionalParams = new HashMap<>();
+        optionalParams.put("radix", (runtime, thisObj, params) -> TrinityNatives.getObjectFor(10));
+        TrinityNatives.registerMethod("Trinity.String", "toInt", false, null, optionalParams, null, null, (runtime, thisObj, params) -> {
+            
+            String thisString = TrinityNatives.toString(thisObj, runtime);
+            int radix = TrinityNatives.toInt(runtime.getVariable("radix"));
+            
+            try {
+                
+                return TrinityNatives.getObjectFor(Integer.parseInt(thisString, radix));
+                
+            } catch (NumberFormatException e) {
+                
+                Errors.throwError("Trinity.Errors.NumberFormatError", runtime, "Input: '" + thisString + "', Radix: " + radix + ", Expected Type: Trinity.Int");
+                return TrinityNatives.getObjectFor(0);
+            }
+        });
+        optionalParams = new HashMap<>();
+        optionalParams.put("radix", (runtime, thisObj, params) -> TrinityNatives.getObjectFor(10));
+        TrinityNatives.registerMethod("Trinity.String", "toLong", false, null, optionalParams, null, null, (runtime, thisObj, params) -> {
+            
+            String thisString = TrinityNatives.toString(thisObj, runtime);
+            int radix = TrinityNatives.toInt(runtime.getVariable("radix"));
+            
+            try {
+                
+                return TrinityNatives.getObjectFor(Long.parseLong(thisString, radix));
+                
+            } catch (NumberFormatException e) {
+                
+                Errors.throwError("Trinity.Errors.NumberFormatError", runtime, "Input: '" + thisString + "', Radix: " + radix + ", Expected Type: Trinity.Long");
+                return TrinityNatives.getObjectFor(0L);
+            }
+        });
         TrinityNatives.registerMethod("Trinity.String", "toFloat", false, null, null, null, null, (runtime, thisObj, params) -> new TYFloat(TrinityNatives.toFloat(thisObj)));
     }
 }

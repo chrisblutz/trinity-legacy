@@ -1,0 +1,5 @@
+module Trinity
+    module Errors
+        class NumberFormatError << Error
+            def initialize(message = '')
+                super.initialize(message)
