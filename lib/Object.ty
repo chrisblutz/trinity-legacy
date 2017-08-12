@@ -10,7 +10,8 @@ module Trinity
 
         def native %(other)
 
-        def native ==(other)
+        def ==(other)
+            checkReferences(this, other)
 
         def native getClass
 
@@ -29,3 +30,5 @@ module Trinity
 
         def isNumeric
             this.isInstance(Int) || this.isInstance(Long) || this.isInstance(Float) || this.isInstance(Trinity.Math.ComplexNumber)
+
+        def native static checkReferences(a, b)

@@ -22,11 +22,6 @@ class NativeObject {
         TrinityNatives.registerMethod("Trinity.Object", "*", false, new String[]{"other"}, null, null, null, DefaultProcedures.getDefaultUOEOperationProcedure("*"));
         TrinityNatives.registerMethod("Trinity.Object", "/", false, new String[]{"other"}, null, null, null, DefaultProcedures.getDefaultUOEOperationProcedure("/"));
         TrinityNatives.registerMethod("Trinity.Object", "%", false, new String[]{"other"}, null, null, null, DefaultProcedures.getDefaultUOEOperationProcedure("%"));
-        TrinityNatives.registerMethod("Trinity.Object", "==", false, new String[]{"other"}, null, null, null, (runtime, thisObj, params) -> {
-            
-            TYObject other = runtime.getVariable("other");
-            return TYBoolean.valueFor(thisObj == other);
-        });
         TrinityNatives.registerMethod("Trinity.Object", "hashCode", false, null, null, null, null, (runtime, thisObj, params) -> NativeStorage.getHashCode(thisObj));
         TrinityNatives.registerMethod("Trinity.Object", "getClass", false, null, null, null, null, (runtime, thisObj, params) -> NativeStorage.getClassObject(thisObj.getObjectClass()));
         TrinityNatives.registerMethod("Trinity.Object", "isInstance", false, new String[]{"instClass"}, null, null, null, (runtime, thisObj, params) -> {
@@ -54,6 +49,13 @@ class NativeObject {
             
             String method = TrinityNatives.toString(runtime.getVariable("method"), runtime);
             return TrinityNatives.getObjectFor(thisObj.getObjectClass().respondsTo(method));
+        });
+        
+        TrinityNatives.registerMethod("Trinity.Object", "checkReferences", true, new String[]{"a", "b"}, null, null, null, (runtime, thisObj, params) -> {
+            
+            TYObject a = runtime.getVariable("a");
+            TYObject b = runtime.getVariable("b");
+            return TYBoolean.valueFor(a == b);
         });
     }
 }
