@@ -11,11 +11,6 @@ public class TrinityStack {
     
     private static List<StackElement> stack = new ArrayList<>();
     
-    static {
-        
-        stack.add(StackElement.getNativeInitStackElement());
-    }
-    
     public static void add(String errorClass, String method, String file, int line) {
         
         stack.add(0, new StackElement(errorClass, method, file, line));

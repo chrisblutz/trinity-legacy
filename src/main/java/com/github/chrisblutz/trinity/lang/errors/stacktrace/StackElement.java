@@ -59,9 +59,4 @@ public class StackElement {
             return "native method '" + getMethod() + "'";
         }
     }
-    
-    public static StackElement getNativeInitStackElement() {
-        
-        return new StackElement(null, "<init>", null, 0);
-    }
 }
