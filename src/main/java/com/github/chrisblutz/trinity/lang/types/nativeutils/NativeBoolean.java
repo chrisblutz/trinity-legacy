@@ -15,7 +15,7 @@ class NativeBoolean {
         TrinityNatives.registerField("Trinity.Boolean", "TRUE", (runtime, thisObj, params) -> TYBoolean.TRUE);
         TrinityNatives.registerField("Trinity.Boolean", "FALSE", (runtime, thisObj, params) -> TYBoolean.FALSE);
         
-        TrinityNatives.registerMethod("Trinity.Boolean", "==", false, new String[]{"other"}, null, null, null, (runtime, thisObj, params) -> {
+        TrinityNatives.registerMethod("Trinity.Boolean", "==", (runtime, thisObj, params) -> {
             
             TYObject object = runtime.getVariable("other");
             

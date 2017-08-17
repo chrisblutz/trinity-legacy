@@ -1,7 +1,6 @@
 package com.github.chrisblutz.trinity.lang.types.nativeutils;
 
 import com.github.chrisblutz.trinity.lang.TYObject;
-import com.github.chrisblutz.trinity.lang.procedures.ProcedureAction;
 import com.github.chrisblutz.trinity.lang.types.maps.TYMap;
 import com.github.chrisblutz.trinity.lang.types.numeric.TYLong;
 import com.github.chrisblutz.trinity.lang.types.strings.TYString;
@@ -20,10 +19,8 @@ class NativeSystem {
     
     static void register() {
         
-        TrinityNatives.registerMethod("Trinity.System", "currentTimeMillis", true, null, null, null, null, (runtime, thisObj, params) -> new TYLong(System.currentTimeMillis()));
-        Map<String, ProcedureAction> optionalParams = new HashMap<>();
-        optionalParams.put("name", (runtime, thisObj, params) -> TYObject.NIL);
-        TrinityNatives.registerMethod("Trinity.System", "getEnvironment", true, null, optionalParams, null, null, (runtime, thisObj, params) -> {
+        TrinityNatives.registerMethod("Trinity.System", "currentTimeMillis", (runtime, thisObj, params) -> new TYLong(System.currentTimeMillis()));
+        TrinityNatives.registerMethod("Trinity.System", "getEnvironment", (runtime, thisObj, params) -> {
             
             TYObject name = runtime.getVariable("name");
             
@@ -37,8 +34,8 @@ class NativeSystem {
                 return getEnvironmentMap();
             }
         });
-        TrinityNatives.registerMethod("Trinity.System", "loadProperties", true, null, null, null, null, (runtime, thisObj, params) -> TrinityProperties.load());
-        TrinityNatives.registerMethod("Trinity.System", "identify", true, new String[]{"obj"}, null, null, null, (runtime, thisObj, params) -> {
+        TrinityNatives.registerMethod("Trinity.System", "loadProperties", (runtime, thisObj, params) -> TrinityProperties.load());
+        TrinityNatives.registerMethod("Trinity.System", "identify", (runtime, thisObj, params) -> {
             
             TYObject object = runtime.getVariable("obj");
             return NativeStorage.getHashCode(object);

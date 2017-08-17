@@ -1,14 +1,10 @@
 package com.github.chrisblutz.trinity.natives;
 
-import com.github.chrisblutz.trinity.interpreter.Scope;
 import com.github.chrisblutz.trinity.lang.ClassRegistry;
-import com.github.chrisblutz.trinity.lang.TYClass;
-import com.github.chrisblutz.trinity.lang.TYMethod;
 import com.github.chrisblutz.trinity.lang.TYObject;
 import com.github.chrisblutz.trinity.lang.errors.Errors;
 import com.github.chrisblutz.trinity.lang.errors.stacktrace.TrinityStack;
 import com.github.chrisblutz.trinity.lang.procedures.ProcedureAction;
-import com.github.chrisblutz.trinity.lang.procedures.TYProcedure;
 import com.github.chrisblutz.trinity.lang.scope.TYRuntime;
 import com.github.chrisblutz.trinity.lang.types.arrays.TYArray;
 import com.github.chrisblutz.trinity.lang.types.bool.TYBoolean;
@@ -17,7 +13,10 @@ import com.github.chrisblutz.trinity.lang.types.numeric.TYInt;
 import com.github.chrisblutz.trinity.lang.types.numeric.TYLong;
 import com.github.chrisblutz.trinity.lang.types.strings.TYString;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -29,49 +28,11 @@ import java.util.*;
  */
 public class TrinityNatives {
     
-    private static Map<String, TYMethod> methods = new HashMap<>();
-    private static Map<String, TYClass> pendingLoads = new HashMap<>();
-    private static Map<String, String> pendingLoadFiles = new HashMap<>();
-    private static Map<String, Integer> pendingLoadLines = new HashMap<>();
-    
+    private static Map<String, Map<String, ProcedureAction>> methods = new HashMap<>();
     private static Map<String, ProcedureAction> globals = new HashMap<>();
-    
     private static Map<String, Map<String, ProcedureAction>> fields = new HashMap<>();
     
-    /**
-     * Registers a native method to be loaded when its container class is loaded.<br>
-     * <br>
-     * This method allows for the definition of argument names, which can be retrieved using
-     * {@code Runtime.getVariableLoc()}:
-     * <pre>
-     *     runtime.getVariableLoc("name");
-     * </pre>
-     * <p>
-     * If there is a block argument defined, this can also be retrieved using this same method.
-     * The resulting {@code TYObject} will be an instance of the Trinity class {@code Procedure}.
-     * It can be invoked by using {@code TrinityNatives.call()}:
-     * <pre>
-     *      TYObject procedure = runtime.getVariableLoc("blockArg")
-     *      TYObject result = TrinityNatives.call(procedure, "call", runtime, [any parameters]);
-     * </pre>
-     *
-     * @param className       The name of the container class for this method
-     * @param methodName      The name of this method
-     * @param staticMethod    Whether or not this method is defined as {@code static}
-     * @param mandatoryParams The mandatory argument names for this method.  This may be {@code null} if there are no mandatory arguments.
-     * @param optionalParams  The optional arguments for this method, defined in the map with the name as the key
-     *                        and a {@code ProcedureAction} that returns the default argument value as the value.  This may be {@code null}
-     *                        if there are no optional arguments.
-     * @param blockParam      The block argument for this method.  This is the equivalent of defining an {@code &block} argument in Trinity
-     *                        source code.  This may be {@code null} if there is no block argument.
-     * @param overflowParam   The overflow argument for this method.  If any additional arguments are passed to this method beyond the specified
-     *                        mandatory, optional, and block arguments, they will be placed in an array and passed in as this overflow argument.
-     *                        This is the equivalent of defining an {@code ...args} argument in Trinity source code.  This may be {@code null}
-     *                        if there is no overflow argument.
-     * @param action          The {@code ProcedureAction} that is called when this method is invoked.  The return value from this action is used as
-     *                        the method's return value.
-     */
-    public static void registerMethod(String className, String methodName, boolean staticMethod, String[] mandatoryParams, Map<String, ProcedureAction> optionalParams, String blockParam, String overflowParam, ProcedureAction action) {
+    public static void registerMethod(String className, String methodName, ProcedureAction action) {
         
         ProcedureAction actionWithStackTrace = (runtime, thisObj, params) -> {
             
@@ -84,45 +45,35 @@ public class TrinityNatives {
             return result;
         };
         
-        List<String> mandatoryParamsList;
-        if (mandatoryParams != null) {
+        if (!methods.containsKey(className)) {
             
-            mandatoryParamsList = Arrays.asList(mandatoryParams);
+            methods.put(className, new HashMap<>());
+        }
+        
+        methods.get(className).put(methodName, actionWithStackTrace);
+    }
+    
+    public static ProcedureAction getMethodProcedureAction(String className, String methodName, String fileName, int lineNumber) {
+        
+        if (methods.containsKey(className) && methods.get(className).containsKey(methodName)) {
+            
+            return methods.get(className).get(methodName);
             
         } else {
             
-            mandatoryParamsList = new ArrayList<>();
+            Errors.throwSyntaxError("Trinity.Errors.ParseError", "Native method " + className + "." + methodName + " not implemented.", fileName, lineNumber);
+            return null;
         }
-        
-        if (optionalParams == null) {
-            
-            optionalParams = new TreeMap<>();
-        }
-        
-        TYProcedure procedure = new TYProcedure(actionWithStackTrace, mandatoryParamsList, optionalParams, blockParam, overflowParam, true);
-        TYMethod method = new TYMethod(methodName, staticMethod, true, ClassRegistry.getClass(className), procedure);
-        String fullName = className + "." + methodName;
-        methods.put(fullName, method);
     }
     
-    /**
-     * Registers a global variable.  Variables declared using this method are not automatically
-     * available inside Trinity.  In order to maintain source code transparency and avoid confusion
-     * with globals declared invisibly, all globals declared using this method must be initialized
-     * inside Trinity source code using {@code Natives.initGlobalVariable()}:
-     * <pre>
-     *     Natives.initGlobalVariable('name')
-     * </pre>
-     * <p>
-     * It is recommended that this call come in the initializer code for the file, before any
-     * class or module definitions.
-     *
-     * @param name   The name of this variable (will be used in source code as {@code $name}.
-     * @param action The {@code ProcedureAction} that returns the value of this global.
-     */
     public static void registerGlobal(String name, ProcedureAction action) {
         
         globals.put(name, action);
+    }
+    
+    public static ProcedureAction getGlobalProcedureAction(String name) {
+        
+        return globals.get(name);
     }
     
     public static void registerField(String className, String varName, ProcedureAction action) {
@@ -135,54 +86,6 @@ public class TrinityNatives {
         fields.get(className).put(varName, action);
     }
     
-    public static void doLoad(String name, boolean secureMethod, TYClass current, String fileName, int lineNumber, Scope scope, String[] leadingComments) {
-        
-        if (methods.containsKey(name)) {
-            
-            addToClass(name, secureMethod, current, fileName, lineNumber, scope, leadingComments);
-            
-        } else {
-            
-            pendingLoads.put(name, current);
-            pendingLoadFiles.put(name, fileName);
-            pendingLoadLines.put(name, lineNumber);
-        }
-    }
-    
-    private static void addToClass(String name, boolean secureMethod, TYClass current, String fileName, int lineNumber, Scope scope, String[] leadingComments) {
-        
-        if (methods.containsKey(name)) {
-            
-            TYMethod method = methods.get(name);
-            method.setScope(scope);
-            method.setLeadingComments(leadingComments);
-            method.setSecureMethod(secureMethod);
-            current.registerMethod(method);
-            
-        } else {
-            
-            Errors.throwSyntaxError("Trinity.Errors.ParseError", "Native method " + name + " not found.", fileName, lineNumber);
-        }
-    }
-    
-    public static void checkAllLoaded() {
-        
-        for (String str : pendingLoads.keySet()) {
-            
-            Errors.throwSyntaxErrorDelayExit("Trinity.Errors.ParseError", "Native method " + str + " not implemented.", pendingLoadFiles.get(str), pendingLoadLines.get(str));
-        }
-        
-        if (pendingLoads.size() > 0) {
-            
-            Errors.exit();
-        }
-    }
-    
-    public static ProcedureAction getGlobalProcedureAction(String name) {
-        
-        return globals.get(name);
-    }
-    
     public static ProcedureAction getFieldProcedureAction(String className, String varName, String fileName, int lineNumber) {
         
         if (fields.containsKey(className) && fields.get(className).containsKey(varName)) {
@@ -191,7 +94,7 @@ public class TrinityNatives {
             
         } else {
             
-            Errors.throwSyntaxError("Trinity.Errors.ParseError", "Native field " + className + "." + varName + " not found.", fileName, lineNumber);
+            Errors.throwSyntaxError("Trinity.Errors.ParseError", "Native field " + className + "." + varName + " not implemented.", fileName, lineNumber);
             return null;
         }
     }

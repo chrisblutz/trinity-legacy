@@ -82,9 +82,6 @@ public class Runner {
         
         PluginLoader.triggerEvent(Events.CLASS_FINALIZATION);
         
-        // Check that all native methods have been implemented
-        TrinityNatives.checkAllLoaded();
-        
         if (sourceFiles.length > 0) {
             
             // Run

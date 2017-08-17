@@ -38,7 +38,7 @@ class NativeKernel {
         TrinityNatives.registerGlobal("STDOUT", (runtime, thisObj, params) -> new TYNativeOutputStream(System.out));
         TrinityNatives.registerGlobal("STDERR", (runtime, thisObj, params) -> new TYNativeOutputStream(System.err));
         
-        TrinityNatives.registerMethod("Trinity.Kernel", "readln", true, null, null, null, null, (runtime, thisObj, params) -> {
+        TrinityNatives.registerMethod("Trinity.Kernel", "readln", (runtime, thisObj, params) -> {
             
             if (readlnSc == null) {
                 
@@ -51,7 +51,7 @@ class NativeKernel {
             
             return new TYString(readlnSc.nextLine());
         });
-        TrinityNatives.registerMethod("Trinity.Kernel", "throw", true, new String[]{"error"}, null, null, null, (runtime, thisObj, params) -> {
+        TrinityNatives.registerMethod("Trinity.Kernel", "throw", (runtime, thisObj, params) -> {
             
             TYObject error = runtime.getVariable("error");
             
@@ -63,12 +63,12 @@ class NativeKernel {
             
             return TYObject.NONE;
         });
-        TrinityNatives.registerMethod("Trinity.Kernel", "exit", true, new String[]{"code"}, null, null, null, (runtime, thisObj, params) -> {
+        TrinityNatives.registerMethod("Trinity.Kernel", "exit", (runtime, thisObj, params) -> {
             
             Trinity.exit(TrinityNatives.toInt(runtime.getVariable("code")));
             return TYObject.NONE;
         });
-        TrinityNatives.registerMethod("Trinity.Kernel", "sleep", true, new String[]{"millis"}, null, null, null, (runtime, thisObj, params) -> {
+        TrinityNatives.registerMethod("Trinity.Kernel", "sleep", (runtime, thisObj, params) -> {
             
             long wait = TrinityNatives.toLong(runtime.getVariable("millis"));
             
@@ -83,9 +83,7 @@ class NativeKernel {
             
             return TYObject.NONE;
         });
-        Map<String, ProcedureAction> optionalParameters = new HashMap<>();
-        optionalParameters.put("args", (runtime, thisObj, params) -> new TYMap(new HashMap<>()));
-        TrinityNatives.registerMethod("Trinity.Kernel", "eval", true, new String[]{"code"}, optionalParameters, null, null, (runtime, thisObj, params) -> {
+        TrinityNatives.registerMethod("Trinity.Kernel", "eval", (runtime, thisObj, params) -> {
             
             TYObject code = runtime.getVariable("code");
             TYObject args = runtime.getVariable("args");
@@ -129,7 +127,7 @@ class NativeKernel {
             
             return action.onAction(newRuntime, TYObject.NONE);
         });
-        TrinityNatives.registerMethod("Trinity.Kernel", "load", true, new String[]{"file"}, null, null, null, (runtime, thisObj, params) -> {
+        TrinityNatives.registerMethod("Trinity.Kernel", "load", (runtime, thisObj, params) -> {
             
             TYObject fileObj = runtime.getVariable("file");
             

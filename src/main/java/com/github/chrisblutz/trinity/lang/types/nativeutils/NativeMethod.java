@@ -18,11 +18,11 @@ class NativeMethod {
     
     static void register() {
         
-        TrinityNatives.registerMethod("Trinity.Method", "getRequiredArguments", false, null, null, null, null, (runtime, thisObj, params) -> NativeStorage.getMandatoryArguments(TrinityNatives.cast(TYMethodObject.class, thisObj).getInternalMethod().getProcedure()));
-        TrinityNatives.registerMethod("Trinity.Method", "getOptionalArguments", false, null, null, null, null, (runtime, thisObj, params) -> NativeStorage.getOptionalArguments(TrinityNatives.cast(TYMethodObject.class, thisObj).getInternalMethod().getProcedure()));
-        TrinityNatives.registerMethod("Trinity.Method", "getBlockArgument", false, null, null, null, null, (runtime, thisObj, params) -> NativeStorage.getBlockArgument(TrinityNatives.cast(TYMethodObject.class, thisObj).getInternalMethod().getProcedure()));
-        TrinityNatives.registerMethod("Trinity.Method", "getOverflowArgument", false, null, null, null, null, (runtime, thisObj, params) -> NativeStorage.getOverflowArgument(TrinityNatives.cast(TYMethodObject.class, thisObj).getInternalMethod().getProcedure()));
-        TrinityNatives.registerMethod("Trinity.Method", "invoke", false, new String[]{"obj"}, null, null, "args", (runtime, thisObj, params) -> {
+        TrinityNatives.registerMethod("Trinity.Method", "getRequiredArguments", (runtime, thisObj, params) -> NativeStorage.getMandatoryArguments(TrinityNatives.cast(TYMethodObject.class, thisObj).getInternalMethod().getProcedure()));
+        TrinityNatives.registerMethod("Trinity.Method", "getOptionalArguments", (runtime, thisObj, params) -> NativeStorage.getOptionalArguments(TrinityNatives.cast(TYMethodObject.class, thisObj).getInternalMethod().getProcedure()));
+        TrinityNatives.registerMethod("Trinity.Method", "getBlockArgument", (runtime, thisObj, params) -> NativeStorage.getBlockArgument(TrinityNatives.cast(TYMethodObject.class, thisObj).getInternalMethod().getProcedure()));
+        TrinityNatives.registerMethod("Trinity.Method", "getOverflowArgument", (runtime, thisObj, params) -> NativeStorage.getOverflowArgument(TrinityNatives.cast(TYMethodObject.class, thisObj).getInternalMethod().getProcedure()));
+        TrinityNatives.registerMethod("Trinity.Method", "invoke", (runtime, thisObj, params) -> {
             
             TYObject invokeThis = runtime.getVariable("obj");
             
@@ -38,11 +38,11 @@ class NativeMethod {
             
             return method.getContainerClass().tyInvoke(name, runtime, null, null, invokeThis, methodParams.toArray(new TYObject[methodParams.size()]));
         });
-        TrinityNatives.registerMethod("Trinity.Method", "getName", false, null, null, null, null, (runtime, thisObj, params) -> NativeStorage.getMethodName(TrinityNatives.cast(TYMethodObject.class, thisObj).getInternalMethod()));
-        TrinityNatives.registerMethod("Trinity.Method", "isStatic", false, null, null, null, null, (runtime, thisObj, params) -> NativeStorage.isMethodStatic(TrinityNatives.cast(TYMethodObject.class, thisObj).getInternalMethod()));
-        TrinityNatives.registerMethod("Trinity.Method", "isNative", false, null, null, null, null, (runtime, thisObj, params) -> NativeStorage.isMethodNative(TrinityNatives.cast(TYMethodObject.class, thisObj).getInternalMethod()));
-        TrinityNatives.registerMethod("Trinity.Method", "isSecure", false, null, null, null, null, (runtime, thisObj, params) -> NativeStorage.isMethodSecure(TrinityNatives.cast(TYMethodObject.class, thisObj).getInternalMethod()));
-        TrinityNatives.registerMethod("Trinity.Method", "getComments", false, null, null, null, null, (runtime, thisObj, params) -> {
+        TrinityNatives.registerMethod("Trinity.Method", "getName", (runtime, thisObj, params) -> NativeStorage.getMethodName(TrinityNatives.cast(TYMethodObject.class, thisObj).getInternalMethod()));
+        TrinityNatives.registerMethod("Trinity.Method", "isStatic", (runtime, thisObj, params) -> NativeStorage.isMethodStatic(TrinityNatives.cast(TYMethodObject.class, thisObj).getInternalMethod()));
+        TrinityNatives.registerMethod("Trinity.Method", "isNative", (runtime, thisObj, params) -> NativeStorage.isMethodNative(TrinityNatives.cast(TYMethodObject.class, thisObj).getInternalMethod()));
+        TrinityNatives.registerMethod("Trinity.Method", "isSecure", (runtime, thisObj, params) -> NativeStorage.isMethodSecure(TrinityNatives.cast(TYMethodObject.class, thisObj).getInternalMethod()));
+        TrinityNatives.registerMethod("Trinity.Method", "getComments", (runtime, thisObj, params) -> {
             
             TYMethod method = TrinityNatives.cast(TYMethodObject.class, thisObj).getInternalMethod();
             

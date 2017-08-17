@@ -99,49 +99,49 @@ public class MethodInterpreter extends DeclarationInterpreter {
                     Errors.throwSyntaxError("Trinity.Errors.ScopeError", "Methods must be declared within a class.", fileName, line.getLineNumber());
                 }
                 
-                if (!nativeMethod) {
+                List<String> mandatoryParams = new ArrayList<>();
+                Map<String, ProcedureAction> optParams = new TreeMap<>();
+                String blockParam = null;
+                String overflowParam = null;
+                
+                if (position < line.size() && line.get(position).getToken() == Token.LEFT_PARENTHESIS && line.get(line.size() - 1).getToken() == Token.RIGHT_PARENTHESIS) {
                     
-                    List<String> mandatoryParams = new ArrayList<>();
-                    Map<String, ProcedureAction> optParams = new TreeMap<>();
-                    String blockParam = null;
-                    String overflowParam = null;
+                    position++;
+                    TokenInfo[] tokens = Arrays.copyOfRange(line.toArray(new TokenInfo[line.size()]), position, line.size() - 1);
+                    List<List<TokenInfo>> infoSets = ExpressionInterpreter.splitByTokenIntoList(tokens, Token.COMMA, fileName, line.getLineNumber());
                     
-                    if (position < line.size() && line.get(position).getToken() == Token.LEFT_PARENTHESIS && line.get(line.size() - 1).getToken() == Token.RIGHT_PARENTHESIS) {
+                    for (List<TokenInfo> list : infoSets) {
                         
-                        position++;
-                        TokenInfo[] tokens = Arrays.copyOfRange(line.toArray(new TokenInfo[line.size()]), position, line.size() - 1);
-                        List<List<TokenInfo>> infoSets = ExpressionInterpreter.splitByTokenIntoList(tokens, Token.COMMA, fileName, line.getLineNumber());
-                        
-                        for (List<TokenInfo> list : infoSets) {
+                        if (list.size() == 1 && list.get(0).getToken() == Token.NON_TOKEN_STRING) {
                             
-                            if (list.size() == 1 && list.get(0).getToken() == Token.NON_TOKEN_STRING) {
-                                
-                                mandatoryParams.add(list.get(0).getContents());
-                                
-                            } else if (list.size() > 2 && list.get(0).getToken() == Token.NON_TOKEN_STRING && list.get(1).getToken() == Token.ASSIGNMENT_OPERATOR) {
-                                
-                                List<TokenInfo> newList = new ArrayList<>();
-                                newList.addAll(list);
-                                newList.remove(0);
-                                newList.remove(0);
-                                
-                                ChainedInstructionSet value = ExpressionInterpreter.interpret(env.getLastClass().getName(), name, fileName, fullFile, line.getLineNumber(), newList.toArray(new TokenInfo[newList.size()]), null);
-                                ProcedureAction action = (runtime, thisObj, params) -> value.evaluate(thisObj, runtime);
-                                
-                                optParams.put(list.get(0).getContents(), action);
-                                
-                            } else if (list.size() == 2 && list.get(0).getToken() == Token.BLOCK_PREFIX && list.get(1).getToken() == Token.NON_TOKEN_STRING) {
-                                
-                                blockParam = list.get(1).getContents();
-                                
-                            } else if (list.size() == 2 && list.get(0).getToken() == Token.TRIPLE_DOT && list.get(1).getToken() == Token.NON_TOKEN_STRING) {
-                                
-                                overflowParam = list.get(1).getContents();
-                            }
+                            mandatoryParams.add(list.get(0).getContents());
+                            
+                        } else if (list.size() > 2 && list.get(0).getToken() == Token.NON_TOKEN_STRING && list.get(1).getToken() == Token.ASSIGNMENT_OPERATOR) {
+                            
+                            List<TokenInfo> newList = new ArrayList<>();
+                            newList.addAll(list);
+                            newList.remove(0);
+                            newList.remove(0);
+                            
+                            ChainedInstructionSet value = ExpressionInterpreter.interpret(env.getLastClass().getName(), name, fileName, fullFile, line.getLineNumber(), newList.toArray(new TokenInfo[newList.size()]), null);
+                            ProcedureAction action = (runtime, thisObj, params) -> value.evaluate(thisObj, runtime);
+                            
+                            optParams.put(list.get(0).getContents(), action);
+                            
+                        } else if (list.size() == 2 && list.get(0).getToken() == Token.BLOCK_PREFIX && list.get(1).getToken() == Token.NON_TOKEN_STRING) {
+                            
+                            blockParam = list.get(1).getContents();
+                            
+                        } else if (list.size() == 2 && list.get(0).getToken() == Token.TRIPLE_DOT && list.get(1).getToken() == Token.NON_TOKEN_STRING) {
+                            
+                            overflowParam = list.get(1).getContents();
                         }
                     }
+                }
+                
+                ProcedureAction action;
+                if (!nativeMethod) {
                     
-                    ProcedureAction action;
                     if (nextBlock != null) {
                         
                         action = ExpressionInterpreter.interpret(nextBlock, env, env.getClassStack().get(env.getClassStack().size() - 1).getName(), name, true);
@@ -151,18 +151,18 @@ public class MethodInterpreter extends DeclarationInterpreter {
                         action = (runtime, thisObj, params) -> TYObject.NONE;
                     }
                     
-                    TYProcedure procedure = new TYProcedure(action, mandatoryParams, optParams, blockParam, overflowParam, true);
-                    
-                    TYMethod method = new TYMethod(name, staticMethod, false, secureMethod, containerClass, procedure);
-                    method.setScope(env.getScope());
-                    method.setLeadingComments(line.getLeadingComments());
-                    method.importModules(TrinityInterpreter.getImportedModules());
-                    containerClass.registerMethod(method);
-                    
                 } else {
                     
-                    TrinityNatives.doLoad(env.getEnvironmentString() + "." + name, secureMethod, containerClass, fileName, line.getLineNumber(), env.getScope(), line.getLeadingComments());
+                    action = TrinityNatives.getMethodProcedureAction(containerClass.getName(), name, fileName, line.getLineNumber());
                 }
+                
+                TYProcedure procedure = new TYProcedure(action, mandatoryParams, optParams, blockParam, overflowParam, true);
+                
+                TYMethod method = new TYMethod(name, staticMethod, false, secureMethod, containerClass, procedure);
+                method.setScope(env.getScope());
+                method.setLeadingComments(line.getLeadingComments());
+                method.importModules(TrinityInterpreter.getImportedModules());
+                containerClass.registerMethod(method);
             }
         }
     }
