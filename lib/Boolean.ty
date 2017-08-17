@@ -1,5 +1,7 @@
 module Trinity
     class Boolean
+        val native static TRUE, FALSE
+
         def native ==(other)
 
         def toString
