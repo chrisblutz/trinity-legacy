@@ -1,0 +1,19 @@
+module Trinity
+    module Geometry
+        class Point
+            private
+                var x, y
+
+            public
+                def initialize(x, y)
+                    this.x = x
+                    this.y = y
+
+                def getX
+                    x
+
+                def getY
+                    y
+
+                def toString
+                    '(' + getX() + ', ' + getY() + ')'

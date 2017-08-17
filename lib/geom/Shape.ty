@@ -1,0 +1,17 @@
+module Trinity
+    module Geometry
+        class Shape
+            def getBounds
+                Rectangle.new(0, 0, 0, 0)
+
+            def contains(x, y)
+                false
+
+            def containsPoint(point)
+                false
+
+            def intersects(x, y, w, h)
+                false
+
+            def intersectsRect(rect)
+                false

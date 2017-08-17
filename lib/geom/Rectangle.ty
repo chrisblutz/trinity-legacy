@@ -1,0 +1,56 @@
+module Trinity
+    module Geometry
+        class Rectangle << Shape
+            private
+                var x, y, width, height
+
+            public
+                def initialize(x, y, w, h)
+                    this.x = x
+                    this.y = y
+                    this.width = w
+                    this.height = h
+
+                def getX
+                    x
+
+                def getX2
+                    x + getWidth()
+
+                def getY
+                    y
+
+                def getY2
+                    y + getHeight()
+
+                def getWidth
+                    width
+
+                def getHeight
+                    height
+
+                def toString
+                    getClass() + '[x=' + getX() + ', y=' + getY() + ', w=' + getWidth() + ', h=' + getHeight() + ']'
+
+                def getBounds
+                    this
+
+                def contains(x, y)
+                    if getWidth() < 0 || getHeight() < 0
+                        return false
+                    if x < getX() || y < getY()
+                        return false
+                    (getX2() < getX() || getX2() > x) && (getY2() < getY() || getY2() > y)
+
+                def containsPoint(point)
+                    contains(point.getX(), point.getY())
+
+                def intersects(x, y, w, h)
+                    if getWidth() <= 0 || getHeight() <= 0 || w <= 0 || h <= 0
+                        return false
+                    x2 = x + w
+                    y2 = y + h
+                    (x2 < x || x2 > getX2()) && (y2 < y || y2 > getY2()) && (getX2() < getX() || getX2() > x) && (getY2() < getY() || getY2() > y)
+
+                def intersectsRect(rect)
+                    intersects(rect.getX(), rect.getY(), rect.getWidth(), rect.getHeight())
