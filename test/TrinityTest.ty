@@ -3,4 +3,4 @@ import Trinity.Testing
 class TrinityTest
     def static main(args)
         suite = Suite.new('trinity', Module.get('TrinityTest').getInnerClasses())
-        suite.run
+        suite.run()
