@@ -8,10 +8,10 @@ module Trinity
                 false
 
             def containsPoint(point)
-                false
+                contains(point.getX(), point.getY())
 
             def intersects(x, y, w, h)
                 false
 
             def intersectsRect(rect)
-                false
+                intersects(rect.getX(), rect.getY(), rect.getWidth(), rect.getHeight())

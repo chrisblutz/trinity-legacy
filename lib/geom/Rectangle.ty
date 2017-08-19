@@ -42,15 +42,9 @@ module Trinity
                         return false
                     (getX2() < getX() || getX2() > x) && (getY2() < getY() || getY2() > y)
 
-                def containsPoint(point)
-                    contains(point.getX(), point.getY())
-
                 def intersects(x, y, w, h)
                     if getWidth() <= 0 || getHeight() <= 0 || w <= 0 || h <= 0
                         return false
                     x2 = x + w
                     y2 = y + h
                     (x2 < x || x2 > getX2()) && (y2 < y || y2 > getY2()) && (getX2() < getX() || getX2() > x) && (getY2() < getY() || getY2() > y)
-
-                def intersectsRect(rect)
-                    intersects(rect.getX(), rect.getY(), rect.getWidth(), rect.getHeight())
