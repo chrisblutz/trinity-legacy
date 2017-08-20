@@ -1,0 +1,65 @@
+module Trinity
+    module Geometry
+        class Ellipse << Shape
+            private
+                var x, y, width, height
+                var bounds
+
+            public
+                def initialize(x, y, w, h)
+                    this.x = x
+                    this.y = y
+                    this.width = w
+                    this.height = h
+
+                    this.bounds = Rectangle.new(x, y, w, h)
+
+                def getX
+                    x
+
+                def getY
+                    y
+
+                def getWidth
+                    width
+
+                def getHeight
+                    height
+
+                def toString
+                    getClass() + '[x=' + getX() + ', y=' + getY() + ', w=' + getWidth() + ', h=' + getHeight() + ']'
+
+                def getBounds
+                    bounds
+
+                def contains(x, y)
+                    if getWidth() < 0 || getHeight() < 0
+                        return false
+                    if x < getX() || y < getY()
+                        return false
+
+                    normX = (x - getX()) / getWidth() - 0.5
+                    normY = (y - getY()) / getHeight() - 0.5
+                    (normX * normX + normY * normY) < 0.25
+
+                def intersects(x, y, w, h)
+                    if getWidth() <= 0 || getHeight() <= 0 || w <= 0 || h <= 0
+                        return false
+
+                    normX0 = (x - getX()) / getWidth() - 0.5
+                    normX1 = normX0 + w / getWidth()
+                    normY0 = (y - getY()) / getHeight() - 0.5
+                    normY1 = normY0 + h / getHeight()
+
+                    nearX = 0, nearY = 0
+                    if normX0 > 0
+                        nearX = normX0
+                    else if normX1 < 0
+                        nearX = normX1
+
+                    if normY0 > 0
+                        nearY = normY0
+                    else if normY1 < 0
+                        nearY = normY1
+
+                    (nearX * nearX + nearY * nearY) < 0.25
