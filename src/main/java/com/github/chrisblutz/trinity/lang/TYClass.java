@@ -8,6 +8,7 @@ import com.github.chrisblutz.trinity.lang.scope.TYRuntime;
 import com.github.chrisblutz.trinity.lang.variables.VariableLoc;
 import com.github.chrisblutz.trinity.lang.variables.VariableManager;
 import com.github.chrisblutz.trinity.natives.NativeStorage;
+import com.github.chrisblutz.trinity.natives.TrinityNatives;
 import com.github.chrisblutz.trinity.plugins.PluginLoader;
 import com.github.chrisblutz.trinity.plugins.api.Events;
 
@@ -370,7 +371,7 @@ public class TYClass {
                         
                         Errors.throwError("Trinity.Errors.ReturnError", runtime, "Cannot return a value from a constructor.");
                         
-                    } else if (obj.getObjectClass().isInstanceOf(ClassRegistry.getClass("Trinity.Map")) || obj.getObjectClass().isInstanceOf(ClassRegistry.getClass("Trinity.Procedure"))) {
+                    } else if (TrinityNatives.isClassNativelyConstructed(newObj.getObjectClass()) && TrinityNatives.isClassNativelyConstructed(obj.getObjectClass())) {
                         
                         newObj = obj;
                     }

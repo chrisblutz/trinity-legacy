@@ -17,6 +17,8 @@ class NativeMap {
     
     static void register() {
         
+        TrinityNatives.registerForNativeConstruction("Trinity.Map");
+        
         TrinityNatives.registerMethod("Trinity.Map", "initialize", (runtime, thisObj, params) -> new TYMap(new HashMap<>()));
         TrinityNatives.registerMethod("Trinity.Map", "length", (runtime, thisObj, params) -> NativeStorage.getMapLength(TrinityNatives.cast(TYMap.class, thisObj)));
         TrinityNatives.registerMethod("Trinity.Map", "keys", (runtime, thisObj, params) -> NativeStorage.getMapKeySet(TrinityNatives.cast(TYMap.class, thisObj)));

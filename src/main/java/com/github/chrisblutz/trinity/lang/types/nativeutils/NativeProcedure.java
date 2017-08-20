@@ -19,6 +19,8 @@ class NativeProcedure {
     
     static void register() {
         
+        TrinityNatives.registerForNativeConstruction("Trinity.Procedure");
+        
         TrinityNatives.registerMethod("Trinity.Procedure", "initialize", (runtime, thisObj, params) -> {
             
             if (runtime.hasVariable("block")) {

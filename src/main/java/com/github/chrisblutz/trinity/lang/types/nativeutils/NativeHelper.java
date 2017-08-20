@@ -25,6 +25,8 @@ public class NativeHelper {
         NativeKernel.register();
         NativeSystem.register();
         
+        NativeThread.register();
+        
         NativeErrors.register();
         NativeFileSystem.register();
         NativeProcedure.register();
