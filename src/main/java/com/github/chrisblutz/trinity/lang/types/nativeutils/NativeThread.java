@@ -1,7 +1,6 @@
 package com.github.chrisblutz.trinity.lang.types.nativeutils;
 
 import com.github.chrisblutz.trinity.lang.TYObject;
-import com.github.chrisblutz.trinity.lang.procedures.TYProcedure;
 import com.github.chrisblutz.trinity.lang.threading.TYThread;
 import com.github.chrisblutz.trinity.lang.types.bool.TYBoolean;
 import com.github.chrisblutz.trinity.lang.types.procedures.TYProcedureObject;
@@ -21,10 +20,10 @@ class NativeThread {
         
         TrinityNatives.registerMethod("Trinity.Thread", "initialize", (runtime, thisObj, params) -> {
             
-            TYProcedure procedure = TrinityNatives.cast(TYProcedureObject.class, runtime.getVariable("block")).getInternalProcedure();
+            TYProcedureObject procedureObj = TrinityNatives.cast(TYProcedureObject.class, runtime.getVariable("block"));
             String name = TrinityNatives.toString(runtime.getVariable("name"), runtime);
             
-            return new TYThreadObject(new TYThread(name, procedure, runtime));
+            return new TYThreadObject(new TYThread(name, procedureObj.getInternalProcedure(), procedureObj.getProcedureRuntime()));
         });
         TrinityNatives.registerMethod("Trinity.Thread", "start", (runtime, thisObj, params) -> {
             
