@@ -8,8 +8,8 @@ import com.github.chrisblutz.trinity.interpreter.instructionsets.ChainedInstruct
 import com.github.chrisblutz.trinity.lang.TYClass;
 import com.github.chrisblutz.trinity.lang.TYObject;
 import com.github.chrisblutz.trinity.lang.errors.Errors;
-import com.github.chrisblutz.trinity.lang.errors.stacktrace.TrinityStack;
 import com.github.chrisblutz.trinity.lang.procedures.ProcedureAction;
+import com.github.chrisblutz.trinity.lang.threading.TYThread;
 import com.github.chrisblutz.trinity.natives.TrinityNatives;
 import com.github.chrisblutz.trinity.parser.blocks.Block;
 import com.github.chrisblutz.trinity.parser.lines.Line;
@@ -96,11 +96,13 @@ public class ValInterpreter extends DeclarationInterpreter {
                             final TYClass container = containerClass;
                             action = (runtime, thisObj, params) -> {
                                 
-                                TrinityStack.add(container.getName(), "<nil>", fileName, line.getLineNumber());
+                                TYThread current = TYThread.getCurrentThread();
+                                
+                                current.getTrinityStack().add(container.getName(), "<nil>", fileName, line.getLineNumber());
                                 
                                 TYObject result = set.evaluate(TYObject.NONE, runtime);
                                 
-                                TrinityStack.pop();
+                                current.getTrinityStack().pop();
                                 
                                 return result;
                             };

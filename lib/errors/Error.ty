@@ -2,13 +2,14 @@ module Trinity
     module Errors
         class Error
             private
-                var message, stackTrace
+                var message, stackTrace, thread
 
             public
                 def initialize(message)
                     this.message = message
 
                     stackTrace = populateStackTrace()
+                    thread = Thread.current()
 
                 def getMessage
                     message
@@ -17,7 +18,7 @@ module Trinity
                     stackTrace
 
                 def toString
-                    str = getClass().toString()
+                    str = 'Thread \'' + thread.getName() + '\' - ' + getClass().toString()
 
                     if !getMessage().isEmpty()
                         str += ': ' + getMessage()

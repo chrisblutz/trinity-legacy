@@ -5,8 +5,8 @@ import com.github.chrisblutz.trinity.cli.CLI;
 import com.github.chrisblutz.trinity.interpreter.errors.TrinityErrorException;
 import com.github.chrisblutz.trinity.lang.TYObject;
 import com.github.chrisblutz.trinity.lang.errors.stacktrace.StackElement;
-import com.github.chrisblutz.trinity.lang.errors.stacktrace.TrinityStack;
 import com.github.chrisblutz.trinity.lang.scope.TYRuntime;
+import com.github.chrisblutz.trinity.lang.threading.TYThread;
 import com.github.chrisblutz.trinity.lang.types.strings.TYString;
 import com.github.chrisblutz.trinity.natives.TrinityNatives;
 
@@ -60,7 +60,7 @@ public class Errors {
     public static void throwUnrecoverable(String errorClass, Object... args) {
         
         TYObject error = constructError(errorClass, new TYRuntime(), args);
-        throwUncaughtJavaException(new TrinityErrorException(error), null, 0);
+        throwUncaughtJavaException(new TrinityErrorException(error), null, 0, TYThread.getCurrentThread());
     }
     
     private static TYObject constructError(String errorClass, TYRuntime runtime, Object... args) {
@@ -83,7 +83,7 @@ public class Errors {
         return TrinityNatives.newInstance(errorClass, runtime, tyArgs);
     }
     
-    public static void throwUncaughtJavaException(Throwable error, String file, int line) {
+    public static void throwUncaughtJavaException(Throwable error, String file, int line, TYThread thread) {
         
         if (error instanceof TrinityErrorException) {
             
@@ -98,7 +98,7 @@ public class Errors {
             
         } else {
             
-            System.err.println("An error occurred in the Trinity interpreter in file '" + file + "' at line " + line + ".");
+            System.err.println("An error occurred in the Trinity interpreter in file '" + file + "' at line " + line + " on thread '" + thread.getName() + "'.");
             
             if (CLI.isDebuggingEnabled()) {
                 
@@ -106,7 +106,7 @@ public class Errors {
                 error.printStackTrace();
                 
                 System.err.println("\n== FULL TRINITY STACK ==\n");
-                for(StackElement element : TrinityStack.getStack()){
+                for (StackElement element : thread.getTrinityStack().getStack()) {
                     
                     System.err.println(element);
                 }

@@ -1,11 +1,12 @@
 package com.github.chrisblutz.trinity.natives;
 
 import com.github.chrisblutz.trinity.lang.ClassRegistry;
+import com.github.chrisblutz.trinity.lang.TYClass;
 import com.github.chrisblutz.trinity.lang.TYObject;
 import com.github.chrisblutz.trinity.lang.errors.Errors;
-import com.github.chrisblutz.trinity.lang.errors.stacktrace.TrinityStack;
 import com.github.chrisblutz.trinity.lang.procedures.ProcedureAction;
 import com.github.chrisblutz.trinity.lang.scope.TYRuntime;
+import com.github.chrisblutz.trinity.lang.threading.TYThread;
 import com.github.chrisblutz.trinity.lang.types.arrays.TYArray;
 import com.github.chrisblutz.trinity.lang.types.bool.TYBoolean;
 import com.github.chrisblutz.trinity.lang.types.numeric.TYFloat;
@@ -32,15 +33,19 @@ public class TrinityNatives {
     private static Map<String, ProcedureAction> globals = new HashMap<>();
     private static Map<String, Map<String, ProcedureAction>> fields = new HashMap<>();
     
+    private static List<TYClass> nativeConstructors = new ArrayList<>();
+    
     public static void registerMethod(String className, String methodName, ProcedureAction action) {
         
         ProcedureAction actionWithStackTrace = (runtime, thisObj, params) -> {
             
-            TrinityStack.add(className, methodName, null, 0);
+            TYThread current = TYThread.getCurrentThread();
+            
+            current.getTrinityStack().add(className, methodName, null, 0);
             
             TYObject result = action.onAction(runtime, thisObj, params);
             
-            TrinityStack.pop();
+            current.getTrinityStack().pop();
             
             return result;
         };
@@ -97,6 +102,16 @@ public class TrinityNatives {
             Errors.throwSyntaxError("Trinity.Errors.ParseError", "Native field " + className + "." + varName + " not implemented.", fileName, lineNumber);
             return null;
         }
+    }
+    
+    public static void registerForNativeConstruction(String className) {
+        
+        nativeConstructors.add(ClassRegistry.getClass(className));
+    }
+    
+    public static boolean isClassNativelyConstructed(TYClass tyClass){
+        
+        return nativeConstructors.contains(tyClass);
     }
     
     /**

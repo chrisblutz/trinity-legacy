@@ -1,19 +1,22 @@
 package com.github.chrisblutz.trinity.runner;
 
-import com.github.chrisblutz.trinity.Trinity;
 import com.github.chrisblutz.trinity.cli.CLI;
 import com.github.chrisblutz.trinity.interpreter.TrinityInterpreter;
 import com.github.chrisblutz.trinity.lang.ClassRegistry;
 import com.github.chrisblutz.trinity.lang.TYClass;
 import com.github.chrisblutz.trinity.lang.TYObject;
 import com.github.chrisblutz.trinity.lang.errors.Errors;
-import com.github.chrisblutz.trinity.lang.scope.TYRuntime;
+import com.github.chrisblutz.trinity.lang.procedures.ProcedureAction;
+import com.github.chrisblutz.trinity.lang.procedures.TYProcedure;
+import com.github.chrisblutz.trinity.lang.threading.TYThread;
 import com.github.chrisblutz.trinity.natives.TrinityNatives;
 import com.github.chrisblutz.trinity.parser.TrinityParser;
 import com.github.chrisblutz.trinity.plugins.PluginLoader;
 import com.github.chrisblutz.trinity.plugins.api.Events;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 
 /**
@@ -21,29 +24,29 @@ import java.io.File;
  */
 public class Runner {
     
-    private static String currentFile;
-    private static int currentLine;
+    private static Map<Thread, String> currentFiles = new HashMap<>();
+    private static Map<Thread, Integer> currentLines = new HashMap<>();
     
-    private static Thread trinityThread;
+    private static final ThreadGroup trinityThreadGroup = new ThreadGroup("TrinityThreads");
     
-    public static String getCurrentFile() {
+    public static String getCurrentFile(Thread thread) {
         
-        return currentFile;
+        return currentFiles.get(thread);
     }
     
     public static void setCurrentFile(String currentFile) {
         
-        Runner.currentFile = currentFile;
+        currentFiles.put(Thread.currentThread(), currentFile);
     }
     
-    public static int getCurrentLine() {
+    public static int getCurrentLine(Thread thread) {
         
-        return currentLine;
+        return currentLines.get(thread);
     }
     
     public static void setCurrentLine(int currentLine) {
         
-        Runner.currentLine = currentLine;
+        currentLines.put(Thread.currentThread(), currentLine);
     }
     
     public static void updateLocation(String currentFile, int currentLine) {
@@ -54,15 +57,7 @@ public class Runner {
     
     public static void run(File[] sourceFiles, String mainClass, String[] args) {
         
-        trinityThread = new Thread(() -> parseAndRun(sourceFiles, mainClass, args));
-        trinityThread.setName("Trinity-Main");
-        trinityThread.setUncaughtExceptionHandler((t, e) -> {
-            
-            Errors.throwUncaughtJavaException(e, getCurrentFile(), getCurrentLine());
-            
-            Trinity.exit(1);
-        });
-        trinityThread.start();
+        parseAndRun(sourceFiles, mainClass, args);
     }
     
     private static void parseAndRun(File[] sourceFiles, String mainClass, String[] args) {
@@ -93,15 +88,18 @@ public class Runner {
             
             long startMillis = System.currentTimeMillis();
             
-            TrinityInterpreter.runPreMainInitializationCode();
-            
+            ProcedureAction mainAction = null;
             if (mainClass != null) {
                 
                 if (ClassRegistry.classExists(mainClass)) {
                     
-                    TYClass main = ClassRegistry.getClass(mainClass);
+                    final TYClass main = ClassRegistry.getClass(mainClass);
                     
-                    main.tyInvoke("main", new TYRuntime(), null, null, TYObject.NONE, TrinityNatives.getArrayFor(args));
+                    mainAction = (runtime, thisObj, params) -> {
+                        
+                        TrinityInterpreter.runPreMainInitializationCode();
+                        return main.tyInvoke("main", runtime, null, null, TYObject.NONE, TrinityNatives.getArrayFor(args));
+                    };
                     
                 } else {
                     
@@ -112,11 +110,33 @@ public class Runner {
                 
                 if (ClassRegistry.getMainClasses().size() > 0) {
                     
-                    ClassRegistry.getMainClasses().get(0).tyInvoke("main", new TYRuntime(), null, null, TYObject.NONE, TrinityNatives.getArrayFor(args));
+                    final TYClass main = ClassRegistry.getMainClasses().get(0);
+                    
+                    mainAction = (runtime, thisObj, params) -> {
+                        
+                        TrinityInterpreter.runPreMainInitializationCode();
+                        return main.tyInvoke("main", runtime, null, null, TYObject.NONE, TrinityNatives.getArrayFor(args));
+                    };
                     
                 } else {
                     
                     Errors.throwSyntaxError("Trinity.Errors.MethodNotFoundError", "No 'main' methods found.", null, 0);
+                }
+            }
+            
+            if (mainAction != null) {
+                
+                TYProcedure mainProcedure = new TYProcedure(mainAction, true);
+                TYThread mainThread = TYThread.constructMainThread(mainProcedure);
+                mainThread.start();
+                
+                try {
+                    
+                    waitForGroupCompletion();
+                    
+                } catch (InterruptedException e) {
+                    
+                    // Interrupted
                 }
             }
             
@@ -132,5 +152,21 @@ public class Runner {
         
         // Trigger plugin unload, assumes execution succeeded
         PluginLoader.unloadAll(0);
+    }
+    
+    private static void waitForGroupCompletion() throws InterruptedException {
+        
+        synchronized (trinityThreadGroup) {
+            
+            while (trinityThreadGroup.activeCount() > 0) {
+                
+                trinityThreadGroup.wait();
+            }
+        }
+    }
+    
+    public static ThreadGroup getTrinityThreadGroup() {
+        
+        return trinityThreadGroup;
     }
 }

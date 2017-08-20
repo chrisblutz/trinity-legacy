@@ -19,7 +19,8 @@ module Trinity
             $STDERR.println(message)
             exit(code)
 
-        def native static sleep(millis)
+        def static sleep(millis)
+            Thread.sleep(millis)
 
         def native static eval(code, args = {})
 

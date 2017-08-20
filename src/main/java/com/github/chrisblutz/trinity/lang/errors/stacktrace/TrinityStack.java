@@ -1,6 +1,7 @@
 package com.github.chrisblutz.trinity.lang.errors.stacktrace;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -9,24 +10,32 @@ import java.util.List;
  */
 public class TrinityStack {
     
-    private static List<StackElement> stack = new ArrayList<>();
+    private List<StackElement> stack = new ArrayList<>();
     
-    public static void add(String errorClass, String method, String file, int line) {
+    public TrinityStack(TrinityStack parent) {
+        
+        if (parent != null) {
+            
+            Collections.addAll(stack, parent.getStack());
+        }
+    }
+    
+    public void add(String errorClass, String method, String file, int line) {
         
         stack.add(0, new StackElement(errorClass, method, file, line));
     }
     
-    public static void pop() {
+    public void pop() {
         
         stack.remove(0);
     }
     
-    public static int size() {
+    public int size() {
         
         return stack.size();
     }
     
-    public static void popToSize(int size) {
+    public void popToSize(int size) {
         
         while (size() > size) {
             
@@ -34,7 +43,7 @@ public class TrinityStack {
         }
     }
     
-    public static StackElement[] getStack() {
+    public StackElement[] getStack() {
         
         return stack.toArray(new StackElement[stack.size()]);
     }

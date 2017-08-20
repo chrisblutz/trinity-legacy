@@ -3,9 +3,9 @@ package com.github.chrisblutz.trinity.interpreter;
 import com.github.chrisblutz.trinity.interpreter.instructionsets.*;
 import com.github.chrisblutz.trinity.lang.TYObject;
 import com.github.chrisblutz.trinity.lang.errors.Errors;
-import com.github.chrisblutz.trinity.lang.errors.stacktrace.TrinityStack;
 import com.github.chrisblutz.trinity.lang.procedures.ProcedureAction;
 import com.github.chrisblutz.trinity.lang.procedures.TYProcedure;
+import com.github.chrisblutz.trinity.lang.threading.TYThread;
 import com.github.chrisblutz.trinity.parser.blocks.Block;
 import com.github.chrisblutz.trinity.parser.blocks.BlockLine;
 import com.github.chrisblutz.trinity.parser.lines.Line;
@@ -127,20 +127,21 @@ public class ExpressionInterpreter {
             
             TYObject returnObj = TYObject.NONE;
             
+            TYThread current = TYThread.getCurrentThread();
             for (ChainedInstructionSet set : sets) {
                 
                 if (!includeStackTrace) {
                     
-                    TrinityStack.pop();
+                    current.getTrinityStack().pop();
                 }
                 
-                TrinityStack.add(errorClass, method, set.getFileName(), set.getLineNumber());
+                current.getTrinityStack().add(errorClass, method, set.getFileName(), set.getLineNumber());
                 
                 TYObject result = set.evaluate(TYObject.NONE, runtime);
                 
                 if (includeStackTrace) {
                     
-                    TrinityStack.pop();
+                    current.getTrinityStack().pop();
                 }
                 
                 if (result != null && !runtime.isReturning()) {

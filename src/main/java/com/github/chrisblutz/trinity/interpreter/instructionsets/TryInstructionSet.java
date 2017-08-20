@@ -3,9 +3,9 @@ package com.github.chrisblutz.trinity.interpreter.instructionsets;
 import com.github.chrisblutz.trinity.interpreter.errors.TrinityErrorException;
 import com.github.chrisblutz.trinity.lang.TYObject;
 import com.github.chrisblutz.trinity.lang.errors.Errors;
-import com.github.chrisblutz.trinity.lang.errors.stacktrace.TrinityStack;
 import com.github.chrisblutz.trinity.lang.procedures.ProcedureAction;
 import com.github.chrisblutz.trinity.lang.scope.TYRuntime;
+import com.github.chrisblutz.trinity.lang.threading.TYThread;
 import com.github.chrisblutz.trinity.plugins.PluginLoader;
 import com.github.chrisblutz.trinity.plugins.api.Events;
 
@@ -61,7 +61,7 @@ public class TryInstructionSet extends ChainedInstructionSet {
         
         TYObject result = TYObject.NONE;
         
-        int stackDepth = TrinityStack.size();
+        int stackDepth = TYThread.getCurrentThread().getTrinityStack().size();
         try {
             
             if (getAction() != null) {
@@ -75,7 +75,7 @@ public class TryInstructionSet extends ChainedInstructionSet {
             // These are normally removed after an instruction set completes,
             // but since this instruction set exited with an error, its
             // corresponding stack elements were not removed.
-            TrinityStack.popToSize(stackDepth);
+            TYThread.getCurrentThread().getTrinityStack().popToSize(stackDepth);
             
             PluginLoader.triggerEvent(Events.ERROR_CAUGHT, e.getErrorObject(), getFileName(), getLineNumber());
             

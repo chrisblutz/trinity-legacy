@@ -5,6 +5,7 @@ import com.github.chrisblutz.trinity.lang.TYMethod;
 import com.github.chrisblutz.trinity.lang.TYModule;
 import com.github.chrisblutz.trinity.lang.TYObject;
 import com.github.chrisblutz.trinity.lang.procedures.TYProcedure;
+import com.github.chrisblutz.trinity.lang.threading.TYThread;
 import com.github.chrisblutz.trinity.lang.types.*;
 import com.github.chrisblutz.trinity.lang.types.arrays.TYArray;
 import com.github.chrisblutz.trinity.lang.types.bool.TYBoolean;
@@ -12,6 +13,7 @@ import com.github.chrisblutz.trinity.lang.types.maps.TYMap;
 import com.github.chrisblutz.trinity.lang.types.numeric.TYFloat;
 import com.github.chrisblutz.trinity.lang.types.numeric.TYInt;
 import com.github.chrisblutz.trinity.lang.types.strings.TYString;
+import com.github.chrisblutz.trinity.lang.types.threading.TYThreadObject;
 
 import java.util.*;
 
@@ -60,10 +62,12 @@ public class NativeStorage {
     private static Map<TYModule, TYObject> moduleLeadingComments = new HashMap<>();
     private static Map<TYMethod, TYObject> methodLeadingComments = new HashMap<>();
     
+    private static Map<TYThread, TYThreadObject> threadObjectMap = new HashMap<>();
+    
     private static TYString nilString = null;
     private static TYFloat e = null, pi = null;
     
-    public static TYClassObject getClassObject(TYClass tyClass) {
+    public synchronized static TYClassObject getClassObject(TYClass tyClass) {
         
         if (!classObjects.containsKey(tyClass)) {
             
@@ -73,7 +77,7 @@ public class NativeStorage {
         return classObjects.get(tyClass);
     }
     
-    public static TYStaticClassObject getStaticClassObject(TYClass tyClass) {
+    public synchronized static TYStaticClassObject getStaticClassObject(TYClass tyClass) {
         
         if (!staticClassObjects.containsKey(tyClass)) {
             
@@ -83,7 +87,7 @@ public class NativeStorage {
         return staticClassObjects.get(tyClass);
     }
     
-    public static TYModuleObject getModuleObject(TYModule tyModule) {
+    public synchronized static TYModuleObject getModuleObject(TYModule tyModule) {
         
         if (!moduleObjects.containsKey(tyModule)) {
             
@@ -93,7 +97,7 @@ public class NativeStorage {
         return moduleObjects.get(tyModule);
     }
     
-    public static TYStaticModuleObject getStaticModuleObject(TYModule tyModule) {
+    public synchronized static TYStaticModuleObject getStaticModuleObject(TYModule tyModule) {
         
         if (!staticModuleObjects.containsKey(tyModule)) {
             
@@ -103,7 +107,7 @@ public class NativeStorage {
         return staticModuleObjects.get(tyModule);
     }
     
-    public static TYMethodObject getMethodObject(TYMethod tyMethod) {
+    public synchronized static TYMethodObject getMethodObject(TYMethod tyMethod) {
         
         if (!methodObjects.containsKey(tyMethod)) {
             
@@ -113,7 +117,7 @@ public class NativeStorage {
         return methodObjects.get(tyMethod);
     }
     
-    public static TYString getClassName(TYClass tyClass) {
+    public synchronized static TYString getClassName(TYClass tyClass) {
         
         if (!classNames.containsKey(tyClass)) {
             
@@ -123,7 +127,7 @@ public class NativeStorage {
         return classNames.get(tyClass);
     }
     
-    public static TYString getClassShortName(TYClass tyClass) {
+    public synchronized static TYString getClassShortName(TYClass tyClass) {
         
         if (!classShortNames.containsKey(tyClass)) {
             
@@ -133,7 +137,7 @@ public class NativeStorage {
         return classShortNames.get(tyClass);
     }
     
-    public static TYString getModuleName(TYModule tyModule) {
+    public synchronized static TYString getModuleName(TYModule tyModule) {
         
         if (!moduleNames.containsKey(tyModule)) {
             
@@ -143,7 +147,7 @@ public class NativeStorage {
         return moduleNames.get(tyModule);
     }
     
-    public static TYString getModuleShortName(TYModule tyModule) {
+    public synchronized static TYString getModuleShortName(TYModule tyModule) {
         
         if (!moduleShortNames.containsKey(tyModule)) {
             
@@ -153,7 +157,7 @@ public class NativeStorage {
         return moduleShortNames.get(tyModule);
     }
     
-    public static TYString getMethodName(TYMethod tyMethod) {
+    public synchronized static TYString getMethodName(TYMethod tyMethod) {
         
         if (!methodNames.containsKey(tyMethod)) {
             
@@ -163,7 +167,7 @@ public class NativeStorage {
         return methodNames.get(tyMethod);
     }
     
-    public static TYBoolean isMethodStatic(TYMethod tyMethod) {
+    public synchronized static TYBoolean isMethodStatic(TYMethod tyMethod) {
         
         if (!methodStatic.containsKey(tyMethod)) {
             
@@ -173,7 +177,7 @@ public class NativeStorage {
         return methodStatic.get(tyMethod);
     }
     
-    public static TYBoolean isMethodNative(TYMethod tyMethod) {
+    public synchronized static TYBoolean isMethodNative(TYMethod tyMethod) {
         
         if (!methodNative.containsKey(tyMethod)) {
             
@@ -183,7 +187,7 @@ public class NativeStorage {
         return methodNative.get(tyMethod);
     }
     
-    public static TYBoolean isMethodSecure(TYMethod tyMethod) {
+    public synchronized static TYBoolean isMethodSecure(TYMethod tyMethod) {
         
         if (!methodSecure.containsKey(tyMethod)) {
             
@@ -193,7 +197,7 @@ public class NativeStorage {
         return methodSecure.get(tyMethod);
     }
     
-    public static TYArray getMandatoryArguments(TYProcedure tyProcedure) {
+    public synchronized static TYArray getMandatoryArguments(TYProcedure tyProcedure) {
         
         if (!mandatoryArguments.containsKey(tyProcedure)) {
             
@@ -205,7 +209,7 @@ public class NativeStorage {
         return mandatoryArguments.get(tyProcedure);
     }
     
-    public static TYArray getOptionalArguments(TYProcedure tyProcedure) {
+    public synchronized static TYArray getOptionalArguments(TYProcedure tyProcedure) {
         
         if (!optionalArguments.containsKey(tyProcedure)) {
             
@@ -217,7 +221,7 @@ public class NativeStorage {
         return optionalArguments.get(tyProcedure);
     }
     
-    public static TYObject getBlockArgument(TYProcedure tyProcedure) {
+    public synchronized static TYObject getBlockArgument(TYProcedure tyProcedure) {
         
         if (!blockArguments.containsKey(tyProcedure)) {
             
@@ -227,7 +231,7 @@ public class NativeStorage {
         return blockArguments.get(tyProcedure);
     }
     
-    public static TYObject getOverflowArgument(TYProcedure tyProcedure) {
+    public synchronized static TYObject getOverflowArgument(TYProcedure tyProcedure) {
         
         if (!overflowArguments.containsKey(tyProcedure)) {
             
@@ -237,7 +241,7 @@ public class NativeStorage {
         return overflowArguments.get(tyProcedure);
     }
     
-    public static TYInt getArrayLength(TYArray tyArray) {
+    public synchronized static TYInt getArrayLength(TYArray tyArray) {
         
         if (!arrayLengths.containsKey(tyArray)) {
             
@@ -247,12 +251,12 @@ public class NativeStorage {
         return arrayLengths.get(tyArray);
     }
     
-    public static void clearArrayData(TYArray tyArray) {
+    public synchronized static void clearArrayData(TYArray tyArray) {
         
         arrayLengths.remove(tyArray);
     }
     
-    public static TYArray getMapKeySet(TYMap tyMap) {
+    public synchronized static TYArray getMapKeySet(TYMap tyMap) {
         
         if (!mapKeySets.containsKey(tyMap)) {
             
@@ -264,7 +268,7 @@ public class NativeStorage {
         return mapKeySets.get(tyMap);
     }
     
-    public static TYArray getMapValues(TYMap tyMap) {
+    public synchronized static TYArray getMapValues(TYMap tyMap) {
         
         if (!mapValues.containsKey(tyMap)) {
             
@@ -276,7 +280,7 @@ public class NativeStorage {
         return mapValues.get(tyMap);
     }
     
-    public static TYInt getMapLength(TYMap tyMap) {
+    public synchronized static TYInt getMapLength(TYMap tyMap) {
         
         if (!mapLengths.containsKey(tyMap)) {
             
@@ -286,14 +290,14 @@ public class NativeStorage {
         return mapLengths.get(tyMap);
     }
     
-    public static void clearMapData(TYMap tyMap) {
+    public synchronized static void clearMapData(TYMap tyMap) {
         
         mapKeySets.remove(tyMap);
         mapValues.remove(tyMap);
         mapLengths.remove(tyMap);
     }
     
-    public static TYInt getHashCode(TYObject tyObject) {
+    public synchronized static TYInt getHashCode(TYObject tyObject) {
         
         if (!hashCodes.containsKey(tyObject)) {
             
@@ -303,7 +307,7 @@ public class NativeStorage {
         return hashCodes.get(tyObject);
     }
     
-    public static TYString getNilString() {
+    public synchronized static TYString getNilString() {
         
         if (nilString == null) {
             
@@ -313,7 +317,7 @@ public class NativeStorage {
         return nilString;
     }
     
-    public static TYObject getLeadingComments(TYClass tyClass) {
+    public synchronized static TYObject getLeadingComments(TYClass tyClass) {
         
         if (!classLeadingComments.containsKey(tyClass)) {
             
@@ -324,7 +328,7 @@ public class NativeStorage {
         return classLeadingComments.get(tyClass);
     }
     
-    public static TYObject getLeadingComments(TYModule tyModule) {
+    public synchronized static TYObject getLeadingComments(TYModule tyModule) {
         
         if (!moduleLeadingComments.containsKey(tyModule)) {
             
@@ -335,7 +339,7 @@ public class NativeStorage {
         return moduleLeadingComments.get(tyModule);
     }
     
-    public static TYObject getLeadingComments(TYMethod tyMethod) {
+    public synchronized static TYObject getLeadingComments(TYMethod tyMethod) {
         
         if (!methodLeadingComments.containsKey(tyMethod)) {
             
@@ -346,7 +350,17 @@ public class NativeStorage {
         return methodLeadingComments.get(tyMethod);
     }
     
-    public static TYFloat getE() {
+    public synchronized static TYThreadObject getThreadObject(TYThread tyThread) {
+        
+        if (!threadObjectMap.containsKey(tyThread)) {
+            
+            threadObjectMap.put(tyThread, new TYThreadObject(tyThread));
+        }
+        
+        return threadObjectMap.get(tyThread);
+    }
+    
+    public synchronized static TYFloat getE() {
         
         if (e == null) {
             
@@ -356,7 +370,7 @@ public class NativeStorage {
         return e;
     }
     
-    public static TYFloat getPi() {
+    public synchronized static TYFloat getPi() {
         
         if (pi == null) {
             

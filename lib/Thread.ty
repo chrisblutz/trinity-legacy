@@ -1,0 +1,31 @@
+module Trinity
+    class Thread
+        def native initialize(&block, name = 'thread' + nextId())
+
+        def native start
+
+        def native interrupt
+
+        def native isAlive
+
+        def native isInterrupted
+
+        def native getName
+
+        def native setErrorHandler(&block)
+
+        def native getErrorHandler
+
+        def toString
+            getClass() + '[' + getName() + ']'
+
+        def native static current
+
+        def native static sleep(millis)
+
+        private
+            var nextAvailable = 0
+
+            def static nextId
+                nextAvailable += 1
+                nextAvailable
