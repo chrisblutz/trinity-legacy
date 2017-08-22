@@ -49,9 +49,16 @@ class NativeProcedure {
                 procParams.addAll(((TYArray) args).getInternalList());
             }
             
-            TYProcedureObject subBlock = TrinityNatives.cast(TYProcedureObject.class, runtime.getVariable("block"));
+            TYProcedure subProc = null;
+            TYRuntime subRuntime = null;
+            if (proc.getBlockParameter() != null) {
+                
+                TYProcedureObject subBlock = TrinityNatives.cast(TYProcedureObject.class, runtime.getVariable("block"));
+                subProc = subBlock.getInternalProcedure();
+                subRuntime = subBlock.getProcedureRuntime();
+            }
             
-            TYObject result = proc.call(newRuntime, subBlock.getInternalProcedure(), subBlock.getProcedureRuntime(), TYObject.NONE, procParams.toArray(new TYObject[procParams.size()]));
+            TYObject result = proc.call(newRuntime, subProc, subRuntime, TYObject.NONE, procParams.toArray(new TYObject[procParams.size()]));
             
             newRuntime.disposeVariables(obj.getProcedureRuntime());
             
