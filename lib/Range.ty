@@ -25,10 +25,10 @@ module Trinity
                 if block?
                     next = getBegin()
                     while next != getEnd()
-                        &block.call(next)
+                        block.call(next)
                         next = next.next()
                     if !getExcludeEnd()
-                        &block.call(next)
+                        block.call(next)
 
             def ==(other)
                 if !other.isInstance(Range)
