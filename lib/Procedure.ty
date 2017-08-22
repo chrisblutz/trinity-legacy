@@ -10,7 +10,7 @@ module Trinity
 
         def native getOverflowArgument
 
-        def native call(...args)
+        def native call(&block, ...args)
 
         def toString
             str = getClass().toString()
