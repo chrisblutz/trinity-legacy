@@ -316,8 +316,7 @@ public class ExpressionInterpreter {
             
             return new FinallyInstructionSet(action, fileName, fullFile, lineNumber);
             
-        } else if (TokenUtils.containsOnFirstLevel(tokens, Token.ASSIGNMENT_OPERATOR, Token.NIL_ASSIGNMENT_OPERATOR, Token.PLUS_EQUAL, Token.MINUS_EQUAL, Token.MULTIPLY_EQUAL, Token.DIVIDE_EQUAL, Token.MODULUS_EQUAL)) {
-            
+        } else if (TokenUtils.containsOnFirstLevel(tokens, Token.ASSIGNMENT_OPERATOR, Token.NIL_ASSIGNMENT_OPERATOR, Token.PLUS_EQUAL, Token.MINUS_EQUAL, Token.MULTIPLY_EQUAL, Token.DIVIDE_EQUAL, Token.MODULUS_EQUAL, Token.BITWISE_AND_EQUAL, Token.BITWISE_OR_EQUAL, Token.BITWISE_XOR_EQUAL, Token.BIT_SHIFT_LEFT_EQUAL, Token.BIT_SHIFT_RIGHT_EQUAL, Token.BIT_SHIFT_LOGICAL_RIGHT_EQUAL)) {
             
             if (TokenUtils.containsOnFirstLevel(tokens, Token.COMMA)) {
                 
@@ -334,15 +333,23 @@ public class ExpressionInterpreter {
             return interpretTernary(errorClass, method, fileName, fullFile, lineNumber, tokens, nextBlock);
             
         } else if (TokenUtils.containsOnFirstLevel(tokens, Token.PLUS, Token.MINUS, Token.MULTIPLY, Token.DIVIDE, Token.MODULUS, Token.EQUAL_TO, Token.NOT_EQUAL_TO, Token.GREATER_THAN, Token.GREATER_THAN_OR_EQUAL_TO,
-                Token.LESS_THAN, Token.LESS_THAN_OR_EQUAL_TO, Token.NEGATIVE_OPERATOR, Token.AND, Token.OR)) {
+                Token.LESS_THAN, Token.LESS_THAN_OR_EQUAL_TO, Token.NEGATIVE_OPERATOR, Token.AND, Token.OR, Token.BLOCK_PREFIX, Token.VERTICAL_BAR, Token.BITWISE_XOR, Token.BIT_SHIFT_RIGHT, Token.BIT_SHIFT_LOGICAL_RIGHT, Token.CLASS_EXTENSION, Token.BITWISE_COMPLEMENT)) {
             
             if (TokenUtils.containsOnFirstLevel(tokens, Token.AND, Token.OR)) {
                 
                 return interpretBinaryAndOrOperator(errorClass, method, fileName, fullFile, lineNumber, tokens, nextBlock);
                 
+            } else if (TokenUtils.containsOnFirstLevel(tokens, Token.VERTICAL_BAR, Token.BITWISE_XOR, Token.BLOCK_PREFIX) && checkBitwiseOpLocation(tokens)) {
+                
+                return interpretBinaryBitwiseOperator(errorClass, method, fileName, fullFile, lineNumber, tokens, nextBlock);
+                
             } else if (TokenUtils.containsOnFirstLevel(tokens, Token.LESS_THAN, Token.LESS_THAN_OR_EQUAL_TO, Token.EQUAL_TO, Token.NOT_EQUAL_TO, Token.GREATER_THAN, Token.GREATER_THAN_OR_EQUAL_TO)) {
                 
                 return interpretBinaryComparisonOperator(errorClass, method, fileName, fullFile, lineNumber, tokens, nextBlock);
+                
+            } else if (TokenUtils.containsOnFirstLevel(tokens, Token.CLASS_EXTENSION, Token.BIT_SHIFT_RIGHT, Token.BIT_SHIFT_LOGICAL_RIGHT)) {
+                
+                return interpretBinaryBitShiftOperator(errorClass, method, fileName, fullFile, lineNumber, tokens, nextBlock);
                 
             } else if (TokenUtils.containsOnFirstLevel(tokens, Token.PLUS, Token.MINUS, Token.MULTIPLY, Token.DIVIDE, Token.MODULUS) && tokens[0].getToken() != Token.MINUS) {
                 
@@ -351,6 +358,10 @@ public class ExpressionInterpreter {
             } else if (tokens[0].getToken() == Token.MINUS) {
                 
                 return interpretNumericUnaryNegation(errorClass, method, fileName, fullFile, lineNumber, tokens, nextBlock);
+                
+            } else if (tokens[0].getToken() == Token.BITWISE_COMPLEMENT) {
+                
+                return interpretBitwiseUnaryOperator(errorClass, method, fileName, fullFile, lineNumber, tokens, nextBlock);
                 
             } else if (TokenUtils.containsOnFirstLevel(tokens, Token.NEGATIVE_OPERATOR)) {
                 
@@ -404,6 +415,38 @@ public class ExpressionInterpreter {
         }
         
         return null;
+    }
+    
+    private static boolean checkEndingVerticalBars(TokenInfo[] tokens) {
+        
+        return tokens[tokens.length - 1].getToken() == Token.VERTICAL_BAR;
+    }
+    
+    private static boolean checkBitwiseOpLocation(TokenInfo[] tokens) {
+        
+        if (!checkEndingVerticalBars(tokens)) {
+            
+            return true;
+        }
+        
+        boolean endBlockDef = false;
+        // Skip last token, we know its a VERTICAL_BAR ( | )
+        for (int i = tokens.length - 2; i >= 0; i--) {
+            
+            if (tokens[i].getToken() == Token.VERTICAL_BAR) {
+                
+                endBlockDef = true;
+                
+            } else if (endBlockDef) {
+                
+                if (tokens[i].getToken() == Token.VERTICAL_BAR || tokens[i].getToken() == Token.BLOCK_PREFIX) {
+                    
+                    return true;
+                }
+            }
+        }
+        
+        return false;
     }
     
     public static ChainedInstructionSet interpretForChainedInstructionSet(String errorClass, String method, String fileName, File fullFile, int lineNumber, TokenInfo[] tokens, Block nextBlock) {
@@ -906,6 +949,85 @@ public class ExpressionInterpreter {
         return new ChainedInstructionSet(evaluators.toArray(new ObjectEvaluator[evaluators.size()]), fileName, fullFile, lineNumber);
     }
     
+    private static ChainedInstructionSet interpretBinaryBitwiseOperator(String errorClass, String method, String fileName, File fullFile, int lineNumber, TokenInfo[] tokens, Block nextBlock) {
+        
+        TokenInfo[] positions = tokens;
+        if (checkEndingVerticalBars(tokens)) {
+            
+            int i;
+            for (i = tokens.length - 2; i >= 0; i--) {
+                
+                if (tokens[i].getToken() == Token.VERTICAL_BAR) {
+                    
+                    break;
+                }
+            }
+            positions = new TokenInfo[--i];
+            System.arraycopy(tokens, 0, positions, 0, positions.length);
+        }
+        
+        List<ObjectEvaluator> evaluators = new ArrayList<>();
+        
+        if (TokenUtils.containsOnFirstLevel(positions, Token.VERTICAL_BAR)) {
+            
+            ChainedInstructionSet[] components = splitByToken(errorClass, method, fileName, fullFile, lineNumber, tokens, Token.VERTICAL_BAR, nextBlock);
+            evaluators.add(components[0]);
+            
+            BinaryBitwiseInstructionSet binOpSet = new BinaryBitwiseInstructionSet(Token.VERTICAL_BAR, components[1], fileName, fullFile, lineNumber);
+            evaluators.add(binOpSet);
+            
+        } else if (TokenUtils.containsOnFirstLevel(positions, Token.BITWISE_XOR)) {
+            
+            ChainedInstructionSet[] components = splitByToken(errorClass, method, fileName, fullFile, lineNumber, tokens, Token.BITWISE_XOR, nextBlock);
+            evaluators.add(components[0]);
+            
+            BinaryBitwiseInstructionSet binOpSet = new BinaryBitwiseInstructionSet(Token.BITWISE_XOR, components[1], fileName, fullFile, lineNumber);
+            evaluators.add(binOpSet);
+            
+        } else if (TokenUtils.containsOnFirstLevel(positions, Token.BLOCK_PREFIX)) {
+            
+            ChainedInstructionSet[] components = splitByToken(errorClass, method, fileName, fullFile, lineNumber, tokens, Token.BLOCK_PREFIX, nextBlock);
+            evaluators.add(components[0]);
+            
+            BinaryBitwiseInstructionSet binOpSet = new BinaryBitwiseInstructionSet(Token.BLOCK_PREFIX, components[1], fileName, fullFile, lineNumber);
+            evaluators.add(binOpSet);
+        }
+        
+        return new ChainedInstructionSet(evaluators.toArray(new ObjectEvaluator[evaluators.size()]), fileName, fullFile, lineNumber);
+    }
+    
+    private static ChainedInstructionSet interpretBinaryBitShiftOperator(String errorClass, String method, String fileName, File fullFile, int lineNumber, TokenInfo[] tokens, Block nextBlock) {
+        
+        List<ObjectEvaluator> evaluators = new ArrayList<>();
+        
+        if (TokenUtils.containsOnFirstLevel(tokens, Token.CLASS_EXTENSION)) {
+            
+            ChainedInstructionSet[] components = splitByToken(errorClass, method, fileName, fullFile, lineNumber, tokens, Token.CLASS_EXTENSION, nextBlock);
+            evaluators.add(components[0]);
+            
+            BinaryBitShiftInstructionSet binOpSet = new BinaryBitShiftInstructionSet(Token.CLASS_EXTENSION, components[1], fileName, fullFile, lineNumber);
+            evaluators.add(binOpSet);
+            
+        } else if (TokenUtils.containsOnFirstLevel(tokens, Token.BIT_SHIFT_RIGHT)) {
+            
+            ChainedInstructionSet[] components = splitByToken(errorClass, method, fileName, fullFile, lineNumber, tokens, Token.BIT_SHIFT_RIGHT, nextBlock);
+            evaluators.add(components[0]);
+            
+            BinaryBitShiftInstructionSet binOpSet = new BinaryBitShiftInstructionSet(Token.BIT_SHIFT_RIGHT, components[1], fileName, fullFile, lineNumber);
+            evaluators.add(binOpSet);
+            
+        } else if (TokenUtils.containsOnFirstLevel(tokens, Token.BIT_SHIFT_LOGICAL_RIGHT)) {
+            
+            ChainedInstructionSet[] components = splitByToken(errorClass, method, fileName, fullFile, lineNumber, tokens, Token.BIT_SHIFT_LOGICAL_RIGHT, nextBlock);
+            evaluators.add(components[0]);
+            
+            BinaryBitShiftInstructionSet binOpSet = new BinaryBitShiftInstructionSet(Token.BIT_SHIFT_LOGICAL_RIGHT, components[1], fileName, fullFile, lineNumber);
+            evaluators.add(binOpSet);
+        }
+        
+        return new ChainedInstructionSet(evaluators.toArray(new ObjectEvaluator[evaluators.size()]), fileName, fullFile, lineNumber);
+    }
+    
     private static ChainedInstructionSet interpretUnaryNegation(String errorClass, String method, String fileName, File fullFile, int lineNumber, TokenInfo[] tokens, Block nextBlock) {
         
         List<ObjectEvaluator> evaluators = new ArrayList<>();
@@ -920,6 +1042,26 @@ public class ExpressionInterpreter {
             ChainedInstructionSet obj = interpret(errorClass, method, fileName, fullFile, lineNumber, strippedArr, nextBlock);
             
             UnaryNegationInstructionSet unOpSet = new UnaryNegationInstructionSet(Token.NEGATIVE_OPERATOR, obj, fileName, fullFile, lineNumber);
+            evaluators.add(unOpSet);
+        }
+        
+        return new ChainedInstructionSet(evaluators.toArray(new ObjectEvaluator[evaluators.size()]), fileName, fullFile, lineNumber);
+    }
+    
+    private static ChainedInstructionSet interpretBitwiseUnaryOperator(String errorClass, String method, String fileName, File fullFile, int lineNumber, TokenInfo[] tokens, Block nextBlock) {
+        
+        List<ObjectEvaluator> evaluators = new ArrayList<>();
+        
+        if (tokens[0].getToken() == Token.BITWISE_COMPLEMENT) {
+            
+            List<TokenInfo> stripped = new ArrayList<>();
+            stripped.addAll(Arrays.asList(tokens));
+            stripped.remove(0);
+            
+            TokenInfo[] strippedArr = stripped.toArray(new TokenInfo[stripped.size()]);
+            ChainedInstructionSet obj = interpret(errorClass, method, fileName, fullFile, lineNumber, strippedArr, nextBlock);
+            
+            BitwiseUnaryInstructionSet unOpSet = new BitwiseUnaryInstructionSet(Token.BITWISE_COMPLEMENT, obj, fileName, fullFile, lineNumber);
             evaluators.add(unOpSet);
         }
         
@@ -1058,6 +1200,30 @@ public class ExpressionInterpreter {
         } else if (TokenUtils.containsOnFirstLevel(tokens, Token.MODULUS_EQUAL)) {
             
             operator = Token.MODULUS_EQUAL;
+            
+        } else if (TokenUtils.containsOnFirstLevel(tokens, Token.BITWISE_AND_EQUAL)) {
+            
+            operator = Token.BITWISE_AND_EQUAL;
+            
+        } else if (TokenUtils.containsOnFirstLevel(tokens, Token.BITWISE_OR_EQUAL)) {
+            
+            operator = Token.BITWISE_OR_EQUAL;
+            
+        } else if (TokenUtils.containsOnFirstLevel(tokens, Token.BITWISE_XOR_EQUAL)) {
+            
+            operator = Token.BITWISE_XOR_EQUAL;
+            
+        } else if (TokenUtils.containsOnFirstLevel(tokens, Token.BIT_SHIFT_LEFT_EQUAL)) {
+            
+            operator = Token.BIT_SHIFT_LEFT_EQUAL;
+            
+        } else if (TokenUtils.containsOnFirstLevel(tokens, Token.BIT_SHIFT_RIGHT_EQUAL)) {
+            
+            operator = Token.BIT_SHIFT_RIGHT_EQUAL;
+            
+        } else if (TokenUtils.containsOnFirstLevel(tokens, Token.BIT_SHIFT_LOGICAL_RIGHT_EQUAL)) {
+            
+            operator = Token.BIT_SHIFT_LOGICAL_RIGHT_EQUAL;
         }
         
         if (operator != null) {

@@ -25,6 +25,10 @@ public enum Token {
     MULTIPLY("*"), MULTIPLY_EQUAL("*="), DIVIDE("/"), DIVIDE_EQUAL("/="), MODULUS("%"), MODULUS_EQUAL("%="),
     AND("&&"), OR("||"),
     
+    // Bitwise Operators
+    BITWISE_XOR("^"), BITWISE_COMPLEMENT("~"), BIT_SHIFT_RIGHT(">>"), BIT_SHIFT_LOGICAL_RIGHT(">>>"),
+    BITWISE_AND_EQUAL("&="), BITWISE_OR_EQUAL("|="), BITWISE_XOR_EQUAL("^="), BIT_SHIFT_LEFT_EQUAL("<<="), BIT_SHIFT_RIGHT_EQUAL(">>="), BIT_SHIFT_LOGICAL_RIGHT_EQUAL(">>>="),
+    
     // Native Checks
     BLOCK_CHECK("block?"),
     

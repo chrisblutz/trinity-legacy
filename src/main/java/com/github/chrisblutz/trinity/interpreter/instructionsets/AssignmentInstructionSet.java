@@ -1,10 +1,14 @@
 package com.github.chrisblutz.trinity.interpreter.instructionsets;
 
+import com.github.chrisblutz.trinity.lang.ClassRegistry;
 import com.github.chrisblutz.trinity.lang.TYObject;
 import com.github.chrisblutz.trinity.lang.errors.Errors;
 import com.github.chrisblutz.trinity.lang.scope.TYRuntime;
+import com.github.chrisblutz.trinity.lang.types.numeric.TYInt;
+import com.github.chrisblutz.trinity.lang.types.numeric.TYLong;
 import com.github.chrisblutz.trinity.lang.variables.VariableLoc;
 import com.github.chrisblutz.trinity.lang.variables.VariableManager;
+import com.github.chrisblutz.trinity.natives.TrinityNatives;
 import com.github.chrisblutz.trinity.parser.tokens.Token;
 import com.github.chrisblutz.trinity.parser.tokens.TokenInfo;
 
@@ -107,15 +111,105 @@ public class AssignmentInstructionSet extends ObjectEvaluator {
                         } else if (getOperator() == Token.MODULUS_EQUAL) {
                             
                             opObj = current.tyInvoke("%", runtime, null, null, opObj);
+                            
+                        } else if (getOperator() == Token.BITWISE_AND_EQUAL) {
+                            
+                            if (current.getObjectClass().isInstanceOf(ClassRegistry.getClass("Trinity.Long")) && opObj.getObjectClass().isInstanceOf(ClassRegistry.getClass("Trinity.Long"))) {
+                                
+                                long thisLong = TrinityNatives.toLong(current);
+                                long otherLong = TrinityNatives.toLong(opObj);
+                                opObj = new TYLong(thisLong & otherLong);
+                                
+                            } else {
+                                
+                                int thisInt = TrinityNatives.toInt(current);
+                                int otherInt = TrinityNatives.toInt(opObj);
+                                opObj = new TYInt(thisInt & otherInt);
+                            }
+                            
+                        } else if (getOperator() == Token.BITWISE_OR_EQUAL) {
+                            
+                            if (current.getObjectClass().isInstanceOf(ClassRegistry.getClass("Trinity.Long")) && opObj.getObjectClass().isInstanceOf(ClassRegistry.getClass("Trinity.Long"))) {
+                                
+                                long thisLong = TrinityNatives.toLong(current);
+                                long otherLong = TrinityNatives.toLong(opObj);
+                                opObj = new TYLong(thisLong | otherLong);
+                                
+                            } else {
+                                
+                                int thisInt = TrinityNatives.toInt(current);
+                                int otherInt = TrinityNatives.toInt(opObj);
+                                opObj = new TYInt(thisInt | otherInt);
+                            }
+                            
+                        } else if (getOperator() == Token.BITWISE_XOR_EQUAL) {
+                            
+                            if (current.getObjectClass().isInstanceOf(ClassRegistry.getClass("Trinity.Long")) && opObj.getObjectClass().isInstanceOf(ClassRegistry.getClass("Trinity.Long"))) {
+                                
+                                long thisLong = TrinityNatives.toLong(current);
+                                long otherLong = TrinityNatives.toLong(opObj);
+                                opObj = new TYLong(thisLong ^ otherLong);
+                                
+                            } else {
+                                
+                                int thisInt = TrinityNatives.toInt(current);
+                                int otherInt = TrinityNatives.toInt(opObj);
+                                opObj = new TYInt(thisInt ^ otherInt);
+                            }
+                            
+                        } else if (getOperator() == Token.BIT_SHIFT_LEFT_EQUAL) {
+                            
+                            if (current.getObjectClass().isInstanceOf(ClassRegistry.getClass("Trinity.Long")) && opObj.getObjectClass().isInstanceOf(ClassRegistry.getClass("Trinity.Long"))) {
+                                
+                                long thisLong = TrinityNatives.toLong(current);
+                                long otherLong = TrinityNatives.toLong(opObj);
+                                opObj = new TYLong(thisLong << otherLong);
+                                
+                            } else {
+                                
+                                int thisInt = TrinityNatives.toInt(current);
+                                int otherInt = TrinityNatives.toInt(opObj);
+                                opObj = new TYInt(thisInt << otherInt);
+                            }
+                            
+                        } else if (getOperator() == Token.BIT_SHIFT_RIGHT_EQUAL) {
+                            
+                            if (current.getObjectClass().isInstanceOf(ClassRegistry.getClass("Trinity.Long")) && opObj.getObjectClass().isInstanceOf(ClassRegistry.getClass("Trinity.Long"))) {
+                                
+                                long thisLong = TrinityNatives.toLong(current);
+                                long otherLong = TrinityNatives.toLong(opObj);
+                                opObj = new TYLong(thisLong >> otherLong);
+                                
+                            } else {
+                                
+                                int thisInt = TrinityNatives.toInt(current);
+                                int otherInt = TrinityNatives.toInt(opObj);
+                                opObj = new TYInt(thisInt >> otherInt);
+                            }
+                            
+                        } else if (getOperator() == Token.BIT_SHIFT_LOGICAL_RIGHT_EQUAL) {
+                            
+                            if (current.getObjectClass().isInstanceOf(ClassRegistry.getClass("Trinity.Long")) && opObj.getObjectClass().isInstanceOf(ClassRegistry.getClass("Trinity.Long"))) {
+                                
+                                long thisLong = TrinityNatives.toLong(current);
+                                long otherLong = TrinityNatives.toLong(opObj);
+                                opObj = new TYLong(thisLong >>> otherLong);
+                                
+                            } else {
+                                
+                                int thisInt = TrinityNatives.toInt(current);
+                                int otherInt = TrinityNatives.toInt(opObj);
+                                opObj = new TYInt(thisInt >>> otherInt);
+                            }
                         }
                         
                         VariableManager.put(loc, opObj);
                     }
                 }
                 
-            }else{
+            } else {
                 
-                Errors.throwError("Trinity.Errors.ScopeError", "Cannot set value of field marked '"+loc.getScope().toString()+"' here.");
+                Errors.throwError("Trinity.Errors.ScopeError", "Cannot set value of field marked '" + loc.getScope().toString() + "' here.");
             }
         }
         
