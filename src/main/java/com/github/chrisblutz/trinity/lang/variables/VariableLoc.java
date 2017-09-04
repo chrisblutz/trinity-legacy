@@ -3,6 +3,7 @@ package com.github.chrisblutz.trinity.lang.variables;
 import com.github.chrisblutz.trinity.interpreter.Scope;
 import com.github.chrisblutz.trinity.lang.TYClass;
 import com.github.chrisblutz.trinity.lang.TYObject;
+import com.github.chrisblutz.trinity.lang.scope.TYRuntime;
 
 
 /**
@@ -47,5 +48,36 @@ public class VariableLoc {
     public void setConstant(boolean constant) {
         
         this.constant = constant;
+    }
+    
+    public boolean checkScope(TYRuntime runtime) {
+        
+        if (getContainerClass() == null) {
+            
+            return true;
+        }
+        
+        switch (getScope()) {
+            
+            case PUBLIC:
+                
+                return true;
+            
+            case MODULE_PROTECTED:
+                
+                return getContainerClass().getModule() == runtime.getModule();
+            
+            case PROTECTED:
+                
+                return runtime.getTyClass().isInstanceOf(getContainerClass());
+            
+            case PRIVATE:
+                
+                return getContainerClass() == runtime.getTyClass();
+            
+            default:
+                
+                return false;
+        }
     }
 }

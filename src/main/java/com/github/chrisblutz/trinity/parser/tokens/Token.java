@@ -10,11 +10,11 @@ public enum Token {
     
     // Values
     NIL("nil"), TRUE("true"), FALSE("false"), SUPER("super"),
-    __FILE__("__FILE__"), __LINE__("__LINE__"),
+    __FILE__("__FILE__"), __LINE__("__LINE__"), THIS("this"),
     
     // Definitions
     IMPORT("import"), MODULE("module"), CLASS("class"), DEF("def"), NATIVE("native"),
-    CLASS_EXTENSION("<<"), GLOBAL_VAR("$"), VAL("val"), VAR("var"),
+    CLASS_EXTENSION("<<"), GLOBAL_VAR("$"), VAL("val"), VAR("var"), INIT("init"),
     
     // Modifiers
     STATIC("static"), SECURE("secure"), SCOPE_MODIFIER("\0"), PUBLIC_SCOPE("public"), PROTECTED_SCOPE("protected"), MODULE_PROTECTED_SCOPE("module-protected"), PRIVATE_SCOPE("private"),

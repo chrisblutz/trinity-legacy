@@ -22,7 +22,7 @@ module Trinity
                     while hasNext()
                         obj = next()
                         if obj.isInstance(Array)
-                            obj.solidify
+                            obj.solidify()
                         block.call(obj)
 
                 def reset

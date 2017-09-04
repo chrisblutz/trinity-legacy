@@ -491,37 +491,6 @@ public class TYClass {
         }
     }
     
-    public boolean checkScope(VariableLoc loc, TYRuntime runtime) {
-        
-        if (loc.getContainerClass() == null) {
-            
-            return true;
-        }
-        
-        switch (loc.getScope()) {
-            
-            case PUBLIC:
-                
-                return true;
-            
-            case MODULE_PROTECTED:
-                
-                return loc.getContainerClass().getModule() == runtime.getModule();
-            
-            case PROTECTED:
-                
-                return runtime.getTyClass().isInstanceOf(loc.getContainerClass());
-            
-            case PRIVATE:
-                
-                return loc.getContainerClass() == runtime.getTyClass();
-            
-            default:
-                
-                return false;
-        }
-    }
-    
     public void registerMethod(TYMethod method) {
         
         if (methods.containsKey(method.getName()) && methods.get(method.getName()).isSecureMethod()) {
@@ -583,9 +552,9 @@ public class TYClass {
         this.leadingComments = leadingComments;
     }
     
-    public void addInitializationActions(List<ProcedureAction> actions) {
+    public void addInitializationAction(ProcedureAction action) {
         
-        initializationActions.addAll(actions);
+        initializationActions.add(action);
     }
     
     public void runInitializationActions() {

@@ -28,20 +28,20 @@ module Trinity
 
                 def +(other)
                     if other.isInstance(ComplexNumber)
-                        return ComplexNumber.new(real() + other.real(), imaginary + other.imaginary())
+                        return ComplexNumber.new(real() + other.real(), imaginary() + other.imaginary())
                     else
                         return ComplexNumber.new(real() + other, imaginary())
 
                 def -(other)
                     if other.isInstance(ComplexNumber)
-                        return ComplexNumber.new(real() - other.real(), imaginary - other.imaginary())
+                        return ComplexNumber.new(real() - other.real(), imaginary() - other.imaginary())
                     else
                         return ComplexNumber.new(real() - other, imaginary())
 
                 def *(other)
                     if other.isInstance(ComplexNumber)
                         r = (real() * other.real()) - (imaginary() * other.imaginary())
-                        i = (real() * other.imaginary) + (imaginary() * other.real())
+                        i = (real() * other.imaginary()) + (imaginary() * other.real())
                         return ComplexNumber.new(r, i)
                     else
                         return ComplexNumber.new(real() * other, imaginary() * other)

@@ -1,5 +1,6 @@
-Natives.initGlobalVariable('STDOUT')
-Natives.initGlobalVariable('STDERR')
+init
+    Natives.initGlobalVariable('STDOUT')
+    Natives.initGlobalVariable('STDERR')
 
 module Trinity
     class Kernel
