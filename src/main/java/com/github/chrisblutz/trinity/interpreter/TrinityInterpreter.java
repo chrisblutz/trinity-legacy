@@ -56,6 +56,8 @@ public class TrinityInterpreter {
             
             action.onAction(runtime, TYObject.NONE);
         }
+        
+        initializationActions.clear();
     }
     
     public static void interpret(Block block, InterpretEnvironment env) {

@@ -3,6 +3,7 @@ package com.github.chrisblutz.trinity.lang.types.nativeutils;
 import com.github.chrisblutz.trinity.Trinity;
 import com.github.chrisblutz.trinity.interpreter.ExpressionInterpreter;
 import com.github.chrisblutz.trinity.interpreter.InterpretEnvironment;
+import com.github.chrisblutz.trinity.interpreter.TrinityInterpreter;
 import com.github.chrisblutz.trinity.interpreter.errors.TrinityErrorException;
 import com.github.chrisblutz.trinity.lang.ClassRegistry;
 import com.github.chrisblutz.trinity.lang.TYObject;
@@ -143,6 +144,9 @@ class NativeKernel {
             }
             
             TrinityParser.parse(file);
+    
+            TrinityInterpreter.runInitializationActions();
+            
             return TYObject.NONE;
         });
     }
