@@ -1,9 +1,11 @@
 init
-    Natives.initGlobalVariable('STDOUT')
-    Natives.initGlobalVariable('STDERR')
+    $STDOUT = Kernel.STDOUT
+    $STDERR = Kernel.STDERR
 
 module Trinity
     class Kernel
+        val native static STDOUT, STDERR
+
         def native static readln
 
         def static print(str)

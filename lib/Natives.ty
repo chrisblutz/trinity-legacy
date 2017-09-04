@@ -1,3 +1,0 @@
-module Trinity
-    class Natives
-        def native static initGlobalVariable(name)

@@ -30,7 +30,6 @@ import java.util.Map;
 public class TrinityNatives {
     
     private static Map<String, Map<String, ProcedureAction>> methods = new HashMap<>();
-    private static Map<String, ProcedureAction> globals = new HashMap<>();
     private static Map<String, Map<String, ProcedureAction>> fields = new HashMap<>();
     
     private static List<TYClass> nativeConstructors = new ArrayList<>();
@@ -69,16 +68,6 @@ public class TrinityNatives {
             Errors.throwSyntaxError("Trinity.Errors.NativeTypeError", "Native method " + className + "." + methodName + " not implemented.", fileName, lineNumber);
             return null;
         }
-    }
-    
-    public static void registerGlobal(String name, ProcedureAction action) {
-        
-        globals.put(name, action);
-    }
-    
-    public static ProcedureAction getGlobalProcedureAction(String name) {
-        
-        return globals.get(name);
     }
     
     public static void registerField(String className, String varName, ProcedureAction action) {
@@ -175,7 +164,6 @@ public class TrinityNatives {
         
         return TYObject.NIL;
     }
-    
     
     /**
      * This method wraps an array of Java objects inside Trinity's

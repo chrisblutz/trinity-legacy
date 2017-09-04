@@ -2,7 +2,6 @@ package com.github.chrisblutz.trinity.interpreter.instructions;
 
 import com.github.chrisblutz.trinity.interpreter.variables.Variables;
 import com.github.chrisblutz.trinity.lang.TYObject;
-import com.github.chrisblutz.trinity.lang.errors.Errors;
 import com.github.chrisblutz.trinity.lang.scope.TYRuntime;
 import com.github.chrisblutz.trinity.lang.variables.VariableLoc;
 
@@ -27,15 +26,11 @@ public class GlobalVariableLocRetriever implements VariableLocRetriever {
     @Override
     public VariableLoc evaluate(TYObject thisObj, TYRuntime runtime) {
         
-        if (Variables.hasGlobalVariable(getName())) {
+        if (!Variables.hasGlobalVariable(getName())) {
             
-            return Variables.getGlobalVariable(getName());
-            
-        } else {
-            
-            Errors.throwError("Trinity.Errors.FieldNotFoundError", runtime, "Global field '" + getName() + "' not found.");
+            Variables.setGlobalVariable(getName(), TYObject.NIL);
         }
         
-        return null;
+        return Variables.getGlobalVariable(getName());
     }
 }

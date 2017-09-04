@@ -35,8 +35,8 @@ class NativeKernel {
     
     static void register() {
         
-        TrinityNatives.registerGlobal("STDOUT", (runtime, thisObj, params) -> new TYNativeOutputStream(System.out));
-        TrinityNatives.registerGlobal("STDERR", (runtime, thisObj, params) -> new TYNativeOutputStream(System.err));
+        TrinityNatives.registerField("Trinity.Kernel", "STDOUT", (runtime, thisObj, params) -> new TYNativeOutputStream(System.out));
+        TrinityNatives.registerField("Trinity.Kernel", "STDERR", (runtime, thisObj, params) -> new TYNativeOutputStream(System.err));
         
         TrinityNatives.registerMethod("Trinity.Kernel", "readln", (runtime, thisObj, params) -> {
             
