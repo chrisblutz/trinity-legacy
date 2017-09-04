@@ -5,8 +5,6 @@ import com.github.chrisblutz.trinity.interpreter.BinaryOperator;
 import com.github.chrisblutz.trinity.interpreter.LogicalOperator;
 import com.github.chrisblutz.trinity.interpreter.UnaryOperator;
 import com.github.chrisblutz.trinity.interpreter.instructions.InstructionSet;
-import com.github.chrisblutz.trinity.lang.ClassRegistry;
-import com.github.chrisblutz.trinity.lang.TYClass;
 import com.github.chrisblutz.trinity.lang.TYObject;
 import com.github.chrisblutz.trinity.lang.scope.TYRuntime;
 import com.github.chrisblutz.trinity.lang.types.bool.TYBoolean;
@@ -70,8 +68,7 @@ public class OperatorFacets {
             @Override
             public TYObject operate(TYObject first, TYObject second, TYRuntime runtime) {
                 
-                TYClass longClass = ClassRegistry.getClass("Trinity.Long");
-                if (first.getObjectClass().isInstanceOf(longClass) || second.getObjectClass().isInstanceOf(longClass)) {
+                if (TrinityNatives.isInstance(first, "Trinity.Long") || TrinityNatives.isInstance(second, "Trinity.Long")) {
                     
                     long firstLong = TrinityNatives.toLong(first);
                     long secondLong = TrinityNatives.toLong(second);
@@ -90,8 +87,7 @@ public class OperatorFacets {
             @Override
             public TYObject operate(TYObject first, TYObject second, TYRuntime runtime) {
                 
-                TYClass longClass = ClassRegistry.getClass("Trinity.Long");
-                if (first.getObjectClass().isInstanceOf(longClass) || second.getObjectClass().isInstanceOf(longClass)) {
+                if (TrinityNatives.isInstance(first, "Trinity.Long") || TrinityNatives.isInstance(second, "Trinity.Long")) {
                     
                     long firstLong = TrinityNatives.toLong(first);
                     long secondLong = TrinityNatives.toLong(second);
@@ -110,8 +106,7 @@ public class OperatorFacets {
             @Override
             public TYObject operate(TYObject first, TYObject second, TYRuntime runtime) {
                 
-                TYClass longClass = ClassRegistry.getClass("Trinity.Long");
-                if (first.getObjectClass().isInstanceOf(longClass) || second.getObjectClass().isInstanceOf(longClass)) {
+                if (TrinityNatives.isInstance(first, "Trinity.Long") || TrinityNatives.isInstance(second, "Trinity.Long")) {
                     
                     long firstLong = TrinityNatives.toLong(first);
                     long secondLong = TrinityNatives.toLong(second);
@@ -188,8 +183,7 @@ public class OperatorFacets {
             @Override
             public TYObject operate(TYObject first, TYObject second, TYRuntime runtime) {
                 
-                TYClass longClass = ClassRegistry.getClass("Trinity.Long");
-                if (first.getObjectClass().isInstanceOf(longClass) || second.getObjectClass().isInstanceOf(longClass)) {
+                if (TrinityNatives.isInstance(first, "Trinity.Long") || TrinityNatives.isInstance(second, "Trinity.Long")) {
                     
                     long firstLong = TrinityNatives.toLong(first);
                     long secondLong = TrinityNatives.toLong(second);
@@ -208,8 +202,7 @@ public class OperatorFacets {
             @Override
             public TYObject operate(TYObject first, TYObject second, TYRuntime runtime) {
                 
-                TYClass longClass = ClassRegistry.getClass("Trinity.Long");
-                if (first.getObjectClass().isInstanceOf(longClass) || second.getObjectClass().isInstanceOf(longClass)) {
+                if (TrinityNatives.isInstance(first, "Trinity.Long") || TrinityNatives.isInstance(second, "Trinity.Long")) {
                     
                     long firstLong = TrinityNatives.toLong(first);
                     long secondLong = TrinityNatives.toLong(second);
@@ -228,8 +221,7 @@ public class OperatorFacets {
             @Override
             public TYObject operate(TYObject first, TYObject second, TYRuntime runtime) {
                 
-                TYClass longClass = ClassRegistry.getClass("Trinity.Long");
-                if (first.getObjectClass().isInstanceOf(longClass) || second.getObjectClass().isInstanceOf(longClass)) {
+                if (TrinityNatives.isInstance(first, "Trinity.Long") || TrinityNatives.isInstance(second, "Trinity.Long")) {
                     
                     long firstLong = TrinityNatives.toLong(first);
                     long secondLong = TrinityNatives.toLong(second);
@@ -257,7 +249,7 @@ public class OperatorFacets {
             @Override
             public TYObject operate(TYObject first, TYObject second, TYRuntime runtime) {
                 
-                if (second.getObjectClass().isInstanceOf(ClassRegistry.getClass("Trinity.String"))) {
+                if (TrinityNatives.isInstance(second, "Trinity.String")) {
                     
                     first = first.tyInvoke("toString", runtime, null, null);
                 }
@@ -286,7 +278,7 @@ public class OperatorFacets {
             @Override
             public TYObject operate(TYObject first, TYObject second, TYRuntime runtime) {
                 
-                if (second.getObjectClass().isInstanceOf(ClassRegistry.getClass("Trinity.String"))) {
+                if (TrinityNatives.isInstance(second, "Trinity.String")) {
                     
                     return second.tyInvoke("*", runtime, null, null, first);
                     
@@ -318,12 +310,12 @@ public class OperatorFacets {
             @Override
             public TYObject operate(TYObject value) {
                 
-                if (value.getObjectClass().isInstanceOf(ClassRegistry.getClass("Trinity.Long"))) {
+                if (TrinityNatives.isInstance(value, "Trinity.Long")) {
                     
                     long thisLong = TrinityNatives.toLong(value);
                     return new TYLong(+thisLong);
                     
-                } else if (value.getObjectClass().isInstanceOf(ClassRegistry.getClass("Trinity.Float"))) {
+                } else if (TrinityNatives.isInstance(value, "Trinity.Float")) {
                     
                     double thisDouble = TrinityNatives.toFloat(value);
                     return new TYFloat(+thisDouble);
@@ -340,12 +332,12 @@ public class OperatorFacets {
             @Override
             public TYObject operate(TYObject value) {
                 
-                if (value.getObjectClass().isInstanceOf(ClassRegistry.getClass("Trinity.Long"))) {
+                if (TrinityNatives.isInstance(value, "Trinity.Long")) {
                     
                     long thisLong = TrinityNatives.toLong(value);
                     return new TYLong(-thisLong);
                     
-                } else if (value.getObjectClass().isInstanceOf(ClassRegistry.getClass("Trinity.Float"))) {
+                } else if (TrinityNatives.isInstance(value, "Trinity.Float")) {
                     
                     double thisDouble = TrinityNatives.toFloat(value);
                     return new TYFloat(-thisDouble);
@@ -362,7 +354,7 @@ public class OperatorFacets {
             @Override
             public TYObject operate(TYObject value) {
                 
-                if (value.getObjectClass().isInstanceOf(ClassRegistry.getClass("Trinity.Long"))) {
+                if (TrinityNatives.isInstance(value, "Trinity.Long")) {
                     
                     long thisLong = TrinityNatives.toLong(value);
                     return new TYLong(~thisLong);

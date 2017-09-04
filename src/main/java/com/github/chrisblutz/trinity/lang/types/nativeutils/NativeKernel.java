@@ -5,7 +5,6 @@ import com.github.chrisblutz.trinity.interpreter.ExpressionInterpreter;
 import com.github.chrisblutz.trinity.interpreter.InterpretEnvironment;
 import com.github.chrisblutz.trinity.interpreter.TrinityInterpreter;
 import com.github.chrisblutz.trinity.interpreter.errors.TrinityErrorException;
-import com.github.chrisblutz.trinity.lang.ClassRegistry;
 import com.github.chrisblutz.trinity.lang.TYObject;
 import com.github.chrisblutz.trinity.lang.errors.Errors;
 import com.github.chrisblutz.trinity.lang.procedures.ProcedureAction;
@@ -56,7 +55,7 @@ class NativeKernel {
             
             TYObject error = runtime.getVariable("error");
             
-            if (error.getObjectClass().isInstanceOf(ClassRegistry.getClass("Trinity.Errors.Error"))) {
+            if (TrinityNatives.isInstance(error, "Trinity.Errors.Error")) {
                 
                 PluginLoader.triggerEvent(Events.ERROR_THROWN, error);
                 throw new TrinityErrorException(error);
@@ -133,7 +132,7 @@ class NativeKernel {
             TYObject fileObj = runtime.getVariable("file");
             
             File file;
-            if (fileObj.getObjectClass().isInstanceOf(ClassRegistry.getClass("Trinity.IO.Files.File"))) {
+            if (TrinityNatives.isInstance(fileObj, "Trinity.IO.Files.File")) {
                 
                 String path = TrinityNatives.toString(fileObj.tyInvoke("getPath", runtime, null, null), runtime);
                 file = new File(path);
@@ -144,7 +143,7 @@ class NativeKernel {
             }
             
             TrinityParser.parse(file);
-    
+            
             TrinityInterpreter.runInitializationActions();
             
             return TYObject.NONE;

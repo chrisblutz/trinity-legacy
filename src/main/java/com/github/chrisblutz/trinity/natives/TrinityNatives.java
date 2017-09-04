@@ -288,7 +288,7 @@ public class TrinityNatives {
             
         } else {
             
-            if (tyObject.getObjectClass().isInstanceOf(ClassRegistry.getClass("Trinity.Math.ComplexNumber"))) {
+            if (isInstance(tyObject, "Trinity.Math.ComplexNumber")) {
                 
                 if (getImaginaryComplexComponent(tyObject) == 0) {
                     
@@ -322,7 +322,7 @@ public class TrinityNatives {
             
         } else {
             
-            if (tyObject.getObjectClass().isInstanceOf(ClassRegistry.getClass("Trinity.Math.ComplexNumber"))) {
+            if (isInstance(tyObject, "Trinity.Math.ComplexNumber")) {
                 
                 if (getImaginaryComplexComponent(tyObject) == 0) {
                     
@@ -356,7 +356,7 @@ public class TrinityNatives {
             
         } else {
             
-            if (tyObject.getObjectClass().isInstanceOf(ClassRegistry.getClass("Trinity.Math.ComplexNumber"))) {
+            if (isInstance(tyObject, "Trinity.Math.ComplexNumber")) {
                 
                 if (getImaginaryComplexComponent(tyObject) == 0) {
                     
@@ -459,5 +459,18 @@ public class TrinityNatives {
     public static TYObject wrapComplexNumber(double real, double imaginary) {
         
         return ClassRegistry.getClass("Trinity.Kernel").tyInvoke("cmplx", new TYRuntime(), null, null, null, wrapNumber(real), wrapNumber(imaginary));
+    }
+    
+    /**
+     * Checks if an object is an instance of a Trinity class or any subclasses
+     * of that class.
+     *
+     * @param object    The object to check
+     * @param className The inherited class
+     * @return Whether or not the object is an instance of a class
+     */
+    public static boolean isInstance(TYObject object, String className) {
+        
+        return object.getObjectClass().isInstanceOf(ClassRegistry.getClass(className));
     }
 }
