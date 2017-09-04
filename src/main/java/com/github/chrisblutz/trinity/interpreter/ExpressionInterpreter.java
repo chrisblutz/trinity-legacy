@@ -1,20 +1,19 @@
 package com.github.chrisblutz.trinity.interpreter;
 
-import com.github.chrisblutz.trinity.interpreter.instructionsets.*;
-import com.github.chrisblutz.trinity.lang.TYObject;
+import com.github.chrisblutz.trinity.interpreter.actions.ArgumentProcedureAction;
+import com.github.chrisblutz.trinity.interpreter.actions.ExpressionProcedureAction;
+import com.github.chrisblutz.trinity.interpreter.helpers.KeywordExpressionHelper;
+import com.github.chrisblutz.trinity.interpreter.instructions.*;
 import com.github.chrisblutz.trinity.lang.errors.Errors;
 import com.github.chrisblutz.trinity.lang.procedures.ProcedureAction;
 import com.github.chrisblutz.trinity.lang.procedures.TYProcedure;
-import com.github.chrisblutz.trinity.lang.threading.TYThread;
 import com.github.chrisblutz.trinity.parser.blocks.Block;
 import com.github.chrisblutz.trinity.parser.blocks.BlockLine;
 import com.github.chrisblutz.trinity.parser.lines.Line;
 import com.github.chrisblutz.trinity.parser.tokens.Token;
 import com.github.chrisblutz.trinity.parser.tokens.TokenInfo;
 import com.github.chrisblutz.trinity.runner.Runner;
-import com.github.chrisblutz.trinity.utils.TokenUtils;
 
-import java.io.File;
 import java.util.*;
 
 
@@ -25,1338 +24,822 @@ public class ExpressionInterpreter {
     
     private static InterpretEnvironment environment;
     
-    public static ProcedureAction interpret(Block block, InterpretEnvironment env, String errorClass, String method, boolean includeStackTrace) {
+    public static ProcedureAction interpret(Block block, InterpretEnvironment environment, String errorClass, String method, boolean includeStackTrace) {
         
-        environment = env;
+        ExpressionInterpreter.environment = environment;
         
-        List<ChainedInstructionSet> sets = new ArrayList<>();
-        
-        BranchingIfInstructionSet ifSet = null;
-        BranchingSwitchInstructionSet switchSet = null;
-        TryInstructionSet trySet = null;
+        List<InstructionSet> sets = new ArrayList<>();
         
         for (int i = 0; i < block.size(); i++) {
             
             Line line = ((BlockLine) block.get(i)).getLine();
             
-            Runner.updateLocation(block.getFileName(), line.getLineNumber());
+            String fileName = block.getFileName();
+            int lineNumber = line.getLineNumber();
+            
+            Runner.updateLocation(fileName, lineNumber);
             
             Block nextBlock = null;
-            
             if (i + 1 < block.size() && block.get(i + 1) instanceof Block) {
                 
-                nextBlock = (Block) block.get(i + 1);
-                i++;
+                nextBlock = (Block) block.get(++i);
             }
             
-            ChainedInstructionSet set = interpret(errorClass, method, block.getFileName(), block.getFullFile(), line.getLineNumber(), line.toArray(new TokenInfo[line.size()]), nextBlock);
-            
-            if (set instanceof BranchingIfInstructionSet) {
+            if (line.size() > 0) {
                 
-                switchSet = null;
-                trySet = null;
-                BranchingIfInstructionSet newIfSet = ((BranchingIfInstructionSet) set);
+                InstructionSet set = interpretExpression(block, line.toArray(), new Location(fileName, block.getFullFile(), lineNumber), errorClass, method, nextBlock);
                 
-                if (newIfSet.getBranchToken() != Token.IF && ifSet != null) {
-                    
-                    ifSet.setChild(newIfSet);
-                    
-                } else {
+                if (set != null) {
                     
                     sets.add(set);
                 }
-                
-                ifSet = newIfSet;
-                
-            } else if (set instanceof BranchingSwitchInstructionSet) {
-                
-                ifSet = null;
-                trySet = null;
-                BranchingSwitchInstructionSet newSwitchSet = ((BranchingSwitchInstructionSet) set);
-                
-                if (newSwitchSet.getBranchToken() != Token.SWITCH && switchSet != null) {
-                    
-                    switchSet.setChild(newSwitchSet);
-                    
-                } else {
-                    
-                    sets.add(set);
-                }
-                
-                switchSet = newSwitchSet;
-                
-            } else if (set instanceof TryInstructionSet) {
-                
-                ifSet = null;
-                switchSet = null;
-                trySet = (TryInstructionSet) set;
-                sets.add(set);
-                
-            } else if (set instanceof CatchInstructionSet) {
-                
-                if (trySet == null) {
-                    
-                    Errors.throwSyntaxError("Trinity.Errors.ParseError", "All 'catch' blocks must accompany a 'try' block.", set.getFileName(), set.getLineNumber());
-                    
-                } else {
-                    
-                    trySet.setCatchSet((CatchInstructionSet) set);
-                }
-                
-            } else if (set instanceof FinallyInstructionSet) {
-                
-                if (trySet == null) {
-                    
-                    Errors.throwSyntaxError("Trinity.Errors.ParseError", "All 'finally' blocks must accompany a 'try' block.", set.getFileName(), set.getLineNumber());
-                    
-                } else {
-                    
-                    trySet.setFinallySet((FinallyInstructionSet) set);
-                }
-                
-            } else {
-                
-                ifSet = null;
-                switchSet = null;
-                trySet = null;
-                sets.add(set);
             }
         }
         
-        return (runtime, thisObj, params) -> {
+        return new ExpressionProcedureAction(errorClass, method, includeStackTrace, sets.toArray(new InstructionSet[sets.size()]));
+    }
+    
+    public static InstructionSet interpretExpression(Block block, TokenInfo[] tokens, Location location, String errorClass, String method, Block nextBlock) {
+        
+        Token first = tokens[0].getToken();
+        
+        if (KeywordExpressions.isKeyword(first)) {
             
-            TYObject returnObj = TYObject.NONE;
-            
-            TYThread current = TYThread.getCurrentThread();
-            for (ChainedInstructionSet set : sets) {
+            ProcedureAction next = null;
+            if (nextBlock != null) {
                 
-                if (!includeStackTrace) {
+                next = interpret(nextBlock, environment, errorClass, method, false);
+            }
+            
+            if (KeywordExpressions.checkConstraints(block, first)) {
+                
+                TokenInfo[] strippedTokens = new TokenInfo[tokens.length - 1];
+                System.arraycopy(tokens, 1, strippedTokens, 0, strippedTokens.length);
+                
+                if (strippedTokens.length > 0 && strippedTokens[0].getToken() == Token.LEFT_PARENTHESIS && strippedTokens[strippedTokens.length - 1].getToken() == Token.RIGHT_PARENTHESIS && checkWrappingOnFirst(strippedTokens)) {
                     
-                    current.getTrinityStack().pop();
+                    TokenInfo[] temp = new TokenInfo[strippedTokens.length - 2];
+                    System.arraycopy(strippedTokens, 1, temp, 0, temp.length);
+                    strippedTokens = temp;
                 }
                 
-                current.getTrinityStack().add(errorClass, method, set.getFileName(), set.getLineNumber());
+                int comp = KeywordExpressions.getKeywordComponents(first);
                 
-                TYObject result = set.evaluate(TYObject.NONE, runtime);
-                
-                if (includeStackTrace) {
+                List<InstructionSet> components = new ArrayList<>();
+                if (comp > 0) {
                     
-                    current.getTrinityStack().pop();
+                    if (strippedTokens.length == 0 && KeywordExpressions.isKeywordRigid(first)) {
+                        
+                        Errors.throwSyntaxError("Trinity.Errors.SyntaxError", "'" + first.getLiteral() + "' statements require " + comp + " expressions, found " + components.size() + ".", location.getFileName(), location.getLineNumber());
+                    }
+                    
+                    Token delimiter = KeywordExpressions.getKeywordDelimiter(first);
+                    
+                    if (delimiter != null) {
+                        
+                        InstructionSet[] sets = splitExpressions(strippedTokens, delimiter, location, errorClass, method, null);
+                        components.addAll(Arrays.asList(sets));
+                        
+                    } else {
+                        
+                        components.add(interpretCompoundExpression(strippedTokens, location, errorClass, method, null));
+                    }
+                    
+                    if (components.size() > comp || (components.size() < comp && KeywordExpressions.isKeywordRigid(first))) {
+                        
+                        Errors.throwSyntaxError("Trinity.Errors.SyntaxError", "'" + first.getLiteral() + "' statements require " + comp + " expressions, found " + components.size() + ".", location.getFileName(), location.getLineNumber());
+                    }
+                    
+                } else if (strippedTokens.length > 0) {
+                    
+                    Errors.throwSyntaxError("Trinity.Errors.SyntaxError", "'" + first.getLiteral() + "' statements require " + comp + " expressions, found " + components.size() + ".", location.getFileName(), location.getLineNumber());
                 }
                 
-                if (result != null && !runtime.isReturning()) {
+                InstructionSet[] sets = components.toArray(new InstructionSet[components.size()]);
+                
+                KeywordExpressionHelper helper = KeywordExpressions.getKeywordHelper(first);
+                InstructionSet thisSet = helper.interpret(sets, next, location);
+                
+                if (KeywordExpressions.runConstraintHelper(block, first, thisSet)) {
                     
-                    returnObj = result;
+                    KeywordExpressions.updatePrevious(block, first, thisSet);
                     
-                } else if (runtime.isReturning()) {
-                    
-                    return runtime.getReturnObject();
+                    if (KeywordExpressions.getKeywordAddDirect(first)) {
+                        
+                        return thisSet;
+                        
+                    } else {
+                        
+                        return null;
+                    }
                     
                 } else {
                     
-                    return returnObj;
+                    Errors.throwSyntaxError("Trinity.Errors.SyntaxError", KeywordExpressions.getConstraintMessage(first), location.getFileName(), location.getLineNumber());
                 }
-            }
-            
-            return returnObj;
-        };
-    }
-    
-    public static ChainedInstructionSet interpret(String errorClass, String method, String fileName, File fullFile, int lineNumber, TokenInfo[] tokens, Block nextBlock) {
-        
-        if (tokens[0].getToken() == Token.IF || tokens[0].getToken() == Token.ELSIF || tokens[0].getToken() == Token.ELSE) {
-            
-            List<TokenInfo> stripped = new ArrayList<>();
-            stripped.addAll(Arrays.asList(tokens));
-            stripped.remove(0);
-            
-            ChainedInstructionSet expression = null;
-            
-            if (tokens[0].getToken() != Token.ELSE) {
-                
-                expression = interpret(errorClass, method, fileName, fullFile, lineNumber, stripped.toArray(new TokenInfo[stripped.size()]), null);
-            }
-            
-            ProcedureAction action = null;
-            
-            if (nextBlock != null) {
-                
-                action = interpret(nextBlock, environment, errorClass, method, false);
-            }
-            
-            return new BranchingIfInstructionSet(tokens[0].getToken(), expression, action, fileName, fullFile, lineNumber);
-            
-        } else if (tokens[0].getToken() == Token.SWITCH || tokens[0].getToken() == Token.CASE || tokens[0].getToken() == Token.DEFAULT) {
-            
-            List<TokenInfo> stripped = new ArrayList<>();
-            stripped.addAll(Arrays.asList(tokens));
-            stripped.remove(0);
-            
-            ChainedInstructionSet expression = null;
-            
-            if (tokens[0].getToken() != Token.DEFAULT) {
-                
-                expression = interpret(errorClass, method, fileName, fullFile, lineNumber, stripped.toArray(new TokenInfo[stripped.size()]), null);
-            }
-            
-            ProcedureAction action = null;
-            
-            if (nextBlock != null) {
-                
-                action = interpret(nextBlock, environment, errorClass, method, false);
-            }
-            
-            return new BranchingSwitchInstructionSet(tokens[0].getToken(), expression, action, fileName, fullFile, lineNumber);
-            
-        } else if (tokens[0].getToken() == Token.WHILE) {
-            
-            List<TokenInfo> stripped = new ArrayList<>();
-            stripped.addAll(Arrays.asList(tokens));
-            stripped.remove(0);
-            
-            ChainedInstructionSet expression = interpret(errorClass, method, fileName, fullFile, lineNumber, stripped.toArray(new TokenInfo[stripped.size()]), null);
-            
-            ProcedureAction action = null;
-            
-            if (nextBlock != null) {
-                
-                action = interpret(nextBlock, environment, errorClass, method, false);
-            }
-            
-            return new WhileLoopInstructionSet(expression, action, fileName, fullFile, lineNumber);
-            
-        } else if (tokens[0].getToken() == Token.FOR) {
-            
-            List<TokenInfo> stripped = new ArrayList<>();
-            stripped.addAll(Arrays.asList(tokens));
-            stripped.remove(0);
-            if (stripped.size() > 0 && stripped.get(0).getToken() == Token.LEFT_PARENTHESIS) {
-                
-                stripped.remove(0);
-            }
-            
-            if (stripped.size() > 0 && stripped.get(stripped.size() - 1).getToken() == Token.RIGHT_PARENTHESIS) {
-                
-                stripped.remove(stripped.size() - 1);
-            }
-            
-            ChainedInstructionSet[] expressions = interpretListOfChainedInstructionSets(errorClass, method, fileName, fullFile, lineNumber, stripped.toArray(new TokenInfo[stripped.size()]), Token.SEMICOLON, nextBlock);
-            
-            if (expressions.length == 3) {
-                
-                ProcedureAction action = null;
-                
-                if (nextBlock != null) {
-                    
-                    action = interpret(nextBlock, environment, errorClass, method, false);
-                }
-                
-                return new ForLoopInstructionSet(expressions[0], expressions[1], expressions[2], action, fileName, fullFile, lineNumber);
                 
             } else {
                 
-                Errors.throwSyntaxError("Trinity.Errors.ParseError", "For loops require 3 components.", fileName, lineNumber);
+                Errors.throwSyntaxError("Trinity.Errors.SyntaxError", "..." + KeywordExpressions.getConstraintMessage(first), location.getFileName(), location.getLineNumber());
             }
-            
-        } else if (tokens[0].getToken() == Token.RETURN) {
-            
-            List<TokenInfo> stripped = new ArrayList<>();
-            stripped.addAll(Arrays.asList(tokens));
-            stripped.remove(0);
-            
-            ChainedInstructionSet expression = null;
-            
-            if (stripped.size() > 0) {
-                
-                expression = interpret(errorClass, method, fileName, fullFile, lineNumber, stripped.toArray(new TokenInfo[stripped.size()]), nextBlock);
-            }
-            
-            return new ReturnInstructionSet(tokens[0].getToken(), expression, fileName, fullFile, lineNumber);
-            
-        } else if (tokens[0].getToken() == Token.TRY) {
-            
-            ProcedureAction action = null;
-            
-            if (nextBlock != null) {
-                
-                action = interpret(nextBlock, environment, errorClass, method, false);
-            }
-            
-            return new TryInstructionSet(action, fileName, fullFile, lineNumber);
-            
-        } else if (tokens[0].getToken() == Token.CATCH) {
-            
-            String variable = null;
-            if (tokens.length == 2 && tokens[1].getToken() == Token.NON_TOKEN_STRING) {
-                
-                variable = tokens[1].getContents();
-                
-            } else {
-                
-                Errors.throwSyntaxError("Trinity.Errors.ParseError", "All 'catch' blocks must provide a variable.", fileName, lineNumber);
-            }
-            
-            ProcedureAction action = null;
-            
-            if (nextBlock != null) {
-                
-                action = interpret(nextBlock, environment, errorClass, method, false);
-            }
-            
-            return new CatchInstructionSet(action, variable, fileName, fullFile, lineNumber);
-            
-        } else if (tokens[0].getToken() == Token.FINALLY) {
-            
-            ProcedureAction action = null;
-            
-            if (nextBlock != null) {
-                
-                action = interpret(nextBlock, environment, errorClass, method, false);
-            }
-            
-            return new FinallyInstructionSet(action, fileName, fullFile, lineNumber);
-            
-        } else if (TokenUtils.containsOnFirstLevel(tokens, Token.ASSIGNMENT_OPERATOR, Token.NIL_ASSIGNMENT_OPERATOR, Token.PLUS_EQUAL, Token.MINUS_EQUAL, Token.MULTIPLY_EQUAL, Token.DIVIDE_EQUAL, Token.MODULUS_EQUAL, Token.BITWISE_AND_EQUAL, Token.BITWISE_OR_EQUAL, Token.BITWISE_XOR_EQUAL, Token.BIT_SHIFT_LEFT_EQUAL, Token.BIT_SHIFT_RIGHT_EQUAL, Token.BIT_SHIFT_LOGICAL_RIGHT_EQUAL)) {
-            
-            if (TokenUtils.containsOnFirstLevel(tokens, Token.COMMA)) {
-                
-                ChainedInstructionSet[] sets = interpretListOfChainedInstructionSets(errorClass, method, fileName, fullFile, lineNumber, tokens, Token.COMMA, nextBlock);
-                return new ChainedInstructionSet(sets, fileName, fullFile, lineNumber);
-                
-            } else {
-                
-                return interpretAssignment(errorClass, method, fileName, fullFile, lineNumber, tokens, nextBlock);
-            }
-            
-        } else if (TokenUtils.containsOnFirstLevelSequentially(tokens, Token.QUESTION_MARK, Token.COLON)) {
-            
-            return interpretTernary(errorClass, method, fileName, fullFile, lineNumber, tokens, nextBlock);
-            
-        } else if (TokenUtils.containsOnFirstLevel(tokens, Token.PLUS, Token.MINUS, Token.MULTIPLY, Token.DIVIDE, Token.MODULUS, Token.EQUAL_TO, Token.NOT_EQUAL_TO, Token.GREATER_THAN, Token.GREATER_THAN_OR_EQUAL_TO,
-                Token.LESS_THAN, Token.LESS_THAN_OR_EQUAL_TO, Token.NEGATIVE_OPERATOR, Token.AND, Token.OR, Token.BLOCK_PREFIX, Token.VERTICAL_BAR, Token.BITWISE_XOR, Token.BIT_SHIFT_RIGHT, Token.BIT_SHIFT_LOGICAL_RIGHT, Token.CLASS_EXTENSION, Token.BITWISE_COMPLEMENT)) {
-            
-            if (TokenUtils.containsOnFirstLevel(tokens, Token.AND, Token.OR)) {
-                
-                return interpretBinaryAndOrOperator(errorClass, method, fileName, fullFile, lineNumber, tokens, nextBlock);
-                
-            } else if (TokenUtils.containsOnFirstLevel(tokens, Token.VERTICAL_BAR, Token.BITWISE_XOR, Token.BLOCK_PREFIX) && checkBitwiseOpLocation(tokens)) {
-                
-                return interpretBinaryBitwiseOperator(errorClass, method, fileName, fullFile, lineNumber, tokens, nextBlock);
-                
-            } else if (TokenUtils.containsOnFirstLevel(tokens, Token.LESS_THAN, Token.LESS_THAN_OR_EQUAL_TO, Token.EQUAL_TO, Token.NOT_EQUAL_TO, Token.GREATER_THAN, Token.GREATER_THAN_OR_EQUAL_TO)) {
-                
-                return interpretBinaryComparisonOperator(errorClass, method, fileName, fullFile, lineNumber, tokens, nextBlock);
-                
-            } else if (TokenUtils.containsOnFirstLevel(tokens, Token.CLASS_EXTENSION, Token.BIT_SHIFT_RIGHT, Token.BIT_SHIFT_LOGICAL_RIGHT)) {
-                
-                return interpretBinaryBitShiftOperator(errorClass, method, fileName, fullFile, lineNumber, tokens, nextBlock);
-                
-            } else if (TokenUtils.containsOnFirstLevel(tokens, Token.PLUS, Token.MINUS, Token.MULTIPLY, Token.DIVIDE, Token.MODULUS) && tokens[0].getToken() != Token.MINUS) {
-                
-                return interpretBinaryOperatorMath(errorClass, method, fileName, fullFile, lineNumber, tokens, nextBlock);
-                
-            } else if (tokens[0].getToken() == Token.MINUS) {
-                
-                return interpretNumericUnaryNegation(errorClass, method, fileName, fullFile, lineNumber, tokens, nextBlock);
-                
-            } else if (tokens[0].getToken() == Token.BITWISE_COMPLEMENT) {
-                
-                return interpretBitwiseUnaryOperator(errorClass, method, fileName, fullFile, lineNumber, tokens, nextBlock);
-                
-            } else if (TokenUtils.containsOnFirstLevel(tokens, Token.NEGATIVE_OPERATOR)) {
-                
-                return interpretUnaryNegation(errorClass, method, fileName, fullFile, lineNumber, tokens, nextBlock);
-            }
-            
-        } else if (TokenUtils.containsOnFirstLevel(tokens, Token.DOUBLE_DOT, Token.TRIPLE_DOT)) {
-            
-            return interpretRange(errorClass, method, fileName, fullFile, lineNumber, tokens, nextBlock);
-            
-        } else if (nextBlock != null) {
-            
-            List<String> mandatoryParams = new ArrayList<>();
-            Map<String, ProcedureAction> optParams = new TreeMap<>();
-            String blockParam = null, overflowParam = null;
-            int end = 0;
-            
-            if (tokens[tokens.length - 1].getToken() == Token.VERTICAL_BAR) {
-                
-                List<TokenInfo> tokenList = new ArrayList<>();
-                
-                for (int i = tokens.length - 2; tokens[i].getToken() != Token.VERTICAL_BAR; i--) {
-                    
-                    tokenList.add(0, tokens[i]);
-                    end++;
-                }
-                end++;
-                
-                ParameterResults results = parseVerticalBarParameters(tokenList, errorClass, method, fileName, fullFile, lineNumber);
-                mandatoryParams = results.getMandatoryParameters();
-                optParams = results.getOptionalParameters();
-                blockParam = results.getBlockParam();
-                overflowParam = results.getOverflowParam();
-            }
-            
-            ProcedureAction action = interpret(nextBlock, environment, errorClass, method, true);
-            
-            TYProcedure procedure = new TYProcedure(action, mandatoryParams, optParams, blockParam, overflowParam, false);
-            
-            TokenInfo[] newTokens = Arrays.copyOf(tokens, tokens.length - end);
-            
-            ChainedInstructionSet instructionSet = interpretForChainedInstructionSet(errorClass, method, fileName, fullFile, lineNumber, newTokens, nextBlock);
-            ObjectEvaluator set = instructionSet.getChildren().get(instructionSet.getChildren().size() - 1);
-            set.setProcedure(procedure);
-            
-            return instructionSet;
             
         } else {
             
-            return interpretForChainedInstructionSet(errorClass, method, fileName, fullFile, lineNumber, tokens, null);
+            TokenInfo[] expression = tokens;
+            TYProcedure next = null;
+            
+            if (nextBlock != null) {
+                
+                ProcedureAction action = interpret(nextBlock, environment, errorClass, method, true);
+                
+                if (tokens[tokens.length - 1].getToken() == Token.VERTICAL_BAR) {
+                    
+                    List<TokenInfo> params = new ArrayList<>();
+                    int i = tokens.length - 2;
+                    for (; i >= 0; i--) {
+                        
+                        TokenInfo token = tokens[i];
+                        if (token.getToken() == Token.VERTICAL_BAR) {
+                            
+                            break;
+                            
+                        } else {
+                            
+                            params.add(0, token);
+                        }
+                    }
+                    
+                    Parameters parameters = interpretParameters(params.toArray(new TokenInfo[params.size()]), location, errorClass, method);
+                    
+                    expression = new TokenInfo[i];
+                    System.arraycopy(tokens, 0, expression, 0, expression.length);
+                    
+                    next = new TYProcedure(action, parameters.getMandatoryParameters(), parameters.getOptionalParameters(), parameters.getBlockParameter(), parameters.getOverflowParameter(), false);
+                    
+                } else {
+                    
+                    next = new TYProcedure(action, false);
+                }
+            }
+            
+            return interpretCompoundExpression(expression, location, errorClass, method, next);
         }
         
         return null;
     }
     
-    private static boolean checkEndingVerticalBars(TokenInfo[] tokens) {
+    private static boolean checkWrappingOnFirst(TokenInfo[] tokens) {
         
-        return tokens[tokens.length - 1].getToken() == Token.VERTICAL_BAR;
-    }
-    
-    private static boolean checkBitwiseOpLocation(TokenInfo[] tokens) {
-        
-        if (!checkEndingVerticalBars(tokens)) {
+        int level = 0;
+        for (int i = 0; i < tokens.length; i++) {
             
-            return true;
+            Token t = tokens[i].getToken();
+            
+            if (t == Token.LEFT_PARENTHESIS) {
+                
+                level++;
+                
+            } else if (t == Token.RIGHT_PARENTHESIS) {
+                
+                level--;
+            }
+            
+            if (level == 0 && i < tokens.length - 1) {
+                
+                return false;
+            }
         }
         
-        boolean endBlockDef = false;
-        // Skip last token, we know its a VERTICAL_BAR ( | )
-        for (int i = tokens.length - 2; i >= 0; i--) {
+        return true;
+    }
+    
+    public static InstructionSet interpretCompoundExpression(TokenInfo[] tokens, Location location, String errorClass, String method, TYProcedure next) {
+        
+        Token[] logicalOperators = LogicalOperator.getOperators().toArray(new Token[LogicalOperator.getOperators().size()]);
+        
+        if (containsOnFirstLevel(tokens, AssignmentOperators.getAssignmentTokens())) {
             
-            if (tokens[i].getToken() == Token.VERTICAL_BAR) {
+            // Signifies assignment (ex. x = 10)
+            if (containsOnFirstLevel(tokens, Token.COMMA)) {
                 
-                endBlockDef = true;
+                InstructionSet[] sets = splitExpressions(tokens, Token.COMMA, location, errorClass, method, next);
+                return new InstructionSet(sets, location);
                 
-            } else if (endBlockDef) {
+            } else {
                 
-                if (tokens[i].getToken() == Token.VERTICAL_BAR || tokens[i].getToken() == Token.BLOCK_PREFIX) {
+                Token token = findOnFirstLevel(tokens, AssignmentOperators.getAssignmentTokens());
+                
+                List<List<TokenInfo>> tokenSets = splitTokens(tokens, token);
+                TokenInfo[] assignmentTokens = tokenSets.get(0).toArray(new TokenInfo[tokenSets.get(0).size()]);
+                TokenInfo[] valueTokens = tokenSets.get(1).toArray(new TokenInfo[tokenSets.get(1).size()]);
+                InstructionSet value = interpretCompoundExpression(valueTokens, location, errorClass, method, next);
+                
+                if (assignmentTokens[assignmentTokens.length - 1].getToken() == Token.RIGHT_SQUARE_BRACKET) {
                     
-                    return true;
+                    
+                    int loc = findBracketBeginning(tokens, location);
+                    TokenInfo[] strippedTokens = new TokenInfo[assignmentTokens.length - loc - 2];
+                    System.arraycopy(assignmentTokens, loc + 1, strippedTokens, 0, strippedTokens.length);
+                    
+                    InstructionSet[] indices = splitExpressions(strippedTokens, Token.COMMA, location, errorClass, method, null);
+                    
+                    TokenInfo[] objectTokens = new TokenInfo[loc];
+                    System.arraycopy(tokens, 0, objectTokens, 0, objectTokens.length);
+                    
+                    InstructionSet object = interpretCompoundExpression(objectTokens, location, errorClass, method, null);
+                    
+                    return new InstructionSet(new Instruction[]{new IndexAssignmentInstruction(token, object, indices, value, location)}, location);
+                    
+                } else {
+                    
+                    InstructionSet assignmentObject = interpretCompoundExpression(assignmentTokens, location, errorClass, method, null);
+                    
+                    Instruction[] instructions = assignmentObject.getInstructions();
+                    Instruction[] remainder = new Instruction[instructions.length - 1];
+                    System.arraycopy(instructions, 0, remainder, 0, remainder.length);
+                    Instruction end = instructions[instructions.length - 1];
+                    
+                    if (end instanceof InstructionSet && ((InstructionSet) end).getInstructions().length == 1) {
+                        
+                        end = ((InstructionSet) end).getInstructions()[0];
+                    }
+                    
+                    InstructionSet remainderSet = new InstructionSet(remainder, assignmentObject.getLocation());
+                    VariableLocRetriever retriever;
+                    if (end instanceof GlobalVariableInstruction) {
+                        
+                        retriever = new GlobalVariableLocRetriever(((GlobalVariableInstruction) end).getName());
+                        
+                    } else if (end instanceof SingleTokenInstruction) {
+                        
+                        retriever = new SingleTokenVariableLocRetriever(((SingleTokenInstruction) end).getContents());
+                        
+                    } else {
+                        
+                        Errors.throwSyntaxError("Trinity.Errors.SyntaxError", "Invalid left-hand expression.", location.getFileName(), location.getLineNumber());
+                        retriever = null;
+                    }
+                    
+                    return new InstructionSet(new Instruction[]{new AssignmentInstruction(token, remainderSet, retriever, value, location)}, location);
                 }
+            }
+            
+        } else if (containsOnFirstLevelSequentially(tokens, Token.QUESTION_MARK, Token.COLON)) {
+            
+            // Signifies ternary operator usage (ex. x ? y : z)
+            List<List<TokenInfo>> firstSplit = splitTokens(tokens, Token.QUESTION_MARK);
+            List<TokenInfo> firstHalfList = firstSplit.get(0);
+            TokenInfo[] firstHalf = firstHalfList.toArray(new TokenInfo[firstHalfList.size()]);
+            
+            List<TokenInfo> secondHalfList = firstSplit.get(1);
+            TokenInfo[] secondHalf = secondHalfList.toArray(new TokenInfo[secondHalfList.size()]);
+            
+            InstructionSet first = interpretCompoundExpression(firstHalf, location, errorClass, method, null);
+            InstructionSet[] secondSplit = splitByToken(secondHalf, Token.COLON, location, errorClass, method, next);
+            
+            return new InstructionSet(new Instruction[]{new TernaryOperatorInstruction(first, secondSplit[0], secondSplit[1], location)}, location);
+            
+        } else if (containsOnFirstLevel(tokens, logicalOperators)) {
+            
+            // Signifies binary logical operator usage (ex. x && y)
+            Token token = findOnFirstLevel(tokens, logicalOperators);
+            
+            InstructionSet[] sets = splitByToken(tokens, token, location, errorClass, method, next);
+            
+            return new InstructionSet(new Instruction[]{sets[0], new LogicalOperatorInstruction(LogicalOperator.getOperator(token), sets[1], location)}, location);
+            
+        } else if (containsOperatorOnFirstLevel(tokens)) {
+            
+            // Signifies binary operator usage (ex. 1 + 2)
+            Token token = findOperatorOnFirstLevel(tokens);
+            
+            InstructionSet[] sets = splitByTokenWithOperators(tokens, token, location, errorClass, method, next);
+            
+            return new InstructionSet(new Instruction[]{sets[0], new BinaryOperatorInstruction(BinaryOperator.getOperator(token), sets[1], location)}, location);
+            
+        } else if (containsOnFirstLevel(tokens, Token.DOUBLE_DOT, Token.TRIPLE_DOT)) {
+            
+            // Signifies range initialization (ex. 1..10)
+            Token token = findOnFirstLevel(tokens, Token.DOUBLE_DOT, Token.TRIPLE_DOT);
+            
+            InstructionSet[] sets = splitByToken(tokens, token, location, errorClass, method, next);
+            
+            return new InstructionSet(new Instruction[]{new RangeCreationInstruction(token, sets[0], sets[1], location)}, location);
+            
+        } else if (tokens.length > 0 && UnaryOperator.getOperators().contains(tokens[0].getToken())) {
+            
+            // Signifies unary operator use (ex. -10)
+            Token token = tokens[0].getToken();
+            TokenInfo[] strippedTokens = new TokenInfo[tokens.length - 1];
+            System.arraycopy(tokens, 1, strippedTokens, 0, strippedTokens.length);
+            
+            InstructionSet set = interpretCompoundExpression(strippedTokens, location, errorClass, method, next);
+            
+            return new InstructionSet(new Instruction[]{set, new UnaryOperatorInstruction(UnaryOperator.getOperator(token), location)}, location);
+            
+        } else if (containsOnFirstLevel(tokens, Token.DOT_OPERATOR)) {
+            
+            // Signifies expressions separated by a dot operator (ex. X.y)
+            InstructionSet[] sets = splitByToken(tokens, Token.DOT_OPERATOR, location, errorClass, method, next);
+            
+            return new InstructionSet(new Instruction[]{sets[0], sets[1]}, location);
+            
+        } else if (tokens.length == 1 && Keywords.getTokens().contains(tokens[0].getToken())) {
+            
+            // Signifies keywords (super, nil, etc.), as well as literal and numeric strings
+            return new InstructionSet(new Instruction[]{new KeywordInstruction(tokens[0], location)}, location);
+            
+        } else {
+            
+            int loc;
+            if (tokens.length > 0 && tokens[tokens.length - 1].getToken() == Token.RIGHT_SQUARE_BRACKET && ((loc = findBracketBeginning(tokens, location)) > 0)) {
+                
+                // Signifies a [] call on an object
+                TokenInfo[] strippedTokens = new TokenInfo[tokens.length - loc - 2];
+                System.arraycopy(tokens, loc + 1, strippedTokens, 0, strippedTokens.length);
+                
+                InstructionSet[] indices = splitExpressions(strippedTokens, Token.COMMA, location, errorClass, method, null);
+                
+                TokenInfo[] objectTokens = new TokenInfo[loc];
+                System.arraycopy(tokens, 0, objectTokens, 0, objectTokens.length);
+                
+                InstructionSet object = interpretCompoundExpression(objectTokens, location, errorClass, method, null);
+                
+                return new InstructionSet(new Instruction[]{object, new IndexAccessInstruction(indices, next, location)}, location);
+                
+            } else if (tokens.length > 0 && tokens[0].getToken() == Token.LEFT_PARENTHESIS) {
+                
+                // Signifies an expression wrapped in parentheses
+                checkWrapping(tokens, Token.LEFT_PARENTHESIS, Token.RIGHT_PARENTHESIS, "Unmatched parentheses.", location);
+                
+                TokenInfo[] strippedTokens = new TokenInfo[tokens.length - 2];
+                System.arraycopy(tokens, 1, strippedTokens, 0, strippedTokens.length);
+                
+                return interpretCompoundExpression(strippedTokens, location, errorClass, method, null);
+                
+            } else if (tokens.length > 0 && tokens[0].getToken() == Token.LEFT_SQUARE_BRACKET) {
+                
+                // Signifies array initialization
+                checkWrapping(tokens, Token.LEFT_SQUARE_BRACKET, Token.RIGHT_SQUARE_BRACKET, "Unmatched brackets.", location);
+                
+                TokenInfo[] strippedTokens = new TokenInfo[tokens.length - 2];
+                System.arraycopy(tokens, 1, strippedTokens, 0, strippedTokens.length);
+                
+                InstructionSet[] arrayComponents = splitExpressions(strippedTokens, Token.COMMA, location, errorClass, method, null);
+                
+                return new InstructionSet(new Instruction[]{new ArrayInitializationInstruction(arrayComponents, location)}, location);
+                
+            } else if (tokens.length > 0 && tokens[0].getToken() == Token.LEFT_CURLY_BRACKET) {
+                
+                // Signifies map initialization
+                checkWrapping(tokens, Token.LEFT_CURLY_BRACKET, Token.RIGHT_CURLY_BRACKET, "Unmatched brackets.", location);
+                
+                TokenInfo[] strippedTokens = new TokenInfo[tokens.length - 2];
+                System.arraycopy(tokens, 1, strippedTokens, 0, strippedTokens.length);
+                
+                List<List<TokenInfo>> tokenSets = splitTokens(strippedTokens, Token.COMMA);
+                List<InstructionSet[]> mapComponents = new ArrayList<>();
+                
+                for (List<TokenInfo> set : tokenSets) {
+                    
+                    TokenInfo[] array = set.toArray(new TokenInfo[set.size()]);
+                    mapComponents.add(splitByToken(array, Token.COLON, location, errorClass, method, null));
+                }
+                
+                return new InstructionSet(new Instruction[]{new MapInitializationInstruction(mapComponents, location)}, location);
+                
+            } else if (tokens.length == 2 && tokens[0].getToken() == Token.GLOBAL_VAR && tokens[1].getToken() == Token.NON_TOKEN_STRING) {
+                
+                // Signifies global variable
+                return new InstructionSet(new Instruction[]{new GlobalVariableInstruction(tokens[1].getContents(), location)}, location);
+                
+            } else if (tokens.length == 1 && tokens[0].getToken() == Token.NON_TOKEN_STRING) {
+                
+                // Signifies single-token name (class/module names, variables, etc.)
+                return new InstructionSet(new Instruction[]{new SingleTokenInstruction(tokens[0].getContents(), location)}, location);
+                
+            } else if (tokens.length > 1 && tokens[1].getToken() == Token.LEFT_PARENTHESIS) {
+                
+                // Signifies a method call
+                TokenInfo[] paramTokens = new TokenInfo[tokens.length - 1];
+                System.arraycopy(tokens, 1, paramTokens, 0, paramTokens.length);
+                
+                checkWrapping(paramTokens, Token.LEFT_PARENTHESIS, Token.RIGHT_PARENTHESIS, "Unmatched parentheses.", location);
+                
+                TokenInfo[] strippedTokens = new TokenInfo[paramTokens.length - 2];
+                System.arraycopy(paramTokens, 1, strippedTokens, 0, strippedTokens.length);
+                
+                InstructionSet[] params = splitExpressions(strippedTokens, Token.COMMA, location, errorClass, method, null);
+                
+                return new InstructionSet(new Instruction[]{new MethodCallInstruction(tokens[0].getContents(), params, next, location)}, location);
+                
+            } else {
+                
+                Errors.throwSyntaxError("Trinity.Errors.SyntaxError", "Unrecognized token.", location.getFileName(), location.getLineNumber());
+            }
+        }
+        
+        return null;
+    }
+    
+    private static int findBracketBeginning(TokenInfo[] tokens, Location location) {
+        
+        int level = 0;
+        for (int i = tokens.length - 1; i >= 0; i--) {
+            
+            TokenInfo info = tokens[i];
+            if (isLevelUpToken(info.getToken())) {
+                
+                level++;
+                
+            } else if (isLevelDownToken(info.getToken())) {
+                
+                level--;
+                
+            }
+            
+            if (level == 0 && info.getToken() == Token.LEFT_SQUARE_BRACKET) {
+                
+                return i;
+            }
+        }
+        
+        Errors.throwSyntaxError("Trinity.Errors.SyntaxError", "Unmatched brackets.", location.getFileName(), location.getLineNumber());
+        return 0;
+    }
+    
+    private static void checkWrapping(TokenInfo[] tokens, Token left, Token right, String errorMessage, Location location) {
+        
+        if (tokens[0].getToken() != left || tokens[tokens.length - 1].getToken() != right) {
+            
+            Errors.throwSyntaxError("Trinity.Errors.SyntaxError", errorMessage, location.getFileName(), location.getLineNumber());
+        }
+        
+        // Check for imbalanced brackets
+        int level = 0;
+        for (TokenInfo info : tokens) {
+            
+            if (isLevelUpToken(info.getToken())) {
+                
+                level++;
+                
+            } else if (isLevelDownToken(info.getToken())) {
+                
+                level--;
+            }
+        }
+        
+        if (level != 0) {
+            
+            Errors.throwSyntaxError("Trinity.Errors.SyntaxError", errorMessage, location.getFileName(), location.getLineNumber());
+        }
+    }
+    
+    private static InstructionSet[] splitExpressions(TokenInfo[] tokens, Token delimiter, Location location, String errorClass, String method, TYProcedure next) {
+        
+        List<List<TokenInfo>> tokenSets = splitTokens(tokens, delimiter);
+        List<InstructionSet> sets = new ArrayList<>();
+        
+        for (int i = 0; i < tokenSets.size(); i++) {
+            
+            List<TokenInfo> list = tokenSets.get(i);
+            TokenInfo[] listArr = list.toArray(new TokenInfo[list.size()]);
+            sets.add(interpretCompoundExpression(listArr, location, errorClass, method, next));
+        }
+        
+        return sets.toArray(new InstructionSet[sets.size()]);
+    }
+    
+    public static List<List<TokenInfo>> splitTokens(TokenInfo[] tokens, Token delimiter) {
+        
+        List<List<TokenInfo>> sets = new ArrayList<>();
+        
+        List<TokenInfo> current = new ArrayList<>();
+        int level = 0;
+        for (TokenInfo info : tokens) {
+            
+            if (level == 0 && info.getToken() == delimiter) {
+                
+                List<TokenInfo> tempSet = new ArrayList<>();
+                tempSet.addAll(current);
+                sets.add(tempSet);
+                current.clear();
+                
+            } else {
+                
+                if (isLevelUpToken(info.getToken())) {
+                    
+                    level++;
+                    
+                } else if (isLevelDownToken(info.getToken())) {
+                    
+                    level--;
+                }
+                
+                current.add(info);
+            }
+        }
+        
+        if (!current.isEmpty()) {
+            
+            sets.add(current);
+        }
+        
+        return sets;
+    }
+    
+    private static List<List<TokenInfo>> splitTokensWithOperators(TokenInfo[] tokens, Token delimiter) {
+        
+        List<List<TokenInfo>> sets = new ArrayList<>();
+        
+        List<TokenInfo> current = new ArrayList<>();
+        int level = 0;
+        for (int i = 0; i < tokens.length; i++) {
+            
+            TokenInfo info = tokens[i];
+            
+            if (level == 0 && info.getToken() == delimiter && checkOperator(tokens, i, delimiter)) {
+                
+                List<TokenInfo> tempSet = new ArrayList<>();
+                tempSet.addAll(current);
+                sets.add(tempSet);
+                current.clear();
+                
+            } else {
+                
+                if (isLevelUpToken(info.getToken())) {
+                    
+                    level++;
+                    
+                } else if (isLevelDownToken(info.getToken())) {
+                    
+                    level--;
+                }
+                
+                current.add(info);
+            }
+        }
+        
+        if (!current.isEmpty()) {
+            
+            sets.add(current);
+        }
+        
+        return sets;
+    }
+    
+    private static boolean checkOperator(TokenInfo[] tokens, int i, Token token) {
+        
+        if (UnaryOperator.getOperators().contains(token)) {
+            
+            if (i == 0 || (i - 1 > 0 && BinaryOperator.getOperators().contains(tokens[i - 1].getToken()))) {
+                
+                return false;
+            }
+        }
+        
+        return true;
+    }
+    
+    private static InstructionSet[] splitByToken(TokenInfo[] tokens, Token delimiter, Location location, String errorClass, String method, TYProcedure next) {
+        
+        List<List<TokenInfo>> tokenSets = splitTokens(tokens, delimiter);
+        
+        List<TokenInfo> firstExpression = new ArrayList<>();
+        for (int i = 0; i < tokenSets.size() - 1; i++) {
+            
+            firstExpression.addAll(tokenSets.get(i));
+            
+            if (i < tokenSets.size() - 2) {
+                
+                firstExpression.add(new TokenInfo(delimiter, delimiter.getLiteral()));
+            }
+        }
+        
+        List<TokenInfo> secondExpression = tokenSets.get(tokenSets.size() - 1);
+        
+        InstructionSet first = interpretCompoundExpression(firstExpression.toArray(new TokenInfo[firstExpression.size()]), location, errorClass, method, null);
+        InstructionSet second = interpretCompoundExpression(secondExpression.toArray(new TokenInfo[secondExpression.size()]), location, errorClass, method, next);
+        
+        return new InstructionSet[]{first, second};
+    }
+    
+    private static InstructionSet[] splitByTokenWithOperators(TokenInfo[] tokens, Token delimiter, Location location, String errorClass, String method, TYProcedure next) {
+        
+        List<List<TokenInfo>> tokenSets = splitTokensWithOperators(tokens, delimiter);
+        
+        List<TokenInfo> firstExpression = new ArrayList<>();
+        for (int i = 0; i < tokenSets.size() - 1; i++) {
+            
+            firstExpression.addAll(tokenSets.get(i));
+            
+            if (i < tokenSets.size() - 2) {
+                
+                firstExpression.add(new TokenInfo(delimiter, delimiter.getLiteral()));
+            }
+        }
+        
+        List<TokenInfo> secondExpression = tokenSets.get(tokenSets.size() - 1);
+        
+        InstructionSet first = interpretCompoundExpression(firstExpression.toArray(new TokenInfo[firstExpression.size()]), location, errorClass, method, null);
+        InstructionSet second = interpretCompoundExpression(secondExpression.toArray(new TokenInfo[secondExpression.size()]), location, errorClass, method, next);
+        
+        return new InstructionSet[]{first, second};
+    }
+    
+    public static Parameters interpretParameters(TokenInfo[] tokens, Location location, String errorClass, String method) {
+        
+        List<String> mandatory = new ArrayList<>();
+        Map<String, ProcedureAction> optional = new TreeMap<>();
+        String block = null, overflow = null;
+        
+        List<List<TokenInfo>> tokenSets = splitTokens(tokens, Token.COMMA);
+        
+        for (List<TokenInfo> list : tokenSets) {
+            
+            if (list.size() == 1 && list.get(0).getToken() == Token.NON_TOKEN_STRING) {
+                
+                mandatory.add(list.get(0).getContents());
+                
+            } else if (list.size() > 2 && list.get(0).getToken() == Token.NON_TOKEN_STRING && list.get(1).getToken() == Token.ASSIGNMENT_OPERATOR) {
+                
+                TokenInfo[] fullExp = list.toArray(new TokenInfo[list.size()]);
+                TokenInfo[] optionalValue = new TokenInfo[list.size() - 2];
+                System.arraycopy(fullExp, 2, optionalValue, 0, optionalValue.length);
+                
+                InstructionSet value = interpretCompoundExpression(optionalValue, location, errorClass, method, null);
+                ProcedureAction action = new ArgumentProcedureAction(value);
+                
+                optional.put(list.get(0).getContents(), action);
+                
+            } else if (list.size() == 2 && list.get(1).getToken() == Token.NON_TOKEN_STRING) {
+                
+                String contents = list.get(1).getContents();
+                
+                if (list.get(0).getToken() == Token.BLOCK_PREFIX) {
+                    
+                    block = contents;
+                    
+                } else if (list.get(0).getToken() == Token.TRIPLE_DOT) {
+                    
+                    overflow = contents;
+                }
+                
+            } else {
+                
+                Errors.throwSyntaxError("Trinity.Errors.SyntaxError", "Unrecognized expression.", location.getFileName(), location.getLineNumber());
+            }
+        }
+        
+        return new Parameters(mandatory, optional, block, overflow);
+    }
+    
+    private static boolean isLevelUpToken(Token t) {
+        
+        return t == Token.LEFT_PARENTHESIS || t == Token.LEFT_SQUARE_BRACKET || t == Token.LEFT_CURLY_BRACKET;
+    }
+    
+    private static boolean isLevelDownToken(Token t) {
+        
+        return t == Token.RIGHT_PARENTHESIS || t == Token.RIGHT_SQUARE_BRACKET || t == Token.RIGHT_CURLY_BRACKET;
+    }
+    
+    private static boolean containsOnFirstLevel(TokenInfo[] tokens, Token... delimiters) {
+        
+        List<Token> tokenList = Arrays.asList(delimiters);
+        
+        int level = 0;
+        for (TokenInfo info : tokens) {
+            
+            if (isLevelUpToken(info.getToken())) {
+                
+                level++;
+                
+            } else if (isLevelDownToken(info.getToken())) {
+                
+                level--;
+                
+            } else if (level == 0 && tokenList.contains(info.getToken())) {
+                
+                return true;
             }
         }
         
         return false;
     }
     
-    public static ChainedInstructionSet interpretForChainedInstructionSet(String errorClass, String method, String fileName, File fullFile, int lineNumber, TokenInfo[] tokens, Block nextBlock) {
+    private static Token findOnFirstLevel(TokenInfo[] tokens, Token... delimiters) {
         
-        List<ObjectEvaluator> evaluators = new ArrayList<>();
+        List<Token> tokenList = Arrays.asList(delimiters);
         
-        TokenInfo previousNonToken = null;
-        TokenInfo previous = null;
-        List<TokenInfo> levelTemp = new ArrayList<>();
-        boolean matchingParam = false, matchingObjArrayIndex = false, matchingArray = false, matchingArrayIndex = false, matchingMap = false;
         int level = 0;
+        for (TokenInfo info : tokens) {
+            
+            if (isLevelUpToken(info.getToken())) {
+                
+                level++;
+                
+            } else if (isLevelDownToken(info.getToken())) {
+                
+                level--;
+                
+            } else if (level == 0 && tokenList.contains(info.getToken())) {
+                
+                return info.getToken();
+            }
+        }
         
+        return null;
+    }
+    
+    private static boolean containsOnFirstLevelSequentially(TokenInfo[] tokens, Token first, Token second) {
+        
+        boolean foundFirst = false;
+        
+        int level = 0;
+        for (TokenInfo info : tokens) {
+            
+            if (isLevelUpToken(info.getToken())) {
+                
+                level++;
+                
+            } else if (isLevelDownToken(info.getToken())) {
+                
+                level--;
+                
+            } else if (level == 0 && !foundFirst && info.getToken() == first) {
+                
+                foundFirst = true;
+                
+            } else if (level == 0 && foundFirst && info.getToken() == second) {
+                
+                return true;
+            }
+        }
+        
+        return false;
+    }
+    
+    private static boolean containsOperatorOnFirstLevel(TokenInfo[] tokens) {
+        
+        List<Token> tokenList = BinaryOperator.getOperators();
+        
+        int level = 0;
         for (int i = 0; i < tokens.length; i++) {
             
             TokenInfo info = tokens[i];
             
-            if (i == 0 && info.getToken() == Token.LEFT_PARENTHESIS) {
+            if (isLevelUpToken(info.getToken())) {
                 
                 level++;
-                matchingParam = false;
                 
-            } else if (i == 0 && info.getToken() == Token.LEFT_SQUARE_BRACKET) {
+            } else if (isLevelDownToken(info.getToken())) {
+                
+                level--;
+                
+            } else if (level == 0 && tokenList.contains(info.getToken()) && checkOperator(tokens, i, info.getToken())) {
+                
+                return true;
+            }
+        }
+        
+        return false;
+    }
+    
+    private static Token findOperatorOnFirstLevel(TokenInfo[] tokens) {
+        
+        List<Token> tokenList = BinaryOperator.getOperators();
+        
+        int level = 0, precedenceIndex = tokenList.size();
+        for (int i = 0; i < tokens.length; i++) {
+            
+            TokenInfo info = tokens[i];
+            
+            if (isLevelUpToken(info.getToken())) {
                 
                 level++;
-                matchingArray = true;
                 
-            } else if (i == 0 && info.getToken() == Token.LEFT_CURLY_BRACKET) {
+            } else if (isLevelDownToken(info.getToken())) {
                 
-                level++;
-                matchingMap = true;
+                level--;
                 
-            } else if (level == 0) {
+            } else if (level == 0 && tokenList.contains(info.getToken()) && checkOperator(tokens, i, info.getToken())) {
                 
-                if ((previous != null && previous.getToken() == Token.NON_TOKEN_STRING) && info.getToken() == Token.LEFT_PARENTHESIS) {
-                    
-                    level++;
-                    matchingParam = true;
-                    
-                } else if ((previous != null && previous.getToken() == Token.NON_TOKEN_STRING) && info.getToken() == Token.LEFT_SQUARE_BRACKET) {
-                    
-                    level++;
-                    matchingArrayIndex = true;
-                    
-                } else if (i != 0 && info.getToken() == Token.LEFT_SQUARE_BRACKET) {
-                    
-                    level++;
-                    matchingObjArrayIndex = true;
-                    
-                } else if (info.getToken() == Token.NON_TOKEN_STRING) {
-                    
-                    if (previousNonToken != null) {
-                        
-                        if (previousNonToken.getToken() == Token.NON_TOKEN_STRING) {
-                            
-                            evaluators.add(new InstructionSet(new TokenInfo[]{previousNonToken}, fileName, fullFile, lineNumber));
-                            
-                        } else {
-                            
-                            evaluators.add(new KeywordInstructionSet(new TokenInfo[]{previousNonToken}, fileName, fullFile, lineNumber));
-                        }
-                        previousNonToken = info;
-                        
-                    } else {
-                        
-                        previousNonToken = info;
-                    }
-                    
-                } else if (info.getToken() == Token.CLASS || info.getToken() == Token.MODULE) {
-                    
-                    if (previousNonToken != null) {
-                        
-                        if (previousNonToken.getToken() == Token.NON_TOKEN_STRING) {
-                            
-                            evaluators.add(new InstructionSet(new TokenInfo[]{previousNonToken}, fileName, fullFile, lineNumber));
-                            
-                        } else {
-                            
-                            evaluators.add(new KeywordInstructionSet(new TokenInfo[]{previousNonToken}, fileName, fullFile, lineNumber));
-                        }
-                        previousNonToken = info;
-                        
-                    } else {
-                        
-                        previousNonToken = info;
-                    }
-                    
-                } else if (info.getToken() == Token.GLOBAL_VAR && i + 1 < tokens.length && tokens[i + 1].getToken() == Token.NON_TOKEN_STRING) {
-                    
-                    evaluators.add(new InstructionSet(new TokenInfo[]{info, tokens[i + 1]}, fileName, fullFile, lineNumber));
-                    i++;
-                    
-                } else if (info.getToken() == Token.BREAK || info.getToken() == Token.BLOCK_CHECK || info.getToken() == Token.__FILE__ || info.getToken() == Token.__LINE__ || info.getToken() == Token.SUPER || info.getToken() == Token.NIL || info.getToken() == Token.LITERAL_STRING || info.getToken() == Token.NUMERIC_STRING || info.getToken() == Token.TRUE || info.getToken() == Token.FALSE) {
-                    
-                    evaluators.add(new KeywordInstructionSet(new TokenInfo[]{info}, fileName, fullFile, lineNumber));
-                }
+                // Order of operations
+                int index = tokenList.indexOf(info.getToken());
                 
-            } else {
-                
-                if (isLevelUpToken(info.getToken())) {
+                if (index < precedenceIndex) {
                     
-                    level++;
-                    
-                } else if (isLevelDownToken(info.getToken())) {
-                    
-                    level--;
-                }
-                
-                levelTemp.add(info);
-                
-                if (level == 0) {
-                    
-                    if (matchingParam) {
-                        
-                        matchingParam = false;
-                        
-                        List<TokenInfo> temp = new ArrayList<>();
-                        temp.addAll(levelTemp);
-                        if (levelTemp.get(levelTemp.size() - 1).getToken() == Token.RIGHT_PARENTHESIS) {
-                            
-                            temp.remove(temp.size() - 1);
-                        }
-                        levelTemp.clear();
-                        
-                        ChainedInstructionSet[] params = interpretListOfChainedInstructionSets(errorClass, method, fileName, fullFile, lineNumber, temp.toArray(new TokenInfo[temp.size()]), Token.COMMA, nextBlock);
-                        
-                        TokenInfo[] tokenArr = new TokenInfo[0];
-                        if (previousNonToken != null) {
-                            
-                            tokenArr = new TokenInfo[]{previousNonToken};
-                        }
-                        previousNonToken = null;
-                        
-                        InstructionSet methodSet = new InstructionSet(tokenArr, fileName, fullFile, lineNumber);
-                        for (ChainedInstructionSet param : params) {
-                            
-                            methodSet.addChild(param);
-                        }
-                        evaluators.add(methodSet);
-                        
-                    } else if (matchingArray) {
-                        
-                        matchingArray = false;
-                        
-                        List<TokenInfo> temp = new ArrayList<>();
-                        temp.addAll(levelTemp);
-                        if (levelTemp.get(levelTemp.size() - 1).getToken() == Token.RIGHT_SQUARE_BRACKET) {
-                            
-                            temp.remove(temp.size() - 1);
-                        }
-                        levelTemp.clear();
-                        
-                        ChainedInstructionSet[] params = interpretListOfChainedInstructionSets(errorClass, method, fileName, fullFile, lineNumber, temp.toArray(new TokenInfo[temp.size()]), Token.COMMA, nextBlock);
-                        
-                        ArrayInitializationInstructionSet arraySet = new ArrayInitializationInstructionSet(params, fileName, fullFile, lineNumber);
-                        evaluators.add(arraySet);
-                        
-                    } else if (matchingArrayIndex) {
-                        
-                        matchingArrayIndex = false;
-                        
-                        List<TokenInfo> temp = new ArrayList<>();
-                        temp.addAll(levelTemp);
-                        if (levelTemp.get(levelTemp.size() - 1).getToken() == Token.RIGHT_SQUARE_BRACKET) {
-                            
-                            temp.remove(temp.size() - 1);
-                        }
-                        levelTemp.clear();
-                        
-                        ChainedInstructionSet[] params = interpretListOfChainedInstructionSets(errorClass, method, fileName, fullFile, lineNumber, temp.toArray(new TokenInfo[temp.size()]), Token.COMMA, nextBlock);
-                        
-                        TokenInfo[] tokenArr = new TokenInfo[0];
-                        if (previousNonToken != null) {
-                            
-                            tokenArr = new TokenInfo[]{previousNonToken};
-                        }
-                        previousNonToken = null;
-                        
-                        KeyRetrievalInstructionSet keyRetrievalSet = new KeyRetrievalInstructionSet(tokenArr, fileName, fullFile, lineNumber);
-                        for (ChainedInstructionSet param : params) {
-                            
-                            keyRetrievalSet.addChild(param);
-                        }
-                        evaluators.add(keyRetrievalSet);
-                        
-                    } else if (matchingObjArrayIndex) {
-                        
-                        matchingObjArrayIndex = false;
-                        
-                        List<TokenInfo> temp = new ArrayList<>();
-                        temp.addAll(levelTemp);
-                        if (levelTemp.get(levelTemp.size() - 1).getToken() == Token.RIGHT_SQUARE_BRACKET) {
-                            
-                            temp.remove(temp.size() - 1);
-                        }
-                        levelTemp.clear();
-                        
-                        ChainedInstructionSet[] params = interpretListOfChainedInstructionSets(errorClass, method, fileName, fullFile, lineNumber, temp.toArray(new TokenInfo[temp.size()]), Token.COMMA, nextBlock);
-                        
-                        KeyRetrievalInstructionSet keyRetrievalSet = new KeyRetrievalInstructionSet(new TokenInfo[0], fileName, fullFile, lineNumber);
-                        
-                        for (ChainedInstructionSet param : params) {
-                            
-                            keyRetrievalSet.addChild(param);
-                        }
-                        evaluators.add(keyRetrievalSet);
-                        
-                    } else if (matchingMap) {
-                        
-                        matchingMap = false;
-                        
-                        List<TokenInfo> temp = new ArrayList<>();
-                        temp.addAll(levelTemp);
-                        if (levelTemp.get(levelTemp.size() - 1).getToken() == Token.RIGHT_CURLY_BRACKET) {
-                            
-                            temp.remove(temp.size() - 1);
-                        }
-                        levelTemp.clear();
-                        
-                        List<List<TokenInfo>> split = splitByTokenIntoList(temp.toArray(new TokenInfo[temp.size()]), Token.COMMA, fileName, lineNumber);
-                        List<ChainedInstructionSet[]> elements = new ArrayList<>();
-                        
-                        for (List<TokenInfo> part : split) {
-                            
-                            elements.add(splitByToken(errorClass, method, fileName, fullFile, lineNumber, part.toArray(new TokenInfo[part.size()]), Token.COLON, null));
-                        }
-                        
-                        MapInitializationInstructionSet mapSet = new MapInitializationInstructionSet(elements, fileName, fullFile, lineNumber);
-                        evaluators.add(mapSet);
-                        
-                    } else {
-                        
-                        evaluators.add(interpret(errorClass, method, fileName, fullFile, lineNumber, levelTemp.toArray(new TokenInfo[levelTemp.size()]), null));
-                        levelTemp.clear();
-                    }
+                    precedenceIndex = index;
                 }
             }
-            
-            previous = info;
         }
         
-        if (level != 0) {
+        if (precedenceIndex < tokenList.size()) {
             
-            Errors.throwSyntaxError("Trinity.Errors.SyntaxError", "Unmatched brackets.", fileName, lineNumber);
+            return tokenList.get(precedenceIndex);
         }
         
-        if (previousNonToken != null) {
-            
-            if (previousNonToken.getToken() == Token.NON_TOKEN_STRING) {
-                
-                evaluators.add(new InstructionSet(new TokenInfo[]{previousNonToken}, fileName, fullFile, lineNumber));
-                
-            } else {
-                
-                evaluators.add(new KeywordInstructionSet(new TokenInfo[]{previousNonToken}, fileName, fullFile, lineNumber));
-            }
-        }
-        
-        return new ChainedInstructionSet(evaluators.toArray(new ObjectEvaluator[evaluators.size()]), fileName, fullFile, lineNumber);
-    }
-    
-    public static ChainedInstructionSet[] interpretListOfChainedInstructionSets(String errorClass, String method, String fileName, File fullFile, int lineNumber, TokenInfo[] tokens, Token delimiter, Block nextBlock) {
-        
-        List<List<TokenInfo>> infoSets = new ArrayList<>();
-        List<ChainedInstructionSet> sets = new ArrayList<>();
-        
-        List<TokenInfo> current = new ArrayList<>();
-        int level = 0;
-        for (TokenInfo info : tokens) {
-            
-            if (level == 0 && info.getToken() == delimiter) {
-                
-                List<TokenInfo> tempSet = new ArrayList<>();
-                tempSet.addAll(current);
-                infoSets.add(tempSet);
-                current.clear();
-                
-            } else {
-                
-                if (isLevelUpToken(info.getToken())) {
-                    
-                    level++;
-                    
-                } else if (isLevelDownToken(info.getToken())) {
-                    
-                    level--;
-                }
-                
-                current.add(info);
-            }
-        }
-        
-        if (!current.isEmpty()) {
-            
-            infoSets.add(current);
-        }
-        
-        for (int i = 0; i < infoSets.size(); i++) {
-            
-            List<TokenInfo> infoList = infoSets.get(i);
-            
-            Block block = null;
-            if (i == infoSets.size() - 1) {
-                
-                block = nextBlock;
-            }
-            
-            sets.add(interpret(errorClass, method, fileName, fullFile, lineNumber, infoList.toArray(new TokenInfo[infoList.size()]), block));
-        }
-        
-        return sets.toArray(new ChainedInstructionSet[sets.size()]);
-    }
-    
-    public static List<List<TokenInfo>> splitByTokenIntoList(TokenInfo[] tokens, Token delimiter, String fileName, int lineNumber) {
-        
-        List<List<TokenInfo>> infoSets = new ArrayList<>();
-        
-        List<TokenInfo> current = new ArrayList<>();
-        int level = 0;
-        for (TokenInfo info : tokens) {
-            
-            if (level == 0 && info.getToken() == delimiter) {
-                
-                List<TokenInfo> tempSet = new ArrayList<>();
-                tempSet.addAll(current);
-                infoSets.add(tempSet);
-                current.clear();
-                
-            } else {
-                
-                if (isLevelUpToken(info.getToken())) {
-                    
-                    level++;
-                    
-                } else if (isLevelDownToken(info.getToken())) {
-                    
-                    level--;
-                }
-                
-                current.add(info);
-            }
-        }
-        
-        if (!current.isEmpty()) {
-            
-            infoSets.add(current);
-        }
-        
-        return infoSets;
-    }
-    
-    private static ChainedInstructionSet[] splitByToken(String errorClass, String method, String fileName, File fullFile, int lineNumber, TokenInfo[] tokens, Token delimiter, Block nextBlock) {
-        
-        List<List<TokenInfo>> infoSets = splitByTokenIntoList(tokens, delimiter, fileName, lineNumber);
-        
-        List<TokenInfo> firstExpression = new ArrayList<>();
-        
-        for (int i = 0; i < infoSets.size() - 1; i++) {
-            
-            firstExpression.addAll(infoSets.get(i));
-            
-            if (i < infoSets.size() - 2) {
-                
-                firstExpression.add(new TokenInfo(delimiter, delimiter.getLiteral()));
-            }
-        }
-        ChainedInstructionSet first = interpret(errorClass, method, fileName, fullFile, lineNumber, firstExpression.toArray(new TokenInfo[firstExpression.size()]), null);
-        
-        List<TokenInfo> secondExpression = infoSets.get(infoSets.size() - 1);
-        ChainedInstructionSet second = interpret(errorClass, method, fileName, fullFile, lineNumber, secondExpression.toArray(new TokenInfo[secondExpression.size()]), nextBlock);
-        
-        return new ChainedInstructionSet[]{first, second};
-    }
-    
-    private static ChainedInstructionSet interpretBinaryOperatorMath(String errorClass, String method, String fileName, File fullFile, int lineNumber, TokenInfo[] tokens, Block nextBlock) {
-        
-        List<ObjectEvaluator> evaluators = new ArrayList<>();
-        
-        // Maintain order of operations (perform subtraction last, so parse it first, allowing all others to be interpreted before it is)
-        if (TokenUtils.containsOnFirstLevel(tokens, Token.MINUS)) {
-            
-            ChainedInstructionSet[] components = splitByToken(errorClass, method, fileName, fullFile, lineNumber, tokens, Token.MINUS, nextBlock);
-            evaluators.add(components[0]);
-            
-            BinaryOperationInstructionSet binOpSet = new BinaryOperationInstructionSet(Token.MINUS, components[1], fileName, fullFile, lineNumber);
-            evaluators.add(binOpSet);
-            
-        } else if (TokenUtils.containsOnFirstLevel(tokens, Token.PLUS)) {
-            
-            ChainedInstructionSet[] components = splitByToken(errorClass, method, fileName, fullFile, lineNumber, tokens, Token.PLUS, nextBlock);
-            evaluators.add(components[0]);
-            
-            BinaryOperationInstructionSet binOpSet = new BinaryOperationInstructionSet(Token.PLUS, components[1], fileName, fullFile, lineNumber);
-            evaluators.add(binOpSet);
-            
-        } else if (TokenUtils.containsOnFirstLevel(tokens, Token.MODULUS)) {
-            
-            ChainedInstructionSet[] components = splitByToken(errorClass, method, fileName, fullFile, lineNumber, tokens, Token.MODULUS, nextBlock);
-            evaluators.add(components[0]);
-            
-            BinaryOperationInstructionSet binOpSet = new BinaryOperationInstructionSet(Token.MODULUS, components[1], fileName, fullFile, lineNumber);
-            evaluators.add(binOpSet);
-            
-        } else if (TokenUtils.containsOnFirstLevel(tokens, Token.DIVIDE)) {
-            
-            ChainedInstructionSet[] components = splitByToken(errorClass, method, fileName, fullFile, lineNumber, tokens, Token.DIVIDE, nextBlock);
-            evaluators.add(components[0]);
-            
-            BinaryOperationInstructionSet binOpSet = new BinaryOperationInstructionSet(Token.DIVIDE, components[1], fileName, fullFile, lineNumber);
-            evaluators.add(binOpSet);
-            
-        } else if (TokenUtils.containsOnFirstLevel(tokens, Token.MULTIPLY)) {
-            
-            ChainedInstructionSet[] components = splitByToken(errorClass, method, fileName, fullFile, lineNumber, tokens, Token.MULTIPLY, nextBlock);
-            evaluators.add(components[0]);
-            
-            BinaryOperationInstructionSet binOpSet = new BinaryOperationInstructionSet(Token.MULTIPLY, components[1], fileName, fullFile, lineNumber);
-            evaluators.add(binOpSet);
-        }
-        
-        return new ChainedInstructionSet(evaluators.toArray(new ObjectEvaluator[evaluators.size()]), fileName, fullFile, lineNumber);
-    }
-    
-    private static ChainedInstructionSet interpretBinaryComparisonOperator(String errorClass, String method, String fileName, File fullFile, int lineNumber, TokenInfo[] tokens, Block nextBlock) {
-        
-        List<ObjectEvaluator> evaluators = new ArrayList<>();
-        
-        if (TokenUtils.containsOnFirstLevel(tokens, Token.EQUAL_TO)) {
-            
-            ChainedInstructionSet[] components = splitByToken(errorClass, method, fileName, fullFile, lineNumber, tokens, Token.EQUAL_TO, nextBlock);
-            evaluators.add(components[0]);
-            
-            BinaryEqualityOperationInstructionSet binOpSet = new BinaryEqualityOperationInstructionSet(Token.EQUAL_TO, components[1], fileName, fullFile, lineNumber);
-            evaluators.add(binOpSet);
-            
-        } else if (TokenUtils.containsOnFirstLevel(tokens, Token.NOT_EQUAL_TO)) {
-            
-            ChainedInstructionSet[] components = splitByToken(errorClass, method, fileName, fullFile, lineNumber, tokens, Token.NOT_EQUAL_TO, nextBlock);
-            evaluators.add(components[0]);
-            
-            BinaryEqualityOperationInstructionSet binOpSet = new BinaryEqualityOperationInstructionSet(Token.NOT_EQUAL_TO, components[1], fileName, fullFile, lineNumber);
-            evaluators.add(binOpSet);
-            
-        } else if (TokenUtils.containsOnFirstLevel(tokens, Token.LESS_THAN)) {
-            
-            ChainedInstructionSet[] components = splitByToken(errorClass, method, fileName, fullFile, lineNumber, tokens, Token.LESS_THAN, nextBlock);
-            evaluators.add(components[0]);
-            
-            BinaryComparisonOperationInstructionSet binOpSet = new BinaryComparisonOperationInstructionSet(Token.LESS_THAN, components[1], fileName, fullFile, lineNumber);
-            evaluators.add(binOpSet);
-            
-        } else if (TokenUtils.containsOnFirstLevel(tokens, Token.LESS_THAN_OR_EQUAL_TO)) {
-            
-            ChainedInstructionSet[] components = splitByToken(errorClass, method, fileName, fullFile, lineNumber, tokens, Token.LESS_THAN_OR_EQUAL_TO, nextBlock);
-            evaluators.add(components[0]);
-            
-            BinaryComparisonOperationInstructionSet binOpSet = new BinaryComparisonOperationInstructionSet(Token.LESS_THAN_OR_EQUAL_TO, components[1], fileName, fullFile, lineNumber);
-            evaluators.add(binOpSet);
-            
-        } else if (TokenUtils.containsOnFirstLevel(tokens, Token.GREATER_THAN)) {
-            
-            ChainedInstructionSet[] components = splitByToken(errorClass, method, fileName, fullFile, lineNumber, tokens, Token.GREATER_THAN, nextBlock);
-            evaluators.add(components[0]);
-            
-            BinaryComparisonOperationInstructionSet binOpSet = new BinaryComparisonOperationInstructionSet(Token.GREATER_THAN, components[1], fileName, fullFile, lineNumber);
-            evaluators.add(binOpSet);
-            
-        } else if (TokenUtils.containsOnFirstLevel(tokens, Token.GREATER_THAN_OR_EQUAL_TO)) {
-            
-            ChainedInstructionSet[] components = splitByToken(errorClass, method, fileName, fullFile, lineNumber, tokens, Token.GREATER_THAN_OR_EQUAL_TO, nextBlock);
-            evaluators.add(components[0]);
-            
-            BinaryComparisonOperationInstructionSet binOpSet = new BinaryComparisonOperationInstructionSet(Token.GREATER_THAN_OR_EQUAL_TO, components[1], fileName, fullFile, lineNumber);
-            evaluators.add(binOpSet);
-        }
-        
-        return new ChainedInstructionSet(evaluators.toArray(new ObjectEvaluator[evaluators.size()]), fileName, fullFile, lineNumber);
-    }
-    
-    private static ChainedInstructionSet interpretBinaryAndOrOperator(String errorClass, String method, String fileName, File fullFile, int lineNumber, TokenInfo[] tokens, Block nextBlock) {
-        
-        List<ObjectEvaluator> evaluators = new ArrayList<>();
-        
-        if (TokenUtils.containsOnFirstLevel(tokens, Token.AND)) {
-            
-            ChainedInstructionSet[] components = splitByToken(errorClass, method, fileName, fullFile, lineNumber, tokens, Token.AND, nextBlock);
-            evaluators.add(components[0]);
-            
-            BinaryAndOrInstructionSet binOpSet = new BinaryAndOrInstructionSet(Token.AND, components[1], fileName, fullFile, lineNumber);
-            evaluators.add(binOpSet);
-            
-        } else if (TokenUtils.containsOnFirstLevel(tokens, Token.OR)) {
-            
-            ChainedInstructionSet[] components = splitByToken(errorClass, method, fileName, fullFile, lineNumber, tokens, Token.OR, nextBlock);
-            evaluators.add(components[0]);
-            
-            BinaryAndOrInstructionSet binOpSet = new BinaryAndOrInstructionSet(Token.OR, components[1], fileName, fullFile, lineNumber);
-            evaluators.add(binOpSet);
-        }
-        
-        return new ChainedInstructionSet(evaluators.toArray(new ObjectEvaluator[evaluators.size()]), fileName, fullFile, lineNumber);
-    }
-    
-    private static ChainedInstructionSet interpretBinaryBitwiseOperator(String errorClass, String method, String fileName, File fullFile, int lineNumber, TokenInfo[] tokens, Block nextBlock) {
-        
-        TokenInfo[] positions = tokens;
-        if (checkEndingVerticalBars(tokens)) {
-            
-            int i;
-            for (i = tokens.length - 2; i >= 0; i--) {
-                
-                if (tokens[i].getToken() == Token.VERTICAL_BAR) {
-                    
-                    break;
-                }
-            }
-            positions = new TokenInfo[--i];
-            System.arraycopy(tokens, 0, positions, 0, positions.length);
-        }
-        
-        List<ObjectEvaluator> evaluators = new ArrayList<>();
-        
-        if (TokenUtils.containsOnFirstLevel(positions, Token.VERTICAL_BAR)) {
-            
-            ChainedInstructionSet[] components = splitByToken(errorClass, method, fileName, fullFile, lineNumber, tokens, Token.VERTICAL_BAR, nextBlock);
-            evaluators.add(components[0]);
-            
-            BinaryBitwiseInstructionSet binOpSet = new BinaryBitwiseInstructionSet(Token.VERTICAL_BAR, components[1], fileName, fullFile, lineNumber);
-            evaluators.add(binOpSet);
-            
-        } else if (TokenUtils.containsOnFirstLevel(positions, Token.BITWISE_XOR)) {
-            
-            ChainedInstructionSet[] components = splitByToken(errorClass, method, fileName, fullFile, lineNumber, tokens, Token.BITWISE_XOR, nextBlock);
-            evaluators.add(components[0]);
-            
-            BinaryBitwiseInstructionSet binOpSet = new BinaryBitwiseInstructionSet(Token.BITWISE_XOR, components[1], fileName, fullFile, lineNumber);
-            evaluators.add(binOpSet);
-            
-        } else if (TokenUtils.containsOnFirstLevel(positions, Token.BLOCK_PREFIX)) {
-            
-            ChainedInstructionSet[] components = splitByToken(errorClass, method, fileName, fullFile, lineNumber, tokens, Token.BLOCK_PREFIX, nextBlock);
-            evaluators.add(components[0]);
-            
-            BinaryBitwiseInstructionSet binOpSet = new BinaryBitwiseInstructionSet(Token.BLOCK_PREFIX, components[1], fileName, fullFile, lineNumber);
-            evaluators.add(binOpSet);
-        }
-        
-        return new ChainedInstructionSet(evaluators.toArray(new ObjectEvaluator[evaluators.size()]), fileName, fullFile, lineNumber);
-    }
-    
-    private static ChainedInstructionSet interpretBinaryBitShiftOperator(String errorClass, String method, String fileName, File fullFile, int lineNumber, TokenInfo[] tokens, Block nextBlock) {
-        
-        List<ObjectEvaluator> evaluators = new ArrayList<>();
-        
-        if (TokenUtils.containsOnFirstLevel(tokens, Token.CLASS_EXTENSION)) {
-            
-            ChainedInstructionSet[] components = splitByToken(errorClass, method, fileName, fullFile, lineNumber, tokens, Token.CLASS_EXTENSION, nextBlock);
-            evaluators.add(components[0]);
-            
-            BinaryBitShiftInstructionSet binOpSet = new BinaryBitShiftInstructionSet(Token.CLASS_EXTENSION, components[1], fileName, fullFile, lineNumber);
-            evaluators.add(binOpSet);
-            
-        } else if (TokenUtils.containsOnFirstLevel(tokens, Token.BIT_SHIFT_RIGHT)) {
-            
-            ChainedInstructionSet[] components = splitByToken(errorClass, method, fileName, fullFile, lineNumber, tokens, Token.BIT_SHIFT_RIGHT, nextBlock);
-            evaluators.add(components[0]);
-            
-            BinaryBitShiftInstructionSet binOpSet = new BinaryBitShiftInstructionSet(Token.BIT_SHIFT_RIGHT, components[1], fileName, fullFile, lineNumber);
-            evaluators.add(binOpSet);
-            
-        } else if (TokenUtils.containsOnFirstLevel(tokens, Token.BIT_SHIFT_LOGICAL_RIGHT)) {
-            
-            ChainedInstructionSet[] components = splitByToken(errorClass, method, fileName, fullFile, lineNumber, tokens, Token.BIT_SHIFT_LOGICAL_RIGHT, nextBlock);
-            evaluators.add(components[0]);
-            
-            BinaryBitShiftInstructionSet binOpSet = new BinaryBitShiftInstructionSet(Token.BIT_SHIFT_LOGICAL_RIGHT, components[1], fileName, fullFile, lineNumber);
-            evaluators.add(binOpSet);
-        }
-        
-        return new ChainedInstructionSet(evaluators.toArray(new ObjectEvaluator[evaluators.size()]), fileName, fullFile, lineNumber);
-    }
-    
-    private static ChainedInstructionSet interpretUnaryNegation(String errorClass, String method, String fileName, File fullFile, int lineNumber, TokenInfo[] tokens, Block nextBlock) {
-        
-        List<ObjectEvaluator> evaluators = new ArrayList<>();
-        
-        if (tokens[0].getToken() == Token.NEGATIVE_OPERATOR) {
-            
-            List<TokenInfo> stripped = new ArrayList<>();
-            stripped.addAll(Arrays.asList(tokens));
-            stripped.remove(0);
-            
-            TokenInfo[] strippedArr = stripped.toArray(new TokenInfo[stripped.size()]);
-            ChainedInstructionSet obj = interpret(errorClass, method, fileName, fullFile, lineNumber, strippedArr, nextBlock);
-            
-            UnaryNegationInstructionSet unOpSet = new UnaryNegationInstructionSet(Token.NEGATIVE_OPERATOR, obj, fileName, fullFile, lineNumber);
-            evaluators.add(unOpSet);
-        }
-        
-        return new ChainedInstructionSet(evaluators.toArray(new ObjectEvaluator[evaluators.size()]), fileName, fullFile, lineNumber);
-    }
-    
-    private static ChainedInstructionSet interpretBitwiseUnaryOperator(String errorClass, String method, String fileName, File fullFile, int lineNumber, TokenInfo[] tokens, Block nextBlock) {
-        
-        List<ObjectEvaluator> evaluators = new ArrayList<>();
-        
-        if (tokens[0].getToken() == Token.BITWISE_COMPLEMENT) {
-            
-            List<TokenInfo> stripped = new ArrayList<>();
-            stripped.addAll(Arrays.asList(tokens));
-            stripped.remove(0);
-            
-            TokenInfo[] strippedArr = stripped.toArray(new TokenInfo[stripped.size()]);
-            ChainedInstructionSet obj = interpret(errorClass, method, fileName, fullFile, lineNumber, strippedArr, nextBlock);
-            
-            BitwiseUnaryInstructionSet unOpSet = new BitwiseUnaryInstructionSet(Token.BITWISE_COMPLEMENT, obj, fileName, fullFile, lineNumber);
-            evaluators.add(unOpSet);
-        }
-        
-        return new ChainedInstructionSet(evaluators.toArray(new ObjectEvaluator[evaluators.size()]), fileName, fullFile, lineNumber);
-    }
-    
-    private static ChainedInstructionSet interpretNumericUnaryNegation(String errorClass, String method, String fileName, File fullFile, int lineNumber, TokenInfo[] tokens, Block nextBlock) {
-        
-        List<ObjectEvaluator> evaluators = new ArrayList<>();
-        List<TokenInfo> stripped = new ArrayList<>();
-        stripped.addAll(Arrays.asList(tokens));
-        stripped.remove(0);
-        
-        TokenInfo[] strippedArr = stripped.toArray(new TokenInfo[stripped.size()]);
-        ChainedInstructionSet obj = interpret(errorClass, method, fileName, fullFile, lineNumber, strippedArr, nextBlock);
-        
-        UnaryNegationInstructionSet unOpSet = new UnaryNegationInstructionSet(Token.MINUS, obj, fileName, fullFile, lineNumber);
-        evaluators.add(unOpSet);
-        
-        return new ChainedInstructionSet(evaluators.toArray(new ObjectEvaluator[evaluators.size()]), fileName, fullFile, lineNumber);
-    }
-    
-    private static ChainedInstructionSet interpretRange(String errorClass, String method, String fileName, File fullFile, int lineNumber, TokenInfo[] tokens, Block nextBlock) {
-        
-        ChainedInstructionSet[] sets = new ChainedInstructionSet[2];
-        Token delimiter = Token.DOUBLE_DOT;
-        
-        if (TokenUtils.containsOnFirstLevel(tokens, Token.DOUBLE_DOT)) {
-            
-            delimiter = Token.DOUBLE_DOT;
-            sets = splitByToken(errorClass, method, fileName, fullFile, lineNumber, tokens, Token.DOUBLE_DOT, nextBlock);
-            
-        } else if (TokenUtils.containsOnFirstLevel(tokens, Token.TRIPLE_DOT)) {
-            
-            delimiter = Token.TRIPLE_DOT;
-            sets = splitByToken(errorClass, method, fileName, fullFile, lineNumber, tokens, Token.TRIPLE_DOT, nextBlock);
-        }
-        
-        return new ChainedInstructionSet(new ObjectEvaluator[]{new DoubleSetInstructionSet(DoubleSetInstructionSet.TokenSet.RANGE, sets[0], sets[1], delimiter, fileName, fullFile, lineNumber)}, fileName, fullFile, lineNumber);
-    }
-    
-    private static ChainedInstructionSet interpretTernary(String errorClass, String method, String fileName, File fullFile, int lineNumber, TokenInfo[] tokens, Block nextBlock) {
-        
-        List<List<TokenInfo>> firstSplit = splitByTokenIntoList(tokens, Token.QUESTION_MARK, fileName, lineNumber);
-        List<TokenInfo> firstHalfList = firstSplit.get(0);
-        TokenInfo[] firstHalf = firstHalfList.toArray(new TokenInfo[firstHalfList.size()]);
-        ChainedInstructionSet first = interpret(errorClass, method, fileName, fullFile, lineNumber, firstHalf, null);
-        List<TokenInfo> secondHalfList = firstSplit.get(1);
-        TokenInfo[] secondHalf = secondHalfList.toArray(new TokenInfo[secondHalfList.size()]);
-        ChainedInstructionSet[] secondSplit = splitByToken(errorClass, method, fileName, fullFile, lineNumber, secondHalf, Token.COLON, nextBlock);
-        
-        return new ChainedInstructionSet(new ObjectEvaluator[]{new TripleSetInstructionSet(TripleSetInstructionSet.TokenSet.TERNARY_OP, first, secondSplit[0], secondSplit[1], Token.QUESTION_MARK, Token.COLON, fileName, fullFile, lineNumber)}, fileName, fullFile, lineNumber);
-    }
-    
-    private static class SplitResults {
-        
-        private TokenInfo[] tokens;
-        private ChainedInstructionSet value;
-        
-        public SplitResults(TokenInfo[] tokens, ChainedInstructionSet value) {
-            
-            this.tokens = tokens;
-            this.value = value;
-        }
-        
-        public TokenInfo[] getTokens() {
-            
-            return tokens;
-        }
-        
-        public ChainedInstructionSet getValue() {
-            
-            return value;
-        }
-    }
-    
-    private static SplitResults splitIntoTokensAndValue(String errorClass, String method, String fileName, File fullFile, int lineNumber, TokenInfo[] tokens, Token delimiter, Block nextBlock) {
-        
-        List<List<TokenInfo>> tokenLists = new ArrayList<>();
-        tokenLists.add(new ArrayList<>());
-        tokenLists.add(new ArrayList<>());
-        
-        boolean hitDelimiter = false;
-        
-        for (TokenInfo info : tokens) {
-            
-            if (!hitDelimiter && info.getToken() == delimiter) {
-                
-                hitDelimiter = true;
-                
-            } else if (!hitDelimiter) {
-                
-                tokenLists.get(0).add(info);
-                
-            } else {
-                
-                tokenLists.get(1).add(info);
-            }
-        }
-        
-        TokenInfo[] tokenArr = tokenLists.get(0).toArray(new TokenInfo[tokenLists.get(0).size()]);
-        ChainedInstructionSet value = interpret(errorClass, method, fileName, fullFile, lineNumber, tokenLists.get(1).toArray(new TokenInfo[tokenLists.get(1).size()]), nextBlock);
-        
-        return new SplitResults(tokenArr, value);
-    }
-    
-    private static ChainedInstructionSet interpretAssignment(String errorClass, String method, String fileName, File fullFile, int lineNumber, TokenInfo[] tokens, Block nextBlock) {
-        
-        List<ObjectEvaluator> evaluators = new ArrayList<>();
-        
-        Token operator = null;
-        if (TokenUtils.containsOnFirstLevel(tokens, Token.ASSIGNMENT_OPERATOR)) {
-            
-            operator = Token.ASSIGNMENT_OPERATOR;
-            
-        } else if (TokenUtils.containsOnFirstLevel(tokens, Token.NIL_ASSIGNMENT_OPERATOR)) {
-            
-            operator = Token.NIL_ASSIGNMENT_OPERATOR;
-            
-        } else if (TokenUtils.containsOnFirstLevel(tokens, Token.PLUS_EQUAL)) {
-            
-            operator = Token.PLUS_EQUAL;
-            
-        } else if (TokenUtils.containsOnFirstLevel(tokens, Token.MINUS_EQUAL)) {
-            
-            operator = Token.MINUS_EQUAL;
-            
-        } else if (TokenUtils.containsOnFirstLevel(tokens, Token.MULTIPLY_EQUAL)) {
-            
-            operator = Token.MULTIPLY_EQUAL;
-            
-        } else if (TokenUtils.containsOnFirstLevel(tokens, Token.DIVIDE_EQUAL)) {
-            
-            operator = Token.DIVIDE_EQUAL;
-            
-        } else if (TokenUtils.containsOnFirstLevel(tokens, Token.MODULUS_EQUAL)) {
-            
-            operator = Token.MODULUS_EQUAL;
-            
-        } else if (TokenUtils.containsOnFirstLevel(tokens, Token.BITWISE_AND_EQUAL)) {
-            
-            operator = Token.BITWISE_AND_EQUAL;
-            
-        } else if (TokenUtils.containsOnFirstLevel(tokens, Token.BITWISE_OR_EQUAL)) {
-            
-            operator = Token.BITWISE_OR_EQUAL;
-            
-        } else if (TokenUtils.containsOnFirstLevel(tokens, Token.BITWISE_XOR_EQUAL)) {
-            
-            operator = Token.BITWISE_XOR_EQUAL;
-            
-        } else if (TokenUtils.containsOnFirstLevel(tokens, Token.BIT_SHIFT_LEFT_EQUAL)) {
-            
-            operator = Token.BIT_SHIFT_LEFT_EQUAL;
-            
-        } else if (TokenUtils.containsOnFirstLevel(tokens, Token.BIT_SHIFT_RIGHT_EQUAL)) {
-            
-            operator = Token.BIT_SHIFT_RIGHT_EQUAL;
-            
-        } else if (TokenUtils.containsOnFirstLevel(tokens, Token.BIT_SHIFT_LOGICAL_RIGHT_EQUAL)) {
-            
-            operator = Token.BIT_SHIFT_LOGICAL_RIGHT_EQUAL;
-        }
-        
-        if (operator != null) {
-            
-            SplitResults results = splitIntoTokensAndValue(errorClass, method, fileName, fullFile, lineNumber, tokens, operator, nextBlock);
-            
-            TokenInfo[] resultTokens = results.getTokens();
-            
-            if (resultTokens[resultTokens.length - 1].getToken() == Token.RIGHT_SQUARE_BRACKET) {
-                
-                List<TokenInfo> indices = new ArrayList<>();
-                int i, level = 0;
-                for (i = resultTokens.length - 2; i >= 0; i--) {
-                    
-                    TokenInfo info = resultTokens[i];
-                    
-                    if (level == 0 && info.getToken() == Token.LEFT_SQUARE_BRACKET) {
-                        
-                        break;
-                        
-                    } else if (isLevelUpToken(info.getToken())) {
-                        
-                        level++;
-                        
-                    } else if (isLevelDownToken(info.getToken())) {
-                        
-                        level--;
-                    }
-                    
-                    indices.add(0, info);
-                }
-                
-                TokenInfo[] assignmentObjectTokens = new TokenInfo[i];
-                System.arraycopy(resultTokens, 0, assignmentObjectTokens, 0, i);
-                
-                ChainedInstructionSet assignmentObject = interpret(errorClass, method, fileName, fullFile, lineNumber, assignmentObjectTokens, null);
-                ChainedInstructionSet[] assignmentParams = interpretListOfChainedInstructionSets(errorClass, method, fileName, fullFile, lineNumber, indices.toArray(new TokenInfo[indices.size()]), Token.COMMA, null);
-                
-                IndexAssignmentInstructionSet assignSet = new IndexAssignmentInstructionSet(assignmentObject, assignmentParams, operator, results.getValue(), fileName, fullFile, lineNumber);
-                evaluators.add(assignSet);
-                
-            } else {
-                
-                ChainedInstructionSet assignmentObject = interpret(errorClass, method, fileName, fullFile, lineNumber, resultTokens, null);
-                
-                AssignmentInstructionSet assignSet = new AssignmentInstructionSet(assignmentObject, operator, results.getValue(), fileName, fullFile, lineNumber);
-                evaluators.add(assignSet);
-            }
-            
-        } else {
-            
-            Errors.throwSyntaxError("Trinity.Errors.SyntaxError", "Unrecognized operator.", fileName, lineNumber);
-        }
-        
-        return new ChainedInstructionSet(evaluators.toArray(new ObjectEvaluator[evaluators.size()]), fileName, fullFile, lineNumber);
-    }
-    
-    private static ParameterResults parseVerticalBarParameters(List<TokenInfo> tokens, String errorClass, String method, String fileName, File fullFile, int lineNumber) {
-        
-        List<String> mandatoryParams = new ArrayList<>();
-        Map<String, ProcedureAction> optParams = new TreeMap<>();
-        String blockParam = null, overflowParam = null;
-        
-        List<List<TokenInfo>> infoSets = new ArrayList<>();
-        List<TokenInfo> paramInfo = new ArrayList<>();
-        int level = 0;
-        for (TokenInfo info : tokens) {
-            
-            if (level == 0 && info.getToken() == Token.COMMA) {
-                
-                List<TokenInfo> newList = new ArrayList<>();
-                newList.addAll(paramInfo);
-                infoSets.add(newList);
-                paramInfo.clear();
-                
-            } else {
-                
-                if (isLevelUpToken(info.getToken())) {
-                    
-                    level++;
-                    
-                } else if (isLevelDownToken(info.getToken())) {
-                    
-                    level--;
-                }
-                
-                paramInfo.add(info);
-            }
-        }
-        
-        if (!paramInfo.isEmpty()) {
-            
-            infoSets.add(paramInfo);
-        }
-        
-        for (List<TokenInfo> list : infoSets) {
-            
-            if (list.size() == 1 && list.get(0).getToken() == Token.NON_TOKEN_STRING) {
-                
-                mandatoryParams.add(list.get(0).getContents());
-                
-            } else if (list.size() > 2 && list.get(0).getToken() == Token.NON_TOKEN_STRING && list.get(1).getToken() == Token.ASSIGNMENT_OPERATOR) {
-                
-                List<TokenInfo> newList = new ArrayList<>();
-                newList.addAll(list);
-                newList.remove(0);
-                newList.remove(0);
-                
-                ChainedInstructionSet value = ExpressionInterpreter.interpret(errorClass, method, fileName, fullFile, lineNumber, newList.toArray(new TokenInfo[newList.size()]), null);
-                ProcedureAction action = (runtime, thisObj, params) -> value.evaluate(thisObj, runtime);
-                
-                optParams.put(list.get(0).getContents(), action);
-                
-            } else if (list.size() == 2 && list.get(0).getToken() == Token.BLOCK_PREFIX && list.get(1).getToken() == Token.NON_TOKEN_STRING) {
-                
-                blockParam = list.get(1).getContents();
-                
-            } else if (list.size() == 2 && list.get(0).getToken() == Token.TRIPLE_DOT && list.get(1).getToken() == Token.NON_TOKEN_STRING) {
-                
-                overflowParam = list.get(1).getContents();
-            }
-        }
-        
-        return new ParameterResults(mandatoryParams, optParams, blockParam, overflowParam);
-    }
-    
-    public static boolean isLevelUpToken(Token t) {
-        
-        return t == Token.LEFT_PARENTHESIS || t == Token.LEFT_SQUARE_BRACKET || t == Token.LEFT_CURLY_BRACKET;
-    }
-    
-    public static boolean isLevelDownToken(Token t) {
-        
-        return t == Token.RIGHT_PARENTHESIS || t == Token.RIGHT_SQUARE_BRACKET || t == Token.RIGHT_CURLY_BRACKET;
+        return null;
     }
 }

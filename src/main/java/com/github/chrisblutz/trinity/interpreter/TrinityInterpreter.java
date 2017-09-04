@@ -1,6 +1,9 @@
 package com.github.chrisblutz.trinity.interpreter;
 
-import com.github.chrisblutz.trinity.interpreter.defaults.*;
+import com.github.chrisblutz.trinity.interpreter.facets.DeclarationFacets;
+import com.github.chrisblutz.trinity.interpreter.facets.KeywordExpressionFacets;
+import com.github.chrisblutz.trinity.interpreter.facets.KeywordFacets;
+import com.github.chrisblutz.trinity.interpreter.facets.OperatorFacets;
 import com.github.chrisblutz.trinity.lang.TYObject;
 import com.github.chrisblutz.trinity.lang.errors.Errors;
 import com.github.chrisblutz.trinity.lang.procedures.ProcedureAction;
@@ -9,6 +12,7 @@ import com.github.chrisblutz.trinity.parser.blocks.Block;
 import com.github.chrisblutz.trinity.parser.blocks.BlockItem;
 import com.github.chrisblutz.trinity.parser.blocks.BlockLine;
 import com.github.chrisblutz.trinity.parser.lines.Line;
+import com.github.chrisblutz.trinity.parser.tokens.Token;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,15 +23,8 @@ import java.util.List;
  */
 public class TrinityInterpreter {
     
-    private static List<DeclarationInterpreter> declarationInterpreters = new ArrayList<>();
-    private static List<ProcedureAction> preMainInitializationCode = new ArrayList<>();
-    
-    public static void registerDeclarationInterpreter(DeclarationInterpreter declarationInterpreter) {
-        
-        declarationInterpreters.add(declarationInterpreter);
-    }
-    
     private static List<String> importedModules = new ArrayList<>();
+    private static List<ProcedureAction> initializationActions = new ArrayList<>();
     
     public static void interpret(Block block) {
         
@@ -46,10 +43,22 @@ public class TrinityInterpreter {
         return importedModules.toArray(new String[importedModules.size()]);
     }
     
-    public static void interpret(Block block, InterpretEnvironment env) {
+    public static void addInitializationAction(ProcedureAction action) {
         
-        List<ProcedureAction> initializationActions = new ArrayList<>();
-        Block current = new Block(block.getFileName(), block.getFullFile(), block.getSpaces());
+        initializationActions.add(action);
+    }
+    
+    public static void runInitializationActions() {
+        
+        TYRuntime runtime = new TYRuntime();
+        
+        for (ProcedureAction action : initializationActions) {
+            
+            action.onAction(runtime, TYObject.NONE);
+        }
+    }
+    
+    public static void interpret(Block block, InterpretEnvironment env) {
         
         for (int i = 0; i < block.size(); i++) {
             
@@ -57,12 +66,11 @@ public class TrinityInterpreter {
             
             if (item instanceof Block) {
                 
-                interpret(block, env);
+                interpret((Block) item, env);
                 
             } else if (item instanceof BlockLine) {
                 
                 Line line = ((BlockLine) item).getLine();
-                
                 Block nextBlock = null;
                 
                 if (i + 1 < block.size() && block.get(i + 1) instanceof Block) {
@@ -70,72 +78,35 @@ public class TrinityInterpreter {
                     nextBlock = (Block) block.get(++i);
                 }
                 
-                boolean claimed = false;
-                for (DeclarationInterpreter interpreter : declarationInterpreters) {
+                if (line.size() > 0) {
                     
-                    if (line.size() > 0 && line.get(0).getToken() == interpreter.getTokenIdentifier()) {
+                    Token decl = line.get(0).getToken();
+                    
+                    if (Declarations.getTokens().contains(decl)) {
                         
-                        claimed = true;
-                        interpreter.interpret(line, nextBlock, env, block.getFileName(), block.getFullFile());
+                        if (Declarations.checkSize(decl, line)) {
+                            
+                            Declarations.getDeclaration(decl).define(line, nextBlock, env, new Location(block.getFileName(), block.getFullFile(), line.getLineNumber()));
+                            
+                        } else {
+                            
+                            Errors.throwSyntaxError("Trinity.Errors.SyntaxError", "Malformed declaration.", block.getFileName(), line.getLineNumber());
+                        }
+                        
+                    } else {
+                        
+                        Errors.throwSyntaxError("Trinity.Errors.SyntaxError", "Unrecognized declaration.", block.getFileName(), line.getLineNumber());
                     }
                 }
-                
-                if (!claimed) {
-                    
-                    if (!env.isInitializable() && env.hasElements()) {
-                        
-                        Errors.throwSyntaxError("Trinity.Errors.SyntaxError", "Initialization code prohibited here.", block.getFileName(), line.getLineNumber());
-                    }
-                    
-                    current.add(item);
-                    if (nextBlock != null) {
-                        
-                        current.add(nextBlock);
-                    }
-                    
-                } else if (!current.isEmpty()) {
-                    
-                    initializationActions.add(ExpressionInterpreter.interpret(current, env, env.isInitializable() ? env.getLastClass().getName() : null, null, true));
-                    current.clear();
-                }
             }
-        }
-        
-        if (!current.isEmpty()) {
-            
-            initializationActions.add(ExpressionInterpreter.interpret(current, env, env.getLastClass().getName(), null, true));
-            current.clear();
-        }
-        
-        if (!initializationActions.isEmpty()) {
-            
-            if (env.hasElements()) {
-                
-                env.getLastClass().addInitializationActions(initializationActions);
-                
-            } else {
-                
-                preMainInitializationCode.addAll(initializationActions);
-            }
-        }
-    }
-    
-    public static void runPreMainInitializationCode() {
-        
-        for (ProcedureAction action : preMainInitializationCode) {
-            
-            action.onAction(new TYRuntime(), TYObject.NONE);
         }
     }
     
     static {
         
-        registerDeclarationInterpreter(new ImportInterpreter());
-        registerDeclarationInterpreter(new ModuleInterpreter());
-        registerDeclarationInterpreter(new ClassInterpreter());
-        registerDeclarationInterpreter(new MethodInterpreter());
-        registerDeclarationInterpreter(new ScopeInterpreter());
-        registerDeclarationInterpreter(new VarInterpreter());
-        registerDeclarationInterpreter(new ValInterpreter());
+        DeclarationFacets.registerFacets();
+        OperatorFacets.registerFacets();
+        KeywordFacets.registerFacets();
+        KeywordExpressionFacets.registerFacets();
     }
 }

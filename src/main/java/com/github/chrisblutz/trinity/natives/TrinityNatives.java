@@ -66,7 +66,7 @@ public class TrinityNatives {
             
         } else {
             
-            Errors.throwSyntaxError("Trinity.Errors.ParseError", "Native method " + className + "." + methodName + " not implemented.", fileName, lineNumber);
+            Errors.throwSyntaxError("Trinity.Errors.NativeTypeError", "Native method " + className + "." + methodName + " not implemented.", fileName, lineNumber);
             return null;
         }
     }
@@ -99,7 +99,7 @@ public class TrinityNatives {
             
         } else {
             
-            Errors.throwSyntaxError("Trinity.Errors.ParseError", "Native field " + className + "." + varName + " not implemented.", fileName, lineNumber);
+            Errors.throwSyntaxError("Trinity.Errors.NativeTypeError", "Native field " + className + "." + varName + " not implemented.", fileName, lineNumber);
             return null;
         }
     }
@@ -109,7 +109,7 @@ public class TrinityNatives {
         nativeConstructors.add(ClassRegistry.getClass(className));
     }
     
-    public static boolean isClassNativelyConstructed(TYClass tyClass){
+    public static boolean isClassNativelyConstructed(TYClass tyClass) {
         
         return nativeConstructors.contains(tyClass);
     }

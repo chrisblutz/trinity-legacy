@@ -97,7 +97,7 @@ public class Runner {
                     
                     mainAction = (runtime, thisObj, params) -> {
                         
-                        TrinityInterpreter.runPreMainInitializationCode();
+                        TrinityInterpreter.runInitializationActions();
                         return main.tyInvoke("main", runtime, null, null, TYObject.NONE, TrinityNatives.getArrayFor(args));
                     };
                     
@@ -114,7 +114,7 @@ public class Runner {
                     
                     mainAction = (runtime, thisObj, params) -> {
                         
-                        TrinityInterpreter.runPreMainInitializationCode();
+                        TrinityInterpreter.runInitializationActions();
                         return main.tyInvoke("main", runtime, null, null, TYObject.NONE, TrinityNatives.getArrayFor(args));
                     };
                     
