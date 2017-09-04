@@ -453,7 +453,7 @@ public class TYClass {
             
             return getSuperclass().tyInvoke(originClass, methodName, runtime, procedure, procedureRuntime, thisObj, params);
             
-        } else if (ClassRegistry.getClass("Trinity.Kernel").getMethods().containsKey(methodName)) {
+        } else if (thisObj == TYObject.NONE && ClassRegistry.getClass("Trinity.Kernel").getMethods().containsKey(methodName)) {
             
             return ClassRegistry.getClass("Trinity.Kernel").tyInvoke(originClass, methodName, runtime, procedure, procedureRuntime, thisObj, params);
             
