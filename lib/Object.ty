@@ -10,6 +10,12 @@ module Trinity
 
         def native %(other)
 
+        def native <<(other)
+
+        def native >>(other)
+
+        def native >>>(other)
+
         def ==(other)
             checkReferences(this, other)
 

@@ -27,6 +27,22 @@ class NativeLong {
         TrinityNatives.registerMethod("Trinity.Long", "*", getActionForOperation("*"));
         TrinityNatives.registerMethod("Trinity.Long", "/", getActionForOperation("/"));
         TrinityNatives.registerMethod("Trinity.Long", "%", getActionForOperation("%"));
+        TrinityNatives.registerMethod("Trinity.Long", "<<", (runtime, thisObj, params) -> {
+            
+            TYObject other = runtime.getVariable("other");
+            return new TYLong(TrinityNatives.toLong(thisObj) << TrinityNatives.toLong(other));
+            
+        });
+        TrinityNatives.registerMethod("Trinity.Long", ">>", (runtime, thisObj, params) -> {
+            
+            TYObject other = runtime.getVariable("other");
+            return new TYLong(TrinityNatives.toLong(thisObj) >> TrinityNatives.toLong(other));
+        });
+        TrinityNatives.registerMethod("Trinity.Long", ">>>", (runtime, thisObj, params) -> {
+            
+            TYObject other = runtime.getVariable("other");
+            return new TYLong(TrinityNatives.toLong(thisObj) >>> TrinityNatives.toLong(other));
+        });
         TrinityNatives.registerMethod("Trinity.Long", "toString", (runtime, thisObj, params) -> new TYString(Long.toString(TrinityNatives.toLong(thisObj))));
         TrinityNatives.registerMethod("Trinity.Long", "toHexString", (runtime, thisObj, params) -> new TYString(Long.toHexString(TrinityNatives.toLong(thisObj))));
         TrinityNatives.registerMethod("Trinity.Long", "compareTo", (runtime, thisObj, params) -> {

@@ -183,18 +183,7 @@ public class OperatorFacets {
             @Override
             public TYObject operate(TYObject first, TYObject second, TYRuntime runtime) {
                 
-                if (TrinityNatives.isInstance(first, "Trinity.Long") || TrinityNatives.isInstance(second, "Trinity.Long")) {
-                    
-                    long firstLong = TrinityNatives.toLong(first);
-                    long secondLong = TrinityNatives.toLong(second);
-                    return new TYLong(firstLong << secondLong);
-                    
-                } else {
-                    
-                    int firstInt = TrinityNatives.toInt(first);
-                    int secondInt = TrinityNatives.toInt(second);
-                    return new TYInt(firstInt << secondInt);
-                }
+                return first.tyInvoke("<<", runtime, null, null, second);
             }
         };
         BinaryOperator bitShiftRight = new BinaryOperator(Token.BIT_SHIFT_RIGHT) {
@@ -202,18 +191,7 @@ public class OperatorFacets {
             @Override
             public TYObject operate(TYObject first, TYObject second, TYRuntime runtime) {
                 
-                if (TrinityNatives.isInstance(first, "Trinity.Long") || TrinityNatives.isInstance(second, "Trinity.Long")) {
-                    
-                    long firstLong = TrinityNatives.toLong(first);
-                    long secondLong = TrinityNatives.toLong(second);
-                    return new TYLong(firstLong >> secondLong);
-                    
-                } else {
-                    
-                    int firstInt = TrinityNatives.toInt(first);
-                    int secondInt = TrinityNatives.toInt(second);
-                    return new TYInt(firstInt >> secondInt);
-                }
+                return first.tyInvoke(">>", runtime, null, null, second);
             }
         };
         BinaryOperator bitShiftRightLogical = new BinaryOperator(Token.BIT_SHIFT_LOGICAL_RIGHT) {
@@ -221,18 +199,7 @@ public class OperatorFacets {
             @Override
             public TYObject operate(TYObject first, TYObject second, TYRuntime runtime) {
                 
-                if (TrinityNatives.isInstance(first, "Trinity.Long") || TrinityNatives.isInstance(second, "Trinity.Long")) {
-                    
-                    long firstLong = TrinityNatives.toLong(first);
-                    long secondLong = TrinityNatives.toLong(second);
-                    return new TYLong(firstLong >>> secondLong);
-                    
-                } else {
-                    
-                    int firstInt = TrinityNatives.toInt(first);
-                    int secondInt = TrinityNatives.toInt(second);
-                    return new TYInt(firstInt >>> secondInt);
-                }
+                return first.tyInvoke(">>>", runtime, null, null, second);
             }
         };
         

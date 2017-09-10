@@ -12,6 +12,12 @@ module Trinity
 
         def native %(other)
 
+        def native <<(other)
+
+        def native >>(other)
+
+        def native >>>(other)
+
         def native ==(other)
 
         def native toString

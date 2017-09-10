@@ -27,6 +27,42 @@ class NativeInt {
         TrinityNatives.registerMethod("Trinity.Int", "*", getActionForOperation("*"));
         TrinityNatives.registerMethod("Trinity.Int", "/", getActionForOperation("/"));
         TrinityNatives.registerMethod("Trinity.Int", "%", getActionForOperation("%"));
+        TrinityNatives.registerMethod("Trinity.Int", "<<", (runtime, thisObj, params) -> {
+            
+            TYObject other = runtime.getVariable("other");
+            if (TrinityNatives.isInstance(other, "Trinity.Long")) {
+                
+                return new TYLong(TrinityNatives.toLong(thisObj) << TrinityNatives.toLong(other));
+                
+            } else {
+                
+                return new TYInt(TrinityNatives.toInt(thisObj) << TrinityNatives.toInt(other));
+            }
+        });
+        TrinityNatives.registerMethod("Trinity.Int", ">>", (runtime, thisObj, params) -> {
+            
+            TYObject other = runtime.getVariable("other");
+            if (TrinityNatives.isInstance(other, "Trinity.Long")) {
+                
+                return new TYLong(TrinityNatives.toLong(thisObj) >> TrinityNatives.toLong(other));
+                
+            } else {
+                
+                return new TYInt(TrinityNatives.toInt(thisObj) >> TrinityNatives.toInt(other));
+            }
+        });
+        TrinityNatives.registerMethod("Trinity.Int", ">>>", (runtime, thisObj, params) -> {
+            
+            TYObject other = runtime.getVariable("other");
+            if (TrinityNatives.isInstance(other, "Trinity.Long")) {
+                
+                return new TYLong(TrinityNatives.toLong(thisObj) >>> TrinityNatives.toLong(other));
+                
+            } else {
+                
+                return new TYInt(TrinityNatives.toInt(thisObj) >>> TrinityNatives.toInt(other));
+            }
+        });
         TrinityNatives.registerMethod("Trinity.Int", "toString", (runtime, thisObj, params) -> new TYString(Integer.toString(TrinityNatives.toInt(thisObj))));
         TrinityNatives.registerMethod("Trinity.Int", "toHexString", (runtime, thisObj, params) -> new TYString(Integer.toHexString(TrinityNatives.toInt(thisObj))));
         TrinityNatives.registerMethod("Trinity.Int", "compareTo", (runtime, thisObj, params) -> {

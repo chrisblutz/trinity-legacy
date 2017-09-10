@@ -361,7 +361,7 @@ public class DeclarationFacets {
                 name = nameInfo.getContents();
                 position++;
                 
-            } else if (nameInfo.getToken() == Token.PLUS || nameInfo.getToken() == Token.MINUS || nameInfo.getToken() == Token.MULTIPLY || nameInfo.getToken() == Token.DIVIDE || nameInfo.getToken() == Token.MODULUS) {
+            } else if (nameInfo.getToken() == Token.PLUS || nameInfo.getToken() == Token.MINUS || nameInfo.getToken() == Token.MULTIPLY || nameInfo.getToken() == Token.DIVIDE || nameInfo.getToken() == Token.MODULUS || nameInfo.getToken() == Token.CLASS_EXTENSION || nameInfo.getToken() == Token.BIT_SHIFT_RIGHT || nameInfo.getToken() == Token.BIT_SHIFT_LOGICAL_RIGHT) {
                 
                 name = nameInfo.getContents();
                 position++;
