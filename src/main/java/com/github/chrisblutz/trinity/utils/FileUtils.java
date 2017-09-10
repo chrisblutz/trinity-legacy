@@ -66,4 +66,14 @@ public class FileUtils {
         
         return trinityHome;
     }
+    
+    public static void checkStandardLibrary(){
+        
+        if(!new File(getTrinityHome(), "lib/").exists()){
+            
+            System.err.println("Trinity's standard library could not be found.");
+    
+            Trinity.exit(80);
+        }
+    }
 }

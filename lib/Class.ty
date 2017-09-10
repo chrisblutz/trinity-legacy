@@ -10,7 +10,7 @@ module Trinity
 
         def native getShortName
 
-        def native construct(args)
+        def native construct(...args)
 
         def native getMethods
 
@@ -23,6 +23,8 @@ module Trinity
         def native getComments
 
         def native static get(name)
+
+        def native static all
 
         def toString
             getName()

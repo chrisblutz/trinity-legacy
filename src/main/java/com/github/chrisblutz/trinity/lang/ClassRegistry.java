@@ -1,5 +1,6 @@
 package com.github.chrisblutz.trinity.lang;
 
+import com.github.chrisblutz.trinity.natives.NativeStorage;
 import com.github.chrisblutz.trinity.plugins.PluginLoader;
 import com.github.chrisblutz.trinity.plugins.api.Events;
 
@@ -35,15 +36,12 @@ public class ClassRegistry {
             TYClass tyClass = new TYClass(className, shortClassName);
             classes.put(className, tyClass);
             
+            NativeStorage.clearAllClassData();
+            
             PluginLoader.triggerEvent(Events.CLASS_LOAD, tyClass);
         }
         
         return classes.get(className);
-    }
-    
-    public static void register(String className, TYClass tyClass) {
-        
-        classes.put(className, tyClass);
     }
     
     public static boolean classExists(String className) {
@@ -69,8 +67,8 @@ public class ClassRegistry {
         }
     }
     
-    public static TYClass[] getClasses() {
+    public static List<TYClass> getClasses() {
         
-        return classes.values().toArray(new TYClass[classes.size()]);
+        return new ArrayList<>(classes.values());
     }
 }

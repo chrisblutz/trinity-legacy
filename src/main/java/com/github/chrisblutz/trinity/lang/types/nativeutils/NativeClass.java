@@ -70,7 +70,14 @@ class NativeClass {
         });
         TrinityNatives.registerMethod("Trinity.Class", "getName", (runtime, thisObj, params) -> NativeStorage.getClassName(TrinityNatives.cast(TYClassObject.class, thisObj).getInternalClass()));
         TrinityNatives.registerMethod("Trinity.Class", "getShortName", (runtime, thisObj, params) -> NativeStorage.getClassShortName(TrinityNatives.cast(TYClassObject.class, thisObj).getInternalClass()));
-        TrinityNatives.registerMethod("Trinity.Class", "construct", (runtime, thisObj, params) -> TrinityNatives.newInstance(TrinityNatives.cast(TYClassObject.class, thisObj).getInternalClass().getName(), runtime, params));
+        TrinityNatives.registerMethod("Trinity.Class", "construct", (runtime, thisObj, params) -> {
+            
+            TYClass tyClass = TrinityNatives.cast(TYClassObject.class, thisObj).getInternalClass();
+            TYArray args = TrinityNatives.cast(TYArray.class, runtime.getVariable("args"));
+            TYObject[] argArray = args.getInternalList().toArray(new TYObject[args.size()]);
+            
+            return TrinityNatives.newInstance(tyClass.getName(), runtime, argArray);
+        });
         TrinityNatives.registerMethod("Trinity.Class", "getMethods", (runtime, thisObj, params) -> {
             
             List<TYObject> methods = new ArrayList<>();
@@ -138,5 +145,6 @@ class NativeClass {
                 return TYObject.NIL;
             }
         });
+        TrinityNatives.registerMethod("Trinity.Class", "all", (runtime, thisObj, params) -> NativeStorage.getAllClasses());
     }
 }

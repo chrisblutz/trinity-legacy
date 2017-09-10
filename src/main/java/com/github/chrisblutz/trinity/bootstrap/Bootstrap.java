@@ -18,6 +18,9 @@ public class Bootstrap {
         // Load interpreter information
         TrinityInfo.loadInfo();
         
+        // Check that the standard library exists
+        FileUtils.checkStandardLibrary();
+        
         // Load native methods
         NativeHelper.registerDefaults();
         

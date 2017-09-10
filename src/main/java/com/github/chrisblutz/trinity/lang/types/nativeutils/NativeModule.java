@@ -103,5 +103,6 @@ class NativeModule {
                 return TYObject.NIL;
             }
         });
+        TrinityNatives.registerMethod("Trinity.Module", "all", (runtime, thisObj, params) -> NativeStorage.getAllModules());
     }
 }

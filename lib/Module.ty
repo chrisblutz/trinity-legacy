@@ -18,5 +18,7 @@ module Trinity
 
         def native static get(name)
 
+        def native static all
+
         def toString
             getName()

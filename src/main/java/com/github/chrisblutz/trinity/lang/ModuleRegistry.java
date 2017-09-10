@@ -1,6 +1,10 @@
 package com.github.chrisblutz.trinity.lang;
 
+import com.github.chrisblutz.trinity.natives.NativeStorage;
+
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -28,6 +32,8 @@ public class ModuleRegistry {
             
             TYModule tyModule = new TYModule(moduleName, shortModuleName);
             modules.put(moduleName, tyModule);
+    
+            NativeStorage.clearAllModuleData();
         }
         
         return modules.get(moduleName);
@@ -36,5 +42,10 @@ public class ModuleRegistry {
     public static boolean moduleExists(String moduleName) {
         
         return modules.containsKey(moduleName);
+    }
+    
+    public static List<TYModule> getModules() {
+        
+        return new ArrayList<>(modules.values());
     }
 }

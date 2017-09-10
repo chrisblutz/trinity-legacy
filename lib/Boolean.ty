@@ -5,7 +5,4 @@ module Trinity
         def native ==(other)
 
         def toString
-            if this == true
-                return 'true'
-            else
-                return 'false'
+            this ? 'true' : 'false'

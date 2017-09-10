@@ -1,9 +1,6 @@
 package com.github.chrisblutz.trinity.natives;
 
-import com.github.chrisblutz.trinity.lang.TYClass;
-import com.github.chrisblutz.trinity.lang.TYMethod;
-import com.github.chrisblutz.trinity.lang.TYModule;
-import com.github.chrisblutz.trinity.lang.TYObject;
+import com.github.chrisblutz.trinity.lang.*;
 import com.github.chrisblutz.trinity.lang.procedures.TYProcedure;
 import com.github.chrisblutz.trinity.lang.threading.TYThread;
 import com.github.chrisblutz.trinity.lang.types.*;
@@ -63,6 +60,9 @@ public class NativeStorage {
     private static Map<TYMethod, TYObject> methodLeadingComments = new HashMap<>();
     
     private static Map<TYThread, TYThreadObject> threadObjectMap = new HashMap<>();
+    
+    private static TYArray allClasses = null;
+    private static TYArray allModules = null;
     
     private static TYString nilString = null;
     private static TYFloat e = null, pi = null;
@@ -358,6 +358,46 @@ public class NativeStorage {
         }
         
         return threadObjectMap.get(tyThread);
+    }
+    
+    public synchronized static TYArray getAllClasses() {
+        
+        if (allClasses == null) {
+            
+            List<TYObject> objects = new ArrayList<>();
+            for (TYClass tyClass : ClassRegistry.getClasses()) {
+                
+                objects.add(getClassObject(tyClass));
+            }
+            allClasses = new TYArray(objects);
+        }
+        
+        return allClasses;
+    }
+    
+    public synchronized static TYArray getAllModules() {
+        
+        if (allModules == null) {
+            
+            List<TYObject> objects = new ArrayList<>();
+            for (TYModule tyModule : ModuleRegistry.getModules()) {
+                
+                objects.add(getModuleObject(tyModule));
+            }
+            allModules = new TYArray(objects);
+        }
+        
+        return allModules;
+    }
+    
+    public synchronized static void clearAllClassData() {
+        
+        allClasses = null;
+    }
+    
+    public synchronized static void clearAllModuleData() {
+        
+        allModules = null;
     }
     
     public synchronized static TYFloat getE() {
