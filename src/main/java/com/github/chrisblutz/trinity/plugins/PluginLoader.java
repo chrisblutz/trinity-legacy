@@ -1,6 +1,10 @@
 package com.github.chrisblutz.trinity.plugins;
 
 import com.github.chrisblutz.trinity.cli.CLI;
+import com.github.chrisblutz.trinity.lang.TYClass;
+import com.github.chrisblutz.trinity.lang.TYMethod;
+import com.github.chrisblutz.trinity.lang.TYObject;
+import com.github.chrisblutz.trinity.libraries.NativeLibrary;
 import com.github.chrisblutz.trinity.plugins.api.Plugin;
 import com.github.chrisblutz.trinity.utils.FileUtils;
 
@@ -137,11 +141,75 @@ public class PluginLoader {
         }
     }
     
-    public static void triggerEvent(int event, Object... args) {
+    public static void triggerOnLibraryLoad(String libName, File file, NativeLibrary... libraries) {
         
         for (Plugin p : plugins) {
             
-            p.onEvent(event, args);
+            p.onLibraryLoad(libName, file, libraries);
+        }
+    }
+    
+    public static void triggerOnFileLoad(String fileName, File file) {
+        
+        for (Plugin p : plugins) {
+            
+            p.onFileLoad(fileName, file);
+        }
+    }
+    
+    public static void triggerOnClassLoadFromFile(String fileName, File file, TYClass tyClass) {
+        
+        for (Plugin p : plugins) {
+            
+            p.onClassLoadFromFile(fileName, file, tyClass);
+        }
+    }
+    
+    public static void triggerOnClassLoad(TYClass tyClass) {
+        
+        for (Plugin p : plugins) {
+            
+            p.onClassLoad(tyClass);
+        }
+    }
+    
+    public static void triggerOnClassFinalization() {
+        
+        for (Plugin p : plugins) {
+            
+            p.onClassFinalization();
+        }
+    }
+    
+    public static void triggerOnGlobalVariableUpdate(String globalName, TYObject value) {
+        
+        for (Plugin p : plugins) {
+            
+            p.onGlobalVariableUpdate(globalName, value);
+        }
+    }
+    
+    public static void triggerOnMethodUpdate(TYClass tyClass, TYMethod tyMethod) {
+        
+        for (Plugin p : plugins) {
+            
+            p.onMethodUpdate(tyClass, tyMethod);
+        }
+    }
+    
+    public static void triggerOnErrorThrown(TYObject error) {
+        
+        for (Plugin p : plugins) {
+            
+            p.onErrorThrown(error);
+        }
+    }
+    
+    public static void triggerOnErrorCaught(TYObject error, String fileName, File file, int line) {
+        
+        for (Plugin p : plugins) {
+            
+            p.onErrorCaught(error, fileName, file, line);
         }
     }
     

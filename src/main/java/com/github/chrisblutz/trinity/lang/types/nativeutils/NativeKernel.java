@@ -17,7 +17,6 @@ import com.github.chrisblutz.trinity.natives.TrinityNatives;
 import com.github.chrisblutz.trinity.parser.TrinityParser;
 import com.github.chrisblutz.trinity.parser.blocks.Block;
 import com.github.chrisblutz.trinity.plugins.PluginLoader;
-import com.github.chrisblutz.trinity.plugins.api.Events;
 import com.github.chrisblutz.trinity.utils.FileUtils;
 
 import java.io.File;
@@ -57,7 +56,7 @@ class NativeKernel {
             
             if (TrinityNatives.isInstance(error, "Trinity.Errors.Error")) {
                 
-                PluginLoader.triggerEvent(Events.ERROR_THROWN, error);
+                PluginLoader.triggerOnErrorThrown(error);
                 throw new TrinityErrorException(error);
             }
             

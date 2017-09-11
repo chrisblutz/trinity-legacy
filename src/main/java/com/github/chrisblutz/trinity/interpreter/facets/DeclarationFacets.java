@@ -11,7 +11,6 @@ import com.github.chrisblutz.trinity.natives.TrinityNatives;
 import com.github.chrisblutz.trinity.parser.tokens.Token;
 import com.github.chrisblutz.trinity.parser.tokens.TokenInfo;
 import com.github.chrisblutz.trinity.plugins.PluginLoader;
-import com.github.chrisblutz.trinity.plugins.api.Events;
 
 import java.util.*;
 
@@ -322,7 +321,7 @@ public class DeclarationFacets {
                     TrinityInterpreter.interpret(nextBlock, newEnv);
                 }
                 
-                PluginLoader.triggerEvent(Events.FILE_CLASS_LOAD, location.getFile(), tyClass);
+                PluginLoader.triggerOnClassLoadFromFile(location.getFileName(), location.getFile(), tyClass);
                 
             } else {
                 

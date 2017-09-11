@@ -10,7 +10,6 @@ import com.github.chrisblutz.trinity.lang.variables.VariableManager;
 import com.github.chrisblutz.trinity.natives.NativeStorage;
 import com.github.chrisblutz.trinity.natives.TrinityNatives;
 import com.github.chrisblutz.trinity.plugins.PluginLoader;
-import com.github.chrisblutz.trinity.plugins.api.Events;
 
 import java.util.*;
 
@@ -560,7 +559,7 @@ public class TYClass {
             }
         }
         
-        PluginLoader.triggerEvent(Events.METHOD_UPDATE, this, method);
+        PluginLoader.triggerOnMethodUpdate(this, method);
     }
     
     public Map<String, TYMethod> getMethods() {

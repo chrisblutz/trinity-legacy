@@ -4,7 +4,6 @@ import com.github.chrisblutz.trinity.lang.TYObject;
 import com.github.chrisblutz.trinity.lang.variables.VariableLoc;
 import com.github.chrisblutz.trinity.lang.variables.VariableManager;
 import com.github.chrisblutz.trinity.plugins.PluginLoader;
-import com.github.chrisblutz.trinity.plugins.api.Events;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -36,7 +35,7 @@ public class Variables {
         
         VariableManager.put(getGlobalVariables().get(name), object);
         
-        PluginLoader.triggerEvent(Events.GLOBAL_VARIABLE_UPDATE, name, object);
+        PluginLoader.triggerOnGlobalVariableUpdate(name, object);
     }
     
     public static Map<String, VariableLoc> getGlobalVariables() {

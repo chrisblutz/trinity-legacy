@@ -12,7 +12,6 @@ import com.github.chrisblutz.trinity.parser.lines.LineSet;
 import com.github.chrisblutz.trinity.parser.tokens.Token;
 import com.github.chrisblutz.trinity.parser.tokens.TokenInfo;
 import com.github.chrisblutz.trinity.plugins.PluginLoader;
-import com.github.chrisblutz.trinity.plugins.api.Events;
 import com.github.chrisblutz.trinity.runner.Runner;
 import com.github.chrisblutz.trinity.utils.FileUtils;
 
@@ -99,7 +98,7 @@ public class TrinityParser {
     
     private static Block parse(String filename, File fullFile, String[] lines) {
         
-        PluginLoader.triggerEvent(Events.FILE_LOAD, filename, fullFile);
+        PluginLoader.triggerOnFileLoad(filename, fullFile);
         
         // Parse lines into LineSet
         LineSet lineSet = parseFirstLevel(filename, fullFile, lines);

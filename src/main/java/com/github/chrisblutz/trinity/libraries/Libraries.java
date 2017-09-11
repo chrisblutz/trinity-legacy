@@ -2,6 +2,7 @@ package com.github.chrisblutz.trinity.libraries;
 
 import com.github.chrisblutz.trinity.cli.CLI;
 import com.github.chrisblutz.trinity.parser.TrinityParser;
+import com.github.chrisblutz.trinity.plugins.PluginLoader;
 import com.github.chrisblutz.trinity.utils.FileUtils;
 
 import java.io.File;
@@ -110,6 +111,10 @@ public class Libraries {
             }
             
             loadSources(name, zip, file, sources);
+    
+            PluginLoader.triggerOnLibraryLoad(name, file, libraries.toArray(new NativeLibrary[libraries.size()]));
+    
+            libraries.clear();
             
         } catch (IOException e) {
             

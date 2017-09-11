@@ -12,7 +12,6 @@ import com.github.chrisblutz.trinity.lang.threading.TYThread;
 import com.github.chrisblutz.trinity.natives.TrinityNatives;
 import com.github.chrisblutz.trinity.parser.TrinityParser;
 import com.github.chrisblutz.trinity.plugins.PluginLoader;
-import com.github.chrisblutz.trinity.plugins.api.Events;
 
 import java.io.File;
 import java.util.HashMap;
@@ -75,7 +74,7 @@ public class Runner {
         
         long endLoadMillis = System.currentTimeMillis();
         
-        PluginLoader.triggerEvent(Events.CLASS_FINALIZATION);
+        PluginLoader.triggerOnClassFinalization();
         
         if (sourceFiles.length > 0) {
             

@@ -7,7 +7,6 @@ import com.github.chrisblutz.trinity.lang.procedures.ProcedureAction;
 import com.github.chrisblutz.trinity.lang.scope.TYRuntime;
 import com.github.chrisblutz.trinity.lang.threading.TYThread;
 import com.github.chrisblutz.trinity.plugins.PluginLoader;
-import com.github.chrisblutz.trinity.plugins.api.Events;
 
 
 /**
@@ -76,7 +75,7 @@ public class TryInstructionSet extends InstructionSet {
             // corresponding stack elements were not removed.
             TYThread.getCurrentThread().getTrinityStack().popToSize(stackDepth);
             
-            PluginLoader.triggerEvent(Events.ERROR_CAUGHT, e.getErrorObject(), getLocation().getFile(), getLocation().getLineNumber());
+            PluginLoader.triggerOnErrorCaught(e.getErrorObject(), getLocation().getFileName(), getLocation().getFile(), getLocation().getLineNumber());
             
             if (getCatchSet() != null) {
                 
