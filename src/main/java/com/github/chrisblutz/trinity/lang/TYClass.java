@@ -34,6 +34,9 @@ public class TYClass {
     
     private List<String> callableMethods = new ArrayList<>();
     
+    private Map<String, Boolean> variables = new HashMap<>();
+    private Map<String, Boolean> variablesNative = new HashMap<>();
+    private Map<String, String[]> variablesComments = new HashMap<>();
     private Map<String, Scope> classVariableScopes = new HashMap<>();
     private Map<String, Boolean> classVariableConstant = new HashMap<>();
     private Map<String, String[]> classVariableImports = new HashMap<>();
@@ -90,8 +93,11 @@ public class TYClass {
         return methods;
     }
     
-    public void registerClassVariable(String name, ProcedureAction action, Scope scope, boolean constant, String[] importedModules) {
+    public void registerClassVariable(String name, boolean isNative, String[] leadingComments, ProcedureAction action, Scope scope, boolean constant, String[] importedModules) {
         
+        variables.put(name, true);
+        variablesNative.put(name, isNative);
+        variablesComments.put(name, leadingComments);
         classVariableActions.put(name, action);
         classVariableScopes.put(name, scope);
         classVariableConstant.put(name, constant);
@@ -128,8 +134,11 @@ public class TYClass {
         }
     }
     
-    public void registerInstanceVariable(String name, ProcedureAction action, Scope scope, boolean constant, String[] importedModules) {
+    public void registerInstanceVariable(String name, boolean isNative, String[] leadingComments, ProcedureAction action, Scope scope, boolean constant, String[] importedModules) {
         
+        variables.put(name, false);
+        variablesNative.put(name, isNative);
+        variablesComments.put(name, leadingComments);
         instanceVariableActions.put(name, action);
         instanceVariableScopes.put(name, scope);
         instanceVariableConstant.put(name, constant);
@@ -255,6 +264,43 @@ public class TYClass {
         }
         
         return null;
+    }
+    
+    public String[] getFieldArray() {
+        
+        return variables.keySet().toArray(new String[variables.size()]);
+    }
+    
+    public boolean fieldExists(String name) {
+        
+        return variables.keySet().contains(name);
+    }
+    
+    public boolean isFieldNative(String name) {
+        
+        return variablesNative.getOrDefault(name, false);
+    }
+    
+    public boolean isFieldStatic(String name) {
+        
+        return variables.getOrDefault(name, false);
+    }
+    
+    public boolean isFieldConstant(String name) {
+        
+        if (isFieldStatic(name)) {
+            
+            return classVariableConstant.getOrDefault(name, false);
+            
+        } else {
+            
+            return instanceVariableConstant.getOrDefault(name, false);
+        }
+    }
+    
+    public String[] getFieldLeadingComments(String name) {
+        
+        return variablesComments.getOrDefault(name, null);
     }
     
     public String getName() {

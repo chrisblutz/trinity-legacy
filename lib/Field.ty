@@ -1,0 +1,24 @@
+module Trinity
+    class Field
+        def native getName
+
+        def native isStatic
+
+        def native isNative
+
+        def native isConstant
+
+        def native getComments
+
+        def native getValue(obj)
+
+        def toString
+            str = getName()
+
+            if isConstant()
+                str += ' [constant]'
+            if isNative()
+                str += ' [native]'
+            if isStatic()
+                str += ' [static]'
+            str

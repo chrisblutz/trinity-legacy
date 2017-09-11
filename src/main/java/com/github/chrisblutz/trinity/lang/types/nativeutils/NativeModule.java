@@ -103,6 +103,16 @@ class NativeModule {
                 return TYObject.NIL;
             }
         });
-        TrinityNatives.registerMethod("Trinity.Module", "all", (runtime, thisObj, params) -> NativeStorage.getAllModules());
+        TrinityNatives.registerMethod("Trinity.Module", "all", (runtime, thisObj, params) -> {
+            
+            List<TYObject> modules = new ArrayList<>();
+            
+            for (TYModule m : ModuleRegistry.getModules()) {
+                
+                modules.add(NativeStorage.getModuleObject(m));
+            }
+            
+            return new TYArray(modules);
+        });
     }
 }

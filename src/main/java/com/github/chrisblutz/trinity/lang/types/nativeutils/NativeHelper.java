@@ -20,6 +20,7 @@ public class NativeHelper {
         NativeClass.register();
         NativeModule.register();
         NativeMethod.register();
+        NativeField.register();
         
         NativeKernel.register();
         NativeSystem.register();

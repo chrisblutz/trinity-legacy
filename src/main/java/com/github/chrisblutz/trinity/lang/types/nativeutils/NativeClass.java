@@ -102,6 +102,32 @@ class NativeClass {
                 return TYObject.NIL;
             }
         });
+        TrinityNatives.registerMethod("Trinity.Class", "getFields", (runtime, thisObj, params) -> {
+            
+            TYClass tyClass = TrinityNatives.cast(TYClassObject.class, thisObj).getInternalClass();
+            List<TYObject> fields = new ArrayList<>();
+            
+            for (String f : tyClass.getFieldArray()) {
+                
+                fields.add(NativeStorage.getFieldObject(tyClass, f));
+            }
+            
+            return new TYArray(fields);
+        });
+        TrinityNatives.registerMethod("Trinity.Class", "getField", (runtime, thisObj, params) -> {
+            
+            TYClass tyClass = TrinityNatives.cast(TYClassObject.class, thisObj).getInternalClass();
+            String name = TrinityNatives.toString(runtime.getVariable("name"), runtime);
+            
+            if (tyClass.fieldExists(name)) {
+                
+                return NativeStorage.getFieldObject(tyClass, name);
+                
+            } else {
+                
+                return TYObject.NIL;
+            }
+        });
         TrinityNatives.registerMethod("Trinity.Class", "getInnerClasses", (runtime, thisObj, params) -> {
             
             List<TYObject> classes = new ArrayList<>();
@@ -145,6 +171,16 @@ class NativeClass {
                 return TYObject.NIL;
             }
         });
-        TrinityNatives.registerMethod("Trinity.Class", "all", (runtime, thisObj, params) -> NativeStorage.getAllClasses());
+        TrinityNatives.registerMethod("Trinity.Class", "all", (runtime, thisObj, params) -> {
+            
+            List<TYObject> classes = new ArrayList<>();
+            
+            for (TYClass c : ClassRegistry.getClasses()) {
+                
+                classes.add(NativeStorage.getClassObject(c));
+            }
+            
+            return new TYArray(classes);
+        });
     }
 }

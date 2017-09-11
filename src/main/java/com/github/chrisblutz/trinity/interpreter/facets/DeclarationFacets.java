@@ -155,11 +155,11 @@ public class DeclarationFacets {
                 
                 if (staticVar) {
                     
-                    containerClass.registerClassVariable(name, action, env.getScope(), false, TrinityInterpreter.getImportedModules());
+                    containerClass.registerClassVariable(name, nativeVar, line.getLeadingComments(), action, env.getScope(), false, TrinityInterpreter.getImportedModules());
                     
                 } else {
                     
-                    containerClass.registerInstanceVariable(name, action, env.getScope(), false, TrinityInterpreter.getImportedModules());
+                    containerClass.registerInstanceVariable(name, nativeVar, line.getLeadingComments(), action, env.getScope(), false, TrinityInterpreter.getImportedModules());
                 }
             }
         });
@@ -238,11 +238,11 @@ public class DeclarationFacets {
                 
                 if (staticVar) {
                     
-                    containerClass.registerClassVariable(name, action, env.getScope(), true, TrinityInterpreter.getImportedModules());
+                    containerClass.registerClassVariable(name, nativeVar, line.getLeadingComments(), action, env.getScope(), true, TrinityInterpreter.getImportedModules());
                     
                 } else {
                     
-                    containerClass.registerInstanceVariable(name, action, env.getScope(), true, TrinityInterpreter.getImportedModules());
+                    containerClass.registerInstanceVariable(name, nativeVar, line.getLeadingComments(), action, env.getScope(), true, TrinityInterpreter.getImportedModules());
                 }
             }
         });

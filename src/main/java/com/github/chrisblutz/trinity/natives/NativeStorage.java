@@ -1,6 +1,9 @@
 package com.github.chrisblutz.trinity.natives;
 
-import com.github.chrisblutz.trinity.lang.*;
+import com.github.chrisblutz.trinity.lang.TYClass;
+import com.github.chrisblutz.trinity.lang.TYMethod;
+import com.github.chrisblutz.trinity.lang.TYModule;
+import com.github.chrisblutz.trinity.lang.TYObject;
 import com.github.chrisblutz.trinity.lang.procedures.TYProcedure;
 import com.github.chrisblutz.trinity.lang.threading.TYThread;
 import com.github.chrisblutz.trinity.lang.types.*;
@@ -30,6 +33,7 @@ public class NativeStorage {
     private static Map<TYModule, TYModuleObject> moduleObjects = new HashMap<>();
     private static Map<TYModule, TYStaticModuleObject> staticModuleObjects = new HashMap<>();
     private static Map<TYMethod, TYMethodObject> methodObjects = new HashMap<>();
+    private static Map<TYClass, Map<String, TYFieldObject>> fieldObjects = new HashMap<>();
     
     private static Map<TYClass, TYString> classNames = new HashMap<>();
     private static Map<TYClass, TYString> classShortNames = new HashMap<>();
@@ -47,6 +51,11 @@ public class NativeStorage {
     private static Map<TYProcedure, TYObject> blockArguments = new WeakHashMap<>();
     private static Map<TYProcedure, TYObject> overflowArguments = new WeakHashMap<>();
     
+    private static Map<TYFieldObject, TYString> fieldNames = new HashMap<>();
+    private static Map<TYFieldObject, TYBoolean> fieldStatic = new HashMap<>();
+    private static Map<TYFieldObject, TYBoolean> fieldNative = new HashMap<>();
+    private static Map<TYFieldObject, TYBoolean> fieldConstant = new HashMap<>();
+    
     private static Map<TYArray, TYInt> arrayLengths = new HashMap<>();
     
     private static Map<TYMap, TYArray> mapKeySets = new WeakHashMap<>();
@@ -58,11 +67,9 @@ public class NativeStorage {
     private static Map<TYClass, TYObject> classLeadingComments = new HashMap<>();
     private static Map<TYModule, TYObject> moduleLeadingComments = new HashMap<>();
     private static Map<TYMethod, TYObject> methodLeadingComments = new HashMap<>();
+    private static Map<TYFieldObject, TYObject> fieldLeadingComments = new HashMap<>();
     
     private static Map<TYThread, TYThreadObject> threadObjectMap = new HashMap<>();
-    
-    private static TYArray allClasses = null;
-    private static TYArray allModules = null;
     
     private static TYString nilString = null;
     private static TYFloat e = null, pi = null;
@@ -115,6 +122,21 @@ public class NativeStorage {
         }
         
         return methodObjects.get(tyMethod);
+    }
+    
+    public synchronized static TYFieldObject getFieldObject(TYClass tyClass, String name) {
+        
+        if (!fieldObjects.containsKey(tyClass)) {
+            
+            fieldObjects.put(tyClass, new HashMap<>());
+        }
+        
+        if (!fieldObjects.get(tyClass).containsKey(name)) {
+            
+            fieldObjects.get(tyClass).put(name, new TYFieldObject(tyClass, name));
+        }
+        
+        return fieldObjects.get(tyClass).get(name);
     }
     
     public synchronized static TYString getClassName(TYClass tyClass) {
@@ -241,6 +263,46 @@ public class NativeStorage {
         return overflowArguments.get(tyProcedure);
     }
     
+    public synchronized static TYString getFieldName(TYFieldObject fieldObject) {
+        
+        if (!fieldNames.containsKey(fieldObject)) {
+            
+            fieldNames.put(fieldObject, new TYString(fieldObject.getInternalName()));
+        }
+        
+        return fieldNames.get(fieldObject);
+    }
+    
+    public synchronized static TYBoolean isFieldStatic(TYFieldObject fieldObject) {
+        
+        if (!fieldStatic.containsKey(fieldObject)) {
+            
+            fieldStatic.put(fieldObject, TYBoolean.valueFor(fieldObject.isStatic()));
+        }
+        
+        return fieldStatic.get(fieldObject);
+    }
+    
+    public synchronized static TYBoolean isFieldNative(TYFieldObject fieldObject) {
+        
+        if (!fieldNative.containsKey(fieldObject)) {
+            
+            fieldNative.put(fieldObject, TYBoolean.valueFor(fieldObject.isNative()));
+        }
+        
+        return fieldNative.get(fieldObject);
+    }
+    
+    public synchronized static TYBoolean isFieldConstant(TYFieldObject fieldObject) {
+        
+        if (!fieldConstant.containsKey(fieldObject)) {
+            
+            fieldConstant.put(fieldObject, TYBoolean.valueFor(fieldObject.isConstant()));
+        }
+        
+        return fieldConstant.get(fieldObject);
+    }
+    
     public synchronized static TYInt getArrayLength(TYArray tyArray) {
         
         if (!arrayLengths.containsKey(tyArray)) {
@@ -350,6 +412,17 @@ public class NativeStorage {
         return methodLeadingComments.get(tyMethod);
     }
     
+    public synchronized static TYObject getLeadingComments(TYFieldObject fieldObject) {
+        
+        if (!fieldLeadingComments.containsKey(fieldObject)) {
+            
+            String[] c = fieldObject.getLeadingComments();
+            fieldLeadingComments.put(fieldObject, TrinityNatives.getObjectFor(c));
+        }
+        
+        return fieldLeadingComments.get(fieldObject);
+    }
+    
     public synchronized static TYThreadObject getThreadObject(TYThread tyThread) {
         
         if (!threadObjectMap.containsKey(tyThread)) {
@@ -358,46 +431,6 @@ public class NativeStorage {
         }
         
         return threadObjectMap.get(tyThread);
-    }
-    
-    public synchronized static TYArray getAllClasses() {
-        
-        if (allClasses == null) {
-            
-            List<TYObject> objects = new ArrayList<>();
-            for (TYClass tyClass : ClassRegistry.getClasses()) {
-                
-                objects.add(getClassObject(tyClass));
-            }
-            allClasses = new TYArray(objects);
-        }
-        
-        return allClasses;
-    }
-    
-    public synchronized static TYArray getAllModules() {
-        
-        if (allModules == null) {
-            
-            List<TYObject> objects = new ArrayList<>();
-            for (TYModule tyModule : ModuleRegistry.getModules()) {
-                
-                objects.add(getModuleObject(tyModule));
-            }
-            allModules = new TYArray(objects);
-        }
-        
-        return allModules;
-    }
-    
-    public synchronized static void clearAllClassData() {
-        
-        allClasses = null;
-    }
-    
-    public synchronized static void clearAllModuleData() {
-        
-        allModules = null;
     }
     
     public synchronized static TYFloat getE() {

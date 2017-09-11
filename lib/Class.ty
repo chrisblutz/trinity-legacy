@@ -16,6 +16,10 @@ module Trinity
 
         def native getMethod(name)
 
+        def native getFields
+
+        def native getField(name)
+
         def native getInnerClasses
 
         def native getInnerClass(name)
