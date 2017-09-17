@@ -2,14 +2,14 @@ apply plugin: 'java'
 apply plugin: 'application'
 apply plugin: 'jacoco'
 
-mainClassName = "com.github.chrisblutz.trinity.Trinity"
+mainClassName = 'com.github.chrisblutz.trinity.Trinity'
 
 configurations { codacy }
 
 repositories {
     mavenCentral()
-    maven { url "https://jitpack.io" }
-    maven { url "http://dl.bintray.com/typesafe/maven-releases" }
+    maven { url 'https://jitpack.io' }
+    maven { url 'http://dl.bintray.com/typesafe/maven-releases' }
 }
 
 dependencies {
@@ -19,7 +19,7 @@ dependencies {
 
 test {
     testLogging {
-        events "passed", "skipped", "failed"
+        events 'passed', 'skipped', 'failed'
     }
 }
 
@@ -65,11 +65,11 @@ task trinityTest(dependsOn: jar, type: Exec) {
 }
 
 task sendCoverage(dependsOn: jacocoTestReport, type: JavaExec) {
-    main = "com.codacy.CodacyCoverageReporter"
+    main = 'com.codacy.CodacyCoverageReporter'
     classpath = configurations.codacy
     args = [
-            "-l", "Java",
-            "-r", "${buildDir}/reports/jacoco/test/jacocoTestReport.xml",
-            "-t", "\$CODACY_PROJECT_TOKEN"
+            '-l', 'Java',
+            '-r', "${buildDir}/reports/jacoco/test/jacocoTestReport.xml",
+            '-t', System.getenv('CODACY_PROJECT_TOKEN')
     ]
 }
