@@ -88,24 +88,26 @@ public class ExpressionInterpreter {
                 List<InstructionSet> components = new ArrayList<>();
                 if (comp > 0) {
                     
-                    if (strippedTokens.length == 0 && KeywordExpressions.isKeywordRigid(first)) {
+                    if (strippedTokens.length > 0) {
                         
-                        Errors.throwSyntaxError(Errors.Classes.SYNTAX_ERROR, "'" + first.getLiteral() + "' statements require " + comp + " expressions, found " + components.size() + ".", location.getFileName(), location.getLineNumber());
-                    }
-                    
-                    Token delimiter = KeywordExpressions.getKeywordDelimiter(first);
-                    
-                    if (delimiter == null) {
+                        Token delimiter = KeywordExpressions.getKeywordDelimiter(first);
                         
-                        components.add(interpretCompoundExpression(strippedTokens, location, errorClass, method, null));
+                        if (delimiter == null) {
+                            
+                            components.add(interpretCompoundExpression(strippedTokens, location, errorClass, method, null));
+                            
+                        } else {
+                            
+                            InstructionSet[] sets = splitExpressions(strippedTokens, delimiter, location, errorClass, method, null);
+                            components.addAll(Arrays.asList(sets));
+                        }
                         
-                    } else {
+                        if (components.size() > comp || (components.size() < comp && KeywordExpressions.isKeywordRigid(first))) {
+                            
+                            Errors.throwSyntaxError(Errors.Classes.SYNTAX_ERROR, "'" + first.getLiteral() + "' statements require " + comp + " expressions, found " + components.size() + ".", location.getFileName(), location.getLineNumber());
+                        }
                         
-                        InstructionSet[] sets = splitExpressions(strippedTokens, delimiter, location, errorClass, method, null);
-                        components.addAll(Arrays.asList(sets));
-                    }
-                    
-                    if (components.size() > comp || (components.size() < comp && KeywordExpressions.isKeywordRigid(first))) {
+                    } else if (KeywordExpressions.isKeywordRigid(first)) {
                         
                         Errors.throwSyntaxError(Errors.Classes.SYNTAX_ERROR, "'" + first.getLiteral() + "' statements require " + comp + " expressions, found " + components.size() + ".", location.getFileName(), location.getLineNumber());
                     }
@@ -140,7 +142,7 @@ public class ExpressionInterpreter {
                 
             } else {
                 
-                Errors.throwSyntaxError(Errors.Classes.SYNTAX_ERROR, "..." + KeywordExpressions.getConstraintMessage(first), location.getFileName(), location.getLineNumber());
+                Errors.throwSyntaxError(Errors.Classes.SYNTAX_ERROR, KeywordExpressions.getConstraintMessage(first), location.getFileName(), location.getLineNumber());
             }
             
         } else {
