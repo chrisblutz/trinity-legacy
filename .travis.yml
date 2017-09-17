@@ -7,3 +7,5 @@ script:
  - java -version
  - ./gradlew test
  - ./gradlew trinityTest
+after_success:
+ - ./gradlew sendCoverage
