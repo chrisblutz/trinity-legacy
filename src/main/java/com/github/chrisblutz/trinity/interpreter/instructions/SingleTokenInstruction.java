@@ -3,7 +3,6 @@ package com.github.chrisblutz.trinity.interpreter.instructions;
 import com.github.chrisblutz.trinity.interpreter.Location;
 import com.github.chrisblutz.trinity.lang.*;
 import com.github.chrisblutz.trinity.lang.errors.Errors;
-import com.github.chrisblutz.trinity.lang.TYRuntime;
 import com.github.chrisblutz.trinity.lang.types.TYStaticClassObject;
 import com.github.chrisblutz.trinity.lang.types.TYStaticModuleObject;
 import com.github.chrisblutz.trinity.lang.variables.VariableLoc;
@@ -52,7 +51,7 @@ public class SingleTokenInstruction extends Instruction {
                     
                 } else {
                     
-                    Errors.throwError(Errors.Classes.SCOPE_ERROR, runtime, "Cannot access value of field marked '" + loc.getScope().toString() + "' here.");
+                    loc.getScope().reportAccessViolation(runtime);
                 }
                 
             } else if (runtime.isStaticScope() && runtime.getScopeClass().hasVariable(getContents())) {
@@ -66,7 +65,7 @@ public class SingleTokenInstruction extends Instruction {
                     
                 } else {
                     
-                    Errors.throwError(Errors.Classes.SCOPE_ERROR, runtime, "Cannot access value of field marked '" + loc.getScope().toString() + "' here.");
+                    loc.getScope().reportAccessViolation(runtime);
                 }
                 
             } else if (runtime.getModule() != null && runtime.getModule().hasClass(getContents())) {
@@ -121,7 +120,7 @@ public class SingleTokenInstruction extends Instruction {
                     
                 } else {
                     
-                    Errors.throwError(Errors.Classes.SCOPE_ERROR, runtime, "Cannot access value of field marked '" + loc.getScope().toString() + "' here.");
+                    loc.getScope().reportAccessViolation(runtime);
                 }
                 
             } else if (tyClass.hasClass(getContents())) {
@@ -142,7 +141,7 @@ public class SingleTokenInstruction extends Instruction {
                     
                 } else {
                     
-                    Errors.throwError(Errors.Classes.SCOPE_ERROR, runtime, "Cannot access value of field marked '" + loc.getScope().toString() + "' here.");
+                    loc.getScope().reportAccessViolation(runtime);
                 }
             }
         }

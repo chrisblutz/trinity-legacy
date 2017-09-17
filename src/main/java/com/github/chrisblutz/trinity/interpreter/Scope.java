@@ -1,5 +1,7 @@
 package com.github.chrisblutz.trinity.interpreter;
 
+import com.github.chrisblutz.trinity.lang.TYRuntime;
+import com.github.chrisblutz.trinity.lang.errors.Errors;
 import com.github.chrisblutz.trinity.parser.tokens.Token;
 
 
@@ -22,5 +24,15 @@ public enum Scope {
     public String toString() {
         
         return str;
+    }
+    
+    public void reportAccessViolation(TYRuntime runtime) {
+        
+        Errors.throwError(Errors.Classes.SCOPE_ERROR, runtime, "Cannot access value of field marked '" + this.toString() + "' here.");
+    }
+    
+    public void reportAssignmentViolation(TYRuntime runtime) {
+        
+        Errors.throwError(Errors.Classes.SCOPE_ERROR, runtime, "Cannot set value of field marked '" + this.toString() + "' here.");
     }
 }

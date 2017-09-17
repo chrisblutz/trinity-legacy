@@ -1,7 +1,6 @@
 package com.github.chrisblutz.trinity.lang.types.nativeutils;
 
 import com.github.chrisblutz.trinity.lang.TYObject;
-import com.github.chrisblutz.trinity.lang.errors.Errors;
 import com.github.chrisblutz.trinity.lang.types.TYFieldObject;
 import com.github.chrisblutz.trinity.lang.variables.VariableLoc;
 import com.github.chrisblutz.trinity.natives.NativeStorage;
@@ -41,7 +40,7 @@ class NativeField {
                 
             } else {
                 
-                Errors.throwError(Errors.Classes.SCOPE_ERROR, runtime, "Cannot access value of field marked '" + loc.getScope().toString() + "' here.");
+                loc.getScope().reportAccessViolation(runtime);
             }
             
             return TYObject.NIL;
