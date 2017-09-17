@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
  */
 class NativeString {
     
-    static void register() {
+    protected static void register() {
         
         TrinityNatives.registerMethod(TrinityNatives.Classes.STRING, "chars", (runtime, thisObj, params) -> TrinityNatives.cast(TYString.class, thisObj).getCharacterArray());
         TrinityNatives.registerMethod(TrinityNatives.Classes.STRING, "+", (runtime, thisObj, params) -> {

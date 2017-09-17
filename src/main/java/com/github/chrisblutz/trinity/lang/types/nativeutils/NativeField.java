@@ -12,7 +12,7 @@ import com.github.chrisblutz.trinity.natives.TrinityNatives;
  */
 class NativeField {
     
-    static void register() {
+    protected static void register() {
         
         TrinityNatives.registerMethod(TrinityNatives.Classes.FIELD, "getName", (runtime, thisObj, params) -> NativeStorage.getFieldName(TrinityNatives.cast(TYFieldObject.class, thisObj)));
         TrinityNatives.registerMethod(TrinityNatives.Classes.FIELD, "isStatic", (runtime, thisObj, params) -> NativeStorage.isFieldStatic(TrinityNatives.cast(TYFieldObject.class, thisObj)));

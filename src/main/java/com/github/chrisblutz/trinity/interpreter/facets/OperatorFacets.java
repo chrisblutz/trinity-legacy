@@ -216,12 +216,13 @@ public class OperatorFacets {
             @Override
             public TYObject operate(TYObject first, TYObject second, TYRuntime runtime) {
                 
+                TYObject trueFirst = first;
                 if (TrinityNatives.isInstance(second, TrinityNatives.Classes.STRING)) {
                     
-                    first = first.tyInvoke("toString", runtime, null, null);
+                    trueFirst = first.tyInvoke("toString", runtime, null, null);
                 }
                 
-                return first.tyInvoke("+", runtime, null, null, second);
+                return trueFirst.tyInvoke("+", runtime, null, null, second);
             }
         };
         BinaryOperator modulus = new BinaryOperator(Token.MODULUS) {

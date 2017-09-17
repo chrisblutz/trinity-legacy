@@ -12,7 +12,7 @@ import java.io.PrintStream;
  */
 class NativeOutputStream {
     
-    static void register() {
+    protected static void register() {
         
         TrinityNatives.registerMethod(TrinityNatives.Classes.NATIVE_OUTPUT_STREAM, "print", (runtime, thisObj, params) -> {
             

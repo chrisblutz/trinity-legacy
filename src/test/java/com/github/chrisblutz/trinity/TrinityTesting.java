@@ -10,10 +10,7 @@ import com.github.chrisblutz.trinity.parser.tokens.TokenInfo;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,7 +51,7 @@ public class TrinityTesting {
             
             return lines.toArray(new String[lines.size()]);
             
-        } catch (Exception e) {
+        } catch (IOException e) {
             
             fail("File '" + fileName + "' could not be read. (" + e.getClass().getName() + ": " + e.getMessage() + ")");
             

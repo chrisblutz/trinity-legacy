@@ -16,7 +16,7 @@ import java.util.List;
  */
 class NativeMethod {
     
-    static void register() {
+    protected static void register() {
         
         TrinityNatives.registerMethod(TrinityNatives.Classes.METHOD, "getRequiredArguments", (runtime, thisObj, params) -> NativeStorage.getMandatoryArguments(TrinityNatives.cast(TYMethodObject.class, thisObj).getInternalMethod().getProcedure()));
         TrinityNatives.registerMethod(TrinityNatives.Classes.METHOD, "getOptionalArguments", (runtime, thisObj, params) -> NativeStorage.getOptionalArguments(TrinityNatives.cast(TYMethodObject.class, thisObj).getInternalMethod().getProcedure()));

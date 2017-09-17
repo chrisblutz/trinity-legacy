@@ -16,7 +16,7 @@ import java.util.List;
  */
 class NativeArray {
     
-    static void register() {
+    protected static void register() {
         
         TrinityNatives.registerMethod(TrinityNatives.Classes.ARRAY, "length", (runtime, thisObj, params) -> NativeStorage.getArrayLength(TrinityNatives.cast(TYArray.class, thisObj)));
         TrinityNatives.registerMethod(TrinityNatives.Classes.ARRAY, "add", (runtime, thisObj, params) -> {

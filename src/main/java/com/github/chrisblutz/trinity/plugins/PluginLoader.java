@@ -82,7 +82,11 @@ public class PluginLoader {
         URLClassLoader classLoader = new URLClassLoader(new URL[]{file.toURI().toURL()});
         InputStream pluginFile = classLoader.getResourceAsStream(PLUGIN_FILE);
         
-        if (pluginFile != null) {
+        if (pluginFile == null) {
+            
+            System.err.println("No '.plugin' file found for JAR file '" + PLUGIN_FOLDER + file.getName() + "'.");
+            
+        } else {
             
             Properties properties = new Properties();
             properties.load(pluginFile);
@@ -134,10 +138,6 @@ public class PluginLoader {
                 
                 System.err.println("Plugin class in plugin '" + name + "' must provide a no-argument constructor.");
             }
-            
-        } else {
-            
-            System.err.println("No '.plugin' file found for JAR file '" + PLUGIN_FOLDER + file.getName() + "'.");
         }
     }
     

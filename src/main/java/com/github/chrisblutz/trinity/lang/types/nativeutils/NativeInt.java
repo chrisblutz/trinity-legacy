@@ -17,7 +17,9 @@ import com.github.chrisblutz.trinity.natives.TrinityNatives;
  */
 class NativeInt {
     
-    static void register() {
+    private static boolean overflow = false;
+    
+    protected static void register() {
         
         TrinityNatives.registerField(TrinityNatives.Classes.INT, "MIN_VALUE", (runtime, thisObj, params) -> TrinityNatives.wrapNumber(Integer.MIN_VALUE));
         TrinityNatives.registerField(TrinityNatives.Classes.INT, "MAX_VALUE", (runtime, thisObj, params) -> TrinityNatives.wrapNumber(Integer.MAX_VALUE));
@@ -122,8 +124,6 @@ class NativeInt {
             return TYBoolean.FALSE;
         });
     }
-    
-    private static boolean overflow = false;
     
     private static ProcedureAction getActionForOperation(String operation) {
         

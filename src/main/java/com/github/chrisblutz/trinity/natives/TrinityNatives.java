@@ -29,7 +29,7 @@ import java.util.Map;
  */
 public class TrinityNatives {
     
-    public class Classes {
+    public final class Classes {
         
         public static final String ARRAY = "Trinity.Array";
         public static final String BOOLEAN = "Trinity.Boolean";

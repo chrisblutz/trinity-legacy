@@ -18,7 +18,7 @@ import java.util.List;
  */
 class NativeClass {
     
-    static void register() {
+    protected static void register() {
         
         TrinityNatives.registerMethod(TrinityNatives.Classes.CLASS, "==", (runtime, thisObj, params) -> {
             
@@ -40,7 +40,7 @@ class NativeClass {
                 return TYBoolean.FALSE;
             }
             
-            return TYBoolean.valueFor(thisClass == otherClass);
+            return TYBoolean.valueFor(thisClass.equals(otherClass));
         });
         TrinityNatives.registerMethod(TrinityNatives.Classes.CLASS, "getSuperclass", (runtime, thisObj, params) -> {
             
@@ -59,14 +59,12 @@ class NativeClass {
             
             TYModule module = TrinityNatives.cast(TYClassObject.class, thisObj).getInternalClass().getModule();
             
-            if (module != null) {
-                
-                return NativeStorage.getModuleObject(module);
-                
-            } else {
+            if (module == null) {
                 
                 return TYObject.NIL;
             }
+            
+            return NativeStorage.getModuleObject(module);
         });
         TrinityNatives.registerMethod(TrinityNatives.Classes.CLASS, "getName", (runtime, thisObj, params) -> NativeStorage.getClassName(TrinityNatives.cast(TYClassObject.class, thisObj).getInternalClass()));
         TrinityNatives.registerMethod(TrinityNatives.Classes.CLASS, "getShortName", (runtime, thisObj, params) -> NativeStorage.getClassShortName(TrinityNatives.cast(TYClassObject.class, thisObj).getInternalClass()));
@@ -93,14 +91,12 @@ class NativeClass {
             
             TYMethod method = TrinityNatives.cast(TYClassObject.class, thisObj).getInternalClass().getMethod(TrinityNatives.cast(TYString.class, runtime.getVariable("name")).getInternalString());
             
-            if (method != null) {
-                
-                return NativeStorage.getMethodObject(method);
-                
-            } else {
+            if (method == null) {
                 
                 return TYObject.NIL;
             }
+            
+            return NativeStorage.getMethodObject(method);
         });
         TrinityNatives.registerMethod(TrinityNatives.Classes.CLASS, "getFields", (runtime, thisObj, params) -> {
             
@@ -143,14 +139,12 @@ class NativeClass {
             
             TYClass c = TrinityNatives.cast(TYClassObject.class, thisObj).getInternalClass().getClass(TrinityNatives.cast(TYString.class, runtime.getVariable("name")).getInternalString());
             
-            if (c != null) {
-                
-                return NativeStorage.getClassObject(c);
-                
-            } else {
+            if (c == null) {
                 
                 return TYObject.NIL;
             }
+            
+            return NativeStorage.getClassObject(c);
         });
         TrinityNatives.registerMethod(TrinityNatives.Classes.CLASS, "getComments", (runtime, thisObj, params) -> {
             

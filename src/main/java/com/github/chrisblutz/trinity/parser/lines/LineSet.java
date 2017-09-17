@@ -102,7 +102,8 @@ public class LineSet extends ArrayList<Line> {
     public void collapseComments() {
         
         List<String> comment = new ArrayList<>();
-        int line = -1, leading = -1;
+        int line = -1;
+        int leading = -1;
         
         for (int lineNum : getCommentedLines()) {
             
@@ -156,11 +157,7 @@ public class LineSet extends ArrayList<Line> {
         
         str.append("\n");
         
-        if (!hasCollapsedComments()) {
-            
-            str.append("No comments.");
-            
-        } else {
+        if (hasCollapsedComments()) {
             
             str.append("Comments:");
             
@@ -168,6 +165,10 @@ public class LineSet extends ArrayList<Line> {
                 
                 str.append("\n\t").append(line).append(": ").append(Arrays.toString(getCollapsedComment(line))).append(" [").append(getCollapsedCommentLeading(line)).append(" leading]");
             }
+            
+        } else {
+            
+            str.append("No comments.");
         }
         
         return str.toString();

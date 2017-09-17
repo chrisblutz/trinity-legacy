@@ -17,7 +17,7 @@ import java.util.ArrayList;
  */
 class NativeErrors {
     
-    static void register() {
+    protected static void register() {
         
         TrinityNatives.registerMethod(TrinityNatives.Classes.ERROR, "populateStackTrace", (runtime, thisObj, params) -> {
             
@@ -29,33 +29,33 @@ class NativeErrors {
                 StackElement e = stack.getStack()[i];
                 
                 TYObject errorClass;
-                if (e.getErrorClass() != null) {
+                if (e.getErrorClass() == null) {
                     
-                    errorClass = new TYString(e.getErrorClass());
+                    errorClass = TYObject.NIL;
                     
                 } else {
                     
-                    errorClass = TYObject.NIL;
+                    errorClass = new TYString(e.getErrorClass());
                 }
                 
                 TYObject method;
-                if (e.getMethod() != null) {
+                if (e.getMethod() == null) {
                     
-                    method = new TYString(e.getMethod());
+                    method = TYObject.NIL;
                     
                 } else {
                     
-                    method = TYObject.NIL;
+                    method = new TYString(e.getMethod());
                 }
                 
                 TYObject fileName;
-                if (e.getFile() != null) {
+                if (e.getFile() == null) {
                     
-                    fileName = new TYString(e.getFile());
+                    fileName = TYObject.NIL;
                     
                 } else {
                     
-                    fileName = TYObject.NIL;
+                    fileName = new TYString(e.getFile());
                 }
                 
                 TYObject line = new TYInt(e.getLine());

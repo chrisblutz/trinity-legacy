@@ -9,7 +9,7 @@ import com.github.chrisblutz.trinity.natives.TrinityNatives;
  */
 class NativeMath {
     
-    static void register() {
+    protected static void register() {
         
         TrinityNatives.registerField(TrinityNatives.Classes.MATH, "E", (runtime, thisObj, params) -> NativeStorage.getE());
         TrinityNatives.registerField(TrinityNatives.Classes.MATH, "PI", (runtime, thisObj, params) -> NativeStorage.getPi());

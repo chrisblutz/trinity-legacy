@@ -29,11 +29,12 @@ public class InstructionSet extends Instruction {
         
         updateLocation();
         
+        TYObject currentThis = thisObj;
         for (Instruction instruction : getInstructions()) {
             
-            thisObj = instruction.evaluate(thisObj, runtime);
+            currentThis = instruction.evaluate(currentThis, runtime);
         }
         
-        return thisObj;
+        return currentThis;
     }
 }

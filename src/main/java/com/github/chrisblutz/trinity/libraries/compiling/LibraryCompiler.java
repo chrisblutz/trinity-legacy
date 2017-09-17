@@ -65,7 +65,7 @@ public class LibraryCompiler {
             properties.load(inputStream);
             inputStream.close();
             
-        } catch (Exception e) {
+        } catch (IOException e) {
             
             System.err.println("An error occurred while reading the " + TYBUNDLE_FILE + " file.");
             
@@ -301,14 +301,15 @@ public class LibraryCompiler {
     
     private static String getFileNameWithoutPath(String fullPath, String cutPath) {
         
-        if (!cutPath.replace(File.separatorChar, '/').endsWith("/")) {
+        String path = cutPath;
+        if (!path.replace(File.separatorChar, '/').endsWith("/")) {
             
-            cutPath = cutPath + "/";
+            path = cutPath + "/";
         }
         
-        if (cutPath.length() <= fullPath.length()) {
+        if (path.length() <= fullPath.length()) {
             
-            return fullPath.substring(cutPath.length());
+            return fullPath.substring(path.length());
             
         } else {
             

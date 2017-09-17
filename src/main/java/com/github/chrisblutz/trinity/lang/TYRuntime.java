@@ -240,7 +240,7 @@ public class TYRuntime implements Cloneable {
             
             return runtime;
             
-        } catch (Exception e) {
+        } catch (CloneNotSupportedException e) {
             
             e.printStackTrace();
             return new TYRuntime();

@@ -19,20 +19,18 @@ import java.util.List;
  */
 class NativeModule {
     
-    static void register() {
+    protected static void register() {
         
         TrinityNatives.registerMethod(TrinityNatives.Classes.MODULE, "getModule", (runtime, thisObj, params) -> {
             
             TYModule module = TrinityNatives.cast(TYModuleObject.class, thisObj).getInternalModule().getParentModule();
             
-            if (module != null) {
-                
-                return NativeStorage.getModuleObject(module);
-                
-            } else {
+            if (module == null) {
                 
                 return TYObject.NIL;
             }
+            
+            return NativeStorage.getModuleObject(module);
         });
         TrinityNatives.registerMethod(TrinityNatives.Classes.MODULE, "getName", (runtime, thisObj, params) -> NativeStorage.getModuleName(TrinityNatives.cast(TYModuleObject.class, thisObj).getInternalModule()));
         TrinityNatives.registerMethod(TrinityNatives.Classes.MODULE, "getShortName", (runtime, thisObj, params) -> NativeStorage.getModuleShortName(TrinityNatives.cast(TYModuleObject.class, thisObj).getInternalModule()));
@@ -51,14 +49,12 @@ class NativeModule {
             
             TYModule m = TrinityNatives.cast(TYModuleObject.class, thisObj).getInternalModule().getModule(TrinityNatives.cast(TYString.class, runtime.getVariable("name")).getInternalString());
             
-            if (m != null) {
-                
-                return NativeStorage.getModuleObject(m);
-                
-            } else {
+            if (m == null) {
                 
                 return TYObject.NIL;
             }
+            
+            return NativeStorage.getModuleObject(m);
         });
         TrinityNatives.registerMethod(TrinityNatives.Classes.MODULE, "getInnerClasses", (runtime, thisObj, params) -> {
             
@@ -75,14 +71,12 @@ class NativeModule {
             
             TYClass c = TrinityNatives.cast(TYModuleObject.class, thisObj).getInternalModule().getClass(TrinityNatives.cast(TYString.class, runtime.getVariable("name")).getInternalString());
             
-            if (c != null) {
-                
-                return NativeStorage.getClassObject(c);
-                
-            } else {
+            if (c == null) {
                 
                 return TYObject.NIL;
             }
+            
+            return NativeStorage.getClassObject(c);
         });
         TrinityNatives.registerMethod(TrinityNatives.Classes.MODULE, "getComments", (runtime, thisObj, params) -> {
             

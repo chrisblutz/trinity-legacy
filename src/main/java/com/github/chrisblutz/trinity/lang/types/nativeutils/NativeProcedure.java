@@ -17,7 +17,7 @@ import java.util.List;
  */
 class NativeProcedure {
     
-    static void register() {
+    protected static void register() {
         
         TrinityNatives.registerForNativeConstruction(TrinityNatives.Classes.PROCEDURE);
         

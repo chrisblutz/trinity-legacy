@@ -47,7 +47,7 @@ public class KeywordFacets {
                     
                     return new TYInt(Integer.parseInt(numString));
                     
-                } catch (Exception e) {
+                } catch (NumberFormatException e) {
                     
                     return new TYLong(Long.parseLong(numString));
                 }
@@ -79,15 +79,13 @@ public class KeywordFacets {
         });
         Keywords.register(Token.THIS, (thisObj, info, location, runtime) -> {
             
-            if (!runtime.isStaticScope()) {
-                
-                return runtime.getThis();
-                
-            } else {
+            if (runtime.isStaticScope()) {
                 
                 Errors.throwError(Errors.Classes.SCOPE_ERROR, runtime, "Cannot access 'this' in a static context.");
                 return TYObject.NONE;
             }
+            
+            return runtime.getThis();
         });
         
         Keywords.register(Token.__FILE__, (thisObj, info, location, runtime) -> new TYString(location.getFile().getAbsolutePath()));

@@ -16,7 +16,7 @@ import com.github.chrisblutz.trinity.natives.TrinityNatives;
  */
 public class Errors {
     
-    public class Classes {
+    public final class Classes {
         
         public static final String ARITHMETIC_ERROR = "Trinity.Errors.ArithmeticError";
         public static final String ASSERTION_ERROR = "Trinity.Errors.AssertionError";

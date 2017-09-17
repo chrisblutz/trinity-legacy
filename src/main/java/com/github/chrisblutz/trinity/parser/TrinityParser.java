@@ -17,6 +17,7 @@ import com.github.chrisblutz.trinity.utils.FileUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -56,7 +57,7 @@ public class TrinityParser {
                     parse(inputStream, file.getName(), file);
                     inputStream.close();
                     
-                } catch (Exception e) {
+                } catch (IOException e) {
                     
                     System.err.println("An error occurred while parsing '" + file.getName() + "'.");
                     
@@ -121,7 +122,8 @@ public class TrinityParser {
     
     private static LineSet parseFirstLevel(String filename, File fullFile, String[] lines) {
         
-        String litStr = "", token = "";
+        String litStr = "";
+        String token = "";
         int lineNumber = 1;
         
         LineSet set = new LineSet(filename, fullFile);
@@ -391,22 +393,7 @@ public class TrinityParser {
             
             for (TokenInfo info : line) {
                 
-                if (!inEscaped && !inUnescaped) {
-                    
-                    if (info.getToken() == Token.ESCAPED_LITERAL_QUOTE) {
-                        
-                        inEscaped = true;
-                        
-                    } else if (info.getToken() == Token.UNESCAPED_LITERAL_QUOTE) {
-                        
-                        inUnescaped = true;
-                        
-                    } else {
-                        
-                        newLine.add(info);
-                    }
-                    
-                } else if (inEscaped) {
+                if (inEscaped) {
                     
                     if (info.getToken() == Token.ESCAPED_LITERAL_QUOTE) {
                         
@@ -419,7 +406,7 @@ public class TrinityParser {
                         current.append(getAppendableString(info, true));
                     }
                     
-                } else {
+                } else if (inUnescaped) {
                     
                     if (info.getToken() == Token.UNESCAPED_LITERAL_QUOTE) {
                         
@@ -430,6 +417,21 @@ public class TrinityParser {
                     } else {
                         
                         current.append(getAppendableString(info, false));
+                    }
+                    
+                } else {
+                    
+                    if (info.getToken() == Token.ESCAPED_LITERAL_QUOTE) {
+                        
+                        inEscaped = true;
+                        
+                    } else if (info.getToken() == Token.UNESCAPED_LITERAL_QUOTE) {
+                        
+                        inUnescaped = true;
+                        
+                    } else {
+                        
+                        newLine.add(info);
                     }
                 }
             }

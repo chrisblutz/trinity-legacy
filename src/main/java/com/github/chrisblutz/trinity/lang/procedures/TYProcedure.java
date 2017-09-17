@@ -1,8 +1,8 @@
 package com.github.chrisblutz.trinity.lang.procedures;
 
 import com.github.chrisblutz.trinity.lang.TYObject;
-import com.github.chrisblutz.trinity.lang.errors.Errors;
 import com.github.chrisblutz.trinity.lang.TYRuntime;
+import com.github.chrisblutz.trinity.lang.errors.Errors;
 import com.github.chrisblutz.trinity.lang.types.arrays.TYArray;
 import com.github.chrisblutz.trinity.lang.types.procedures.TYProcedureObject;
 import com.github.chrisblutz.trinity.utils.ArrayUtils;
@@ -120,7 +120,8 @@ public class TYProcedure {
         
         List<TYObject> overflow = new ArrayList<>();
         
-        int paramPos, nameIndex = 0;
+        int paramPos;
+        int nameIndex = 0;
         for (paramPos = 0; paramPos < params.length; paramPos++) {
             
             TYObject param = params[paramPos];

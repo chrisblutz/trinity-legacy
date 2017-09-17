@@ -389,7 +389,23 @@ public class TYClass {
         
         if (methodName.contentEquals("new")) {
             
-            if (constructor != null) {
+            if (constructor == null) {
+                
+                TYRuntime newRuntime = runtime.clone();
+                newRuntime.clearVariables();
+                
+                TYObject newObj = new TYObject(this);
+                
+                newRuntime.setThis(newObj);
+                newRuntime.setScope(newObj, false);
+                newRuntime.setModule(getModule());
+                newRuntime.setTyClass(this);
+                
+                initializeInstanceFields(newObj, newRuntime);
+                
+                return newObj;
+                
+            } else {
                 
                 Scope scope = constructor.getScope();
                 boolean run = checkScope(scope, constructor, runtime);
@@ -428,22 +444,6 @@ public class TYClass {
                     
                     return TYObject.NONE;
                 }
-                
-            } else {
-                
-                TYRuntime newRuntime = runtime.clone();
-                newRuntime.clearVariables();
-                
-                TYObject newObj = new TYObject(this);
-                
-                newRuntime.setThis(newObj);
-                newRuntime.setScope(newObj, false);
-                newRuntime.setModule(getModule());
-                newRuntime.setTyClass(this);
-                
-                initializeInstanceFields(newObj, newRuntime);
-                
-                return newObj;
             }
             
         } else if (methods.containsKey(methodName)) {

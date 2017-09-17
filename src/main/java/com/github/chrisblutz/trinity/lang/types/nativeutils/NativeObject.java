@@ -15,7 +15,7 @@ import com.github.chrisblutz.trinity.natives.TrinityNatives;
  */
 class NativeObject {
     
-    static void register() {
+    protected static void register() {
         
         TrinityNatives.registerMethod(TrinityNatives.Classes.OBJECT, "+", DefaultProcedures.getDefaultUOEOperationProcedure("+"));
         TrinityNatives.registerMethod(TrinityNatives.Classes.OBJECT, "-", DefaultProcedures.getDefaultUOEOperationProcedure("-"));
@@ -58,7 +58,7 @@ class NativeObject {
             
             TYObject a = runtime.getVariable("a");
             TYObject b = runtime.getVariable("b");
-            return TYBoolean.valueFor(a == b);
+            return TYBoolean.valueFor(a.equals(b));
         });
     }
 }

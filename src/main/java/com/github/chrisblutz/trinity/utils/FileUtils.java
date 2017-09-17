@@ -4,12 +4,16 @@ import com.github.chrisblutz.trinity.Trinity;
 import com.github.chrisblutz.trinity.cli.CLI;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
 
 
 /**
  * @author Christopher Lutz
  */
 public class FileUtils {
+    
+    private static File trinityHome = null;
     
     public static String getExtension(File f) {
         
@@ -39,8 +43,6 @@ public class FileUtils {
         file.delete();
     }
     
-    private static File trinityHome = null;
-    
     public static File getTrinityHome() {
         
         if (trinityHome == null) {
@@ -51,7 +53,7 @@ public class FileUtils {
                 // Resolve '../..' out of path
                 trinityHome = trinityHome.getCanonicalFile();
                 
-            } catch (Exception e) {
+            } catch (IOException e) {
                 
                 System.err.println("An error occurred while determining Trinity's home location.");
                 
@@ -61,18 +63,29 @@ public class FileUtils {
                 }
                 
                 Trinity.exit(50);
+                
+            } catch (URISyntaxException e) {
+                
+                System.err.println("Trinity's home location returned a malformed URI.");
+                
+                if (CLI.isDebuggingEnabled()) {
+                    
+                    e.printStackTrace();
+                }
+                
+                Trinity.exit(51);
             }
         }
         
         return trinityHome;
     }
     
-    public static void checkStandardLibrary(){
+    public static void checkStandardLibrary() {
         
-        if(!new File(getTrinityHome(), "lib/").exists()){
+        if (!new File(getTrinityHome(), "lib/").exists()) {
             
             System.err.println("Trinity's standard library could not be found.");
-    
+            
             Trinity.exit(80);
         }
     }

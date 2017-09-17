@@ -14,7 +14,7 @@ import com.github.chrisblutz.trinity.natives.TrinityNatives;
  */
 class NativeThread {
     
-    static void register() {
+    protected static void register() {
         
         TrinityNatives.registerForNativeConstruction(TrinityNatives.Classes.THREAD);
         
@@ -61,14 +61,12 @@ class NativeThread {
         TrinityNatives.registerMethod(TrinityNatives.Classes.THREAD, "getErrorHandler", (runtime, thisObj, params) -> {
             
             TYThread thread = TrinityNatives.cast(TYThreadObject.class, thisObj).getInternalThread();
-            if (thread.getErrorHandler() != null) {
-                
-                return thread.getErrorHandler();
-                
-            } else {
+            if (thread.getErrorHandler() == null) {
                 
                 return TYObject.NIL;
             }
+            
+            return thread.getErrorHandler();
         });
         
         TrinityNatives.registerMethod(TrinityNatives.Classes.THREAD, "current", (runtime, thisObj, params) -> NativeStorage.getThreadObject(TYThread.getCurrentThread()));

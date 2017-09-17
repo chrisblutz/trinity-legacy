@@ -17,22 +17,22 @@ import java.util.Map;
  */
 class NativeSystem {
     
-    static void register() {
+    private static TYMap environmentMap = null;
+    
+    protected static void register() {
         
         TrinityNatives.registerMethod(TrinityNatives.Classes.SYSTEM, "currentTimeMillis", (runtime, thisObj, params) -> new TYLong(System.currentTimeMillis()));
         TrinityNatives.registerMethod(TrinityNatives.Classes.SYSTEM, "getEnvironment", (runtime, thisObj, params) -> {
             
             TYObject name = runtime.getVariable("name");
             
-            if (name != TYObject.NIL) {
-                
-                String value = System.getenv(TrinityNatives.toString(name, runtime));
-                return value == null ? TYObject.NIL : new TYString(value);
-                
-            } else {
+            if (name == TYObject.NIL) {
                 
                 return getEnvironmentMap();
             }
+            
+            String value = System.getenv(TrinityNatives.toString(name, runtime));
+            return value == null ? TYObject.NIL : new TYString(value);
         });
         TrinityNatives.registerMethod(TrinityNatives.Classes.SYSTEM, "loadProperties", (runtime, thisObj, params) -> TrinityProperties.load());
         TrinityNatives.registerMethod(TrinityNatives.Classes.SYSTEM, "identify", (runtime, thisObj, params) -> {
@@ -41,8 +41,6 @@ class NativeSystem {
             return NativeStorage.getHashCode(object);
         });
     }
-    
-    private static TYMap environmentMap = null;
     
     private static TYMap getEnvironmentMap() {
         

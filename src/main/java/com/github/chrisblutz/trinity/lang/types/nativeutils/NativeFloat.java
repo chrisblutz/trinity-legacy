@@ -17,7 +17,7 @@ import com.github.chrisblutz.trinity.natives.TrinityNatives;
  */
 class NativeFloat {
     
-    static void register() {
+    protected static void register() {
         
         TrinityNatives.registerField(TrinityNatives.Classes.FLOAT, "NaN", (runtime, thisObj, params) -> TrinityNatives.wrapNumber(Double.NaN));
         TrinityNatives.registerField(TrinityNatives.Classes.FLOAT, "POSITIVE_INFINITY", (runtime, thisObj, params) -> TrinityNatives.wrapNumber(Double.POSITIVE_INFINITY));

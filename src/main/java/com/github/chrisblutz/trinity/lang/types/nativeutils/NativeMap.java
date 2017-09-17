@@ -15,7 +15,7 @@ import java.util.Map;
  */
 class NativeMap {
     
-    static void register() {
+    protected static void register() {
         
         TrinityNatives.registerForNativeConstruction(TrinityNatives.Classes.MAP);
         

@@ -88,24 +88,7 @@ public class Runner {
             long startMillis = System.currentTimeMillis();
             
             ProcedureAction mainAction = null;
-            if (mainClass != null) {
-                
-                if (ClassRegistry.classExists(mainClass)) {
-                    
-                    final TYClass main = ClassRegistry.getClass(mainClass);
-                    
-                    mainAction = (runtime, thisObj, params) -> {
-                        
-                        TrinityInterpreter.runInitializationActions();
-                        return main.tyInvoke("main", runtime, null, null, TYObject.NONE, TrinityNatives.getArrayFor(args));
-                    };
-                    
-                } else {
-                    
-                    Errors.throwSyntaxError(Errors.Classes.CLASS_NOT_FOUND_ERROR, "Class '" + mainClass + "' not found.", null, 0);
-                }
-                
-            } else {
+            if (mainClass == null) {
                 
                 if (ClassRegistry.getMainClasses().size() > 0) {
                     
@@ -120,6 +103,23 @@ public class Runner {
                 } else {
                     
                     Errors.throwSyntaxError(Errors.Classes.METHOD_NOT_FOUND_ERROR, "No 'main' methods found.", null, 0);
+                }
+                
+            } else {
+                
+                if (ClassRegistry.classExists(mainClass)) {
+                    
+                    final TYClass main = ClassRegistry.getClass(mainClass);
+                    
+                    mainAction = (runtime, thisObj, params) -> {
+                        
+                        TrinityInterpreter.runInitializationActions();
+                        return main.tyInvoke("main", runtime, null, null, TYObject.NONE, TrinityNatives.getArrayFor(args));
+                    };
+                    
+                } else {
+                    
+                    Errors.throwSyntaxError(Errors.Classes.CLASS_NOT_FOUND_ERROR, "Class '" + mainClass + "' not found.", null, 0);
                 }
             }
             

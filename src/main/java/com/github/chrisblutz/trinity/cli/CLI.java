@@ -24,6 +24,9 @@ public class CLI {
     
     private static List<String> libraries = new ArrayList<>();
     
+    private static String currentOption = null;
+    private static List<String> params = new ArrayList<>();
+    
     public static void parse(String[] args) {
         
         for (String arg : args) {
@@ -31,13 +34,14 @@ public class CLI {
             parseArg(arg);
         }
         
-        if (currentOption != null) {
+        if (currentOption == null) {
             
-            parseOption(currentOption, params);
+            parseArguments(params);
             
         } else {
             
-            parseArguments(params);
+            parseOption(currentOption, params);
+            
         }
     }
     
@@ -47,9 +51,6 @@ public class CLI {
         
         Runner.run(sourceFiles.toArray(new File[sourceFiles.size()]), mainClass, arguments.toArray(new String[arguments.size()]));
     }
-    
-    private static String currentOption = null;
-    private static List<String> params = new ArrayList<>();
     
     private static void parseArg(String arg) {
         
@@ -115,6 +116,10 @@ public class CLI {
             case "--lib":
                 
                 libraries.addAll(params);
+                break;
+            
+            default:
+                System.err.println("Unrecognized option '" + arg + "'.");
                 break;
         }
     }

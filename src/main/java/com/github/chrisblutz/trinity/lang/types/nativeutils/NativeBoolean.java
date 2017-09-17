@@ -10,7 +10,7 @@ import com.github.chrisblutz.trinity.natives.TrinityNatives;
  */
 class NativeBoolean {
     
-    static void register() {
+    protected static void register() {
         
         TrinityNatives.registerField(TrinityNatives.Classes.BOOLEAN, "TRUE", (runtime, thisObj, params) -> TYBoolean.TRUE);
         TrinityNatives.registerField(TrinityNatives.Classes.BOOLEAN, "FALSE", (runtime, thisObj, params) -> TYBoolean.FALSE);

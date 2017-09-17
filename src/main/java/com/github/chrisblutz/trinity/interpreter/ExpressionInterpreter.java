@@ -95,14 +95,14 @@ public class ExpressionInterpreter {
                     
                     Token delimiter = KeywordExpressions.getKeywordDelimiter(first);
                     
-                    if (delimiter != null) {
+                    if (delimiter == null) {
                         
-                        InstructionSet[] sets = splitExpressions(strippedTokens, delimiter, location, errorClass, method, null);
-                        components.addAll(Arrays.asList(sets));
+                        components.add(interpretCompoundExpression(strippedTokens, location, errorClass, method, null));
                         
                     } else {
                         
-                        components.add(interpretCompoundExpression(strippedTokens, location, errorClass, method, null));
+                        InstructionSet[] sets = splitExpressions(strippedTokens, delimiter, location, errorClass, method, null);
+                        components.addAll(Arrays.asList(sets));
                     }
                     
                     if (components.size() > comp || (components.size() < comp && KeywordExpressions.isKeywordRigid(first))) {
@@ -265,7 +265,7 @@ public class ExpressionInterpreter {
                     }
                     
                     InstructionSet remainderSet = new InstructionSet(remainder, assignmentObject.getLocation());
-                    VariableLocRetriever retriever;
+                    VariableLocRetriever retriever = null;
                     if (end instanceof GlobalVariableInstruction) {
                         
                         retriever = new GlobalVariableLocRetriever(((GlobalVariableInstruction) end).getName());
@@ -277,7 +277,6 @@ public class ExpressionInterpreter {
                     } else {
                         
                         Errors.throwSyntaxError(Errors.Classes.SYNTAX_ERROR, "Invalid left-hand expression.", location.getFileName(), location.getLineNumber());
-                        retriever = null;
                     }
                     
                     return new InstructionSet(new Instruction[]{new AssignmentInstruction(token, remainderSet, retriever, value, location)}, location);
@@ -651,7 +650,8 @@ public class ExpressionInterpreter {
         
         List<String> mandatory = new ArrayList<>();
         Map<String, ProcedureAction> optional = new TreeMap<>();
-        String block = null, overflow = null;
+        String block = null;
+        String overflow = null;
         
         List<List<TokenInfo>> tokenSets = splitTokens(tokens, Token.COMMA);
         
@@ -810,7 +810,8 @@ public class ExpressionInterpreter {
         
         List<Token> tokenList = BinaryOperator.getOperators();
         
-        int level = 0, precedenceIndex = tokenList.size();
+        int level = 0;
+        int precedenceIndex = tokenList.size();
         for (int i = 0; i < tokens.length; i++) {
             
             TokenInfo info = tokens[i];

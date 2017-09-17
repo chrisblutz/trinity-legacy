@@ -18,7 +18,11 @@ public class TrinityInfo {
         
         InputStream stream = Trinity.class.getResourceAsStream("/trinity-interpreter.dat");
         
-        if (stream != null) {
+        if (stream == null) {
+            
+            System.err.println("INFO: Information on the Trinity interpreter is missing.");
+            
+        } else {
             
             try {
                 
@@ -28,10 +32,6 @@ public class TrinityInfo {
                 
                 System.err.println("INFO: Unable to load information on the Trinity interpreter.");
             }
-            
-        } else {
-            
-            System.err.println("INFO: Information on the Trinity interpreter is missing.");
         }
     }
     

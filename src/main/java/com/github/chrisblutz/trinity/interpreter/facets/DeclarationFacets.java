@@ -72,18 +72,16 @@ public class DeclarationFacets {
                 
                 InterpretEnvironment newEnv = env.append(scope);
                 TrinityInterpreter.interpret(nextBlock, newEnv);
-                env.setScope(scope);
-                
-            } else {
-                
-                env.setScope(scope);
             }
+            
+            env.setScope(scope);
         });
         
         // Definition for variable declarations
         Declarations.register(Token.VAR, 2, 0, (line, nextBlock, env, location) -> {
             
-            boolean staticVar = false, nativeVar = false;
+            boolean staticVar = false;
+            boolean nativeVar = false;
             String name = null;
             int position = 1;
             
@@ -99,16 +97,12 @@ public class DeclarationFacets {
                 position++;
             }
             
-            TYClass containerClass = null;
-            
-            if (!env.getClassStack().isEmpty()) {
-                
-                containerClass = env.getClassStack().get(env.getClassStack().size() - 1);
-                
-            } else {
+            if (env.getClassStack().isEmpty()) {
                 
                 Errors.throwSyntaxError(Errors.Classes.SCOPE_ERROR, "Variables must be declared within a class.", location.getFileName(), location.getLineNumber());
             }
+            
+            TYClass containerClass = env.getClassStack().get(env.getClassStack().size() - 1);
             
             TokenInfo[] parts = new TokenInfo[line.size() - position];
             System.arraycopy(line.toArray(new TokenInfo[line.size()]), position, parts, 0, parts.length);
@@ -127,7 +121,7 @@ public class DeclarationFacets {
                     position++;
                 }
                 
-                ProcedureAction action;
+                ProcedureAction action = null;
                 if (!nativeVar) {
                     
                     if (position < tokens.size() && tokens.get(position).getToken() == Token.ASSIGNMENT_OPERATOR) {
@@ -141,10 +135,6 @@ public class DeclarationFacets {
                         String stackName = "<var='" + name + "'>";
                         InstructionSet set = ExpressionInterpreter.interpretExpression(null, assignment.toArray(new TokenInfo[assignment.size()]), location, containerClass.getName(), stackName, i == splitParts.size() - 1 ? nextBlock : null);
                         action = new VariableProcedureAction(stackName, location, containerClass, set);
-                        
-                    } else {
-                        
-                        action = null;
                     }
                     
                 } else {
@@ -182,16 +172,12 @@ public class DeclarationFacets {
                 position++;
             }
             
-            TYClass containerClass = null;
-            
-            if (!env.getClassStack().isEmpty()) {
-                
-                containerClass = env.getClassStack().get(env.getClassStack().size() - 1);
-                
-            } else {
+            if (env.getClassStack().isEmpty()) {
                 
                 Errors.throwSyntaxError(Errors.Classes.SCOPE_ERROR, "Constants must be declared within a class.", location.getFileName(), location.getLineNumber());
             }
+            
+            TYClass containerClass = env.getClassStack().get(env.getClassStack().size() - 1);
             
             TokenInfo[] parts = new TokenInfo[line.size() - position];
             System.arraycopy(line.toArray(new TokenInfo[line.size()]), position, parts, 0, parts.length);
@@ -210,7 +196,7 @@ public class DeclarationFacets {
                     position++;
                 }
                 
-                ProcedureAction action;
+                ProcedureAction action = null;
                 if (!nativeVar) {
                     
                     if (position < tokens.size() && tokens.get(position).getToken() == Token.ASSIGNMENT_OPERATOR) {
@@ -224,10 +210,6 @@ public class DeclarationFacets {
                         String stackName = "<val='" + name + "'>";
                         InstructionSet set = ExpressionInterpreter.interpretExpression(null, assignment.toArray(new TokenInfo[assignment.size()]), location, containerClass.getName(), stackName, i == splitParts.size() - 1 ? nextBlock : null);
                         action = new VariableProcedureAction(stackName, location, containerClass, set);
-                        
-                    } else {
-                        
-                        action = null;
                     }
                     
                 } else {
@@ -332,7 +314,9 @@ public class DeclarationFacets {
         // Definition for method declarations
         Declarations.register(Token.DEF, 2, 0, (line, nextBlock, env, location) -> {
             
-            boolean staticMethod = false, nativeMethod = false, secureMethod = false;
+            boolean staticMethod = false;
+            boolean nativeMethod = false;
+            boolean secureMethod = false;
             String name;
             int position = 1;
             
@@ -381,16 +365,12 @@ public class DeclarationFacets {
                 position++;
             }
             
-            TYClass containerClass = null;
-            
-            if (!env.getClassStack().isEmpty()) {
-                
-                containerClass = env.getClassStack().get(env.getClassStack().size() - 1);
-                
-            } else {
+            if (env.getClassStack().isEmpty()) {
                 
                 Errors.throwSyntaxError(Errors.Classes.SCOPE_ERROR, "Methods must be declared within a class.", location.getFileName(), location.getLineNumber());
             }
+            
+            TYClass containerClass = env.getClassStack().get(env.getClassStack().size() - 1);
             
             List<String> mandatoryParams = new ArrayList<>();
             Map<String, ProcedureAction> optParams = new TreeMap<>();
@@ -411,13 +391,13 @@ public class DeclarationFacets {
             ProcedureAction action;
             if (!nativeMethod) {
                 
-                if (nextBlock != null) {
+                if (nextBlock == null) {
                     
-                    action = ExpressionInterpreter.interpret(nextBlock, env, env.getClassStack().get(env.getClassStack().size() - 1).getName(), name, true);
+                    action = (runtime, thisObj, params) -> TYObject.NONE;
                     
                 } else {
                     
-                    action = (runtime, thisObj, params) -> TYObject.NONE;
+                    action = ExpressionInterpreter.interpret(nextBlock, env, env.getClassStack().get(env.getClassStack().size() - 1).getName(), name, true);
                 }
                 
             } else {

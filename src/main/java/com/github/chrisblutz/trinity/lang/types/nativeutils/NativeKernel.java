@@ -32,7 +32,7 @@ class NativeKernel {
     
     private static Scanner readlnSc = null;
     
-    static void register() {
+    protected static void register() {
         
         TrinityNatives.registerField(TrinityNatives.Classes.KERNEL, "STDOUT", (runtime, thisObj, params) -> new TYNativeOutputStream(System.out));
         TrinityNatives.registerField(TrinityNatives.Classes.KERNEL, "STDERR", (runtime, thisObj, params) -> new TYNativeOutputStream(System.err));

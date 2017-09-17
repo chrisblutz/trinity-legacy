@@ -9,6 +9,7 @@ import com.github.chrisblutz.trinity.lang.types.strings.TYString;
 import com.github.chrisblutz.trinity.natives.TrinityNatives;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,7 +19,7 @@ import java.util.List;
  */
 class NativeFileSystem {
     
-    static void register() {
+    protected static void register() {
         
         TrinityNatives.registerMethod(TrinityNatives.Classes.FILE_SYSTEM, "normalize", (runtime, thisObj, params) -> {
             
@@ -42,7 +43,7 @@ class NativeFileSystem {
                 }
                 return TYBoolean.valueFor(f.createNewFile());
                 
-            } catch (Exception e) {
+            } catch (IOException e) {
                 
                 Errors.throwError(Errors.Classes.IO_ERROR, runtime, "An error occurred creating a file at '" + ((TYString) object).getInternalString() + "'.");
             }
