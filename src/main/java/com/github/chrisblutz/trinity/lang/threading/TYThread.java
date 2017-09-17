@@ -6,7 +6,7 @@ import com.github.chrisblutz.trinity.lang.TYObject;
 import com.github.chrisblutz.trinity.lang.errors.Errors;
 import com.github.chrisblutz.trinity.lang.errors.stacktrace.TrinityStack;
 import com.github.chrisblutz.trinity.lang.procedures.TYProcedure;
-import com.github.chrisblutz.trinity.lang.scope.TYRuntime;
+import com.github.chrisblutz.trinity.lang.TYRuntime;
 import com.github.chrisblutz.trinity.lang.types.procedures.TYProcedureObject;
 import com.github.chrisblutz.trinity.runner.Runner;
 

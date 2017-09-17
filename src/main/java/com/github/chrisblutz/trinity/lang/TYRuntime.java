@@ -1,9 +1,5 @@
-package com.github.chrisblutz.trinity.lang.scope;
+package com.github.chrisblutz.trinity.lang;
 
-import com.github.chrisblutz.trinity.lang.ModuleRegistry;
-import com.github.chrisblutz.trinity.lang.TYClass;
-import com.github.chrisblutz.trinity.lang.TYModule;
-import com.github.chrisblutz.trinity.lang.TYObject;
 import com.github.chrisblutz.trinity.lang.procedures.TYProcedure;
 import com.github.chrisblutz.trinity.lang.variables.VariableLoc;
 import com.github.chrisblutz.trinity.lang.variables.VariableManager;

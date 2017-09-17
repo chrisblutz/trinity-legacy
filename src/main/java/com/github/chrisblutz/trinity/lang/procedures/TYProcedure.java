@@ -2,7 +2,7 @@ package com.github.chrisblutz.trinity.lang.procedures;
 
 import com.github.chrisblutz.trinity.lang.TYObject;
 import com.github.chrisblutz.trinity.lang.errors.Errors;
-import com.github.chrisblutz.trinity.lang.scope.TYRuntime;
+import com.github.chrisblutz.trinity.lang.TYRuntime;
 import com.github.chrisblutz.trinity.lang.types.arrays.TYArray;
 import com.github.chrisblutz.trinity.lang.types.procedures.TYProcedureObject;
 import com.github.chrisblutz.trinity.utils.ArrayUtils;

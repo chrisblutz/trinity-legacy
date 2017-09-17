@@ -3,7 +3,7 @@ package com.github.chrisblutz.trinity.interpreter.instructions;
 import com.github.chrisblutz.trinity.interpreter.Location;
 import com.github.chrisblutz.trinity.lang.*;
 import com.github.chrisblutz.trinity.lang.errors.Errors;
-import com.github.chrisblutz.trinity.lang.scope.TYRuntime;
+import com.github.chrisblutz.trinity.lang.TYRuntime;
 import com.github.chrisblutz.trinity.lang.types.TYStaticClassObject;
 import com.github.chrisblutz.trinity.lang.types.TYStaticModuleObject;
 import com.github.chrisblutz.trinity.lang.variables.VariableLoc;

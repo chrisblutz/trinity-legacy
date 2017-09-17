@@ -1,6 +1,6 @@
 package com.github.chrisblutz.trinity.utils;
 
-import com.github.chrisblutz.trinity.lang.scope.TYRuntime;
+import com.github.chrisblutz.trinity.lang.TYRuntime;
 import com.github.chrisblutz.trinity.lang.types.arrays.TYArray;
 import com.github.chrisblutz.trinity.natives.TrinityNatives;
 

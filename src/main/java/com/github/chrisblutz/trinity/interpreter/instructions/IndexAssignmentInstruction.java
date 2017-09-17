@@ -4,7 +4,7 @@ import com.github.chrisblutz.trinity.interpreter.AssignmentOperators;
 import com.github.chrisblutz.trinity.interpreter.BinaryOperator;
 import com.github.chrisblutz.trinity.interpreter.Location;
 import com.github.chrisblutz.trinity.lang.TYObject;
-import com.github.chrisblutz.trinity.lang.scope.TYRuntime;
+import com.github.chrisblutz.trinity.lang.TYRuntime;
 import com.github.chrisblutz.trinity.parser.tokens.Token;
 
 

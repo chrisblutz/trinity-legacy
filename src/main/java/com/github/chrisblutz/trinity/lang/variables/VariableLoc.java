@@ -3,7 +3,7 @@ package com.github.chrisblutz.trinity.lang.variables;
 import com.github.chrisblutz.trinity.interpreter.Scope;
 import com.github.chrisblutz.trinity.lang.TYClass;
 import com.github.chrisblutz.trinity.lang.TYObject;
-import com.github.chrisblutz.trinity.lang.scope.TYRuntime;
+import com.github.chrisblutz.trinity.lang.TYRuntime;
 
 
 /**

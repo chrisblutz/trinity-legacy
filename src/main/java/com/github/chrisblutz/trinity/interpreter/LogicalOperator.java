@@ -3,7 +3,7 @@ package com.github.chrisblutz.trinity.interpreter;
 
 import com.github.chrisblutz.trinity.interpreter.instructions.InstructionSet;
 import com.github.chrisblutz.trinity.lang.TYObject;
-import com.github.chrisblutz.trinity.lang.scope.TYRuntime;
+import com.github.chrisblutz.trinity.lang.TYRuntime;
 import com.github.chrisblutz.trinity.lang.types.bool.TYBoolean;
 import com.github.chrisblutz.trinity.parser.tokens.Token;
 

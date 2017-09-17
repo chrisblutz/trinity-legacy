@@ -4,7 +4,7 @@ import com.github.chrisblutz.trinity.interpreter.Location;
 import com.github.chrisblutz.trinity.interpreter.variables.Variables;
 import com.github.chrisblutz.trinity.lang.TYObject;
 import com.github.chrisblutz.trinity.lang.errors.Errors;
-import com.github.chrisblutz.trinity.lang.scope.TYRuntime;
+import com.github.chrisblutz.trinity.lang.TYRuntime;
 import com.github.chrisblutz.trinity.lang.variables.VariableManager;
 
 

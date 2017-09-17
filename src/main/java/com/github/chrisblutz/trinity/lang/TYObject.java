@@ -2,7 +2,6 @@ package com.github.chrisblutz.trinity.lang;
 
 import com.github.chrisblutz.trinity.lang.errors.Errors;
 import com.github.chrisblutz.trinity.lang.procedures.TYProcedure;
-import com.github.chrisblutz.trinity.lang.scope.TYRuntime;
 import com.github.chrisblutz.trinity.lang.types.TYNilClass;
 
 

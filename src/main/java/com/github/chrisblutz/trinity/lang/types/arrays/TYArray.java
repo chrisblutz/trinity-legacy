@@ -2,7 +2,7 @@ package com.github.chrisblutz.trinity.lang.types.arrays;
 
 import com.github.chrisblutz.trinity.lang.ClassRegistry;
 import com.github.chrisblutz.trinity.lang.TYObject;
-import com.github.chrisblutz.trinity.lang.scope.TYRuntime;
+import com.github.chrisblutz.trinity.lang.TYRuntime;
 
 import java.util.List;
 
