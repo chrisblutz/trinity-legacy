@@ -29,4 +29,18 @@ public class TokenInfo {
         
         return token + " -> " + getContents();
     }
+    
+    @Override
+    public boolean equals(Object obj) {
+        
+        if (obj instanceof TokenInfo) {
+            
+            TokenInfo other = (TokenInfo) obj;
+            return getToken() == other.getToken() && getContents().equals(other.getContents());
+            
+        } else {
+            
+            return false;
+        }
+    }
 }

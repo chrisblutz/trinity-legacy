@@ -3,13 +3,35 @@ apply plugin: 'application'
 
 mainClassName = "com.github.chrisblutz.trinity.Trinity"
 
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile 'junit:junit:4.12'
+}
+
+test {
+    testLogging {
+        events "passed", "skipped", "failed"
+    }
+}
+
 sourceSets {
     main {
         java {
             srcDirs = ['src/main/java']
         }
         resources {
-            srcDirs = ['src/main/res']
+            srcDirs = ['src/main/resources']
+        }
+    }
+    test {
+        java {
+            srcDirs = ['src/test/java']
+        }
+        resources {
+            srcDirs = ['src/test/resources']
         }
     }
 }
@@ -20,8 +42,8 @@ tasks.withType(Jar) {
 
 jar {
     manifest {
-        attributes (
-            'Main-Class': mainClassName
+        attributes(
+                'Main-Class': mainClassName
         )
     }
 }

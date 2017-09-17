@@ -5,4 +5,5 @@ before_install:
  - chmod +x gradlew
 script:
  - java -version
+ - ./gradlew test
  - ./gradlew trinityTest
