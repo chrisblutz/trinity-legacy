@@ -67,21 +67,6 @@ class NativeKernel {
             Trinity.exit(TrinityNatives.toInt(runtime.getVariable("code")));
             return TYObject.NONE;
         });
-        TrinityNatives.registerMethod("Trinity.Kernel", "sleep", (runtime, thisObj, params) -> {
-            
-            long wait = TrinityNatives.toLong(runtime.getVariable("millis"));
-            
-            try {
-                
-                Thread.sleep(wait);
-                
-            } catch (InterruptedException e) {
-                
-                // TODO
-            }
-            
-            return TYObject.NONE;
-        });
         TrinityNatives.registerMethod("Trinity.Kernel", "eval", (runtime, thisObj, params) -> {
             
             TYObject code = runtime.getVariable("code");

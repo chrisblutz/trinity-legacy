@@ -225,18 +225,6 @@ public class TYRuntime implements Cloneable {
         variables.clear();
     }
     
-    /*@Override
-    public void finalize() {
-        
-        for (VariableLoc loc : variables.values()) {
-            
-            if (!clonedVars.contains(loc)) {
-                
-                VariableManager.clearVariable(loc);
-            }
-        }
-    }*/
-    
     @Override
     public TYRuntime clone() {
         
