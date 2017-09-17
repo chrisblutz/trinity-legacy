@@ -2,6 +2,7 @@ package com.github.chrisblutz.trinity.lang.types.numeric;
 
 import com.github.chrisblutz.trinity.lang.ClassRegistry;
 import com.github.chrisblutz.trinity.lang.TYObject;
+import com.github.chrisblutz.trinity.natives.TrinityNatives;
 
 
 /**
@@ -13,7 +14,7 @@ public class TYFloat extends TYObject {
     
     public TYFloat(double internal) {
         
-        super(ClassRegistry.getClass("Trinity.Float"));
+        super(ClassRegistry.getClass(TrinityNatives.Classes.FLOAT));
         
         this.internalDouble = internal;
     }

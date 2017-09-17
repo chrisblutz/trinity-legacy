@@ -2,8 +2,9 @@ package com.github.chrisblutz.trinity.lang.types.procedures;
 
 import com.github.chrisblutz.trinity.lang.ClassRegistry;
 import com.github.chrisblutz.trinity.lang.TYObject;
-import com.github.chrisblutz.trinity.lang.procedures.TYProcedure;
 import com.github.chrisblutz.trinity.lang.TYRuntime;
+import com.github.chrisblutz.trinity.lang.procedures.TYProcedure;
+import com.github.chrisblutz.trinity.natives.TrinityNatives;
 
 
 /**
@@ -16,7 +17,7 @@ public class TYProcedureObject extends TYObject {
     
     public TYProcedureObject(TYProcedure internal, TYRuntime procedureRuntime) {
         
-        super(ClassRegistry.getClass("Trinity.Procedure"));
+        super(ClassRegistry.getClass(TrinityNatives.Classes.PROCEDURE));
         
         this.internalProcedure = internal;
         this.procedureRuntime = procedureRuntime;

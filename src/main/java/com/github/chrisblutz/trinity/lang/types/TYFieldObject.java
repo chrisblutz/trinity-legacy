@@ -3,6 +3,7 @@ package com.github.chrisblutz.trinity.lang.types;
 import com.github.chrisblutz.trinity.lang.ClassRegistry;
 import com.github.chrisblutz.trinity.lang.TYClass;
 import com.github.chrisblutz.trinity.lang.TYObject;
+import com.github.chrisblutz.trinity.natives.TrinityNatives;
 
 
 /**
@@ -18,7 +19,7 @@ public class TYFieldObject extends TYObject {
     
     public TYFieldObject(TYClass tyClass, String name) {
         
-        super(ClassRegistry.getClass("Trinity.Field"));
+        super(ClassRegistry.getClass(TrinityNatives.Classes.FIELD));
         
         this.internalClass = tyClass;
         this.internalName = name;
@@ -51,7 +52,7 @@ public class TYFieldObject extends TYObject {
     }
     
     public boolean isConstant() {
-    
+        
         return isConstant;
     }
     

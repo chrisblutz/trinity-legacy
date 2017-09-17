@@ -34,10 +34,10 @@ class NativeKernel {
     
     static void register() {
         
-        TrinityNatives.registerField("Trinity.Kernel", "STDOUT", (runtime, thisObj, params) -> new TYNativeOutputStream(System.out));
-        TrinityNatives.registerField("Trinity.Kernel", "STDERR", (runtime, thisObj, params) -> new TYNativeOutputStream(System.err));
+        TrinityNatives.registerField(TrinityNatives.Classes.KERNEL, "STDOUT", (runtime, thisObj, params) -> new TYNativeOutputStream(System.out));
+        TrinityNatives.registerField(TrinityNatives.Classes.KERNEL, "STDERR", (runtime, thisObj, params) -> new TYNativeOutputStream(System.err));
         
-        TrinityNatives.registerMethod("Trinity.Kernel", "readln", (runtime, thisObj, params) -> {
+        TrinityNatives.registerMethod(TrinityNatives.Classes.KERNEL, "readln", (runtime, thisObj, params) -> {
             
             if (readlnSc == null) {
                 
@@ -50,11 +50,11 @@ class NativeKernel {
             
             return new TYString(readlnSc.nextLine());
         });
-        TrinityNatives.registerMethod("Trinity.Kernel", "throw", (runtime, thisObj, params) -> {
+        TrinityNatives.registerMethod(TrinityNatives.Classes.KERNEL, "throw", (runtime, thisObj, params) -> {
             
             TYObject error = runtime.getVariable("error");
             
-            if (TrinityNatives.isInstance(error, "Trinity.Errors.Error")) {
+            if (TrinityNatives.isInstance(error, TrinityNatives.Classes.ERROR)) {
                 
                 PluginLoader.triggerOnErrorThrown(error);
                 throw new TrinityErrorException(error);
@@ -62,12 +62,12 @@ class NativeKernel {
             
             return TYObject.NONE;
         });
-        TrinityNatives.registerMethod("Trinity.Kernel", "exit", (runtime, thisObj, params) -> {
+        TrinityNatives.registerMethod(TrinityNatives.Classes.KERNEL, "exit", (runtime, thisObj, params) -> {
             
             Trinity.exit(TrinityNatives.toInt(runtime.getVariable("code")));
             return TYObject.NONE;
         });
-        TrinityNatives.registerMethod("Trinity.Kernel", "eval", (runtime, thisObj, params) -> {
+        TrinityNatives.registerMethod(TrinityNatives.Classes.KERNEL, "eval", (runtime, thisObj, params) -> {
             
             TYObject code = runtime.getVariable("code");
             TYObject args = runtime.getVariable("args");
@@ -79,7 +79,7 @@ class NativeKernel {
                 
             } else {
                 
-                Errors.throwError("Trinity.Errors.InvalidTypeError", runtime, "Kernel.eval requires its args argument to be an array.");
+                Errors.throwError(Errors.Classes.INVALID_TYPE_ERROR, runtime, "Kernel.eval requires its args argument to be an array.");
                 argsMap = new TYMap(new HashMap<>());
             }
             
@@ -111,7 +111,7 @@ class NativeKernel {
             
             return action.onAction(newRuntime, TYObject.NONE);
         });
-        TrinityNatives.registerMethod("Trinity.Kernel", "load", (runtime, thisObj, params) -> {
+        TrinityNatives.registerMethod(TrinityNatives.Classes.KERNEL, "load", (runtime, thisObj, params) -> {
             
             TYObject fileObj = runtime.getVariable("file");
             

@@ -73,7 +73,7 @@ public class SingleTokenVariableLocRetriever implements VariableLocRetriever {
             }
         }
         
-        Errors.throwError("Trinity.Errors.FieldNotFoundError", runtime, "No field '" + getContents() + "' found.");
+        Errors.throwError(Errors.Classes.FIELD_NOT_FOUND_ERROR, runtime, "No field '" + getContents() + "' found.");
         
         return null;
     }

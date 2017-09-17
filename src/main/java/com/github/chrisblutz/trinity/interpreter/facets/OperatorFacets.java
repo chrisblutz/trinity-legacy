@@ -68,7 +68,7 @@ public class OperatorFacets {
             @Override
             public TYObject operate(TYObject first, TYObject second, TYRuntime runtime) {
                 
-                if (TrinityNatives.isInstance(first, "Trinity.Long") || TrinityNatives.isInstance(second, "Trinity.Long")) {
+                if (TrinityNatives.isInstance(first, TrinityNatives.Classes.LONG) || TrinityNatives.isInstance(second, TrinityNatives.Classes.LONG)) {
                     
                     long firstLong = TrinityNatives.toLong(first);
                     long secondLong = TrinityNatives.toLong(second);
@@ -87,7 +87,7 @@ public class OperatorFacets {
             @Override
             public TYObject operate(TYObject first, TYObject second, TYRuntime runtime) {
                 
-                if (TrinityNatives.isInstance(first, "Trinity.Long") || TrinityNatives.isInstance(second, "Trinity.Long")) {
+                if (TrinityNatives.isInstance(first, TrinityNatives.Classes.LONG) || TrinityNatives.isInstance(second, TrinityNatives.Classes.LONG)) {
                     
                     long firstLong = TrinityNatives.toLong(first);
                     long secondLong = TrinityNatives.toLong(second);
@@ -106,7 +106,7 @@ public class OperatorFacets {
             @Override
             public TYObject operate(TYObject first, TYObject second, TYRuntime runtime) {
                 
-                if (TrinityNatives.isInstance(first, "Trinity.Long") || TrinityNatives.isInstance(second, "Trinity.Long")) {
+                if (TrinityNatives.isInstance(first, TrinityNatives.Classes.LONG) || TrinityNatives.isInstance(second, TrinityNatives.Classes.LONG)) {
                     
                     long firstLong = TrinityNatives.toLong(first);
                     long secondLong = TrinityNatives.toLong(second);
@@ -216,7 +216,7 @@ public class OperatorFacets {
             @Override
             public TYObject operate(TYObject first, TYObject second, TYRuntime runtime) {
                 
-                if (TrinityNatives.isInstance(second, "Trinity.String")) {
+                if (TrinityNatives.isInstance(second, TrinityNatives.Classes.STRING)) {
                     
                     first = first.tyInvoke("toString", runtime, null, null);
                 }
@@ -245,7 +245,7 @@ public class OperatorFacets {
             @Override
             public TYObject operate(TYObject first, TYObject second, TYRuntime runtime) {
                 
-                if (TrinityNatives.isInstance(second, "Trinity.String")) {
+                if (TrinityNatives.isInstance(second, TrinityNatives.Classes.STRING)) {
                     
                     return second.tyInvoke("*", runtime, null, null, first);
                     
@@ -277,12 +277,12 @@ public class OperatorFacets {
             @Override
             public TYObject operate(TYObject value) {
                 
-                if (TrinityNatives.isInstance(value, "Trinity.Long")) {
+                if (TrinityNatives.isInstance(value, TrinityNatives.Classes.LONG)) {
                     
                     long thisLong = TrinityNatives.toLong(value);
                     return new TYLong(+thisLong);
                     
-                } else if (TrinityNatives.isInstance(value, "Trinity.Float")) {
+                } else if (TrinityNatives.isInstance(value, TrinityNatives.Classes.FLOAT)) {
                     
                     double thisDouble = TrinityNatives.toFloat(value);
                     return new TYFloat(+thisDouble);
@@ -299,12 +299,12 @@ public class OperatorFacets {
             @Override
             public TYObject operate(TYObject value) {
                 
-                if (TrinityNatives.isInstance(value, "Trinity.Long")) {
+                if (TrinityNatives.isInstance(value, TrinityNatives.Classes.LONG)) {
                     
                     long thisLong = TrinityNatives.toLong(value);
                     return new TYLong(-thisLong);
                     
-                } else if (TrinityNatives.isInstance(value, "Trinity.Float")) {
+                } else if (TrinityNatives.isInstance(value, TrinityNatives.Classes.FLOAT)) {
                     
                     double thisDouble = TrinityNatives.toFloat(value);
                     return new TYFloat(-thisDouble);
@@ -321,7 +321,7 @@ public class OperatorFacets {
             @Override
             public TYObject operate(TYObject value) {
                 
-                if (TrinityNatives.isInstance(value, "Trinity.Long")) {
+                if (TrinityNatives.isInstance(value, TrinityNatives.Classes.LONG)) {
                     
                     long thisLong = TrinityNatives.toLong(value);
                     return new TYLong(~thisLong);

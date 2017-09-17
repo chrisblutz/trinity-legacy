@@ -19,7 +19,7 @@ class NativeErrors {
     
     static void register() {
         
-        TrinityNatives.registerMethod("Trinity.Errors.Error", "populateStackTrace", (runtime, thisObj, params) -> {
+        TrinityNatives.registerMethod(TrinityNatives.Classes.ERROR, "populateStackTrace", (runtime, thisObj, params) -> {
             
             TYArray ary = new TYArray(new ArrayList<>());
             

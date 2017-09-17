@@ -19,18 +19,18 @@ class NativeInt {
     
     static void register() {
         
-        TrinityNatives.registerField("Trinity.Int", "MIN_VALUE", (runtime, thisObj, params) -> TrinityNatives.wrapNumber(Integer.MIN_VALUE));
-        TrinityNatives.registerField("Trinity.Int", "MAX_VALUE", (runtime, thisObj, params) -> TrinityNatives.wrapNumber(Integer.MAX_VALUE));
+        TrinityNatives.registerField(TrinityNatives.Classes.INT, "MIN_VALUE", (runtime, thisObj, params) -> TrinityNatives.wrapNumber(Integer.MIN_VALUE));
+        TrinityNatives.registerField(TrinityNatives.Classes.INT, "MAX_VALUE", (runtime, thisObj, params) -> TrinityNatives.wrapNumber(Integer.MAX_VALUE));
         
-        TrinityNatives.registerMethod("Trinity.Int", "+", getActionForOperation("+"));
-        TrinityNatives.registerMethod("Trinity.Int", "-", getActionForOperation("-"));
-        TrinityNatives.registerMethod("Trinity.Int", "*", getActionForOperation("*"));
-        TrinityNatives.registerMethod("Trinity.Int", "/", getActionForOperation("/"));
-        TrinityNatives.registerMethod("Trinity.Int", "%", getActionForOperation("%"));
-        TrinityNatives.registerMethod("Trinity.Int", "<<", (runtime, thisObj, params) -> {
+        TrinityNatives.registerMethod(TrinityNatives.Classes.INT, "+", getActionForOperation("+"));
+        TrinityNatives.registerMethod(TrinityNatives.Classes.INT, "-", getActionForOperation("-"));
+        TrinityNatives.registerMethod(TrinityNatives.Classes.INT, "*", getActionForOperation("*"));
+        TrinityNatives.registerMethod(TrinityNatives.Classes.INT, "/", getActionForOperation("/"));
+        TrinityNatives.registerMethod(TrinityNatives.Classes.INT, "%", getActionForOperation("%"));
+        TrinityNatives.registerMethod(TrinityNatives.Classes.INT, "<<", (runtime, thisObj, params) -> {
             
             TYObject other = runtime.getVariable("other");
-            if (TrinityNatives.isInstance(other, "Trinity.Long")) {
+            if (TrinityNatives.isInstance(other, TrinityNatives.Classes.LONG)) {
                 
                 return new TYLong(TrinityNatives.toLong(thisObj) << TrinityNatives.toLong(other));
                 
@@ -39,10 +39,10 @@ class NativeInt {
                 return new TYInt(TrinityNatives.toInt(thisObj) << TrinityNatives.toInt(other));
             }
         });
-        TrinityNatives.registerMethod("Trinity.Int", ">>", (runtime, thisObj, params) -> {
+        TrinityNatives.registerMethod(TrinityNatives.Classes.INT, ">>", (runtime, thisObj, params) -> {
             
             TYObject other = runtime.getVariable("other");
-            if (TrinityNatives.isInstance(other, "Trinity.Long")) {
+            if (TrinityNatives.isInstance(other, TrinityNatives.Classes.LONG)) {
                 
                 return new TYLong(TrinityNatives.toLong(thisObj) >> TrinityNatives.toLong(other));
                 
@@ -51,10 +51,10 @@ class NativeInt {
                 return new TYInt(TrinityNatives.toInt(thisObj) >> TrinityNatives.toInt(other));
             }
         });
-        TrinityNatives.registerMethod("Trinity.Int", ">>>", (runtime, thisObj, params) -> {
+        TrinityNatives.registerMethod(TrinityNatives.Classes.INT, ">>>", (runtime, thisObj, params) -> {
             
             TYObject other = runtime.getVariable("other");
-            if (TrinityNatives.isInstance(other, "Trinity.Long")) {
+            if (TrinityNatives.isInstance(other, TrinityNatives.Classes.LONG)) {
                 
                 return new TYLong(TrinityNatives.toLong(thisObj) >>> TrinityNatives.toLong(other));
                 
@@ -63,9 +63,9 @@ class NativeInt {
                 return new TYInt(TrinityNatives.toInt(thisObj) >>> TrinityNatives.toInt(other));
             }
         });
-        TrinityNatives.registerMethod("Trinity.Int", "toString", (runtime, thisObj, params) -> new TYString(Integer.toString(TrinityNatives.toInt(thisObj))));
-        TrinityNatives.registerMethod("Trinity.Int", "toHexString", (runtime, thisObj, params) -> new TYString(Integer.toHexString(TrinityNatives.toInt(thisObj))));
-        TrinityNatives.registerMethod("Trinity.Int", "compareTo", (runtime, thisObj, params) -> {
+        TrinityNatives.registerMethod(TrinityNatives.Classes.INT, "toString", (runtime, thisObj, params) -> new TYString(Integer.toString(TrinityNatives.toInt(thisObj))));
+        TrinityNatives.registerMethod(TrinityNatives.Classes.INT, "toHexString", (runtime, thisObj, params) -> new TYString(Integer.toHexString(TrinityNatives.toInt(thisObj))));
+        TrinityNatives.registerMethod(TrinityNatives.Classes.INT, "compareTo", (runtime, thisObj, params) -> {
             
             int thisInt = TrinityNatives.toInt(thisObj);
             TYObject obj = runtime.getVariable("other");
@@ -90,12 +90,12 @@ class NativeInt {
                 
             } else {
                 
-                Errors.throwError("Trinity.Errors.InvalidTypeError", runtime, "Cannot compare types " + thisObj.getObjectClass().getName() + " and " + obj.getObjectClass().getName() + ".");
+                Errors.throwError(Errors.Classes.INVALID_TYPE_ERROR, runtime, "Cannot compare types " + thisObj.getObjectClass().getName() + " and " + obj.getObjectClass().getName() + ".");
             }
             
             return new TYInt(-1);
         });
-        TrinityNatives.registerMethod("Trinity.Int", "==", (runtime, thisObj, params) -> {
+        TrinityNatives.registerMethod(TrinityNatives.Classes.INT, "==", (runtime, thisObj, params) -> {
             
             int thisInt = TrinityNatives.toInt(thisObj);
             TYObject obj = runtime.getVariable("other");
@@ -180,7 +180,7 @@ class NativeInt {
                 
             } else {
                 
-                Errors.throwError("Trinity.Errors.InvalidTypeError", runtime, "Invalid type passed to '" + operation + "'.");
+                Errors.throwError(Errors.Classes.INVALID_TYPE_ERROR, runtime, "Invalid type passed to '" + operation + "'.");
                 
                 returnVal = TYObject.NONE;
             }
@@ -226,7 +226,7 @@ class NativeInt {
                 
                 default:
                     
-                    Errors.throwError("Trinity.Errors.UnsupportedOperationError", "Operation '" + operation + "' not supported.");
+                    Errors.throwError(Errors.Classes.UNSUPPORTED_OPERATION_ERROR, "Operation '" + operation + "' not supported.");
                     
                     return int1;
             }
@@ -267,7 +267,7 @@ class NativeInt {
             
             default:
                 
-                Errors.throwError("Trinity.Errors.UnsupportedOperationError", "Operation '" + operation + "' not supported.");
+                Errors.throwError(Errors.Classes.UNSUPPORTED_OPERATION_ERROR, "Operation '" + operation + "' not supported.");
                 
                 return (double) int1;
         }
@@ -301,7 +301,7 @@ class NativeInt {
             
             default:
                 
-                Errors.throwError("Trinity.Errors.UnsupportedOperationError", "Operation '" + operation + "' not supported.");
+                Errors.throwError(Errors.Classes.UNSUPPORTED_OPERATION_ERROR, "Operation '" + operation + "' not supported.");
                 
                 return (long) int1;
         }

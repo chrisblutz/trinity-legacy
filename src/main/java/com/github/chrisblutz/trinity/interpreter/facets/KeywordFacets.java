@@ -54,7 +54,7 @@ public class KeywordFacets {
                 
             } else {
                 
-                Errors.throwError("Trinity.Errors.NumberFormatError", runtime, "Invalid numeric string.");
+                Errors.throwError(Errors.Classes.NUMBER_FORMAT_ERROR, runtime, "Invalid numeric string.");
                 return TYObject.NONE;
             }
         });
@@ -85,7 +85,7 @@ public class KeywordFacets {
                 
             } else {
                 
-                Errors.throwError("Trinity.Errors.ScopeError", runtime, "Cannot access 'this' in a static context.");
+                Errors.throwError(Errors.Classes.SCOPE_ERROR, runtime, "Cannot access 'this' in a static context.");
                 return TYObject.NONE;
             }
         });
@@ -119,7 +119,7 @@ public class KeywordFacets {
                 
             } else {
                 
-                Errors.throwError("Trinity.Errors.RuntimeError", runtime, "Cannot retrieve a class here.");
+                Errors.throwError(Errors.Classes.RUNTIME_ERROR, runtime, "Cannot retrieve a class here.");
                 return TYObject.NONE;
             }
         });
@@ -135,7 +135,7 @@ public class KeywordFacets {
                 
             } else {
                 
-                Errors.throwError("Trinity.Errors.SyntaxError", runtime, "Cannot retrieve a module here.");
+                Errors.throwError(Errors.Classes.SYNTAX_ERROR, runtime, "Cannot retrieve a module here.");
                 return TYObject.NONE;
             }
         });

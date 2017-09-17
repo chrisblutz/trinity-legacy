@@ -3,6 +3,7 @@ package com.github.chrisblutz.trinity.lang.types.arrays;
 import com.github.chrisblutz.trinity.lang.ClassRegistry;
 import com.github.chrisblutz.trinity.lang.TYObject;
 import com.github.chrisblutz.trinity.lang.TYRuntime;
+import com.github.chrisblutz.trinity.natives.TrinityNatives;
 
 import java.util.List;
 
@@ -16,7 +17,7 @@ public class TYArray extends TYObject {
     
     public TYArray(List<TYObject> internal) {
         
-        super(ClassRegistry.getClass("Trinity.Array"));
+        super(ClassRegistry.getClass(TrinityNatives.Classes.ARRAY));
         
         this.internalList = internal;
         

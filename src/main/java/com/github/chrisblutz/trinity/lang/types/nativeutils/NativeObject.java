@@ -17,17 +17,17 @@ class NativeObject {
     
     static void register() {
         
-        TrinityNatives.registerMethod("Trinity.Object", "+", DefaultProcedures.getDefaultUOEOperationProcedure("+"));
-        TrinityNatives.registerMethod("Trinity.Object", "-", DefaultProcedures.getDefaultUOEOperationProcedure("-"));
-        TrinityNatives.registerMethod("Trinity.Object", "*", DefaultProcedures.getDefaultUOEOperationProcedure("*"));
-        TrinityNatives.registerMethod("Trinity.Object", "/", DefaultProcedures.getDefaultUOEOperationProcedure("/"));
-        TrinityNatives.registerMethod("Trinity.Object", "%", DefaultProcedures.getDefaultUOEOperationProcedure("%"));
-        TrinityNatives.registerMethod("Trinity.Object", "<<", DefaultProcedures.getDefaultUOEOperationProcedure("<<"));
-        TrinityNatives.registerMethod("Trinity.Object", ">>", DefaultProcedures.getDefaultUOEOperationProcedure(">>"));
-        TrinityNatives.registerMethod("Trinity.Object", ">>>", DefaultProcedures.getDefaultUOEOperationProcedure(">>>"));
-        TrinityNatives.registerMethod("Trinity.Object", "hashCode", (runtime, thisObj, params) -> NativeStorage.getHashCode(thisObj));
-        TrinityNatives.registerMethod("Trinity.Object", "getClass", (runtime, thisObj, params) -> NativeStorage.getClassObject(thisObj.getObjectClass()));
-        TrinityNatives.registerMethod("Trinity.Object", "isInstance", (runtime, thisObj, params) -> {
+        TrinityNatives.registerMethod(TrinityNatives.Classes.OBJECT, "+", DefaultProcedures.getDefaultUOEOperationProcedure("+"));
+        TrinityNatives.registerMethod(TrinityNatives.Classes.OBJECT, "-", DefaultProcedures.getDefaultUOEOperationProcedure("-"));
+        TrinityNatives.registerMethod(TrinityNatives.Classes.OBJECT, "*", DefaultProcedures.getDefaultUOEOperationProcedure("*"));
+        TrinityNatives.registerMethod(TrinityNatives.Classes.OBJECT, "/", DefaultProcedures.getDefaultUOEOperationProcedure("/"));
+        TrinityNatives.registerMethod(TrinityNatives.Classes.OBJECT, "%", DefaultProcedures.getDefaultUOEOperationProcedure("%"));
+        TrinityNatives.registerMethod(TrinityNatives.Classes.OBJECT, "<<", DefaultProcedures.getDefaultUOEOperationProcedure("<<"));
+        TrinityNatives.registerMethod(TrinityNatives.Classes.OBJECT, ">>", DefaultProcedures.getDefaultUOEOperationProcedure(">>"));
+        TrinityNatives.registerMethod(TrinityNatives.Classes.OBJECT, ">>>", DefaultProcedures.getDefaultUOEOperationProcedure(">>>"));
+        TrinityNatives.registerMethod(TrinityNatives.Classes.OBJECT, "hashCode", (runtime, thisObj, params) -> NativeStorage.getHashCode(thisObj));
+        TrinityNatives.registerMethod(TrinityNatives.Classes.OBJECT, "getClass", (runtime, thisObj, params) -> NativeStorage.getClassObject(thisObj.getObjectClass()));
+        TrinityNatives.registerMethod(TrinityNatives.Classes.OBJECT, "isInstance", (runtime, thisObj, params) -> {
             
             TYObject object = runtime.getVariable("instClass");
             
@@ -48,13 +48,13 @@ class NativeObject {
                 return TYBoolean.FALSE;
             }
         });
-        TrinityNatives.registerMethod("Trinity.Object", "respondsTo", (runtime, thisObj, params) -> {
+        TrinityNatives.registerMethod(TrinityNatives.Classes.OBJECT, "respondsTo", (runtime, thisObj, params) -> {
             
             String method = TrinityNatives.toString(runtime.getVariable("method"), runtime);
             return TrinityNatives.getObjectFor(thisObj.getObjectClass().respondsTo(method));
         });
         
-        TrinityNatives.registerMethod("Trinity.Object", "checkReferences", (runtime, thisObj, params) -> {
+        TrinityNatives.registerMethod(TrinityNatives.Classes.OBJECT, "checkReferences", (runtime, thisObj, params) -> {
             
             TYObject a = runtime.getVariable("a");
             TYObject b = runtime.getVariable("b");

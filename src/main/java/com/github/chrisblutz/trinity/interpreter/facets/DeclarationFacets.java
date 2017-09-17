@@ -107,7 +107,7 @@ public class DeclarationFacets {
                 
             } else {
                 
-                Errors.throwSyntaxError("Trinity.Errors.ScopeError", "Variables must be declared within a class.", location.getFileName(), location.getLineNumber());
+                Errors.throwSyntaxError(Errors.Classes.SCOPE_ERROR, "Variables must be declared within a class.", location.getFileName(), location.getLineNumber());
             }
             
             TokenInfo[] parts = new TokenInfo[line.size() - position];
@@ -190,7 +190,7 @@ public class DeclarationFacets {
                 
             } else {
                 
-                Errors.throwSyntaxError("Trinity.Errors.ScopeError", "Constants must be declared within a class.", location.getFileName(), location.getLineNumber());
+                Errors.throwSyntaxError(Errors.Classes.SCOPE_ERROR, "Constants must be declared within a class.", location.getFileName(), location.getLineNumber());
             }
             
             TokenInfo[] parts = new TokenInfo[line.size() - position];
@@ -325,7 +325,7 @@ public class DeclarationFacets {
                 
             } else {
                 
-                Errors.throwSyntaxError("Trinity.Errors.SyntaxError", "Native classes are not currently supported.", location.getFileName(), location.getLineNumber());
+                Errors.throwSyntaxError(Errors.Classes.SYNTAX_ERROR, "Native classes are not currently supported.", location.getFileName(), location.getLineNumber());
             }
         });
         
@@ -389,7 +389,7 @@ public class DeclarationFacets {
                 
             } else {
                 
-                Errors.throwSyntaxError("Trinity.Errors.ScopeError", "Methods must be declared within a class.", location.getFileName(), location.getLineNumber());
+                Errors.throwSyntaxError(Errors.Classes.SCOPE_ERROR, "Methods must be declared within a class.", location.getFileName(), location.getLineNumber());
             }
             
             List<String> mandatoryParams = new ArrayList<>();

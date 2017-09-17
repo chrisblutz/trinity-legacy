@@ -2,6 +2,7 @@ package com.github.chrisblutz.trinity.lang.types.bool;
 
 import com.github.chrisblutz.trinity.lang.ClassRegistry;
 import com.github.chrisblutz.trinity.lang.TYObject;
+import com.github.chrisblutz.trinity.natives.TrinityNatives;
 
 
 /**
@@ -15,7 +16,7 @@ public class TYBoolean extends TYObject {
     
     private TYBoolean(boolean internal) {
         
-        super(ClassRegistry.getClass("Trinity.Boolean"));
+        super(ClassRegistry.getClass(TrinityNatives.Classes.BOOLEAN));
         
         this.internalBoolean = internal;
     }

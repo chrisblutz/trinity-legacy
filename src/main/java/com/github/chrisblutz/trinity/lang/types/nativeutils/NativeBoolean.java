@@ -12,10 +12,10 @@ class NativeBoolean {
     
     static void register() {
         
-        TrinityNatives.registerField("Trinity.Boolean", "TRUE", (runtime, thisObj, params) -> TYBoolean.TRUE);
-        TrinityNatives.registerField("Trinity.Boolean", "FALSE", (runtime, thisObj, params) -> TYBoolean.FALSE);
+        TrinityNatives.registerField(TrinityNatives.Classes.BOOLEAN, "TRUE", (runtime, thisObj, params) -> TYBoolean.TRUE);
+        TrinityNatives.registerField(TrinityNatives.Classes.BOOLEAN, "FALSE", (runtime, thisObj, params) -> TYBoolean.FALSE);
         
-        TrinityNatives.registerMethod("Trinity.Boolean", "==", (runtime, thisObj, params) -> {
+        TrinityNatives.registerMethod(TrinityNatives.Classes.BOOLEAN, "==", (runtime, thisObj, params) -> {
             
             TYObject object = runtime.getVariable("other");
             

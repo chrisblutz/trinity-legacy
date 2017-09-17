@@ -143,13 +143,13 @@ public class TYProcedure {
                 
             } else if (hasRigidParameters()) {
                 
-                Errors.throwError("Trinity.Errors.InvalidArgumentNumberError", runtime, "Procedure takes " + getMandatoryParameters().size() + " parameter(s).");
+                Errors.throwError(Errors.Classes.INVALID_ARGUMENT_NUMBER_ERROR, runtime, "Procedure takes " + getMandatoryParameters().size() + " parameter(s).");
             }
         }
         
         if (varNames.size() - optSize > nameIndex) {
             
-            Errors.throwError("Trinity.Errors.InvalidArgumentNumberError", runtime, "Procedure takes " + getMandatoryParameters().size() + " parameter(s).");
+            Errors.throwError(Errors.Classes.INVALID_ARGUMENT_NUMBER_ERROR, runtime, "Procedure takes " + getMandatoryParameters().size() + " parameter(s).");
         }
         
         if (getOverflowParameter() != null) {

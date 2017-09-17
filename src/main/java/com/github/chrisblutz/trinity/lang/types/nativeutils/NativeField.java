@@ -15,12 +15,12 @@ class NativeField {
     
     static void register() {
         
-        TrinityNatives.registerMethod("Trinity.Field", "getName", (runtime, thisObj, params) -> NativeStorage.getFieldName(TrinityNatives.cast(TYFieldObject.class, thisObj)));
-        TrinityNatives.registerMethod("Trinity.Field", "isStatic", (runtime, thisObj, params) -> NativeStorage.isFieldStatic(TrinityNatives.cast(TYFieldObject.class, thisObj)));
-        TrinityNatives.registerMethod("Trinity.Field", "isNative", (runtime, thisObj, params) -> NativeStorage.isFieldNative(TrinityNatives.cast(TYFieldObject.class, thisObj)));
-        TrinityNatives.registerMethod("Trinity.Field", "isConstant", (runtime, thisObj, params) -> NativeStorage.isFieldConstant(TrinityNatives.cast(TYFieldObject.class, thisObj)));
-        TrinityNatives.registerMethod("Trinity.Field", "getComments", (runtime, thisObj, params) -> NativeStorage.getLeadingComments(TrinityNatives.cast(TYFieldObject.class, thisObj)));
-        TrinityNatives.registerMethod("Trinity.Field", "getValue", (runtime, thisObj, params) -> {
+        TrinityNatives.registerMethod(TrinityNatives.Classes.FIELD, "getName", (runtime, thisObj, params) -> NativeStorage.getFieldName(TrinityNatives.cast(TYFieldObject.class, thisObj)));
+        TrinityNatives.registerMethod(TrinityNatives.Classes.FIELD, "isStatic", (runtime, thisObj, params) -> NativeStorage.isFieldStatic(TrinityNatives.cast(TYFieldObject.class, thisObj)));
+        TrinityNatives.registerMethod(TrinityNatives.Classes.FIELD, "isNative", (runtime, thisObj, params) -> NativeStorage.isFieldNative(TrinityNatives.cast(TYFieldObject.class, thisObj)));
+        TrinityNatives.registerMethod(TrinityNatives.Classes.FIELD, "isConstant", (runtime, thisObj, params) -> NativeStorage.isFieldConstant(TrinityNatives.cast(TYFieldObject.class, thisObj)));
+        TrinityNatives.registerMethod(TrinityNatives.Classes.FIELD, "getComments", (runtime, thisObj, params) -> NativeStorage.getLeadingComments(TrinityNatives.cast(TYFieldObject.class, thisObj)));
+        TrinityNatives.registerMethod(TrinityNatives.Classes.FIELD, "getValue", (runtime, thisObj, params) -> {
             
             TYFieldObject fieldObject = TrinityNatives.cast(TYFieldObject.class, thisObj);
             TYObject activeObj = runtime.getVariable("obj");
@@ -41,7 +41,7 @@ class NativeField {
                 
             } else {
                 
-                Errors.throwError("Trinity.Errors.ScopeError", runtime, "Cannot access value of field marked '" + loc.getScope().toString() + "' here.");
+                Errors.throwError(Errors.Classes.SCOPE_ERROR, runtime, "Cannot access value of field marked '" + loc.getScope().toString() + "' here.");
             }
             
             return TYObject.NIL;

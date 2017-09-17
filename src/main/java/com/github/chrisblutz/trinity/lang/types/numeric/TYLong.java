@@ -2,6 +2,7 @@ package com.github.chrisblutz.trinity.lang.types.numeric;
 
 import com.github.chrisblutz.trinity.lang.ClassRegistry;
 import com.github.chrisblutz.trinity.lang.TYObject;
+import com.github.chrisblutz.trinity.natives.TrinityNatives;
 
 
 /**
@@ -13,7 +14,7 @@ public class TYLong extends TYObject {
     
     public TYLong(long internal) {
         
-        super(ClassRegistry.getClass("Trinity.Long"));
+        super(ClassRegistry.getClass(TrinityNatives.Classes.LONG));
         
         this.internalLong = internal;
     }

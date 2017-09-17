@@ -87,7 +87,7 @@ public class AssignmentInstruction extends Instruction {
             
         } else {
             
-            Errors.throwError("Trinity.Errors.ScopeError", "Cannot set value of field marked '" + loc.getScope().toString() + "' here.");
+            Errors.throwError(Errors.Classes.SCOPE_ERROR, "Cannot set value of field marked '" + loc.getScope().toString() + "' here.");
             return TYObject.NIL;
         }
     }

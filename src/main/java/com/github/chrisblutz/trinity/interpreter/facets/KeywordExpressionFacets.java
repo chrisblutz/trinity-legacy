@@ -150,7 +150,7 @@ public class KeywordExpressionFacets {
                     
                 } else {
                     
-                    Errors.throwSyntaxError("Trinity.Errors.SyntaxError", "Invalid 'catch' statement error variable.", location.getFileName(), location.getLineNumber());
+                    Errors.throwSyntaxError(Errors.Classes.SYNTAX_ERROR, "Invalid 'catch' statement error variable.", location.getFileName(), location.getLineNumber());
                     return null;
                 }
             }

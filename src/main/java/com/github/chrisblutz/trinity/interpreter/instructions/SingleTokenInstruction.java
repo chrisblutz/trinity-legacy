@@ -52,7 +52,7 @@ public class SingleTokenInstruction extends Instruction {
                     
                 } else {
                     
-                    Errors.throwError("Trinity.Errors.ScopeError", runtime, "Cannot access value of field marked '" + loc.getScope().toString() + "' here.");
+                    Errors.throwError(Errors.Classes.SCOPE_ERROR, runtime, "Cannot access value of field marked '" + loc.getScope().toString() + "' here.");
                 }
                 
             } else if (runtime.isStaticScope() && runtime.getScopeClass().hasVariable(getContents())) {
@@ -66,7 +66,7 @@ public class SingleTokenInstruction extends Instruction {
                     
                 } else {
                     
-                    Errors.throwError("Trinity.Errors.ScopeError", runtime, "Cannot access value of field marked '" + loc.getScope().toString() + "' here.");
+                    Errors.throwError(Errors.Classes.SCOPE_ERROR, runtime, "Cannot access value of field marked '" + loc.getScope().toString() + "' here.");
                 }
                 
             } else if (runtime.getModule() != null && runtime.getModule().hasClass(getContents())) {
@@ -121,7 +121,7 @@ public class SingleTokenInstruction extends Instruction {
                     
                 } else {
                     
-                    Errors.throwError("Trinity.Errors.ScopeError", runtime, "Cannot access value of field marked '" + loc.getScope().toString() + "' here.");
+                    Errors.throwError(Errors.Classes.SCOPE_ERROR, runtime, "Cannot access value of field marked '" + loc.getScope().toString() + "' here.");
                 }
                 
             } else if (tyClass.hasClass(getContents())) {
@@ -142,12 +142,12 @@ public class SingleTokenInstruction extends Instruction {
                     
                 } else {
                     
-                    Errors.throwError("Trinity.Errors.ScopeError", runtime, "Cannot access value of field marked '" + loc.getScope().toString() + "' here.");
+                    Errors.throwError(Errors.Classes.SCOPE_ERROR, runtime, "Cannot access value of field marked '" + loc.getScope().toString() + "' here.");
                 }
             }
         }
         
-        Errors.throwError("Trinity.Errors.FieldNotFoundError", runtime, "No field '" + getContents() + "' found.");
+        Errors.throwError(Errors.Classes.FIELD_NOT_FOUND_ERROR, runtime, "No field '" + getContents() + "' found.");
         
         return TYObject.NIL;
     }

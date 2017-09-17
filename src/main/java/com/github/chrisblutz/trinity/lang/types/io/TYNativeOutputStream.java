@@ -2,6 +2,7 @@ package com.github.chrisblutz.trinity.lang.types.io;
 
 import com.github.chrisblutz.trinity.lang.ClassRegistry;
 import com.github.chrisblutz.trinity.lang.TYObject;
+import com.github.chrisblutz.trinity.natives.TrinityNatives;
 
 import java.io.PrintStream;
 
@@ -15,7 +16,7 @@ public class TYNativeOutputStream extends TYObject {
     
     public TYNativeOutputStream(PrintStream internal) {
         
-        super(ClassRegistry.getClass("Trinity.IO.NativeOutputStream"));
+        super(ClassRegistry.getClass(TrinityNatives.Classes.NATIVE_OUTPUT_STREAM));
         
         this.internalStream = internal;
     }

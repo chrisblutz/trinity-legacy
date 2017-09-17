@@ -3,6 +3,7 @@ package com.github.chrisblutz.trinity.lang.types.strings;
 import com.github.chrisblutz.trinity.lang.ClassRegistry;
 import com.github.chrisblutz.trinity.lang.TYObject;
 import com.github.chrisblutz.trinity.lang.types.arrays.TYArray;
+import com.github.chrisblutz.trinity.natives.TrinityNatives;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +20,7 @@ public class TYString extends TYObject {
     
     public TYString(String internal) {
         
-        super(ClassRegistry.getClass("Trinity.String"));
+        super(ClassRegistry.getClass(TrinityNatives.Classes.STRING));
         
         this.internalString = internal;
         

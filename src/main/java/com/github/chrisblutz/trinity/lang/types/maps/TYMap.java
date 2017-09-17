@@ -2,6 +2,7 @@ package com.github.chrisblutz.trinity.lang.types.maps;
 
 import com.github.chrisblutz.trinity.lang.ClassRegistry;
 import com.github.chrisblutz.trinity.lang.TYObject;
+import com.github.chrisblutz.trinity.natives.TrinityNatives;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,7 +17,7 @@ public class TYMap extends TYObject {
     
     public TYMap(Map<TYObject, TYObject> internal) {
         
-        super(ClassRegistry.getClass("Trinity.Map"));
+        super(ClassRegistry.getClass(TrinityNatives.Classes.MAP));
         
         this.internalMap = internal;
     }

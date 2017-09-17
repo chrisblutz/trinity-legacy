@@ -34,6 +34,6 @@ public class NumericHelper {
     
     public static void throwDivideByZeroError() {
         
-        Errors.throwError("Trinity.Errors.ArithmeticError", "/ by 0.");
+        Errors.throwError(Errors.Classes.ARITHMETIC_ERROR, "/ by 0.");
     }
 }

@@ -92,12 +92,12 @@ public class TrinityInterpreter {
                             
                         } else {
                             
-                            Errors.throwSyntaxError("Trinity.Errors.SyntaxError", "Malformed declaration.", block.getFileName(), line.getLineNumber());
+                            Errors.throwSyntaxError(Errors.Classes.SYNTAX_ERROR, "Malformed declaration.", block.getFileName(), line.getLineNumber());
                         }
                         
                     } else {
                         
-                        Errors.throwSyntaxError("Trinity.Errors.SyntaxError", "Unrecognized declaration.", block.getFileName(), line.getLineNumber());
+                        Errors.throwSyntaxError(Errors.Classes.SYNTAX_ERROR, "Unrecognized declaration.", block.getFileName(), line.getLineNumber());
                     }
                 }
             }

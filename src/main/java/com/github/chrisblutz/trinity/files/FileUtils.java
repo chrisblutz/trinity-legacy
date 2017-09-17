@@ -42,7 +42,7 @@ public class FileUtils {
             
         } catch (FileNotFoundException e) {
             
-            Errors.throwError("Trinity.Errors.IOError", "File '" + fileName + "' not found.");
+            Errors.throwError(Errors.Classes.IO_ERROR, "File '" + fileName + "' not found.");
         }
     }
     
@@ -57,12 +57,12 @@ public class FileUtils {
                 
             } else {
                 
-                Errors.throwError("Trinity.Errors.IOError", "File '" + fileName + "' not open with reading privileges.");
+                Errors.throwError(Errors.Classes.IO_ERROR, "File '" + fileName + "' not open with reading privileges.");
             }
             
         } else {
             
-            Errors.throwError("Trinity.Errors.IOError", "File '" + fileName + "' not open.");
+            Errors.throwError(Errors.Classes.IO_ERROR, "File '" + fileName + "' not open.");
         }
         
         return TYObject.NIL;
@@ -88,12 +88,12 @@ public class FileUtils {
                 
             } else {
                 
-                Errors.throwError("Trinity.Errors.IOError", "File '" + fileName + "' not open with writing privileges.");
+                Errors.throwError(Errors.Classes.IO_ERROR, "File '" + fileName + "' not open with writing privileges.");
             }
             
         } else {
             
-            Errors.throwError("Trinity.Errors.IOError", "File '" + fileName + "' not open.");
+            Errors.throwError(Errors.Classes.IO_ERROR, "File '" + fileName + "' not open.");
         }
     }
     
@@ -112,7 +112,7 @@ public class FileUtils {
                     
                 } catch (FileNotFoundException e) {
                     
-                    Errors.throwError("Trinity.Errors.IOError", "File '" + fileName + "' not found.");
+                    Errors.throwError(Errors.Classes.IO_ERROR, "File '" + fileName + "' not found.");
                 }
             }
             
@@ -123,7 +123,7 @@ public class FileUtils {
             
         } else {
             
-            Errors.throwError("Trinity.Errors.IOError", "File '" + fileName + "' not open.");
+            Errors.throwError(Errors.Classes.IO_ERROR, "File '" + fileName + "' not open.");
         }
     }
 }

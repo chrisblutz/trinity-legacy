@@ -19,9 +19,9 @@ class NativeProcedure {
     
     static void register() {
         
-        TrinityNatives.registerForNativeConstruction("Trinity.Procedure");
+        TrinityNatives.registerForNativeConstruction(TrinityNatives.Classes.PROCEDURE);
         
-        TrinityNatives.registerMethod("Trinity.Procedure", "initialize", (runtime, thisObj, params) -> {
+        TrinityNatives.registerMethod(TrinityNatives.Classes.PROCEDURE, "initialize", (runtime, thisObj, params) -> {
             
             if (runtime.hasVariable("block")) {
                 
@@ -32,11 +32,11 @@ class NativeProcedure {
                 return new TYProcedureObject(new TYProcedure((runtime11, thisObj1, params1) -> TYObject.NIL, false), new TYRuntime());
             }
         });
-        TrinityNatives.registerMethod("Trinity.Procedure", "getRequiredArguments", (runtime, thisObj, params) -> NativeStorage.getMandatoryArguments(TrinityNatives.cast(TYProcedureObject.class, thisObj).getInternalProcedure()));
-        TrinityNatives.registerMethod("Trinity.Procedure", "getOptionalArguments", (runtime, thisObj, params) -> NativeStorage.getOptionalArguments(TrinityNatives.cast(TYProcedureObject.class, thisObj).getInternalProcedure()));
-        TrinityNatives.registerMethod("Trinity.Procedure", "getBlockArgument", (runtime, thisObj, params) -> NativeStorage.getBlockArgument(TrinityNatives.cast(TYProcedureObject.class, thisObj).getInternalProcedure()));
-        TrinityNatives.registerMethod("Trinity.Procedure", "getOverflowArgument", (runtime, thisObj, params) -> NativeStorage.getOverflowArgument(TrinityNatives.cast(TYProcedureObject.class, thisObj).getInternalProcedure()));
-        TrinityNatives.registerMethod("Trinity.Procedure", "call", (runtime, thisObj, params) -> {
+        TrinityNatives.registerMethod(TrinityNatives.Classes.PROCEDURE, "getRequiredArguments", (runtime, thisObj, params) -> NativeStorage.getMandatoryArguments(TrinityNatives.cast(TYProcedureObject.class, thisObj).getInternalProcedure()));
+        TrinityNatives.registerMethod(TrinityNatives.Classes.PROCEDURE, "getOptionalArguments", (runtime, thisObj, params) -> NativeStorage.getOptionalArguments(TrinityNatives.cast(TYProcedureObject.class, thisObj).getInternalProcedure()));
+        TrinityNatives.registerMethod(TrinityNatives.Classes.PROCEDURE, "getBlockArgument", (runtime, thisObj, params) -> NativeStorage.getBlockArgument(TrinityNatives.cast(TYProcedureObject.class, thisObj).getInternalProcedure()));
+        TrinityNatives.registerMethod(TrinityNatives.Classes.PROCEDURE, "getOverflowArgument", (runtime, thisObj, params) -> NativeStorage.getOverflowArgument(TrinityNatives.cast(TYProcedureObject.class, thisObj).getInternalProcedure()));
+        TrinityNatives.registerMethod(TrinityNatives.Classes.PROCEDURE, "call", (runtime, thisObj, params) -> {
             
             TYProcedureObject obj = (TYProcedureObject) thisObj;
             TYProcedure proc = obj.getInternalProcedure();

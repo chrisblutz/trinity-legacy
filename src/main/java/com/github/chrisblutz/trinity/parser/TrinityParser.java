@@ -494,7 +494,7 @@ public class TrinityParser {
                     
                     if (info.getToken() == Token.WS_TAB) {
                         
-                        Errors.throwSyntaxError("Trinity.Errors.SyntaxError", "No tabs allowed in leading whitespace.", lines.getFileName(), line.getLineNumber());
+                        Errors.throwSyntaxError(Errors.Classes.SYNTAX_ERROR, "No tabs allowed in leading whitespace.", lines.getFileName(), line.getLineNumber());
                         
                     } else if (info.getToken() == Token.WS_SPACE) {
                         

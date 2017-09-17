@@ -19,33 +19,33 @@ class NativeLong {
     
     static void register() {
         
-        TrinityNatives.registerField("Trinity.Long", "MIN_VALUE", (runtime, thisObj, params) -> TrinityNatives.wrapNumber(Long.MIN_VALUE));
-        TrinityNatives.registerField("Trinity.Long", "MAX_VALUE", (runtime, thisObj, params) -> TrinityNatives.wrapNumber(Long.MAX_VALUE));
+        TrinityNatives.registerField(TrinityNatives.Classes.LONG, "MIN_VALUE", (runtime, thisObj, params) -> TrinityNatives.wrapNumber(Long.MIN_VALUE));
+        TrinityNatives.registerField(TrinityNatives.Classes.LONG, "MAX_VALUE", (runtime, thisObj, params) -> TrinityNatives.wrapNumber(Long.MAX_VALUE));
         
-        TrinityNatives.registerMethod("Trinity.Long", "+", getActionForOperation("+"));
-        TrinityNatives.registerMethod("Trinity.Long", "-", getActionForOperation("-"));
-        TrinityNatives.registerMethod("Trinity.Long", "*", getActionForOperation("*"));
-        TrinityNatives.registerMethod("Trinity.Long", "/", getActionForOperation("/"));
-        TrinityNatives.registerMethod("Trinity.Long", "%", getActionForOperation("%"));
-        TrinityNatives.registerMethod("Trinity.Long", "<<", (runtime, thisObj, params) -> {
+        TrinityNatives.registerMethod(TrinityNatives.Classes.LONG, "+", getActionForOperation("+"));
+        TrinityNatives.registerMethod(TrinityNatives.Classes.LONG, "-", getActionForOperation("-"));
+        TrinityNatives.registerMethod(TrinityNatives.Classes.LONG, "*", getActionForOperation("*"));
+        TrinityNatives.registerMethod(TrinityNatives.Classes.LONG, "/", getActionForOperation("/"));
+        TrinityNatives.registerMethod(TrinityNatives.Classes.LONG, "%", getActionForOperation("%"));
+        TrinityNatives.registerMethod(TrinityNatives.Classes.LONG, "<<", (runtime, thisObj, params) -> {
             
             TYObject other = runtime.getVariable("other");
             return new TYLong(TrinityNatives.toLong(thisObj) << TrinityNatives.toLong(other));
             
         });
-        TrinityNatives.registerMethod("Trinity.Long", ">>", (runtime, thisObj, params) -> {
+        TrinityNatives.registerMethod(TrinityNatives.Classes.LONG, ">>", (runtime, thisObj, params) -> {
             
             TYObject other = runtime.getVariable("other");
             return new TYLong(TrinityNatives.toLong(thisObj) >> TrinityNatives.toLong(other));
         });
-        TrinityNatives.registerMethod("Trinity.Long", ">>>", (runtime, thisObj, params) -> {
+        TrinityNatives.registerMethod(TrinityNatives.Classes.LONG, ">>>", (runtime, thisObj, params) -> {
             
             TYObject other = runtime.getVariable("other");
             return new TYLong(TrinityNatives.toLong(thisObj) >>> TrinityNatives.toLong(other));
         });
-        TrinityNatives.registerMethod("Trinity.Long", "toString", (runtime, thisObj, params) -> new TYString(Long.toString(TrinityNatives.toLong(thisObj))));
-        TrinityNatives.registerMethod("Trinity.Long", "toHexString", (runtime, thisObj, params) -> new TYString(Long.toHexString(TrinityNatives.toLong(thisObj))));
-        TrinityNatives.registerMethod("Trinity.Long", "compareTo", (runtime, thisObj, params) -> {
+        TrinityNatives.registerMethod(TrinityNatives.Classes.LONG, "toString", (runtime, thisObj, params) -> new TYString(Long.toString(TrinityNatives.toLong(thisObj))));
+        TrinityNatives.registerMethod(TrinityNatives.Classes.LONG, "toHexString", (runtime, thisObj, params) -> new TYString(Long.toHexString(TrinityNatives.toLong(thisObj))));
+        TrinityNatives.registerMethod(TrinityNatives.Classes.LONG, "compareTo", (runtime, thisObj, params) -> {
             
             long thisLong = TrinityNatives.toLong(thisObj);
             TYObject obj = runtime.getVariable("other");
@@ -70,12 +70,12 @@ class NativeLong {
                 
             } else {
                 
-                Errors.throwError("Trinity.Errors.InvalidTypeError", runtime, "Cannot compare types " + thisObj.getObjectClass().getName() + " and " + obj.getObjectClass().getName() + ".");
+                Errors.throwError(Errors.Classes.INVALID_TYPE_ERROR, runtime, "Cannot compare types " + thisObj.getObjectClass().getName() + " and " + obj.getObjectClass().getName() + ".");
             }
             
             return new TYInt(-1);
         });
-        TrinityNatives.registerMethod("Trinity.Long", "==", (runtime, thisObj, params) -> {
+        TrinityNatives.registerMethod(TrinityNatives.Classes.LONG, "==", (runtime, thisObj, params) -> {
             
             long thisLong = TrinityNatives.toLong(thisObj);
             TYObject obj = runtime.getVariable("other");
@@ -148,7 +148,7 @@ class NativeLong {
                 
             } else {
                 
-                Errors.throwError("Trinity.Errors.InvalidTypeError", runtime, "Invalid type passed to '" + operation + "'.");
+                Errors.throwError(Errors.Classes.INVALID_TYPE_ERROR, runtime, "Invalid type passed to '" + operation + "'.");
                 
                 returnVal = TYObject.NONE;
             }
@@ -185,7 +185,7 @@ class NativeLong {
             
             default:
                 
-                Errors.throwError("Trinity.Errors.UnsupportedOperationError", "Operation '" + operation + "' not supported.");
+                Errors.throwError(Errors.Classes.UNSUPPORTED_OPERATION_ERROR, "Operation '" + operation + "' not supported.");
                 
                 return long1;
         }
@@ -219,7 +219,7 @@ class NativeLong {
             
             default:
                 
-                Errors.throwError("Trinity.Errors.UnsupportedOperationError", "Operation '" + operation + "' not supported.");
+                Errors.throwError(Errors.Classes.UNSUPPORTED_OPERATION_ERROR, "Operation '" + operation + "' not supported.");
                 
                 return (double) long1;
         }

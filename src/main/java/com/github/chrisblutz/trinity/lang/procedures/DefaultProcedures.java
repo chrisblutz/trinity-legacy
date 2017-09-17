@@ -12,7 +12,7 @@ public class DefaultProcedures {
         
         return (runtime, thisObj, params) -> {
             
-            Errors.throwError("Trinity.Errors.UnsupportedOperationError", runtime, "Operation '" + operation + "' not supported.");
+            Errors.throwError(Errors.Classes.UNSUPPORTED_OPERATION_ERROR, runtime, "Operation '" + operation + "' not supported.");
             
             return thisObj;
         };

@@ -21,7 +21,7 @@ class NativeModule {
     
     static void register() {
         
-        TrinityNatives.registerMethod("Trinity.Module", "getModule", (runtime, thisObj, params) -> {
+        TrinityNatives.registerMethod(TrinityNatives.Classes.MODULE, "getModule", (runtime, thisObj, params) -> {
             
             TYModule module = TrinityNatives.cast(TYModuleObject.class, thisObj).getInternalModule().getParentModule();
             
@@ -34,9 +34,9 @@ class NativeModule {
                 return TYObject.NIL;
             }
         });
-        TrinityNatives.registerMethod("Trinity.Module", "getName", (runtime, thisObj, params) -> NativeStorage.getModuleName(TrinityNatives.cast(TYModuleObject.class, thisObj).getInternalModule()));
-        TrinityNatives.registerMethod("Trinity.Module", "getShortName", (runtime, thisObj, params) -> NativeStorage.getModuleShortName(TrinityNatives.cast(TYModuleObject.class, thisObj).getInternalModule()));
-        TrinityNatives.registerMethod("Trinity.Module", "getInnerModules", (runtime, thisObj, params) -> {
+        TrinityNatives.registerMethod(TrinityNatives.Classes.MODULE, "getName", (runtime, thisObj, params) -> NativeStorage.getModuleName(TrinityNatives.cast(TYModuleObject.class, thisObj).getInternalModule()));
+        TrinityNatives.registerMethod(TrinityNatives.Classes.MODULE, "getShortName", (runtime, thisObj, params) -> NativeStorage.getModuleShortName(TrinityNatives.cast(TYModuleObject.class, thisObj).getInternalModule()));
+        TrinityNatives.registerMethod(TrinityNatives.Classes.MODULE, "getInnerModules", (runtime, thisObj, params) -> {
             
             List<TYObject> modules = new ArrayList<>();
             
@@ -47,7 +47,7 @@ class NativeModule {
             
             return new TYArray(modules);
         });
-        TrinityNatives.registerMethod("Trinity.Module", "getInnerModule", (runtime, thisObj, params) -> {
+        TrinityNatives.registerMethod(TrinityNatives.Classes.MODULE, "getInnerModule", (runtime, thisObj, params) -> {
             
             TYModule m = TrinityNatives.cast(TYModuleObject.class, thisObj).getInternalModule().getModule(TrinityNatives.cast(TYString.class, runtime.getVariable("name")).getInternalString());
             
@@ -60,7 +60,7 @@ class NativeModule {
                 return TYObject.NIL;
             }
         });
-        TrinityNatives.registerMethod("Trinity.Module", "getInnerClasses", (runtime, thisObj, params) -> {
+        TrinityNatives.registerMethod(TrinityNatives.Classes.MODULE, "getInnerClasses", (runtime, thisObj, params) -> {
             
             List<TYObject> classes = new ArrayList<>();
             
@@ -71,7 +71,7 @@ class NativeModule {
             
             return new TYArray(classes);
         });
-        TrinityNatives.registerMethod("Trinity.Module", "getInnerClass", (runtime, thisObj, params) -> {
+        TrinityNatives.registerMethod(TrinityNatives.Classes.MODULE, "getInnerClass", (runtime, thisObj, params) -> {
             
             TYClass c = TrinityNatives.cast(TYModuleObject.class, thisObj).getInternalModule().getClass(TrinityNatives.cast(TYString.class, runtime.getVariable("name")).getInternalString());
             
@@ -84,13 +84,13 @@ class NativeModule {
                 return TYObject.NIL;
             }
         });
-        TrinityNatives.registerMethod("Trinity.Module", "getComments", (runtime, thisObj, params) -> {
+        TrinityNatives.registerMethod(TrinityNatives.Classes.MODULE, "getComments", (runtime, thisObj, params) -> {
             
             TYModule m = TrinityNatives.cast(TYModuleObject.class, thisObj).getInternalModule();
             
             return NativeStorage.getLeadingComments(m);
         });
-        TrinityNatives.registerMethod("Trinity.Module", "get", (runtime, thisObj, params) -> {
+        TrinityNatives.registerMethod(TrinityNatives.Classes.MODULE, "get", (runtime, thisObj, params) -> {
             
             String name = TrinityNatives.cast(TYString.class, runtime.getVariable("name")).getInternalString();
             
@@ -103,7 +103,7 @@ class NativeModule {
                 return TYObject.NIL;
             }
         });
-        TrinityNatives.registerMethod("Trinity.Module", "all", (runtime, thisObj, params) -> {
+        TrinityNatives.registerMethod(TrinityNatives.Classes.MODULE, "all", (runtime, thisObj, params) -> {
             
             List<TYObject> modules = new ArrayList<>();
             

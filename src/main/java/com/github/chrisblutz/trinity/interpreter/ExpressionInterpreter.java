@@ -90,7 +90,7 @@ public class ExpressionInterpreter {
                     
                     if (strippedTokens.length == 0 && KeywordExpressions.isKeywordRigid(first)) {
                         
-                        Errors.throwSyntaxError("Trinity.Errors.SyntaxError", "'" + first.getLiteral() + "' statements require " + comp + " expressions, found " + components.size() + ".", location.getFileName(), location.getLineNumber());
+                        Errors.throwSyntaxError(Errors.Classes.SYNTAX_ERROR, "'" + first.getLiteral() + "' statements require " + comp + " expressions, found " + components.size() + ".", location.getFileName(), location.getLineNumber());
                     }
                     
                     Token delimiter = KeywordExpressions.getKeywordDelimiter(first);
@@ -107,12 +107,12 @@ public class ExpressionInterpreter {
                     
                     if (components.size() > comp || (components.size() < comp && KeywordExpressions.isKeywordRigid(first))) {
                         
-                        Errors.throwSyntaxError("Trinity.Errors.SyntaxError", "'" + first.getLiteral() + "' statements require " + comp + " expressions, found " + components.size() + ".", location.getFileName(), location.getLineNumber());
+                        Errors.throwSyntaxError(Errors.Classes.SYNTAX_ERROR, "'" + first.getLiteral() + "' statements require " + comp + " expressions, found " + components.size() + ".", location.getFileName(), location.getLineNumber());
                     }
                     
                 } else if (strippedTokens.length > 0) {
                     
-                    Errors.throwSyntaxError("Trinity.Errors.SyntaxError", "'" + first.getLiteral() + "' statements require " + comp + " expressions, found " + components.size() + ".", location.getFileName(), location.getLineNumber());
+                    Errors.throwSyntaxError(Errors.Classes.SYNTAX_ERROR, "'" + first.getLiteral() + "' statements require " + comp + " expressions, found " + components.size() + ".", location.getFileName(), location.getLineNumber());
                 }
                 
                 InstructionSet[] sets = components.toArray(new InstructionSet[components.size()]);
@@ -135,12 +135,12 @@ public class ExpressionInterpreter {
                     
                 } else {
                     
-                    Errors.throwSyntaxError("Trinity.Errors.SyntaxError", KeywordExpressions.getConstraintMessage(first), location.getFileName(), location.getLineNumber());
+                    Errors.throwSyntaxError(Errors.Classes.SYNTAX_ERROR, KeywordExpressions.getConstraintMessage(first), location.getFileName(), location.getLineNumber());
                 }
                 
             } else {
                 
-                Errors.throwSyntaxError("Trinity.Errors.SyntaxError", "..." + KeywordExpressions.getConstraintMessage(first), location.getFileName(), location.getLineNumber());
+                Errors.throwSyntaxError(Errors.Classes.SYNTAX_ERROR, "..." + KeywordExpressions.getConstraintMessage(first), location.getFileName(), location.getLineNumber());
             }
             
         } else {
@@ -276,7 +276,7 @@ public class ExpressionInterpreter {
                         
                     } else {
                         
-                        Errors.throwSyntaxError("Trinity.Errors.SyntaxError", "Invalid left-hand expression.", location.getFileName(), location.getLineNumber());
+                        Errors.throwSyntaxError(Errors.Classes.SYNTAX_ERROR, "Invalid left-hand expression.", location.getFileName(), location.getLineNumber());
                         retriever = null;
                     }
                     
@@ -435,7 +435,7 @@ public class ExpressionInterpreter {
                 
             } else {
                 
-                Errors.throwSyntaxError("Trinity.Errors.SyntaxError", "Unrecognized token.", location.getFileName(), location.getLineNumber());
+                Errors.throwSyntaxError(Errors.Classes.SYNTAX_ERROR, "Unrecognized token.", location.getFileName(), location.getLineNumber());
             }
         }
         
@@ -464,7 +464,7 @@ public class ExpressionInterpreter {
             }
         }
         
-        Errors.throwSyntaxError("Trinity.Errors.SyntaxError", "Unmatched brackets.", location.getFileName(), location.getLineNumber());
+        Errors.throwSyntaxError(Errors.Classes.SYNTAX_ERROR, "Unmatched brackets.", location.getFileName(), location.getLineNumber());
         return 0;
     }
     
@@ -472,7 +472,7 @@ public class ExpressionInterpreter {
         
         if (tokens[0].getToken() != left || tokens[tokens.length - 1].getToken() != right) {
             
-            Errors.throwSyntaxError("Trinity.Errors.SyntaxError", errorMessage, location.getFileName(), location.getLineNumber());
+            Errors.throwSyntaxError(Errors.Classes.SYNTAX_ERROR, errorMessage, location.getFileName(), location.getLineNumber());
         }
         
         // Check for imbalanced brackets
@@ -491,7 +491,7 @@ public class ExpressionInterpreter {
         
         if (level != 0) {
             
-            Errors.throwSyntaxError("Trinity.Errors.SyntaxError", errorMessage, location.getFileName(), location.getLineNumber());
+            Errors.throwSyntaxError(Errors.Classes.SYNTAX_ERROR, errorMessage, location.getFileName(), location.getLineNumber());
         }
     }
     
@@ -687,7 +687,7 @@ public class ExpressionInterpreter {
                 
             } else {
                 
-                Errors.throwSyntaxError("Trinity.Errors.SyntaxError", "Unrecognized expression.", location.getFileName(), location.getLineNumber());
+                Errors.throwSyntaxError(Errors.Classes.SYNTAX_ERROR, "Unrecognized expression.", location.getFileName(), location.getLineNumber());
             }
         }
         

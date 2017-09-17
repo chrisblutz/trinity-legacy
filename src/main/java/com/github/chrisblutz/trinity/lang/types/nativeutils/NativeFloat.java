@@ -19,19 +19,19 @@ class NativeFloat {
     
     static void register() {
         
-        TrinityNatives.registerField("Trinity.Float", "NaN", (runtime, thisObj, params) -> TrinityNatives.wrapNumber(Double.NaN));
-        TrinityNatives.registerField("Trinity.Float", "POSITIVE_INFINITY", (runtime, thisObj, params) -> TrinityNatives.wrapNumber(Double.POSITIVE_INFINITY));
-        TrinityNatives.registerField("Trinity.Float", "NEGATIVE_INFINITY", (runtime, thisObj, params) -> TrinityNatives.wrapNumber(Double.NEGATIVE_INFINITY));
-        TrinityNatives.registerField("Trinity.Float", "MIN_VALUE", (runtime, thisObj, params) -> TrinityNatives.wrapNumber(Double.MIN_VALUE));
-        TrinityNatives.registerField("Trinity.Float", "MAX_VALUE", (runtime, thisObj, params) -> TrinityNatives.wrapNumber(Double.MAX_VALUE));
+        TrinityNatives.registerField(TrinityNatives.Classes.FLOAT, "NaN", (runtime, thisObj, params) -> TrinityNatives.wrapNumber(Double.NaN));
+        TrinityNatives.registerField(TrinityNatives.Classes.FLOAT, "POSITIVE_INFINITY", (runtime, thisObj, params) -> TrinityNatives.wrapNumber(Double.POSITIVE_INFINITY));
+        TrinityNatives.registerField(TrinityNatives.Classes.FLOAT, "NEGATIVE_INFINITY", (runtime, thisObj, params) -> TrinityNatives.wrapNumber(Double.NEGATIVE_INFINITY));
+        TrinityNatives.registerField(TrinityNatives.Classes.FLOAT, "MIN_VALUE", (runtime, thisObj, params) -> TrinityNatives.wrapNumber(Double.MIN_VALUE));
+        TrinityNatives.registerField(TrinityNatives.Classes.FLOAT, "MAX_VALUE", (runtime, thisObj, params) -> TrinityNatives.wrapNumber(Double.MAX_VALUE));
         
-        TrinityNatives.registerMethod("Trinity.Float", "+", getActionForOperation("+"));
-        TrinityNatives.registerMethod("Trinity.Float", "-", getActionForOperation("-"));
-        TrinityNatives.registerMethod("Trinity.Float", "*", getActionForOperation("*"));
-        TrinityNatives.registerMethod("Trinity.Float", "/", getActionForOperation("/"));
-        TrinityNatives.registerMethod("Trinity.Float", "%", getActionForOperation("%"));
-        TrinityNatives.registerMethod("Trinity.Float", "toString", (runtime, thisObj, params) -> new TYString(Double.toString(TrinityNatives.toFloat(thisObj))));
-        TrinityNatives.registerMethod("Trinity.Float", "compareTo", (runtime, thisObj, params) -> {
+        TrinityNatives.registerMethod(TrinityNatives.Classes.FLOAT, "+", getActionForOperation("+"));
+        TrinityNatives.registerMethod(TrinityNatives.Classes.FLOAT, "-", getActionForOperation("-"));
+        TrinityNatives.registerMethod(TrinityNatives.Classes.FLOAT, "*", getActionForOperation("*"));
+        TrinityNatives.registerMethod(TrinityNatives.Classes.FLOAT, "/", getActionForOperation("/"));
+        TrinityNatives.registerMethod(TrinityNatives.Classes.FLOAT, "%", getActionForOperation("%"));
+        TrinityNatives.registerMethod(TrinityNatives.Classes.FLOAT, "toString", (runtime, thisObj, params) -> new TYString(Double.toString(TrinityNatives.toFloat(thisObj))));
+        TrinityNatives.registerMethod(TrinityNatives.Classes.FLOAT, "compareTo", (runtime, thisObj, params) -> {
             
             double thisDouble = TrinityNatives.toFloat(thisObj);
             TYObject obj = runtime.getVariable("other");
@@ -56,12 +56,12 @@ class NativeFloat {
                 
             } else {
                 
-                Errors.throwError("Trinity.Errors.InvalidTypeError", runtime, "Cannot compare types " + thisObj.getObjectClass().getName() + " and " + obj.getObjectClass().getName() + ".");
+                Errors.throwError(Errors.Classes.INVALID_TYPE_ERROR, runtime, "Cannot compare types " + thisObj.getObjectClass().getName() + " and " + obj.getObjectClass().getName() + ".");
             }
             
             return new TYInt(-1);
         });
-        TrinityNatives.registerMethod("Trinity.Float", "==", (runtime, thisObj, params) -> {
+        TrinityNatives.registerMethod(TrinityNatives.Classes.FLOAT, "==", (runtime, thisObj, params) -> {
             
             double thisDouble = TrinityNatives.toFloat(thisObj);
             TYObject obj = runtime.getVariable("other");
@@ -87,17 +87,17 @@ class NativeFloat {
             
             return TYBoolean.FALSE;
         });
-        TrinityNatives.registerMethod("Trinity.Float", "isNaN", (runtime, thisObj, params) -> {
+        TrinityNatives.registerMethod(TrinityNatives.Classes.FLOAT, "isNaN", (runtime, thisObj, params) -> {
             
             double thisDouble = TrinityNatives.toFloat(thisObj);
             return TYBoolean.valueFor(Double.isNaN(thisDouble));
         });
-        TrinityNatives.registerMethod("Trinity.Float", "isFinite", (runtime, thisObj, params) -> {
+        TrinityNatives.registerMethod(TrinityNatives.Classes.FLOAT, "isFinite", (runtime, thisObj, params) -> {
             
             double thisDouble = TrinityNatives.toFloat(thisObj);
             return TYBoolean.valueFor(Double.isFinite(thisDouble));
         });
-        TrinityNatives.registerMethod("Trinity.Float", "isInfinite", (runtime, thisObj, params) -> {
+        TrinityNatives.registerMethod(TrinityNatives.Classes.FLOAT, "isInfinite", (runtime, thisObj, params) -> {
             
             double thisDouble = TrinityNatives.toFloat(thisObj);
             return TYBoolean.valueFor(Double.isInfinite(thisDouble));
@@ -131,7 +131,7 @@ class NativeFloat {
                 
             } else {
                 
-                Errors.throwError("Trinity.Errors.InvalidTypeError", runtime, "Invalid type passed to '" + operation + "'.");
+                Errors.throwError(Errors.Classes.INVALID_TYPE_ERROR, runtime, "Invalid type passed to '" + operation + "'.");
                 
                 returnVal = TYObject.NONE;
             }
@@ -168,7 +168,7 @@ class NativeFloat {
             
             default:
                 
-                Errors.throwError("Trinity.Errors.UnsupportedOperationError", "Operation '" + operation + "' not supported.");
+                Errors.throwError(Errors.Classes.UNSUPPORTED_OPERATION_ERROR, "Operation '" + operation + "' not supported.");
                 
                 return double1;
         }
@@ -202,7 +202,7 @@ class NativeFloat {
             
             default:
                 
-                Errors.throwError("Trinity.Errors.UnsupportedOperationError", "Operation '" + operation + "' not supported.");
+                Errors.throwError(Errors.Classes.UNSUPPORTED_OPERATION_ERROR, "Operation '" + operation + "' not supported.");
                 
                 return double1;
         }

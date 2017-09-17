@@ -19,8 +19,8 @@ class NativeSystem {
     
     static void register() {
         
-        TrinityNatives.registerMethod("Trinity.System", "currentTimeMillis", (runtime, thisObj, params) -> new TYLong(System.currentTimeMillis()));
-        TrinityNatives.registerMethod("Trinity.System", "getEnvironment", (runtime, thisObj, params) -> {
+        TrinityNatives.registerMethod(TrinityNatives.Classes.SYSTEM, "currentTimeMillis", (runtime, thisObj, params) -> new TYLong(System.currentTimeMillis()));
+        TrinityNatives.registerMethod(TrinityNatives.Classes.SYSTEM, "getEnvironment", (runtime, thisObj, params) -> {
             
             TYObject name = runtime.getVariable("name");
             
@@ -34,8 +34,8 @@ class NativeSystem {
                 return getEnvironmentMap();
             }
         });
-        TrinityNatives.registerMethod("Trinity.System", "loadProperties", (runtime, thisObj, params) -> TrinityProperties.load());
-        TrinityNatives.registerMethod("Trinity.System", "identify", (runtime, thisObj, params) -> {
+        TrinityNatives.registerMethod(TrinityNatives.Classes.SYSTEM, "loadProperties", (runtime, thisObj, params) -> TrinityProperties.load());
+        TrinityNatives.registerMethod(TrinityNatives.Classes.SYSTEM, "identify", (runtime, thisObj, params) -> {
             
             TYObject object = runtime.getVariable("obj");
             return NativeStorage.getHashCode(object);

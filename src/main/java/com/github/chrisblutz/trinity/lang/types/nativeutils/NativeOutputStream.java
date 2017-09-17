@@ -14,7 +14,7 @@ class NativeOutputStream {
     
     static void register() {
         
-        TrinityNatives.registerMethod("Trinity.IO.NativeOutputStream", "print", (runtime, thisObj, params) -> {
+        TrinityNatives.registerMethod(TrinityNatives.Classes.NATIVE_OUTPUT_STREAM, "print", (runtime, thisObj, params) -> {
             
             PrintStream stream = TrinityNatives.cast(TYNativeOutputStream.class, thisObj).getInternalStream();
             String str = TrinityNatives.toString(runtime.getVariable("str"), runtime);
@@ -22,14 +22,14 @@ class NativeOutputStream {
             
             return TYObject.NONE;
         });
-        TrinityNatives.registerMethod("Trinity.IO.NativeOutputStream", "flush", (runtime, thisObj, params) -> {
+        TrinityNatives.registerMethod(TrinityNatives.Classes.NATIVE_OUTPUT_STREAM, "flush", (runtime, thisObj, params) -> {
             
             PrintStream stream = TrinityNatives.cast(TYNativeOutputStream.class, thisObj).getInternalStream();
             stream.flush();
             
             return TYObject.NONE;
         });
-        TrinityNatives.registerMethod("Trinity.IO.NativeOutputStream", "close", (runtime, thisObj, params) -> {
+        TrinityNatives.registerMethod(TrinityNatives.Classes.NATIVE_OUTPUT_STREAM, "close", (runtime, thisObj, params) -> {
             
             PrintStream stream = TrinityNatives.cast(TYNativeOutputStream.class, thisObj).getInternalStream();
             stream.close();

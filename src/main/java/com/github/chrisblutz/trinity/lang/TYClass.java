@@ -50,7 +50,7 @@ public class TYClass {
     
     public TYClass(String name, String shortName) {
         
-        this(name, shortName, name.contentEquals("Trinity.Object") ? null : ClassRegistry.getClass("Trinity.Object"));
+        this(name, shortName, name.contentEquals(TrinityNatives.Classes.OBJECT) ? null : ClassRegistry.getClass(TrinityNatives.Classes.OBJECT));
     }
     
     public TYClass(String name, String shortName, TYClass superclass) {
@@ -413,7 +413,7 @@ public class TYClass {
                     
                     if (newRuntime.isReturning()) {
                         
-                        Errors.throwError("Trinity.Errors.ReturnError", runtime, "Cannot return a value from a constructor.");
+                        Errors.throwError(Errors.Classes.RETURN_ERROR, runtime, "Cannot return a value from a constructor.");
                         
                     } else if (TrinityNatives.isClassNativelyConstructed(newObj.getObjectClass()) && TrinityNatives.isClassNativelyConstructed(obj.getObjectClass())) {
                         
@@ -424,7 +424,7 @@ public class TYClass {
                     
                 } else {
                     
-                    Errors.throwError("Trinity.Errors.ScopeError", runtime, "Constructor cannot be accessed from this context because it is marked '" + scope.toString() + "'.");
+                    Errors.throwError(Errors.Classes.SCOPE_ERROR, runtime, "Constructor cannot be accessed from this context because it is marked '" + scope.toString() + "'.");
                     
                     return TYObject.NONE;
                 }
@@ -470,7 +470,7 @@ public class TYClass {
                     
                     if (thisObj == TYObject.NONE) {
                         
-                        Errors.throwError("Trinity.Errors.ScopeError", runtime, "Instance method '" + methodName + "' cannot be called from a static context.");
+                        Errors.throwError(Errors.Classes.SCOPE_ERROR, runtime, "Instance method '" + methodName + "' cannot be called from a static context.");
                     }
                     
                     newRuntime.setThis(thisObj);
@@ -488,7 +488,7 @@ public class TYClass {
                 
             } else {
                 
-                Errors.throwError("Trinity.Errors.ScopeError", runtime, "Method '" + methodName + "' cannot be accessed from this context because it is marked '" + scope.toString() + "'.");
+                Errors.throwError(Errors.Classes.SCOPE_ERROR, runtime, "Method '" + methodName + "' cannot be accessed from this context because it is marked '" + scope.toString() + "'.");
                 
                 return TYObject.NONE;
             }
@@ -497,13 +497,13 @@ public class TYClass {
             
             return getSuperclass().tyInvoke(originClass, methodName, runtime, procedure, procedureRuntime, thisObj, params);
             
-        } else if ((!runtime.isStaticScope() || thisObj == TYObject.NONE) && ClassRegistry.getClass("Trinity.Kernel").getMethods().containsKey(methodName)) {
+        } else if ((!runtime.isStaticScope() || thisObj == TYObject.NONE) && ClassRegistry.getClass(TrinityNatives.Classes.KERNEL).getMethods().containsKey(methodName)) {
             
-            return ClassRegistry.getClass("Trinity.Kernel").tyInvoke(originClass, methodName, runtime, procedure, procedureRuntime, thisObj, params);
+            return ClassRegistry.getClass(TrinityNatives.Classes.KERNEL).tyInvoke(originClass, methodName, runtime, procedure, procedureRuntime, thisObj, params);
             
         } else {
             
-            Errors.throwError("Trinity.Errors.MethodNotFoundError", runtime, "No method '" + methodName + "' found in '" + originClass.getName() + "'.");
+            Errors.throwError(Errors.Classes.METHOD_NOT_FOUND_ERROR, runtime, "No method '" + methodName + "' found in '" + originClass.getName() + "'.");
         }
         
         return TYObject.NONE;
@@ -650,7 +650,7 @@ public class TYClass {
                         
                     } else {
                         
-                        Errors.throwError("Trinity.Errors.ClassNotFoundError", "Class " + superclassString + " does not exist.");
+                        Errors.throwError(Errors.Classes.CLASS_NOT_FOUND_ERROR, "Class " + superclassString + " does not exist.");
                     }
                 }
             }

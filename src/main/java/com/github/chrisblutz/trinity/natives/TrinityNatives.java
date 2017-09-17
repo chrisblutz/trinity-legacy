@@ -3,9 +3,9 @@ package com.github.chrisblutz.trinity.natives;
 import com.github.chrisblutz.trinity.lang.ClassRegistry;
 import com.github.chrisblutz.trinity.lang.TYClass;
 import com.github.chrisblutz.trinity.lang.TYObject;
+import com.github.chrisblutz.trinity.lang.TYRuntime;
 import com.github.chrisblutz.trinity.lang.errors.Errors;
 import com.github.chrisblutz.trinity.lang.procedures.ProcedureAction;
-import com.github.chrisblutz.trinity.lang.TYRuntime;
 import com.github.chrisblutz.trinity.lang.threading.TYThread;
 import com.github.chrisblutz.trinity.lang.types.arrays.TYArray;
 import com.github.chrisblutz.trinity.lang.types.bool.TYBoolean;
@@ -28,6 +28,31 @@ import java.util.Map;
  * @author Christopher Lutz
  */
 public class TrinityNatives {
+    
+    public class Classes {
+        
+        public static final String ARRAY = "Trinity.Array";
+        public static final String BOOLEAN = "Trinity.Boolean";
+        public static final String CLASS = "Trinity.Class";
+        public static final String COMPLEX_NUMBER = "Trinity.Math.ComplexNumber";
+        public static final String ERROR = "Trinity.Errors.Error";
+        public static final String FIELD = "Trinity.Field";
+        public static final String FILE_SYSTEM = "Trinity.IO.Files.FileSystem";
+        public static final String FLOAT = "Trinity.Float";
+        public static final String INT = "Trinity.Int";
+        public static final String KERNEL = "Trinity.Kernel";
+        public static final String LONG = "Trinity.Long";
+        public static final String MAP = "Trinity.Map";
+        public static final String MATH = "Trinity.Math";
+        public static final String METHOD = "Trinity.Method";
+        public static final String MODULE = "Trinity.Module";
+        public static final String OBJECT = "Trinity.Object";
+        public static final String NATIVE_OUTPUT_STREAM = "Trinity.IO.NativeOutputStream";
+        public static final String PROCEDURE = "Trinity.Procedure";
+        public static final String STRING = "Trinity.String";
+        public static final String SYSTEM = "Trinity.System";
+        public static final String THREAD = "Trinity.Thread";
+    }
     
     private static Map<String, Map<String, ProcedureAction>> methods = new HashMap<>();
     private static Map<String, Map<String, ProcedureAction>> fields = new HashMap<>();
@@ -65,7 +90,7 @@ public class TrinityNatives {
             
         } else {
             
-            Errors.throwSyntaxError("Trinity.Errors.NativeTypeError", "Native method " + className + "." + methodName + " not implemented.", fileName, lineNumber);
+            Errors.throwSyntaxError(Errors.Classes.NATIVE_TYPE_ERROR, "Native method " + className + "." + methodName + " not implemented.", fileName, lineNumber);
             return null;
         }
     }
@@ -88,7 +113,7 @@ public class TrinityNatives {
             
         } else {
             
-            Errors.throwSyntaxError("Trinity.Errors.NativeTypeError", "Native field " + className + "." + varName + " not implemented.", fileName, lineNumber);
+            Errors.throwSyntaxError(Errors.Classes.NATIVE_TYPE_ERROR, "Native field " + className + "." + varName + " not implemented.", fileName, lineNumber);
             return null;
         }
     }
@@ -160,7 +185,7 @@ public class TrinityNatives {
             return getArrayFor((Object[]) obj);
         }
         
-        Errors.throwSyntaxError("Trinity.Errors.NativeTypeError", "Trinity does not have native type-conversion utilities for " + obj.getClass() + ".", null, 0);
+        Errors.throwSyntaxError(Errors.Classes.NATIVE_TYPE_ERROR, "Trinity does not have native type-conversion utilities for " + obj.getClass() + ".", null, 0);
         
         return TYObject.NIL;
     }
@@ -239,7 +264,7 @@ public class TrinityNatives {
             
         } else {
             
-            Errors.throwError("Trinity.Errors.ClassNotFoundError", runtime, "Class " + className + " does not exist.");
+            Errors.throwError(Errors.Classes.CLASS_NOT_FOUND_ERROR, runtime, "Class " + className + " does not exist.");
         }
         
         return TYObject.NIL;
@@ -253,7 +278,7 @@ public class TrinityNatives {
             
         } else {
             
-            Errors.throwError("Trinity.Errors.InvalidTypeError", "Unexpected value of type " + object.getObjectClass().getName() + " found.");
+            Errors.throwError(Errors.Classes.INVALID_TYPE_ERROR, "Unexpected value of type " + object.getObjectClass().getName() + " found.");
             
             // This will throw an error, but the program will exit at the line above, never reaching this point
             return desiredClass.cast(object);
@@ -276,7 +301,7 @@ public class TrinityNatives {
             
         } else {
             
-            if (isInstance(tyObject, "Trinity.Math.ComplexNumber")) {
+            if (isInstance(tyObject, Classes.COMPLEX_NUMBER)) {
                 
                 if (getImaginaryComplexComponent(tyObject) == 0) {
                     
@@ -286,7 +311,7 @@ public class TrinityNatives {
                     
                     TYRuntime runtime = new TYRuntime();
                     String str = toString(tyObject, runtime);
-                    Errors.throwError("Trinity.Errors.ComplexNumberError", "Real number required. Found: " + str);
+                    Errors.throwError(Errors.Classes.COMPLEX_NUMBER_ERROR, "Real number required. Found: " + str);
                 }
             }
             
@@ -310,7 +335,7 @@ public class TrinityNatives {
             
         } else {
             
-            if (isInstance(tyObject, "Trinity.Math.ComplexNumber")) {
+            if (isInstance(tyObject, Classes.COMPLEX_NUMBER)) {
                 
                 if (getImaginaryComplexComponent(tyObject) == 0) {
                     
@@ -320,7 +345,7 @@ public class TrinityNatives {
                     
                     TYRuntime runtime = new TYRuntime();
                     String str = toString(tyObject, runtime);
-                    Errors.throwError("Trinity.Errors.ComplexNumberError", "Real number required. Found: " + str);
+                    Errors.throwError(Errors.Classes.COMPLEX_NUMBER_ERROR, "Real number required. Found: " + str);
                 }
             }
             
@@ -344,7 +369,7 @@ public class TrinityNatives {
             
         } else {
             
-            if (isInstance(tyObject, "Trinity.Math.ComplexNumber")) {
+            if (isInstance(tyObject, Classes.COMPLEX_NUMBER)) {
                 
                 if (getImaginaryComplexComponent(tyObject) == 0) {
                     
@@ -354,7 +379,7 @@ public class TrinityNatives {
                     
                     TYRuntime runtime = new TYRuntime();
                     String str = toString(tyObject, runtime);
-                    Errors.throwError("Trinity.Errors.ComplexNumberError", "Real number required. Found: " + str);
+                    Errors.throwError(Errors.Classes.COMPLEX_NUMBER_ERROR, "Real number required. Found: " + str);
                 }
             }
             
@@ -446,7 +471,7 @@ public class TrinityNatives {
     
     public static TYObject wrapComplexNumber(double real, double imaginary) {
         
-        return ClassRegistry.getClass("Trinity.Kernel").tyInvoke("cmplx", new TYRuntime(), null, null, null, wrapNumber(real), wrapNumber(imaginary));
+        return ClassRegistry.getClass(Classes.KERNEL).tyInvoke("cmplx", new TYRuntime(), null, null, null, wrapNumber(real), wrapNumber(imaginary));
     }
     
     /**
