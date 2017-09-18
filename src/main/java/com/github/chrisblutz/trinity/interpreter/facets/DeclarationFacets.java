@@ -344,20 +344,23 @@ public class DeclarationFacets {
                 name = nameInfo.getContents();
                 position++;
                 
-            } else if (nameInfo.getToken() == Token.PLUS || nameInfo.getToken() == Token.MINUS || nameInfo.getToken() == Token.MULTIPLY || nameInfo.getToken() == Token.DIVIDE || nameInfo.getToken() == Token.MODULUS || nameInfo.getToken() == Token.CLASS_EXTENSION || nameInfo.getToken() == Token.BIT_SHIFT_RIGHT || nameInfo.getToken() == Token.BIT_SHIFT_LOGICAL_RIGHT) {
+            } else if (Operators.isOperatorMethod(nameInfo.getToken())) {
                 
                 name = nameInfo.getContents();
                 position++;
                 
-            } else if (nameInfo.getToken() == Token.LEFT_SQUARE_BRACKET && position + 1 < line.size() && line.get(position + 1).getToken() == Token.RIGHT_SQUARE_BRACKET && position + 2 < line.size() && line.get(position + 2).getToken() == Token.ASSIGNMENT_OPERATOR) {
-                
-                name = "[]=";
-                position += 3;
-                
             } else if (nameInfo.getToken() == Token.LEFT_SQUARE_BRACKET && position + 1 < line.size() && line.get(position + 1).getToken() == Token.RIGHT_SQUARE_BRACKET) {
                 
-                name = "[]";
-                position += 2;
+                if (position + 2 < line.size() && line.get(position + 2).getToken() == Token.ASSIGNMENT_OPERATOR) {
+                    
+                    name = "[]=";
+                    position += 3;
+                    
+                } else {
+                    
+                    name = "[]";
+                    position += 2;
+                }
                 
             } else {
                 

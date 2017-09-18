@@ -1,9 +1,6 @@
 package com.github.chrisblutz.trinity.interpreter.facets;
 
-import com.github.chrisblutz.trinity.interpreter.AssignmentOperators;
-import com.github.chrisblutz.trinity.interpreter.BinaryOperator;
-import com.github.chrisblutz.trinity.interpreter.LogicalOperator;
-import com.github.chrisblutz.trinity.interpreter.UnaryOperator;
+import com.github.chrisblutz.trinity.interpreter.*;
 import com.github.chrisblutz.trinity.interpreter.instructions.InstructionSet;
 import com.github.chrisblutz.trinity.lang.TYObject;
 import com.github.chrisblutz.trinity.lang.TYRuntime;
@@ -256,6 +253,16 @@ public class OperatorFacets {
                 }
             }
         };
+        
+        // Register operators that function via methods
+        Operators.registerOperatorMethod(plus);
+        Operators.registerOperatorMethod(minus);
+        Operators.registerOperatorMethod(multiply);
+        Operators.registerOperatorMethod(divide);
+        Operators.registerOperatorMethod(modulus);
+        Operators.registerOperatorMethod(bitShiftLeft);
+        Operators.registerOperatorMethod(bitShiftRight);
+        Operators.registerOperatorMethod(bitShiftRightLogical);
         
         // Assignment Operators
         AssignmentOperators.registerAssignmentOperator(Token.ASSIGNMENT_OPERATOR, null);
