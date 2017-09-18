@@ -62,7 +62,7 @@ public class FileUtils {
                     e.printStackTrace();
                 }
                 
-                Trinity.exit(50);
+                Trinity.exit(ExitCodes.TRINITY_HOME_DETERMINATION_ERROR);
                 
             } catch (URISyntaxException e) {
                 
@@ -73,7 +73,7 @@ public class FileUtils {
                     e.printStackTrace();
                 }
                 
-                Trinity.exit(51);
+                Trinity.exit(ExitCodes.TRINTIY_HOME_MALFORMED_URI);
             }
         }
         
@@ -86,7 +86,7 @@ public class FileUtils {
             
             System.err.println("Trinity's standard library could not be found.");
             
-            Trinity.exit(80);
+            Trinity.exit(ExitCodes.TRINITY_STANDARD_LIBARY_MISSING);
         }
     }
 }
