@@ -6,10 +6,7 @@ import com.github.chrisblutz.trinity.info.TrinityInfo;
 import java.io.*;
 import java.text.DateFormat;
 import java.util.Calendar;
-import java.util.logging.Formatter;
-import java.util.logging.Handler;
-import java.util.logging.LogRecord;
-import java.util.logging.Logger;
+import java.util.logging.*;
 
 
 /**
@@ -80,7 +77,7 @@ public class TrinityLogging {
             logger.setUseParentHandlers(false);
             logger.addHandler(handler);
             
-        } catch (Exception e) {
+        } catch (IOException e) {
             
             if (CLI.isDebuggingEnabled()) {
                 
@@ -91,10 +88,13 @@ public class TrinityLogging {
     
     public static void logInterpreterInfo() {
         
-        logger.info("Trinity Interpreter: " + TrinityInfo.getVersionString());
-        
-        logger.info("Java Version: " + System.getProperty("java.version"));
-        logger.info("OS: " + System.getProperty("os.name") + " (v" + System.getProperty("os.version") + ") [" + System.getProperty("os.arch") + "]\n");
+        if (logger.isLoggable(Level.INFO)) {
+            
+            logger.info("Trinity Interpreter: " + TrinityInfo.getVersionString());
+            
+            logger.info("Java Version: " + System.getProperty("java.version"));
+            logger.info("OS: " + System.getProperty("os.name") + " (v" + System.getProperty("os.version") + ") [" + System.getProperty("os.arch") + "]\n");
+        }
     }
     
     public static void info(String message) {

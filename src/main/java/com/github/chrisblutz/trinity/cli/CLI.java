@@ -56,13 +56,13 @@ public class CLI {
         
         if (arg.startsWith("-")) {
             
-            if (currentOption != null) {
+            if (currentOption == null) {
                 
-                parseOption(currentOption, params);
+                parseArguments(params);
                 
             } else {
                 
-                parseArguments(params);
+                parseOption(currentOption, params);
             }
             
             params.clear();

@@ -193,24 +193,6 @@ public class TYClass {
         return superclass != null && superclass.hasVariable(name);
     }
     
-    public VariableLoc getVariable(String name) {
-        
-        for (String var : classVariables.keySet()) {
-            
-            if (var.contentEquals(name)) {
-                
-                return classVariables.get(var);
-            }
-        }
-        
-        if (superclass != null) {
-            
-            return superclass.getVariable(name);
-        }
-        
-        return null;
-    }
-    
     public boolean hasVariable(String name, TYObject thisObj) {
         
         if (instanceVariables.containsKey(thisObj)) {
@@ -233,6 +215,24 @@ public class TYClass {
         }
         
         return superclass != null && superclass.hasVariable(name, thisObj);
+    }
+    
+    public VariableLoc getVariable(String name) {
+        
+        for (String var : classVariables.keySet()) {
+            
+            if (var.contentEquals(name)) {
+                
+                return classVariables.get(var);
+            }
+        }
+        
+        if (superclass != null) {
+            
+            return superclass.getVariable(name);
+        }
+        
+        return null;
     }
     
     public VariableLoc getVariable(String name, TYObject thisObj) {

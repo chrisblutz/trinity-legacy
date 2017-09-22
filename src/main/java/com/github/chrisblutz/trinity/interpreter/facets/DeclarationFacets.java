@@ -122,7 +122,11 @@ public class DeclarationFacets {
                 }
                 
                 ProcedureAction action = null;
-                if (!nativeVar) {
+                if (nativeVar) {
+                    
+                    action = TrinityNatives.getFieldProcedureAction(containerClass.getName(), name, location.getFileName(), location.getLineNumber());
+                    
+                } else {
                     
                     if (position < tokens.size() && tokens.get(position).getToken() == Token.ASSIGNMENT_OPERATOR) {
                         
@@ -136,10 +140,6 @@ public class DeclarationFacets {
                         InstructionSet set = ExpressionInterpreter.interpretExpression(null, assignment.toArray(new TokenInfo[assignment.size()]), location, containerClass.getName(), stackName, i == splitParts.size() - 1 ? nextBlock : null);
                         action = new VariableProcedureAction(stackName, location, containerClass, set);
                     }
-                    
-                } else {
-                    
-                    action = TrinityNatives.getFieldProcedureAction(containerClass.getName(), name, location.getFileName(), location.getLineNumber());
                 }
                 
                 if (staticVar) {
@@ -156,7 +156,8 @@ public class DeclarationFacets {
         // Definition for constant declarations
         Declarations.register(Token.VAL, 2, 0, (line, nextBlock, env, location) -> {
             
-            boolean staticVar = false, nativeVar = false;
+            boolean staticVar = false;
+            boolean nativeVar = false;
             String name = null;
             int position = 1;
             
@@ -197,7 +198,11 @@ public class DeclarationFacets {
                 }
                 
                 ProcedureAction action = null;
-                if (!nativeVar) {
+                if (nativeVar) {
+                    
+                    action = TrinityNatives.getFieldProcedureAction(containerClass.getName(), name, location.getFileName(), location.getLineNumber());
+                    
+                } else {
                     
                     if (position < tokens.size() && tokens.get(position).getToken() == Token.ASSIGNMENT_OPERATOR) {
                         
@@ -211,10 +216,6 @@ public class DeclarationFacets {
                         InstructionSet set = ExpressionInterpreter.interpretExpression(null, assignment.toArray(new TokenInfo[assignment.size()]), location, containerClass.getName(), stackName, i == splitParts.size() - 1 ? nextBlock : null);
                         action = new VariableProcedureAction(stackName, location, containerClass, set);
                     }
-                    
-                } else {
-                    
-                    action = TrinityNatives.getFieldProcedureAction(containerClass.getName(), name, location.getFileName(), location.getLineNumber());
                 }
                 
                 if (staticVar) {
@@ -283,7 +284,11 @@ public class DeclarationFacets {
                 className = env.getEnvironmentString() + "." + className;
             }
             
-            if (!nativeClass) {
+            if (nativeClass) {
+                
+                Errors.throwSyntaxError(Errors.Classes.SYNTAX_ERROR, "Native classes are not currently supported.", location.getFileName(), location.getLineNumber());
+                
+            } else {
                 
                 TYClass tyClass = ClassRegistry.getClass(className);
                 tyClass.setLeadingComments(line.getLeadingComments());
@@ -304,10 +309,6 @@ public class DeclarationFacets {
                 }
                 
                 PluginLoader.triggerOnClassLoadFromFile(location.getFileName(), location.getFile(), tyClass);
-                
-            } else {
-                
-                Errors.throwSyntaxError(Errors.Classes.SYNTAX_ERROR, "Native classes are not currently supported.", location.getFileName(), location.getLineNumber());
             }
         });
         
@@ -376,7 +377,7 @@ public class DeclarationFacets {
             TYClass containerClass = env.getClassStack().get(env.getClassStack().size() - 1);
             
             List<String> mandatoryParams = new ArrayList<>();
-            Map<String, ProcedureAction> optParams = new TreeMap<>();
+            Map<String, ProcedureAction> optParams = new LinkedHashMap<>();
             String blockParam = null;
             String overflowParam = null;
             
@@ -392,7 +393,11 @@ public class DeclarationFacets {
             }
             
             ProcedureAction action;
-            if (!nativeMethod) {
+            if (nativeMethod) {
+                
+                action = TrinityNatives.getMethodProcedureAction(containerClass.getName(), name, location.getFileName(), location.getLineNumber());
+                
+            } else {
                 
                 if (nextBlock == null) {
                     
@@ -402,10 +407,6 @@ public class DeclarationFacets {
                     
                     action = ExpressionInterpreter.interpret(nextBlock, env, env.getClassStack().get(env.getClassStack().size() - 1).getName(), name, true);
                 }
-                
-            } else {
-                
-                action = TrinityNatives.getMethodProcedureAction(containerClass.getName(), name, location.getFileName(), location.getLineNumber());
             }
             
             TYProcedure procedure = new TYProcedure(action, mandatoryParams, optParams, blockParam, overflowParam, true);

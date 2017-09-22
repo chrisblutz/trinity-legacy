@@ -2,8 +2,8 @@ package com.github.chrisblutz.trinity.interpreter.instructions;
 
 import com.github.chrisblutz.trinity.interpreter.Location;
 import com.github.chrisblutz.trinity.lang.TYObject;
-import com.github.chrisblutz.trinity.lang.procedures.ProcedureAction;
 import com.github.chrisblutz.trinity.lang.TYRuntime;
+import com.github.chrisblutz.trinity.lang.procedures.ProcedureAction;
 import com.github.chrisblutz.trinity.natives.TrinityNatives;
 import com.github.chrisblutz.trinity.parser.tokens.Token;
 
@@ -77,12 +77,9 @@ public class IfInstructionSet extends InstructionSet {
                 result = getChild().evaluate(TYObject.NONE, newRuntime);
             }
             
-        } else if (getIfToken() == Token.ELSE) {
+        } else if (getIfToken() == Token.ELSE && getAction() != null) {
             
-            if (getAction() != null) {
-                
-                result = getAction().onAction(newRuntime, null, TYObject.NONE);
-            }
+            result = getAction().onAction(newRuntime, null, TYObject.NONE);
         }
         
         newRuntime.dispose(runtime);

@@ -36,33 +36,6 @@ public class TrinityInterpreter {
         interpret(block, new InterpretEnvironment());
     }
     
-    public static void importModule(String module) {
-        
-        importedModules.add(module);
-    }
-    
-    public static String[] getImportedModules() {
-        
-        return importedModules.toArray(new String[importedModules.size()]);
-    }
-    
-    public static void addInitializationAction(ProcedureAction action) {
-        
-        initializationActions.add(action);
-    }
-    
-    public static void runInitializationActions() {
-        
-        TYRuntime runtime = new TYRuntime();
-        
-        for (ProcedureAction action : initializationActions) {
-            
-            action.onAction(runtime, TYObject.NONE);
-        }
-        
-        initializationActions.clear();
-    }
-    
     public static void interpret(Block block, InterpretEnvironment env) {
         
         for (int i = 0; i < block.size(); i++) {
@@ -105,6 +78,33 @@ public class TrinityInterpreter {
                 }
             }
         }
+    }
+    
+    public static void importModule(String module) {
+        
+        importedModules.add(module);
+    }
+    
+    public static String[] getImportedModules() {
+        
+        return importedModules.toArray(new String[importedModules.size()]);
+    }
+    
+    public static void addInitializationAction(ProcedureAction action) {
+        
+        initializationActions.add(action);
+    }
+    
+    public static void runInitializationActions() {
+        
+        TYRuntime runtime = new TYRuntime();
+        
+        for (ProcedureAction action : initializationActions) {
+            
+            action.onAction(runtime, TYObject.NONE);
+        }
+        
+        initializationActions.clear();
     }
     
     public static void incrementInstructionCount() {

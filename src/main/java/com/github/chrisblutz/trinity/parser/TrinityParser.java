@@ -89,15 +89,15 @@ public class TrinityParser {
         
         sc.close();
         
-        return parse(sourceFile, sourceLocation, lines.toArray(new String[lines.size()]));
+        return parseLines(sourceFile, sourceLocation, lines.toArray(new String[lines.size()]));
     }
     
     public static Block parseStrings(File container, String[] lines) {
         
-        return parse(container.getName(), container, lines);
+        return parseLines(container.getName(), container, lines);
     }
     
-    private static Block parse(String filename, File fullFile, String[] lines) {
+    private static Block parseLines(String filename, File fullFile, String[] lines) {
         
         PluginLoader.triggerOnFileLoad(filename, fullFile);
         
