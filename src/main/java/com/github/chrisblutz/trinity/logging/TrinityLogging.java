@@ -56,8 +56,7 @@ public class TrinityLogging {
                 @Override
                 public void publish(LogRecord record) {
                     
-                    String string = formatter.format(record);
-                    printStream.println(string);
+                    printStream.println(formatter.format(record));
                 }
                 
                 @Override

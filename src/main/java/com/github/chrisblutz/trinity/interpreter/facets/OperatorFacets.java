@@ -287,18 +287,15 @@ public class OperatorFacets {
                 
                 if (TrinityNatives.isInstance(value, TrinityNatives.Classes.LONG)) {
                     
-                    long thisLong = TrinityNatives.toLong(value);
-                    return new TYLong(+thisLong);
+                    return new TYLong(+TrinityNatives.toLong(value));
                     
                 } else if (TrinityNatives.isInstance(value, TrinityNatives.Classes.FLOAT)) {
                     
-                    double thisDouble = TrinityNatives.toFloat(value);
-                    return new TYFloat(+thisDouble);
+                    return new TYFloat(+TrinityNatives.toFloat(value));
                     
                 } else {
                     
-                    int thisInt = TrinityNatives.toInt(value);
-                    return new TYInt(+thisInt);
+                    return new TYInt(+TrinityNatives.toInt(value));
                 }
             }
         };
@@ -309,18 +306,15 @@ public class OperatorFacets {
                 
                 if (TrinityNatives.isInstance(value, TrinityNatives.Classes.LONG)) {
                     
-                    long thisLong = TrinityNatives.toLong(value);
-                    return new TYLong(-thisLong);
+                    return new TYLong(-TrinityNatives.toLong(value));
                     
                 } else if (TrinityNatives.isInstance(value, TrinityNatives.Classes.FLOAT)) {
                     
-                    double thisDouble = TrinityNatives.toFloat(value);
-                    return new TYFloat(-thisDouble);
+                    return new TYFloat(-TrinityNatives.toFloat(value));
                     
                 } else {
                     
-                    int thisInt = TrinityNatives.toInt(value);
-                    return new TYInt(-thisInt);
+                    return new TYInt(-TrinityNatives.toInt(value));
                 }
             }
         };
@@ -331,13 +325,11 @@ public class OperatorFacets {
                 
                 if (TrinityNatives.isInstance(value, TrinityNatives.Classes.LONG)) {
                     
-                    long thisLong = TrinityNatives.toLong(value);
-                    return new TYLong(~thisLong);
+                    return new TYLong(~TrinityNatives.toLong(value));
                     
                 } else {
                     
-                    int thisInt = TrinityNatives.toInt(value);
-                    return new TYInt(~thisInt);
+                    return new TYInt(~TrinityNatives.toInt(value));
                 }
             }
         };
