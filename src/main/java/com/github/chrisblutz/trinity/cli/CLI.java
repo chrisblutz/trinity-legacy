@@ -15,7 +15,7 @@ import java.util.List;
 public class CLI {
     
     private static boolean loadedAnyFiles = false;
-    private static boolean debugging = false;
+    private static boolean debugging = false, counting = false;
     
     private static List<File> sourceFiles = new ArrayList<>();
     private static String mainClass = null;
@@ -118,6 +118,12 @@ public class CLI {
                 libraries.addAll(params);
                 break;
             
+            case "-c":
+            case "--count":
+                
+                counting = true;
+                break;
+            
             default:
                 System.err.println("Unrecognized option '" + arg + "'.");
                 break;
@@ -140,5 +146,10 @@ public class CLI {
     public static boolean isDebuggingEnabled() {
         
         return debugging;
+    }
+    
+    public static boolean isCountingEnabled() {
+        
+        return counting;
     }
 }

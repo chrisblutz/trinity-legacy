@@ -147,6 +147,11 @@ public class Runner {
                 long total = endMillis - startMillis;
                 System.out.println(String.format("\nExecution took %.3f seconds (files took %.3f seconds to load).", (float) total / 1000f, (float) loadTotal / 1000f));
             }
+            
+            if (CLI.isCountingEnabled()) {
+                
+                System.out.println("Executed " + TrinityInterpreter.getTotalInstructionCount() + " total instructions.");
+            }
         }
         
         // Trigger plugin unload, assumes execution succeeded

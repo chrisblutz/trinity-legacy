@@ -2,6 +2,7 @@ package com.github.chrisblutz.trinity.bootstrap;
 
 import com.github.chrisblutz.trinity.info.TrinityInfo;
 import com.github.chrisblutz.trinity.lang.types.nativeutils.NativeHelper;
+import com.github.chrisblutz.trinity.logging.TrinityLogging;
 import com.github.chrisblutz.trinity.parser.TrinityParser;
 import com.github.chrisblutz.trinity.utils.FileUtils;
 
@@ -17,6 +18,10 @@ public class Bootstrap {
         
         // Load interpreter information
         TrinityInfo.loadInfo();
+        
+        // Start up Trinity's logger
+        TrinityLogging.setup();
+        TrinityLogging.logInterpreterInfo();
         
         // Check that the standard library exists
         FileUtils.checkStandardLibrary();

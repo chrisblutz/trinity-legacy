@@ -1,13 +1,14 @@
 package com.github.chrisblutz.trinity.interpreter;
 
+import com.github.chrisblutz.trinity.cli.CLI;
 import com.github.chrisblutz.trinity.interpreter.facets.DeclarationFacets;
 import com.github.chrisblutz.trinity.interpreter.facets.KeywordExpressionFacets;
 import com.github.chrisblutz.trinity.interpreter.facets.KeywordFacets;
 import com.github.chrisblutz.trinity.interpreter.facets.OperatorFacets;
 import com.github.chrisblutz.trinity.lang.TYObject;
+import com.github.chrisblutz.trinity.lang.TYRuntime;
 import com.github.chrisblutz.trinity.lang.errors.Errors;
 import com.github.chrisblutz.trinity.lang.procedures.ProcedureAction;
-import com.github.chrisblutz.trinity.lang.TYRuntime;
 import com.github.chrisblutz.trinity.parser.blocks.Block;
 import com.github.chrisblutz.trinity.parser.blocks.BlockItem;
 import com.github.chrisblutz.trinity.parser.blocks.BlockLine;
@@ -25,6 +26,8 @@ public class TrinityInterpreter {
     
     private static List<String> importedModules = new ArrayList<>();
     private static List<ProcedureAction> initializationActions = new ArrayList<>();
+    
+    private static volatile long totalInstructionCount = 0;
     
     public static void interpret(Block block) {
         
@@ -102,6 +105,19 @@ public class TrinityInterpreter {
                 }
             }
         }
+    }
+    
+    public static void incrementInstructionCount() {
+        
+        if (CLI.isCountingEnabled()) {
+            
+            totalInstructionCount++;
+        }
+    }
+    
+    public static long getTotalInstructionCount() {
+        
+        return totalInstructionCount;
     }
     
     static {

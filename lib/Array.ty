@@ -16,6 +16,7 @@ module Trinity
 
             def <<(other)
                 add(other)
+                this
 
             def native [](index)
 
