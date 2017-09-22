@@ -25,7 +25,7 @@ class NativeFileSystem {
             
             TYObject object = runtime.getVariable("path");
             
-            return new TYString(new File(TrinityNatives.cast(TYString.class, object).getInternalString()).getAbsolutePath());
+            return new TYString(new File(TrinityNatives.toString(object, runtime)).getAbsolutePath());
         });
         TrinityNatives.registerMethod(TrinityNatives.Classes.FILE_SYSTEM, "create", (runtime, thisObj, params) -> {
             
@@ -39,8 +39,8 @@ class NativeFileSystem {
                 
                 File parentDir = new File(parent);
                 if (!parentDir.exists() && !parentDir.mkdirs()) {
-                        
-                        Errors.throwError(Errors.Classes.IO_ERROR, runtime, "Unable to create parent directories.");
+                    
+                    Errors.throwError(Errors.Classes.IO_ERROR, runtime, "Unable to create parent directories.");
                 }
                 return TYBoolean.valueFor(f.createNewFile());
                 
@@ -58,7 +58,7 @@ class NativeFileSystem {
             TYObject append = runtime.getVariable("append");
             
             List<FilePrivilege> privileges = new ArrayList<>();
-            String privilegeStr = TrinityNatives.cast(TYString.class, privilege).getInternalString();
+            String privilegeStr = TrinityNatives.toString(privilege, runtime);
             if (privilegeStr.contains("r")) {
                 
                 privileges.add(FilePrivilege.READ);
@@ -68,7 +68,7 @@ class NativeFileSystem {
                 privileges.add(FilePrivilege.WRITE);
             }
             
-            FileUtils.open(TrinityNatives.cast(TYString.class, path).getInternalString(), privileges, TrinityNatives.toBoolean(append));
+            FileUtils.open(TrinityNatives.toString(path, runtime), privileges, TrinityNatives.toBoolean(append));
             
             return TYObject.NONE;
         });
@@ -76,14 +76,14 @@ class NativeFileSystem {
             
             TYObject path = runtime.getVariable("path");
             
-            return FileUtils.read(TrinityNatives.cast(TYString.class, path).getInternalString());
+            return FileUtils.read(TrinityNatives.toString(path, runtime));
         });
         TrinityNatives.registerMethod(TrinityNatives.Classes.FILE_SYSTEM, "write", (runtime, thisObj, params) -> {
             
             TYObject path = runtime.getVariable("path");
             TYObject str = runtime.getVariable("str");
             
-            FileUtils.write(TrinityNatives.cast(TYString.class, path).getInternalString(), TrinityNatives.toString(str, runtime));
+            FileUtils.write(TrinityNatives.toString(path, runtime), TrinityNatives.toString(str, runtime));
             
             return TYObject.NONE;
         });
@@ -91,7 +91,7 @@ class NativeFileSystem {
             
             TYObject path = runtime.getVariable("path");
             
-            FileUtils.close(TrinityNatives.cast(TYString.class, path).getInternalString());
+            FileUtils.close(TrinityNatives.toString(path, runtime));
             
             return TYObject.NONE;
         });

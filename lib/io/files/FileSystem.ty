@@ -4,7 +4,7 @@ module Trinity
     module IO
         module Files
             class FileSystem
-                def native static normalize(name)
+                def native static normalize(path)
 
                 def native static create(path)
 

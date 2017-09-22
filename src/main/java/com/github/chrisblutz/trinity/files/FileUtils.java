@@ -104,6 +104,11 @@ public class FileUtils {
             StringBuilder sb = fileContents.get(fileName);
             if (filePrivileges.get(fileName).contains(FilePrivilege.WRITE)) {
                 
+                fileContents.remove(fileName);
+                filePrivileges.remove(fileName);
+                fileAppending.remove(fileName);
+                hasWritten.remove(fileName);
+                
                 try {
                     
                     PrintStream ps = new PrintStream(new File(fileName));
@@ -115,11 +120,6 @@ public class FileUtils {
                     Errors.throwError(Errors.Classes.IO_ERROR, "File '" + fileName + "' not found.");
                 }
             }
-            
-            fileContents.remove(fileName);
-            filePrivileges.remove(fileName);
-            fileAppending.remove(fileName);
-            hasWritten.remove(fileName);
             
         } else {
             
