@@ -651,7 +651,7 @@ public class ExpressionInterpreter {
     public static Parameters interpretParameters(TokenInfo[] tokens, Location location, String errorClass, String method) {
         
         List<String> mandatory = new ArrayList<>();
-        Map<String, ProcedureAction> optional = new TreeMap<>();
+        Map<String, ProcedureAction> optional = new LinkedHashMap<>();
         String block = null;
         String overflow = null;
         
