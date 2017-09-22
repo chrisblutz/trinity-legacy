@@ -34,12 +34,13 @@ class NativeFileSystem {
             try {
                 
                 File f = new File(TrinityNatives.cast(TYString.class, object).getInternalString());
-                if (f.getParentFile() != null && !f.getParentFile().exists()) {
-                    
-                    if (f.getParentFile().mkdirs()) {
+                String path = f.getAbsolutePath();
+                String parent = path.substring(0, path.replace(File.separatorChar, '/').lastIndexOf('/'));
+                
+                File parentDir = new File(parent);
+                if (!parentDir.exists() && !parentDir.mkdirs()) {
                         
                         Errors.throwError(Errors.Classes.IO_ERROR, runtime, "Unable to create parent directories.");
-                    }
                 }
                 return TYBoolean.valueFor(f.createNewFile());
                 
