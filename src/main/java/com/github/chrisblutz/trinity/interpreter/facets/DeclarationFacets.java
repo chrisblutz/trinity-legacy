@@ -1,6 +1,7 @@
 package com.github.chrisblutz.trinity.interpreter.facets;
 
 import com.github.chrisblutz.trinity.interpreter.*;
+import com.github.chrisblutz.trinity.interpreter.actions.InterfaceMethodProcedureAction;
 import com.github.chrisblutz.trinity.interpreter.actions.VariableProcedureAction;
 import com.github.chrisblutz.trinity.interpreter.instructions.InstructionSet;
 import com.github.chrisblutz.trinity.lang.*;
@@ -19,6 +20,8 @@ import java.util.*;
  * @author Christopher Lutz
  */
 public class DeclarationFacets {
+    
+    public static final ProcedureAction DEFAULT_METHOD = (runtime, thisObj, params) -> TYObject.NONE;
     
     public static void registerFacets() {
         
@@ -262,6 +265,7 @@ public class DeclarationFacets {
             
             boolean nativeClass = false;
             String extension = null;
+            List<String> interfaces = new ArrayList<>();
             int offset = 1;
             
             if (line.get(offset).getToken() == Token.NATIVE) {
@@ -276,7 +280,51 @@ public class DeclarationFacets {
             if (line.size() - offset > 1 && line.get(offset).getToken() == Token.CLASS_EXTENSION) {
                 
                 offset++;
-                extension = line.get(offset).getContents();
+                StringBuilder ext = new StringBuilder();
+                for (; offset < line.size(); offset++) {
+                    
+                    TokenInfo info = line.get(offset);
+                    
+                    if (info.getToken() == Token.INTERFACE_IMPLEMENTATION) {
+                        
+                        break;
+                        
+                    } else if (info.getToken() == Token.NON_TOKEN_STRING) {
+                        
+                        ext.append(info.getContents());
+                        
+                    } else {
+                        
+                        ext.append(info.getToken().getLiteral());
+                    }
+                }
+                
+                extension = ext.toString();
+            }
+            
+            if (line.size() - offset > 1 && line.get(offset).getToken() == Token.INTERFACE_IMPLEMENTATION) {
+                
+                offset++;
+                TokenInfo[] names = new TokenInfo[line.size() - offset];
+                System.arraycopy(line.toArray(), line.size() - names.length, names, 0, names.length);
+                List<List<TokenInfo>> nameTokens = ExpressionInterpreter.splitTokens(names, Token.COMMA);
+                for (List<TokenInfo> tokens : nameTokens) {
+                    
+                    StringBuilder ext = new StringBuilder();
+                    for (TokenInfo info : tokens) {
+                        
+                        if (info.getToken() == Token.NON_TOKEN_STRING) {
+                            
+                            ext.append(info.getContents());
+                            
+                        } else {
+                            
+                            ext.append(info.getToken().getLiteral());
+                        }
+                    }
+                    
+                    interfaces.add(ext.toString());
+                }
             }
             
             if (env.hasElements()) {
@@ -300,6 +348,91 @@ public class DeclarationFacets {
                 if (extension != null) {
                     
                     tyClass.setSuperclassString(extension, TrinityInterpreter.getImportedModules());
+                }
+                if (interfaces.size() > 0) {
+                    
+                    tyClass.setSuperinterfaceStrings(interfaces.toArray(new String[interfaces.size()]), TrinityInterpreter.getImportedModules());
+                }
+                InterpretEnvironment newEnv = env.append(tyClass);
+                
+                if (nextBlock != null) {
+                    
+                    TrinityInterpreter.interpret(nextBlock, newEnv);
+                }
+                
+                PluginLoader.triggerOnClassLoadFromFile(location.getFileName(), location.getFile(), tyClass);
+            }
+        });
+        
+        // Definition for interface declarations
+        Declarations.register(Token.INTERFACE, 2, 0, (line, nextBlock, env, location) -> {
+            
+            boolean nativeInterface = false;
+            List<String> extensions = new ArrayList<>();
+            int offset = 1;
+            
+            if (line.get(offset).getToken() == Token.NATIVE) {
+                
+                nativeInterface = true;
+                offset++;
+            }
+            
+            String className = line.get(offset).getContents();
+            offset++;
+            
+            if (line.size() - offset > 1 && line.get(offset).getToken() == Token.CLASS_EXTENSION) {
+                
+                offset++;
+                TokenInfo[] names = new TokenInfo[line.size() - offset];
+                System.arraycopy(line.toArray(), line.size() - names.length, names, 0, names.length);
+                List<List<TokenInfo>> nameTokens = ExpressionInterpreter.splitTokens(names, Token.COMMA);
+                for (List<TokenInfo> tokens : nameTokens) {
+                    
+                    StringBuilder ext = new StringBuilder();
+                    for (TokenInfo info : tokens) {
+                        
+                        if (info.getToken() == Token.NON_TOKEN_STRING) {
+                            
+                            ext.append(info.getContents());
+                            
+                        } else {
+                            
+                            ext.append(info.getToken().getLiteral());
+                        }
+                    }
+                    
+                    extensions.add(ext.toString());
+                }
+            }
+            
+            if (env.hasElements()) {
+                
+                className = env.getEnvironmentString() + "." + className;
+            }
+            
+            if (nativeInterface) {
+                
+                Errors.throwSyntaxError(Errors.Classes.SYNTAX_ERROR, "Native interfaces are not currently supported.", location.getFileName(), location.getLineNumber());
+                
+            } else {
+                
+                TYClass tyClass = ClassRegistry.getClass(className);
+                tyClass.setInterface(true);
+                tyClass.registerMethod(new TYMethod("initialize", false, true, true, tyClass, new TYProcedure((runtime, thisObj, params) -> {
+                    
+                    Errors.throwError(Errors.Classes.INVALID_TYPE_ERROR, runtime, "Cannot create an instance of an interface.");
+                    return TYObject.NONE;
+                    
+                }, false)));
+                tyClass.setLeadingComments(line.getLeadingComments());
+                if (!env.getModuleStack().isEmpty()) {
+                    
+                    TYModule topModule = env.getLastModule();
+                    tyClass.setModule(topModule);
+                }
+                if (extensions.size() > 0) {
+                    
+                    tyClass.setSuperinterfaceStrings(extensions.toArray(new String[extensions.size()]), TrinityInterpreter.getImportedModules());
                 }
                 InterpretEnvironment newEnv = env.append(tyClass);
                 
@@ -401,12 +534,26 @@ public class DeclarationFacets {
                 
                 if (nextBlock == null) {
                     
-                    action = (runtime, thisObj, params) -> TYObject.NONE;
+                    action = DEFAULT_METHOD;
                     
                 } else {
                     
                     action = ExpressionInterpreter.interpret(nextBlock, env, env.getClassStack().get(env.getClassStack().size() - 1).getName(), name, true);
                 }
+            }
+            
+            // Check if container is an interface, and if it is, make sure this method has no body
+            if (containerClass.isInterface() && action != DEFAULT_METHOD) {
+                
+                Errors.throwSyntaxError(Errors.Classes.INHERITANCE_ERROR, "Methods within interfaces cannot have a body.", location.getFileName(), location.getLineNumber());
+                
+            } else if (containerClass.isInterface() && name.equals("initialize")) {
+                
+                Errors.throwSyntaxError(Errors.Classes.SCOPE_ERROR, "Interfaces cannot declare an 'initialize' method.", location.getFileName(), location.getLineNumber());
+                
+            } else if (containerClass.isInterface()) {
+                
+                action = new InterfaceMethodProcedureAction(name);
             }
             
             TYProcedure procedure = new TYProcedure(action, mandatoryParams, optParams, blockParam, overflowParam, true);

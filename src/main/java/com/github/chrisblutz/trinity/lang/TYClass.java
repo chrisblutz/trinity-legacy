@@ -9,6 +9,7 @@ import com.github.chrisblutz.trinity.lang.variables.VariableManager;
 import com.github.chrisblutz.trinity.natives.NativeStorage;
 import com.github.chrisblutz.trinity.natives.TrinityNatives;
 import com.github.chrisblutz.trinity.plugins.PluginLoader;
+import com.github.chrisblutz.trinity.runner.Runner;
 
 import java.util.*;
 
@@ -21,9 +22,13 @@ public class TYClass {
     private List<TYClass> classes = new ArrayList<>();
     private String name, shortName;
     private TYMethod constructor;
+    private boolean isInterface = false;
     private TYClass superclass;
     private String superclassString;
     private String[] importedForSuperclass;
+    private TYClass[] superinterfaces;
+    private String[] superinterfaceStrings;
+    private String[] importedForSuperinterfaces;
     private TYModule module;
     private List<TYClass> inheritanceTree = new ArrayList<>();
     private Map<String, TYMethod> methods = new HashMap<>();
@@ -72,6 +77,16 @@ public class TYClass {
             tree.add(superclass);
             
             tree.addAll(superclass.compileInheritanceTree());
+        }
+        
+        if (superinterfaces != null && superinterfaces.length > 0) {
+            
+            for (TYClass superinterface : superinterfaces) {
+                
+                tree.add(superinterface);
+                
+                tree.addAll(superinterface.compileInheritanceTree());
+            }
         }
         
         return tree;
@@ -311,6 +326,16 @@ public class TYClass {
         return shortName;
     }
     
+    public boolean isInterface() {
+        
+        return isInterface;
+    }
+    
+    public void setInterface(boolean isInterface) {
+        
+        this.isInterface = isInterface;
+    }
+    
     public TYClass getSuperclass() {
         
         return superclass;
@@ -325,6 +350,22 @@ public class TYClass {
         
         this.superclassString = string;
         this.importedForSuperclass = imports;
+    }
+    
+    public TYClass[] getSuperinterfaces() {
+        
+        return superinterfaces;
+    }
+    
+    public void setSuperinterfaces(TYClass[] superinterfaces) {
+        
+        this.superinterfaces = superinterfaces;
+    }
+    
+    public void setSuperinterfaceStrings(String[] strings, String[] imports) {
+        
+        this.superinterfaceStrings = strings;
+        this.importedForSuperinterfaces = imports;
     }
     
     public boolean isInstanceOf(TYClass tyClass) {
@@ -624,7 +665,13 @@ public class TYClass {
             
             if (module != null && module.hasClass(superclassString)) {
                 
-                setSuperclass(module.getClass(superclassString));
+                TYClass superclass = module.getClass(superclassString);
+                if (superclass.isInterface()) {
+                    
+                    Runner.setPostFinalizeError(Errors.Classes.INHERITANCE_ERROR, "Cannot extend interface " + superclassString + ".  Use the >> implementation operator instead.");
+                }
+                
+                setSuperclass(superclass);
                 
             } else {
                 
@@ -637,31 +684,208 @@ public class TYClass {
                     if (module.hasClass(superclassString)) {
                         
                         found = true;
-                        setSuperclass(module.getClass(superclassString));
+                        
+                        TYClass superclass = module.getClass(superclassString);
+                        if (superclass.isInterface()) {
+                            
+                            Runner.setPostFinalizeError(Errors.Classes.INHERITANCE_ERROR, "Cannot extend interface " + superclassString + ".  Use the >> implementation operator instead.");
+                        }
+                        
+                        setSuperclass(superclass);
                         break;
                     }
                 }
                 
                 if (!found) {
                     
+                    TYModule trinity = ModuleRegistry.getModule("Trinity");
+                    
                     if (ClassRegistry.classExists(superclassString)) {
                         
-                        setSuperclass(ClassRegistry.getClass(superclassString));
+                        TYClass superclass = ClassRegistry.getClass(superclassString);
+                        if (superclass.isInterface()) {
+                            
+                            Runner.setPostFinalizeError(Errors.Classes.INHERITANCE_ERROR, "Cannot extend interface " + superclassString + ".  Use the >> implementation operator instead.");
+                        }
+                        
+                        setSuperclass(superclass);
+                        
+                    } else if (trinity.hasClass(superclassString)) {
+                        
+                        TYClass superclass = trinity.getClass(superclassString);
+                        if (superclass.isInterface()) {
+                            
+                            Runner.setPostFinalizeError(Errors.Classes.INHERITANCE_ERROR, "Cannot extend interface " + superclassString + ".  Use the >> implementation operator instead.");
+                        }
+                        
+                        setSuperclass(superclass);
                         
                     } else {
                         
-                        Errors.throwError(Errors.Classes.CLASS_NOT_FOUND_ERROR, "Class " + superclassString + " does not exist.");
+                        Runner.setPostFinalizeError(Errors.Classes.CLASS_NOT_FOUND_ERROR, "Class " + superclassString + " does not exist.");
+                    }
+                }
+            }
+        }
+        
+        if (superinterfaceStrings != null && superinterfaceStrings.length > 0) {
+            
+            List<TYClass> superinterfaceList = new ArrayList<>();
+            
+            for (String superinterfaceString : superinterfaceStrings) {
+                
+                if (module != null && module.hasClass(superinterfaceString)) {
+                    
+                    TYClass superinterface = module.getClass(superinterfaceString);
+                    if (!superinterface.isInterface()) {
+                        
+                        Runner.setPostFinalizeError(Errors.Classes.INHERITANCE_ERROR, "Cannot implement class " + superinterfaceString + ".  Use the << extension operator instead.");
+                    }
+                    
+                    superinterfaceList.add(superinterface);
+                    
+                } else {
+                    
+                    boolean found = false;
+                    
+                    for (String modStr : importedForSuperinterfaces) {
+                        
+                        TYModule module = ModuleRegistry.getModule(modStr);
+                        
+                        if (module.hasClass(superinterfaceString)) {
+                            
+                            found = true;
+                            
+                            TYClass superinterface = module.getClass(superinterfaceString);
+                            if (!superinterface.isInterface()) {
+                                
+                                Runner.setPostFinalizeError(Errors.Classes.INHERITANCE_ERROR, "Cannot implement class " + superinterfaceString + ".  Use the << extension operator instead.");
+                            }
+                            
+                            superinterfaceList.add(superinterface);
+                            break;
+                        }
+                    }
+                    
+                    if (!found) {
+                        
+                        TYModule trinity = ModuleRegistry.getModule("Trinity");
+                        
+                        if (ClassRegistry.classExists(superinterfaceString)) {
+                            
+                            TYClass superinterface = ClassRegistry.getClass(superinterfaceString);
+                            if (!superinterface.isInterface()) {
+                                
+                                Runner.setPostFinalizeError(Errors.Classes.INHERITANCE_ERROR, "Cannot implement class " + superinterfaceString + ".  Use the << extension operator instead.");
+                            }
+                            
+                            superinterfaceList.add(superinterface);
+                            
+                        } else if (trinity.hasClass(superinterfaceString)) {
+                            
+                            TYClass superinterface = trinity.getClass(superinterfaceString);
+                            if (!superinterface.isInterface()) {
+                                
+                                Runner.setPostFinalizeError(Errors.Classes.INHERITANCE_ERROR, "Cannot implement class " + superinterfaceString + ".  Use the << extension operator instead.");
+                            }
+                            
+                            superinterfaceList.add(superinterface);
+                            
+                        } else {
+                            
+                            Runner.setPostFinalizeError(Errors.Classes.CLASS_NOT_FOUND_ERROR, "Class " + superclassString + " does not exist.");
+                        }
                     }
                 }
             }
             
-            inheritanceTree = compileInheritanceTree();
-            inheritanceTree.add(this);
+            setSuperinterfaces(superinterfaceList.toArray(new TYClass[superinterfaceList.size()]));
         }
         
+        // Check that all superinterface methods are overridden
+        if (!isInterface() && getSuperinterfaces() != null && getSuperinterfaces().length > 0) {
+            
+            for (TYClass superinterface : getSuperinterfaces()) {
+                
+                checkSuperinterfaceMethods(superinterface);
+            }
+        }
+        
+        inheritanceTree = compileInheritanceTree();
+        inheritanceTree.add(this);
         
         Set<String> callables = compileCallableMethods();
         callableMethods = new ArrayList<>(callables);
         Collections.sort(callableMethods);
+    }
+    
+    private void checkSuperinterfaceMethods(TYClass superinterface) {
+        
+        for (TYMethod method : superinterface.getMethodArray()) {
+            
+            if (method.getName().equals("initialize")) {
+                
+                continue;
+            }
+            
+            if (!getMethodNames().contains(method.getName()) || !validateMethod(getMethod(method.getName()), method)) {
+                
+                Runner.setPostFinalizeError(Errors.Classes.INHERITANCE_ERROR, getName() + " must override method '" + method.getName() + " from superinterface " + superinterface.getName() + ".");
+            }
+        }
+        
+        if (superinterface.getSuperinterfaces() != null && superinterface.getSuperinterfaces().length > 0) {
+            
+            for (TYClass superinterfaceSuper : superinterface.getSuperinterfaces()) {
+                
+                checkSuperinterfaceMethods(superinterfaceSuper);
+            }
+        }
+    }
+    
+    private boolean validateMethod(TYMethod method, TYMethod checkMethod) {
+        
+        if (method.isStaticMethod() != checkMethod.isStaticMethod()) {
+            
+            return false;
+        }
+        
+        TYProcedure procedure = method.getProcedure();
+        TYProcedure checkProcedure = checkMethod.getProcedure();
+        
+        List<String> names = new ArrayList<>();
+        if (procedure.getMandatoryParameters() != null) {
+            
+            names.addAll(procedure.getMandatoryParameters());
+        }
+        if (procedure.getOptionalParameters() != null) {
+            
+            names.addAll(procedure.getOptionalParameters().keySet());
+        }
+        
+        List<String> checkNames = new ArrayList<>();
+        if (checkProcedure.getMandatoryParameters() != null) {
+            
+            checkNames.addAll(checkProcedure.getMandatoryParameters());
+        }
+        if (checkProcedure.getOptionalParameters() != null) {
+            
+            checkNames.addAll(checkProcedure.getOptionalParameters().keySet());
+        }
+        
+        if (!names.equals(checkNames)) {
+            
+            return false;
+        }
+        
+        if ((procedure.getBlockParameter() == null && checkProcedure.getBlockParameter() == null) || (procedure.getBlockParameter().equals(checkProcedure.getBlockParameter()))) {
+            
+            if ((procedure.getOverflowParameter() == null && checkProcedure.getOverflowParameter() == null) || (procedure.getOverflowParameter().equals(checkProcedure.getOverflowParameter()))) {
+                
+                return true;
+            }
+        }
+        
+        return false;
     }
 }

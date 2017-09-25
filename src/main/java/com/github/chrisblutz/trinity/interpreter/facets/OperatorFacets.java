@@ -183,7 +183,7 @@ public class OperatorFacets {
                 return first.tyInvoke("<<", runtime, null, null, second);
             }
         };
-        BinaryOperator bitShiftRight = new BinaryOperator(Token.BIT_SHIFT_RIGHT) {
+        BinaryOperator bitShiftRight = new BinaryOperator(Token.INTERFACE_IMPLEMENTATION) {
             
             @Override
             public TYObject operate(TYObject first, TYObject second, TYRuntime runtime) {

@@ -78,9 +78,15 @@ class NativeClass {
         });
         TrinityNatives.registerMethod(TrinityNatives.Classes.CLASS, "getMethods", (runtime, thisObj, params) -> {
             
+            TYClass tyClass = TrinityNatives.cast(TYClassObject.class, thisObj).getInternalClass();
             List<TYObject> methods = new ArrayList<>();
             
-            for (TYMethod m : TrinityNatives.cast(TYClassObject.class, thisObj).getInternalClass().getMethodArray()) {
+            for (TYMethod m : tyClass.getMethodArray()) {
+                
+                if (tyClass.isInterface() && m.getName().equals("initialize")) {
+                    
+                    continue;
+                }
                 
                 methods.add(NativeStorage.getMethodObject(m));
             }

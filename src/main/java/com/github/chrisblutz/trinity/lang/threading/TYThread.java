@@ -3,10 +3,10 @@ package com.github.chrisblutz.trinity.lang.threading;
 import com.github.chrisblutz.trinity.Trinity;
 import com.github.chrisblutz.trinity.interpreter.errors.TrinityErrorException;
 import com.github.chrisblutz.trinity.lang.TYObject;
+import com.github.chrisblutz.trinity.lang.TYRuntime;
 import com.github.chrisblutz.trinity.lang.errors.Errors;
 import com.github.chrisblutz.trinity.lang.errors.stacktrace.TrinityStack;
 import com.github.chrisblutz.trinity.lang.procedures.TYProcedure;
-import com.github.chrisblutz.trinity.lang.TYRuntime;
 import com.github.chrisblutz.trinity.lang.types.procedures.TYProcedureObject;
 import com.github.chrisblutz.trinity.runner.Runner;
 
@@ -27,6 +27,8 @@ public class TYThread {
     private TrinityStack trinityStack;
     
     private TYProcedureObject errorHandler = null;
+    
+    public static final TYThread DEFAULT_DUMP_THREAD = new TYThread("main", new TYProcedure((runtime, thisObj, params) -> TYObject.NONE, false), new TYRuntime());
     
     public TYThread(String name, TYProcedure procedure, TYRuntime runtime) {
         
@@ -120,7 +122,7 @@ public class TYThread {
     
     public static TYThread getThread(Thread thread) {
         
-        return threads.get(thread);
+        return threads.getOrDefault(thread, DEFAULT_DUMP_THREAD);
     }
     
     public static TYThread getCurrentThread() {
