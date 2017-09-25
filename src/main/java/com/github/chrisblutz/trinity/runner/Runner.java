@@ -1,5 +1,6 @@
 package com.github.chrisblutz.trinity.runner;
 
+import com.github.chrisblutz.trinity.Trinity;
 import com.github.chrisblutz.trinity.cli.CLI;
 import com.github.chrisblutz.trinity.interpreter.TrinityInterpreter;
 import com.github.chrisblutz.trinity.lang.ClassRegistry;
@@ -27,6 +28,8 @@ public class Runner {
     private static Map<Thread, Integer> currentLines = new HashMap<>();
     
     private static final ThreadGroup trinityThreadGroup = new ThreadGroup("TrinityThreads");
+    
+    private static String postFinalizeErrorClass, postFinalizeErrorMessage;
     
     public static String getCurrentFile(Thread thread) {
         
@@ -71,6 +74,21 @@ public class Runner {
         }
         
         ClassRegistry.finalizeClasses();
+        
+        // Throw any errors that occurred during finalization
+        if (postFinalizeErrorClass != null) {
+            
+            try {
+                
+                Errors.throwError(postFinalizeErrorClass, postFinalizeErrorMessage);
+                
+            } catch (Exception e) {
+                
+                Errors.throwUncaughtJavaException(e, null, 0, TYThread.DEFAULT_DUMP_THREAD);
+                
+                Trinity.exit(1);
+            }
+        }
         
         long endLoadMillis = System.currentTimeMillis();
         
@@ -156,6 +174,17 @@ public class Runner {
         
         // Trigger plugin unload, assumes execution succeeded
         PluginLoader.unloadAll(0);
+    }
+    
+    public static void setPostFinalizeError(String errorClass, String message) {
+        
+        if (postFinalizeErrorClass != null) {
+            
+            return;
+        }
+        
+        postFinalizeErrorClass = errorClass;
+        postFinalizeErrorMessage = message;
     }
     
     private static void waitForGroupCompletion() throws InterruptedException {

@@ -14,7 +14,7 @@ public enum Token {
     
     // Definitions
     IMPORT("import"), MODULE("module"), CLASS("class"), DEF("def"), NATIVE("native"),
-    CLASS_EXTENSION("<<"), GLOBAL_VAR("$"), VAL("val"), VAR("var"), INIT("init"),
+    CLASS_EXTENSION("<<"), GLOBAL_VAR("$"), VAL("val"), VAR("var"), INIT("init"), INTERFACE("interface"), INTERFACE_IMPLEMENTATION(">>"),
     
     // Modifiers
     STATIC("static"), SECURE("secure"), SCOPE_MODIFIER("\0"), PUBLIC_SCOPE("public"), PROTECTED_SCOPE("protected"), MODULE_PROTECTED_SCOPE("module-protected"), PRIVATE_SCOPE("private"),
@@ -26,7 +26,7 @@ public enum Token {
     AND("&&"), OR("||"),
     
     // Bitwise Operators
-    BITWISE_XOR("^"), BITWISE_COMPLEMENT("~"), BIT_SHIFT_RIGHT(">>"), BIT_SHIFT_LOGICAL_RIGHT(">>>"),
+    BITWISE_XOR("^"), BITWISE_COMPLEMENT("~"), BIT_SHIFT_LOGICAL_RIGHT(">>>"),
     BITWISE_AND_EQUAL("&="), BITWISE_OR_EQUAL("|="), BITWISE_XOR_EQUAL("^="), BIT_SHIFT_LEFT_EQUAL("<<="), BIT_SHIFT_RIGHT_EQUAL(">>="), BIT_SHIFT_LOGICAL_RIGHT_EQUAL(">>>="),
     
     // Native Checks
