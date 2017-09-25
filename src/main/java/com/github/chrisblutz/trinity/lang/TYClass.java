@@ -668,7 +668,7 @@ public class TYClass {
                 TYClass superclass = module.getClass(superclassString);
                 if (superclass.isInterface()) {
                     
-                    Runner.setPostFinalizeError(Errors.Classes.INHERITANCE_ERROR, "Cannot extend interface " + superclassString + ".  Use the >> implementation operator instead.");
+                    throwInterfaceExtensionError(superclassString);
                 }
                 
                 setSuperclass(superclass);
@@ -688,7 +688,7 @@ public class TYClass {
                         TYClass superclass = module.getClass(superclassString);
                         if (superclass.isInterface()) {
                             
-                            Runner.setPostFinalizeError(Errors.Classes.INHERITANCE_ERROR, "Cannot extend interface " + superclassString + ".  Use the >> implementation operator instead.");
+                            throwInterfaceExtensionError(superclassString);
                         }
                         
                         setSuperclass(superclass);
@@ -705,7 +705,7 @@ public class TYClass {
                         TYClass superclass = ClassRegistry.getClass(superclassString);
                         if (superclass.isInterface()) {
                             
-                            Runner.setPostFinalizeError(Errors.Classes.INHERITANCE_ERROR, "Cannot extend interface " + superclassString + ".  Use the >> implementation operator instead.");
+                            throwInterfaceExtensionError(superclassString);
                         }
                         
                         setSuperclass(superclass);
@@ -715,7 +715,7 @@ public class TYClass {
                         TYClass superclass = trinity.getClass(superclassString);
                         if (superclass.isInterface()) {
                             
-                            Runner.setPostFinalizeError(Errors.Classes.INHERITANCE_ERROR, "Cannot extend interface " + superclassString + ".  Use the >> implementation operator instead.");
+                            throwInterfaceExtensionError(superclassString);
                         }
                         
                         setSuperclass(superclass);
@@ -739,7 +739,7 @@ public class TYClass {
                     TYClass superinterface = module.getClass(superinterfaceString);
                     if (!superinterface.isInterface()) {
                         
-                        Runner.setPostFinalizeError(Errors.Classes.INHERITANCE_ERROR, "Cannot implement class " + superinterfaceString + ".  Use the << extension operator instead.");
+                        throwClassImplementationError(superinterfaceString);
                     }
                     
                     superinterfaceList.add(superinterface);
@@ -759,7 +759,7 @@ public class TYClass {
                             TYClass superinterface = module.getClass(superinterfaceString);
                             if (!superinterface.isInterface()) {
                                 
-                                Runner.setPostFinalizeError(Errors.Classes.INHERITANCE_ERROR, "Cannot implement class " + superinterfaceString + ".  Use the << extension operator instead.");
+                                throwClassImplementationError(superinterfaceString);
                             }
                             
                             superinterfaceList.add(superinterface);
@@ -776,7 +776,7 @@ public class TYClass {
                             TYClass superinterface = ClassRegistry.getClass(superinterfaceString);
                             if (!superinterface.isInterface()) {
                                 
-                                Runner.setPostFinalizeError(Errors.Classes.INHERITANCE_ERROR, "Cannot implement class " + superinterfaceString + ".  Use the << extension operator instead.");
+                                throwClassImplementationError(superinterfaceString);
                             }
                             
                             superinterfaceList.add(superinterface);
@@ -786,7 +786,7 @@ public class TYClass {
                             TYClass superinterface = trinity.getClass(superinterfaceString);
                             if (!superinterface.isInterface()) {
                                 
-                                Runner.setPostFinalizeError(Errors.Classes.INHERITANCE_ERROR, "Cannot implement class " + superinterfaceString + ".  Use the << extension operator instead.");
+                                throwClassImplementationError(superinterfaceString);
                             }
                             
                             superinterfaceList.add(superinterface);
@@ -817,6 +817,16 @@ public class TYClass {
         Set<String> callables = compileCallableMethods();
         callableMethods = new ArrayList<>(callables);
         Collections.sort(callableMethods);
+    }
+    
+    private void throwInterfaceExtensionError(String string) {
+        
+        Runner.setPostFinalizeError(Errors.Classes.INHERITANCE_ERROR, "Cannot extend interface " + string + ".  Use the >> implementation operator instead.");
+    }
+    
+    private void throwClassImplementationError(String string) {
+        
+        Runner.setPostFinalizeError(Errors.Classes.INHERITANCE_ERROR, "Cannot implement class " + string + ".  Use the << extension operator instead.");
     }
     
     private void checkSuperinterfaceMethods(TYClass superinterface) {
