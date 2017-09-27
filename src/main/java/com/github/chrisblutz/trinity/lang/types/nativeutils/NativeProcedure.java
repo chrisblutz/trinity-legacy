@@ -1,9 +1,10 @@
 package com.github.chrisblutz.trinity.lang.types.nativeutils;
 
 import com.github.chrisblutz.trinity.lang.TYObject;
-import com.github.chrisblutz.trinity.lang.procedures.TYProcedure;
 import com.github.chrisblutz.trinity.lang.TYRuntime;
+import com.github.chrisblutz.trinity.lang.procedures.TYProcedure;
 import com.github.chrisblutz.trinity.lang.types.arrays.TYArray;
+import com.github.chrisblutz.trinity.lang.types.bool.TYBoolean;
 import com.github.chrisblutz.trinity.lang.types.procedures.TYProcedureObject;
 import com.github.chrisblutz.trinity.natives.NativeStorage;
 import com.github.chrisblutz.trinity.natives.TrinityNatives;
@@ -62,7 +63,14 @@ class NativeProcedure {
             
             newRuntime.disposeVariables(obj.getProcedureRuntime());
             
+            obj.setBroken(newRuntime.isBroken());
+            
             return result;
+        });
+        TrinityNatives.registerMethod(TrinityNatives.Classes.PROCEDURE, "isBroken", (runtime, thisObj, params) -> {
+            
+            TYProcedureObject obj = (TYProcedureObject) thisObj;
+            return TYBoolean.valueFor(obj.isBroken());
         });
     }
 }

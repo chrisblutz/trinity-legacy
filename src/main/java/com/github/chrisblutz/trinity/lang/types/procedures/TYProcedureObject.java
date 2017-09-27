@@ -14,6 +14,7 @@ public class TYProcedureObject extends TYObject {
     
     private TYProcedure internalProcedure;
     private TYRuntime procedureRuntime;
+    private boolean broken = false;
     
     public TYProcedureObject(TYProcedure internal, TYRuntime procedureRuntime) {
         
@@ -31,5 +32,15 @@ public class TYProcedureObject extends TYObject {
     public TYRuntime getProcedureRuntime() {
         
         return procedureRuntime;
+    }
+    
+    public boolean isBroken() {
+    
+        return broken;
+    }
+    
+    public void setBroken(boolean broken) {
+        
+        this.broken = broken;
     }
 }

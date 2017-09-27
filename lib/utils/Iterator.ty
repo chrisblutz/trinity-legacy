@@ -1,0 +1,8 @@
+module Trinity
+    module Utils
+        interface Iterator
+            def next
+
+            def hasNext
+
+            def iterate(&block)

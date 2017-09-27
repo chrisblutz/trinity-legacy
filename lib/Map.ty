@@ -1,5 +1,5 @@
 module Trinity
-    class Map
+    class Map >> Iterable
         def native initialize
 
         def native [](key)
@@ -28,6 +28,8 @@ module Trinity
             str += '}'
             str
 
+        def iterator
+            Trinity.Utils.MapIterator.new(this)
+
         def each(&block)
-            keySet().each() |key|
-                block.call(key, this[key])
+            iterator().iterate(block)

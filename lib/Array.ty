@@ -1,7 +1,5 @@
-import Trinity.ArrayUtils
-
 module Trinity
-    class Array
+    class Array >> Iterable
         private
             var solid = false
 
@@ -51,11 +49,11 @@ module Trinity
                     str += ' (solid)'
                 str
 
+            def iterator
+                Trinity.Utils.ArrayIterator.new(this)
+
             def each(&block)
                 iterator().iterate(block)
-
-            def iterator
-                Iterator.new(this)
 
             def sum
                 sum = 0

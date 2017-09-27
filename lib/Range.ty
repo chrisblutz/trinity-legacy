@@ -26,8 +26,10 @@ module Trinity
                     next = getBegin()
                     while next != getEnd()
                         block.call(next)
+                        if block.isBroken()
+                            break
                         next = next.next()
-                    if !getExcludeEnd()
+                    if !block.isBroken() && !getExcludeEnd()
                         block.call(next)
 
             def ==(other)

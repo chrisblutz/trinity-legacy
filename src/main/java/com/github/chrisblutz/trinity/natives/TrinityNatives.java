@@ -40,6 +40,8 @@ public class TrinityNatives {
         public static final String FILE_SYSTEM = "Trinity.IO.Files.FileSystem";
         public static final String FLOAT = "Trinity.Float";
         public static final String INT = "Trinity.Int";
+        public static final String ITERABLE = "Trinity.Iterable";
+        public static final String ITERATOR = "Trinity.Utils.Iterator";
         public static final String KERNEL = "Trinity.Kernel";
         public static final String LONG = "Trinity.Long";
         public static final String MAP = "Trinity.Map";

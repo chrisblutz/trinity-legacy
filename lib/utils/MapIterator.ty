@@ -1,0 +1,36 @@
+module Trinity
+    module Utils
+        class MapIterator >> Iterator
+            private
+                var map, keys, i = 0
+
+            public
+                def initialize(map)
+                    this.map = map
+                    this.keys = map.keys()
+
+                def nextKey
+                    n = keys[i]
+                    i += 1
+                    n
+
+                def next
+                    n = nextKey()
+                    { n: map[n] }
+
+                def hasNext
+                    i < keys.length()
+
+                def reset
+                    i = 0
+
+                def iterate(&block)
+                    reset()
+                    while hasNext()
+                        key = nextKey()
+                        block.call(key, map[key])
+                        if block.isBroken()
+                            break
+
+                def toString
+                    getClass() + map.toString()

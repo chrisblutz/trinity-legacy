@@ -12,6 +12,8 @@ module Trinity
 
         def native call(&block, ...args)
 
+        def native isBroken
+
         def toString
             str = getClass().toString()
             str += ' (Args: ' + getRequiredArguments().length() + ' required, '
