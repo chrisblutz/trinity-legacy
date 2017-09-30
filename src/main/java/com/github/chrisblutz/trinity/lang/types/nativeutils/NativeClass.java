@@ -55,6 +55,7 @@ class NativeClass {
                 return NativeStorage.getClassObject(superclass);
             }
         });
+        TrinityNatives.registerMethod(TrinityNatives.Classes.CLASS, "getSuperinterfaces", (runtime, thisObj, params) -> NativeStorage.getClassSuperinterfaces(TrinityNatives.cast(TYClassObject.class, thisObj).getInternalClass()));
         TrinityNatives.registerMethod(TrinityNatives.Classes.CLASS, "getModule", (runtime, thisObj, params) -> {
             
             TYModule module = TrinityNatives.cast(TYClassObject.class, thisObj).getInternalClass().getModule();
@@ -152,12 +153,8 @@ class NativeClass {
             
             return NativeStorage.getClassObject(c);
         });
-        TrinityNatives.registerMethod(TrinityNatives.Classes.CLASS, "getComments", (runtime, thisObj, params) -> {
-            
-            TYClass c = TrinityNatives.cast(TYClassObject.class, thisObj).getInternalClass();
-            
-            return NativeStorage.getLeadingComments(c);
-        });
+        TrinityNatives.registerMethod(TrinityNatives.Classes.CLASS, "getComments", (runtime, thisObj, params) -> NativeStorage.getLeadingComments(TrinityNatives.cast(TYClassObject.class, thisObj).getInternalClass()));
+        TrinityNatives.registerMethod(TrinityNatives.Classes.CLASS, "isInterface", (runtime, thisObj, params) -> NativeStorage.getClassIsInterface(TrinityNatives.cast(TYClassObject.class, thisObj).getInternalClass()));
         TrinityNatives.registerMethod(TrinityNatives.Classes.CLASS, "get", (runtime, thisObj, params) -> {
             
             String name = TrinityNatives.cast(TYString.class, runtime.getVariable("name")).getInternalString();

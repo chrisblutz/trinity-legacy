@@ -37,6 +37,8 @@ public class NativeStorage {
     
     private static Map<TYClass, TYString> classNames = new HashMap<>();
     private static Map<TYClass, TYString> classShortNames = new HashMap<>();
+    private static Map<TYClass, TYObject> classSuperinterfaces = new HashMap<>();
+    private static Map<TYClass, TYBoolean> classIsInterface = new HashMap<>();
     
     private static Map<TYModule, TYString> moduleNames = new HashMap<>();
     private static Map<TYModule, TYString> moduleShortNames = new HashMap<>();
@@ -157,6 +159,40 @@ public class NativeStorage {
         }
         
         return classShortNames.get(tyClass);
+    }
+    
+    public synchronized static TYObject getClassSuperinterfaces(TYClass tyClass) {
+        
+        if (!classSuperinterfaces.containsKey(tyClass)) {
+            
+            TYClass[] superinterfaces = tyClass.getSuperinterfaces();
+            TYObject superinterfacesObj = TYObject.NIL;
+            
+            if (superinterfaces != null) {
+                
+                List<TYObject> classObjects = new ArrayList<>();
+                for (TYClass superinterface : superinterfaces) {
+                    
+                    classObjects.add(getClassObject(superinterface));
+                }
+                
+                superinterfacesObj = new TYArray(classObjects);
+            }
+            
+            classSuperinterfaces.put(tyClass, superinterfacesObj);
+        }
+        
+        return classSuperinterfaces.get(tyClass);
+    }
+    
+    public synchronized static TYBoolean getClassIsInterface(TYClass tyClass) {
+        
+        if (!classIsInterface.containsKey(tyClass)) {
+            
+            classIsInterface.put(tyClass, TYBoolean.valueFor(tyClass.isInterface()));
+        }
+        
+        return classIsInterface.get(tyClass);
     }
     
     public synchronized static TYString getModuleName(TYModule tyModule) {

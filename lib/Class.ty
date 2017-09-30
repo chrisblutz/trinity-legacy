@@ -4,6 +4,8 @@ module Trinity
 
         def native getSuperclass
 
+        def native getSuperinterfaces
+
         def native getModule
 
         def native getName
@@ -25,6 +27,8 @@ module Trinity
         def native getInnerClass(name)
 
         def native getComments
+
+        def native isInterface
 
         def native static get(name)
 
