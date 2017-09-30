@@ -2,7 +2,7 @@ module Trinity
     class Map >> Iterable
         def native initialize
 
-        def native [](key)
+        def native [](key, defaultValue = nil)
 
         def native []=(key, value)
 

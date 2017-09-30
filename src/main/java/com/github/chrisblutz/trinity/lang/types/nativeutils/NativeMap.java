@@ -43,7 +43,7 @@ class NativeMap {
             
             return TYObject.NONE;
         });
-        TrinityNatives.registerMethod(TrinityNatives.Classes.MAP, "[]", (runtime, thisObj, params) -> get(TrinityNatives.cast(TYMap.class, thisObj), runtime.getVariable("key"), runtime));
+        TrinityNatives.registerMethod(TrinityNatives.Classes.MAP, "[]", (runtime, thisObj, params) -> get(TrinityNatives.cast(TYMap.class, thisObj), runtime.getVariable("key"), runtime.getVariable("defaultValue"), runtime));
         TrinityNatives.registerMethod(TrinityNatives.Classes.MAP, "[]=", (runtime, thisObj, params) -> {
             
             put(TrinityNatives.cast(TYMap.class, thisObj), runtime.getVariable("key"), runtime.getVariable("value"), runtime);
@@ -54,7 +54,7 @@ class NativeMap {
         });
     }
     
-    private static TYObject get(TYMap tyMap, TYObject obj, TYRuntime runtime) {
+    private static TYObject get(TYMap tyMap, TYObject obj, TYObject def, TYRuntime runtime) {
         
         Map<TYObject, TYObject> map = tyMap.getInternalMap();
         
@@ -68,7 +68,7 @@ class NativeMap {
             }
         }
         
-        return TYObject.NIL;
+        return def;
     }
     
     private static TYObject put(TYMap tyMap, TYObject obj, TYObject value, TYRuntime runtime) {
