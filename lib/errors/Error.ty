@@ -17,6 +17,9 @@ module Trinity
                 def getStackTrace
                     stackTrace
 
+                def printStackTrace
+                    $STDERR.println(this.toString())
+
                 def toString
                     str = 'Thread \'' + thread.getName() + '\' - ' + getClass().toString()
 
