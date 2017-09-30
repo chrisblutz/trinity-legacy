@@ -153,7 +153,7 @@ public class NativeStorage {
         
         if (!classShortNames.containsKey(tyClass)) {
             
-            classShortNames.put(tyClass, new TYString(tyClass.getName()));
+            classShortNames.put(tyClass, new TYString(tyClass.getShortName()));
         }
         
         return classShortNames.get(tyClass);
@@ -173,7 +173,7 @@ public class NativeStorage {
         
         if (!moduleShortNames.containsKey(tyModule)) {
             
-            moduleShortNames.put(tyModule, new TYString(tyModule.getName()));
+            moduleShortNames.put(tyModule, new TYString(tyModule.getShortName()));
         }
         
         return moduleShortNames.get(tyModule);
