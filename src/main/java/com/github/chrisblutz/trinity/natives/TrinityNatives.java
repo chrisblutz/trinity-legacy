@@ -48,6 +48,7 @@ public class TrinityNatives {
         public static final String MATH = "Trinity.Math";
         public static final String METHOD = "Trinity.Method";
         public static final String MODULE = "Trinity.Module";
+        public static final String NUMERIC = "Trinity.Numeric";
         public static final String OBJECT = "Trinity.Object";
         public static final String NATIVE_OUTPUT_STREAM = "Trinity.IO.NativeOutputStream";
         public static final String PROCEDURE = "Trinity.Procedure";
@@ -285,6 +286,46 @@ public class TrinityNatives {
             // This will throw an error, but the program will exit at the line above, never reaching this point
             return desiredClass.cast(object);
         }
+    }
+    
+    public static double asNumber(TYObject tyObject) {
+        
+        if (tyObject instanceof TYInt) {
+            
+            return ((TYInt) tyObject).getInternalInteger();
+            
+        } else if (tyObject instanceof TYLong) {
+            
+            return ((TYLong) tyObject).getInternalLong();
+            
+        } else if (tyObject instanceof TYFloat) {
+            
+            return ((TYFloat) tyObject).getInternalDouble();
+            
+        } else if (tyObject instanceof TYString && ((TYString) tyObject).getInternalString().matches("[0-9]+")) {
+            
+            return Double.parseDouble(((TYString) tyObject).getInternalString());
+            
+        } else if (isInstance(tyObject, Classes.COMPLEX_NUMBER)) {
+            
+            if (getImaginaryComplexComponent(tyObject) == 0) {
+                
+                return getRealComplexComponent(tyObject);
+                
+            } else {
+                
+                TYRuntime runtime = new TYRuntime();
+                String str = toString(tyObject, runtime);
+                Errors.throwError(Errors.Classes.COMPLEX_NUMBER_ERROR, "Real number required. Found: " + str);
+            }
+            
+            
+        } else {
+            
+            Errors.throwError(Errors.Classes.INVALID_TYPE_ERROR, "Expected value of type " + Classes.NUMERIC + ", found " + tyObject.getObjectClass().getName() + ".");
+        }
+        
+        return 0;
     }
     
     public static int toInt(TYObject tyObject) {

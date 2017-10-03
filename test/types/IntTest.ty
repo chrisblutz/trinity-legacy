@@ -20,21 +20,21 @@ module TrinityTest
         def static testMultiplication
             assertEqual(10 * 0, 0)
             assertEqual(1 * 5, 5)
-            assertEqual(5 * (-5), -25)
+            assertEqual(5 * -5, -25)
 
         def static testDivision
             assertEqual(10 / 1, 10)
             assertEqual(10 / 10, 1)
-            assertEqual(10 / (-5), -2)
+            assertEqual(10 / -5, -2)
 
         def static testModulus
             assertEqual(10 % 10, 0)
             assertEqual(10 % 4, 2)
             assertEqual(10 % 20, 10)
-            assertEqual(10 % (-3), -2)
+            assertEqual(10 % -3, -2)
 
         def static testNegatives
-            assertEqual(10 + (-10), 0)
+            assertEqual(10 + -10, 0)
 
         def static testConversions
             assertType(2147483647, Int.class)

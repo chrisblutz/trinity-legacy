@@ -1,6 +1,6 @@
 module Trinity
     module Math
-        class ComplexNumber
+        class ComplexNumber << Numeric
             private
                 var realComponent, imagComponent
 

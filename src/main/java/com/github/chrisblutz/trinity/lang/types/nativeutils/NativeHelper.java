@@ -13,6 +13,7 @@ public class NativeHelper {
         NativeArray.register();
         NativeMap.register();
         
+        NativeNumeric.register();
         NativeInt.register();
         NativeLong.register();
         NativeFloat.register();

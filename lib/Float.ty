@@ -1,27 +1,8 @@
 module Trinity
-    class Float
+    class Float << Numeric
         val native static NaN
         val native static POSITIVE_INFINITY, NEGATIVE_INFINITY
         val native static MIN_VALUE, MAX_VALUE
-
-        def native +(other)
-
-        def native -(other)
-
-        def native *(other)
-
-        def native /(other)
-
-        def native %(other)
-
-        def native ==(other)
-
-        def native toString
-
-        def native compareTo(other)
-
-        def next
-            this + 1
 
         def native isNaN
 

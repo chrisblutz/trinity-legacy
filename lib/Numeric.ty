@@ -1,0 +1,28 @@
+module Trinity
+    class Numeric
+        def native +(other)
+
+        def native -(other)
+
+        def native *(other)
+
+        def native /(other)
+
+        def native %(other)
+
+        def native <<(other)
+
+        def native >>(other)
+
+        def native >>>(other)
+
+        def native ==(other)
+
+        def native toString
+
+        def native toHexString
+
+        def native compareTo(other)
+
+        def next
+            this + 1

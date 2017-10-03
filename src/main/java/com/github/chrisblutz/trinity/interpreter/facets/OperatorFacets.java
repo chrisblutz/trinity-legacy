@@ -214,9 +214,13 @@ public class OperatorFacets {
             public TYObject operate(TYObject first, TYObject second, TYRuntime runtime) {
                 
                 TYObject trueFirst = first;
-                if (TrinityNatives.isInstance(second, TrinityNatives.Classes.STRING)) {
+                if (TrinityNatives.isInstance(second, TrinityNatives.Classes.STRING) && !TrinityNatives.isInstance(first, TrinityNatives.Classes.STRING)) {
                     
                     trueFirst = first.tyInvoke("toString", runtime, null, null);
+                    
+                } else if (TrinityNatives.isInstance(second, TrinityNatives.Classes.COMPLEX_NUMBER) && !TrinityNatives.isInstance(first, TrinityNatives.Classes.COMPLEX_NUMBER)) {
+                    
+                    trueFirst = TrinityNatives.wrapComplexNumber(TrinityNatives.asNumber(first), 0);
                 }
                 
                 return trueFirst.tyInvoke("+", runtime, null, null, second);

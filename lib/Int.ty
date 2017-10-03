@@ -1,30 +1,3 @@
 module Trinity
-    class Int
+    class Int << Numeric
         val native static MIN_VALUE, MAX_VALUE
-
-        def native +(other)
-
-        def native -(other)
-
-        def native *(other)
-
-        def native /(other)
-
-        def native %(other)
-
-        def native <<(other)
-
-        def native >>(other)
-
-        def native >>>(other)
-
-        def native ==(other)
-
-        def native toString
-
-        def native toHexString
-
-        def native compareTo(other)
-
-        def next
-            this + 1

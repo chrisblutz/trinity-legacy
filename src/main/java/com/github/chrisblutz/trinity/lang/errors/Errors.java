@@ -35,6 +35,7 @@ public class Errors {
         public static final String METHOD_NOT_FOUND_ERROR = "Trinity.Errors.MethodNotFoundError";
         public static final String NATIVE_TYPE_ERROR = "Trinity.Errors.NativeTypeError";
         public static final String NIL_ERROR = "Trinity.Errors.NilError";
+        public static final String NOT_IMPLEMENTED_ERROR = "Trinity.Errors.NotImplementedError";
         public static final String NUMBER_FORMAT_ERROR = "Trinity.Errors.NumberFormatError";
         public static final String RETURN_ERROR = "Trinity.Errors.ReturnError";
         public static final String RUNTIME_ERROR = "Trinity.Errors.RuntimeError";

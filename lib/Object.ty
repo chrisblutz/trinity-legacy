@@ -35,6 +35,6 @@ module Trinity
             throw(Trinity.Errors.InvalidTypeError.new('Cannot compare types ' + this.getClass() + ' and ' + other.getClass() + '.'))
 
         def isNumeric
-            this.isInstance(Int) || this.isInstance(Long) || this.isInstance(Float) || this.isInstance(Trinity.Math.ComplexNumber)
+            this.isInstance(Numeric)
 
         def native static checkReferences(a, b)
