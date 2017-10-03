@@ -5,6 +5,7 @@ import com.github.chrisblutz.trinity.lang.errors.Errors;
 import com.github.chrisblutz.trinity.lang.types.arrays.TYArray;
 import com.github.chrisblutz.trinity.lang.types.bool.TYBoolean;
 import com.github.chrisblutz.trinity.lang.types.numeric.TYFloat;
+import com.github.chrisblutz.trinity.lang.types.numeric.TYInt;
 import com.github.chrisblutz.trinity.lang.types.strings.TYString;
 import com.github.chrisblutz.trinity.natives.TrinityNatives;
 
@@ -174,5 +175,19 @@ class NativeString {
             }
         });
         TrinityNatives.registerMethod(TrinityNatives.Classes.STRING, "toFloat", (runtime, thisObj, params) -> new TYFloat(TrinityNatives.toFloat(thisObj)));
+        TrinityNatives.registerMethod(TrinityNatives.Classes.STRING, "compareTo", (runtime, thisObj, params) -> {
+            
+            String first = TrinityNatives.toString(thisObj, runtime);
+            String second = TrinityNatives.toString(runtime.getVariable("other"), runtime);
+            
+            return new TYInt(first.compareTo(second));
+        });
+        TrinityNatives.registerMethod(TrinityNatives.Classes.STRING, "compareToIgnoreCase", (runtime, thisObj, params) -> {
+            
+            String first = TrinityNatives.toString(thisObj, runtime);
+            String second = TrinityNatives.toString(runtime.getVariable("other"), runtime);
+            
+            return new TYInt(first.compareToIgnoreCase(second));
+        });
     }
 }

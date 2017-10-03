@@ -46,6 +46,6 @@ public class MapInitializationInstruction extends Instruction {
             }
         }
         
-        return new TYMap(map);
+        return new TYMap(map, 0);
     }
 }

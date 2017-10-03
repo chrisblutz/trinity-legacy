@@ -89,6 +89,6 @@ public class TrinityProperties {
             Errors.throwError(Errors.Classes.IO_ERROR, "Unable to determine Trinity's home directory.");
         }
         
-        return new TYMap(map);
+        return new TYMap(map, 0);
     }
 }

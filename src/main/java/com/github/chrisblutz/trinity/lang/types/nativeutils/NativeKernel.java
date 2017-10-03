@@ -6,9 +6,9 @@ import com.github.chrisblutz.trinity.interpreter.InterpretEnvironment;
 import com.github.chrisblutz.trinity.interpreter.TrinityInterpreter;
 import com.github.chrisblutz.trinity.interpreter.errors.TrinityErrorException;
 import com.github.chrisblutz.trinity.lang.TYObject;
+import com.github.chrisblutz.trinity.lang.TYRuntime;
 import com.github.chrisblutz.trinity.lang.errors.Errors;
 import com.github.chrisblutz.trinity.lang.procedures.ProcedureAction;
-import com.github.chrisblutz.trinity.lang.TYRuntime;
 import com.github.chrisblutz.trinity.lang.types.arrays.TYArray;
 import com.github.chrisblutz.trinity.lang.types.io.TYNativeOutputStream;
 import com.github.chrisblutz.trinity.lang.types.maps.TYMap;
@@ -80,7 +80,7 @@ class NativeKernel {
             } else {
                 
                 Errors.throwError(Errors.Classes.INVALID_TYPE_ERROR, runtime, "Kernel.eval requires its args argument to be an array.");
-                argsMap = new TYMap(new HashMap<>());
+                argsMap = new TYMap(new HashMap<>(), 0);
             }
             
             String[] lines;

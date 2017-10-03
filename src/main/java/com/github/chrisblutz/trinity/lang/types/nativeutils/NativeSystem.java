@@ -60,7 +60,7 @@ class NativeSystem {
                 }
             }
             
-            environmentMap = new TYMap(map);
+            environmentMap = new TYMap(map, 0);
         }
         
         return environmentMap;

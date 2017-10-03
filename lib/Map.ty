@@ -1,6 +1,8 @@
 module Trinity
     class Map >> Iterable
-        def native initialize
+        val static FAST_STORAGE = 0, ORDERED_STORAGE = 1, COMPARISON_STORAGE = 2
+
+        def native initialize(storageType = FAST_STORAGE)
 
         def native [](key, defaultValue = nil)
 
@@ -17,6 +19,8 @@ module Trinity
         def native values
 
         def native length
+
+        def native getStorageType
 
         def toString
             str = '{'
