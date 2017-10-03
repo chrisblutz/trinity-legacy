@@ -9,6 +9,9 @@ module Trinity
                 this.end = end
                 this.excludeEnd = excludeEnd
 
+                if(!begin.isInstance(Consecutive) || !end.isInstance(Consecutive))
+                    throw(Trinity.Errors.InvalidTypeError.new("Values in a range must implement " + Consecutive.class.toString() + "."))
+
             def getBegin
                 begin
 
@@ -19,9 +22,6 @@ module Trinity
                 excludeEnd
 
             def each(&block)
-                if !getBegin().respondsTo('next')
-                    throw(Trinity.Errors.InvalidTypeError.new("Instances of '" + getBegin().getClass() + "' cannot be used to iterate over a " + getClass() + " instance because '" + getBegin().getClass() + "' does not define a 'next()' method."))
-
                 if block?
                     next = getBegin()
                     while next != getEnd()

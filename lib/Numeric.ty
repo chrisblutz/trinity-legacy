@@ -1,5 +1,5 @@
 module Trinity
-    class Numeric
+    class Numeric >> Consecutive
         def native +(other)
 
         def native -(other)
@@ -26,3 +26,6 @@ module Trinity
 
         def next
             this + 1
+
+        def previous
+            this - 1
