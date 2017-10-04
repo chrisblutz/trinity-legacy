@@ -23,8 +23,6 @@ module Trinity
 
         def native isInstance(instClass)
 
-        def native respondsTo(method)
-
         def secure hashCode
             System.identify(this)
 

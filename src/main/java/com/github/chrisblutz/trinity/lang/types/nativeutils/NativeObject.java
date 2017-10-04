@@ -48,11 +48,6 @@ class NativeObject {
                 return TYBoolean.FALSE;
             }
         });
-        TrinityNatives.registerMethod(TrinityNatives.Classes.OBJECT, "respondsTo", (runtime, thisObj, params) -> {
-            
-            String method = TrinityNatives.toString(runtime.getVariable("method"), runtime);
-            return TrinityNatives.getObjectFor(thisObj.getObjectClass().respondsTo(method));
-        });
         
         TrinityNatives.registerMethod(TrinityNatives.Classes.OBJECT, "checkReferences", (runtime, thisObj, params) -> {
             

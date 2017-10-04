@@ -35,8 +35,6 @@ public class TYClass {
     private List<ProcedureAction> initializationActions = new ArrayList<>();
     private boolean initialized = false;
     
-    private List<String> callableMethods = new ArrayList<>();
-    
     private Map<String, Boolean> variables = new HashMap<>();
     private Map<String, Boolean> variablesNative = new HashMap<>();
     private Map<String, String[]> variablesComments = new HashMap<>();
@@ -90,20 +88,6 @@ public class TYClass {
         }
         
         return tree;
-    }
-    
-    private Set<String> compileCallableMethods() {
-        
-        Set<String> methods = new LinkedHashSet<>();
-        
-        methods.addAll(getMethodNames());
-        
-        if (superclass != null) {
-            
-            methods.addAll(superclass.compileCallableMethods());
-        }
-        
-        return methods;
     }
     
     public void registerClassVariable(String name, boolean isNative, String[] leadingComments, ProcedureAction action, Scope scope, boolean constant, String[] importedModules) {
@@ -622,11 +606,6 @@ public class TYClass {
         return methods.keySet();
     }
     
-    public boolean respondsTo(String method) {
-        
-        return callableMethods.contains(method);
-    }
-    
     public String[] getLeadingComments() {
         
         return leadingComments;
@@ -813,10 +792,6 @@ public class TYClass {
         
         inheritanceTree = compileInheritanceTree();
         inheritanceTree.add(this);
-        
-        Set<String> callables = compileCallableMethods();
-        callableMethods = new ArrayList<>(callables);
-        Collections.sort(callableMethods);
     }
     
     private void throwInterfaceExtensionError(String string) {
