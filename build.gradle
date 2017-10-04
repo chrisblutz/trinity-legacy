@@ -70,6 +70,6 @@ task sendCoverage(dependsOn: jacocoTestReport, type: JavaExec) {
     args = [
             '-l', 'Java',
             '-r', "${buildDir}/reports/jacoco/test/jacocoTestReport.xml",
-            '-t', System.getenv('CODACY_PROJECT_TOKEN')
+            '-t', System.getenv('CODACY_PROJECT_TOKEN') ?: ''
     ]
 }
