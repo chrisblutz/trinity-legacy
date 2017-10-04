@@ -157,9 +157,12 @@ class NativeNumeric {
             case ">>>":
                 
                 return (long) thisDouble >>> (long) otherDouble;
+            
+            default:
+                
+                Errors.throwError(Errors.Classes.UNSUPPORTED_OPERATION_ERROR, "Operation " + operation + " not supported by " + TrinityNatives.Classes.NUMERIC + ".");
+                return 0;
         }
-        
-        return 0;
     }
     
     private static void checkDivision(double denominator) {

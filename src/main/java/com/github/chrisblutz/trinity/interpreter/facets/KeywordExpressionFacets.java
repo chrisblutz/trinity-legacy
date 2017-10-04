@@ -180,15 +180,13 @@ public class KeywordExpressionFacets {
                 
                 if (set instanceof FinallyInstructionSet) {
                     
-                    FinallyInstructionSet finallySet = (FinallyInstructionSet) set;
-                    
                     if (previous instanceof TryInstructionSet) {
                         
-                        ((TryInstructionSet) previous).setFinallySet(finallySet);
+                        ((TryInstructionSet) previous).setFinallySet((FinallyInstructionSet) set);
                         
                     } else if (previous instanceof CatchInstructionSet) {
                         
-                        ((CatchInstructionSet) previous).getTrySet().setFinallySet(finallySet);
+                        ((CatchInstructionSet) previous).getTrySet().setFinallySet((FinallyInstructionSet) set);
                     }
                 }
                 
