@@ -52,6 +52,7 @@ public class TrinityNatives {
         public static final String OBJECT = "Trinity.Object";
         public static final String NATIVE_OUTPUT_STREAM = "Trinity.IO.NativeOutputStream";
         public static final String PROCEDURE = "Trinity.Procedure";
+        public static final String RANDOM = "Trinity.Random";
         public static final String STRING = "Trinity.String";
         public static final String SYSTEM = "Trinity.System";
         public static final String THREAD = "Trinity.Thread";

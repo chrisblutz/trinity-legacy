@@ -26,6 +26,7 @@ public class NativeHelper {
         NativeInt.register();
         NativeLong.register();
         NativeFloat.register();
+        NativeRandom.register();
         
         NativeClass.register();
         NativeModule.register();

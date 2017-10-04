@@ -1,0 +1,10 @@
+module Trinity
+    class Random
+        def static next
+            nextFloat()
+
+        def native static nextInt(origin = Int.MIN_VALUE, bound = Int.MAX_VALUE)
+
+        def native static nextLong(origin = Long.MIN_VALUE, bound = Long.MAX_VALUE)
+
+        def native static nextFloat(origin = 0, bound = 1)
