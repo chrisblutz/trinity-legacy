@@ -51,7 +51,7 @@ public class TrinityProperties {
      */
     public static TYObject getProperty(String property) {
         
-        return map.getOrDefault(property, TYObject.NIL);
+        return map.getOrDefault(TrinityNatives.getObjectFor(property), TYObject.NIL);
     }
     
     /**

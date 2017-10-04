@@ -14,19 +14,17 @@ import java.util.logging.*;
  */
 public class TrinityLogging {
     
-    private static File logFile;
     private static PrintStream printStream;
     
     private static DateFormat dateFormat;
     private static Formatter formatter;
-    private static Handler handler;
     private static Logger logger;
     
     public static void setup() {
         
         try {
-            
-            logFile = new File("logs/trinity.log");
+    
+            File logFile = new File("logs/trinity.log");
             logFile.getParentFile().mkdirs();
             printStream = new PrintStream(new FileOutputStream(logFile));
             
@@ -51,23 +49,23 @@ public class TrinityLogging {
                     return formatted;
                 }
             };
-            handler = new Handler() {
-                
+            Handler handler = new Handler() {
+        
                 @Override
                 public void publish(LogRecord record) {
-                    
+            
                     printStream.println(formatter.format(record));
                 }
-                
+        
                 @Override
                 public void flush() {
-                    
+            
                     printStream.flush();
                 }
-                
+        
                 @Override
                 public void close() throws SecurityException {
-                    
+            
                     printStream.close();
                 }
             };

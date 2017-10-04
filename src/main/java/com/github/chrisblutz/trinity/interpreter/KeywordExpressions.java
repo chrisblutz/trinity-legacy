@@ -99,15 +99,10 @@ public class KeywordExpressions {
     }
     
     public static boolean runConstraintHelper(Block block, Token token, InstructionSet set) {
-        
+    
         PostConstraintHelper helper = constraintHelpers.get(token);
-        
-        if (helper != null) {
-            
-            return helper.postConstraint(set, previousSets.get(block));
-        }
-        
-        return true;
+    
+        return helper == null || helper.postConstraint(set, previousSets.get(block));
     }
     
     public static boolean checkConstraints(Block block, Token token) {

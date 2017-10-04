@@ -500,10 +500,9 @@ public class ExpressionInterpreter {
         
         List<List<TokenInfo>> tokenSets = splitTokens(tokens, delimiter);
         List<InstructionSet> sets = new ArrayList<>();
+    
+        for (List<TokenInfo> list : tokenSets) {
         
-        for (int i = 0; i < tokenSets.size(); i++) {
-            
-            List<TokenInfo> list = tokenSets.get(i);
             TokenInfo[] listArr = list.toArray(new TokenInfo[list.size()]);
             sets.add(interpretCompoundExpression(listArr, location, errorClass, method, next));
         }

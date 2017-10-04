@@ -55,11 +55,11 @@ class NativeMap {
         TrinityNatives.registerMethod(TrinityNatives.Classes.MAP, "[]", (runtime, thisObj, params) -> get(TrinityNatives.cast(TYMap.class, thisObj), runtime.getVariable("key"), runtime.getVariable("defaultValue"), runtime));
         TrinityNatives.registerMethod(TrinityNatives.Classes.MAP, "[]=", (runtime, thisObj, params) -> {
             
-            put(TrinityNatives.cast(TYMap.class, thisObj), runtime.getVariable("key"), runtime.getVariable("value"), runtime);
+            TYObject obj = put(TrinityNatives.cast(TYMap.class, thisObj), runtime.getVariable("key"), runtime.getVariable("value"), runtime);
             
             NativeStorage.clearMapData(TrinityNatives.cast(TYMap.class, thisObj));
             
-            return TYObject.NONE;
+            return obj;
         });
         TrinityNatives.registerMethod(TrinityNatives.Classes.MAP, "getStorageType", (runtime, thisObj, params) -> new TYInt(TrinityNatives.cast(TYMap.class, thisObj).getStorageType()));
     }
@@ -124,7 +124,7 @@ class NativeMap {
         
         if (!exists) {
             
-            map.put(obj, value);
+            return map.put(obj, value);
         }
         
         return TYObject.NIL;
