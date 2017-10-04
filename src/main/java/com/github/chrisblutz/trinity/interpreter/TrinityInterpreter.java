@@ -58,13 +58,13 @@ public class TrinityInterpreter {
                 
                 if (line.size() > 0) {
                     
-                    Token decl = line.get(0).getToken();
+                    Token declaration = line.get(0).getToken();
                     
-                    if (Declarations.getTokens().contains(decl)) {
+                    if (Declarations.getTokens().contains(declaration)) {
                         
-                        if (Declarations.checkSize(decl, line)) {
+                        if (Declarations.checkSize(declaration, line)) {
                             
-                            Declarations.getDeclaration(decl).define(line, nextBlock, env, new Location(block.getFileName(), block.getFullFile(), line.getLineNumber()));
+                            Declarations.getDeclaration(declaration).define(line, nextBlock, env, new Location(block.getFileName(), block.getFullFile(), line.getLineNumber()));
                             
                         } else {
                             

@@ -7,7 +7,7 @@ import com.github.chrisblutz.trinity.lang.variables.VariableLoc;
 /**
  * @author Christopher Lutz
  */
-public interface AssigmentOperatorHelper {
+public interface AssignmentOperatorHelper {
     
     void assign(VariableLoc location, TYObject value);
 }
