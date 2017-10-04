@@ -8,3 +8,15 @@ module Trinity
         def native static nextLong(origin = Long.MIN_VALUE, bound = Long.MAX_VALUE)
 
         def native static nextFloat(origin = 0, bound = 1)
+
+        def static choose(amount, array, allowRepetition = false)
+            result = []
+            chosen = []
+            (1..amount).each()
+                i = nextInt(0, array.length())
+                if !allowRepetition
+                    while chosen.contains(i)
+                        i = nextInt(0, array.length())
+                chosen << i
+                result << array[i]
+            result

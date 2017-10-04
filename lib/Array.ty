@@ -92,6 +92,15 @@ module Trinity
             def isSolid
                 solid
 
+            def contains(obj)
+                found = false
+                this.each() |e|
+                    if obj == e
+                        found = true
+                        break
+                found
+
+
             def native static copyOf(array)
 
             def static forSize(size, value = nil)

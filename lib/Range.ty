@@ -21,6 +21,12 @@ module Trinity
             def getExcludeEnd
                 excludeEnd
 
+            def toArray
+                array = []
+                this.each() |e|
+                    array << e
+                array
+
             def each(&block)
                 if block?
                     next = getBegin()
