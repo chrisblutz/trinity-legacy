@@ -22,6 +22,8 @@ module Trinity
 
         def native getStorageType
 
+        def native swapStorageType(storageType)
+
         def toString
             str = '{'
             for i = 0; i < length(); i += 1

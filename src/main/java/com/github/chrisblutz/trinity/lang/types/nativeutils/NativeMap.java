@@ -1,9 +1,9 @@
 package com.github.chrisblutz.trinity.lang.types.nativeutils;
 
-import com.github.chrisblutz.trinity.lang.ClassRegistry;
 import com.github.chrisblutz.trinity.lang.TYObject;
 import com.github.chrisblutz.trinity.lang.TYRuntime;
 import com.github.chrisblutz.trinity.lang.errors.Errors;
+import com.github.chrisblutz.trinity.lang.procedures.ProcedureAction;
 import com.github.chrisblutz.trinity.lang.types.maps.TYMap;
 import com.github.chrisblutz.trinity.lang.types.numeric.TYInt;
 import com.github.chrisblutz.trinity.natives.NativeStorage;
@@ -62,23 +62,31 @@ class NativeMap {
             return obj;
         });
         TrinityNatives.registerMethod(TrinityNatives.Classes.MAP, "getStorageType", (runtime, thisObj, params) -> new TYInt(TrinityNatives.cast(TYMap.class, thisObj).getStorageType()));
+        TrinityNatives.registerMethod(TrinityNatives.Classes.MAP, "swapStorageType", new ProcedureAction() {
+            
+            @Override
+            public TYObject onAction(TYRuntime runtime, TYObject thisObj, TYObject... params) {
+                
+                int storageType = TrinityNatives.toInt(runtime.getVariable("storageType"));
+                
+                TrinityNatives.cast(TYMap.class, thisObj).setStorageType(storageType);
+                
+                return TYObject.NONE;
+            }
+        });
     }
     
     private static Map<TYObject, TYObject> getMapForStorageType(int storageType) {
         
-        final int FAST_STORAGE = TrinityNatives.toInt(ClassRegistry.getClass(TrinityNatives.Classes.MAP).getVariable("FAST_STORAGE").getValue());
-        final int ORDERED_STORAGE = TrinityNatives.toInt(ClassRegistry.getClass(TrinityNatives.Classes.MAP).getVariable("ORDERED_STORAGE").getValue());
-        final int COMPARISON_STORAGE = TrinityNatives.toInt(ClassRegistry.getClass(TrinityNatives.Classes.MAP).getVariable("COMPARISON_STORAGE").getValue());
-        
-        if (storageType == FAST_STORAGE) {
+        if (storageType == TYMap.getFastStorage()) {
             
             return new HashMap<>();
             
-        } else if (storageType == ORDERED_STORAGE) {
+        } else if (storageType == TYMap.getOrderedStorage()) {
             
             return new LinkedHashMap<>();
             
-        } else if (storageType == COMPARISON_STORAGE) {
+        } else if (storageType == TYMap.getComparisonStorage()) {
             
             return new TreeMap<>(NativeHelper.getTYObjectComparator());
             
