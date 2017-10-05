@@ -10,6 +10,9 @@ module Trinity
         def native static nextFloat(origin = 0, bound = 1)
 
         def static choose(amount, array, allowRepetition = false)
+            if array.isInstance(Range)
+                array = array.toArray()
+
             result = []
             chosen = []
             (1..amount).each()
