@@ -13,6 +13,11 @@ module Trinity
             if array.isInstance(Range)
                 array = array.toArray()
 
+            if !allowRepetition && amount > array.length()
+                throw(Trinity.Errors.InvalidArgumentError.new('Sample size must not exceed population size.'))
+            elsif amount == 0
+                return []
+
             result = []
             chosen = []
             (1..amount).each()
