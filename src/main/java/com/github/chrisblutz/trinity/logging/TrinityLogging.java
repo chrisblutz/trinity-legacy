@@ -2,6 +2,7 @@ package com.github.chrisblutz.trinity.logging;
 
 import com.github.chrisblutz.trinity.cli.CLI;
 import com.github.chrisblutz.trinity.info.TrinityInfo;
+import com.github.chrisblutz.trinity.utils.FileUtils;
 
 import java.io.*;
 import java.text.DateFormat;
@@ -24,7 +25,7 @@ public class TrinityLogging {
         
         try {
     
-            File logFile = new File("logs/trinity.log");
+            File logFile = new File(FileUtils.getTrinityHome(), "logs/trinity.log");
             logFile.getParentFile().mkdirs();
             printStream = new PrintStream(new FileOutputStream(logFile));
             
