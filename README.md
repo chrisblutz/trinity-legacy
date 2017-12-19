@@ -1,6 +1,8 @@
-[![Build Status](https://travis-ci.org/trinity-lang/trinity.svg?branch=master)](https://travis-ci.org/trinity-lang/trinity)
+[![Trinity Logo](https://raw.githubusercontent.com/trinity-lang/trinity-lang/master/logo/logo-horizontal.png)](https://github.com/trinity-lang/trinity-legacy)
 
-[![Trinity Logo](https://raw.githubusercontent.com/trinity-lang/trinity/master/logo/logo-horizontal.png)](https://github.com/trinity-lang/trinity)
+**This is the legacy version of the Trinity interpreter.  The new, updated version can be found [here](https://github.com/trinity-lang/trinity).**
+
+---
 
 Trinity is a dynamically-typed, object-oriented programming language.
 It is heavily influenced by aspects of [Java](https://www.java.com/) and [Ruby](https://www.ruby-lang.org/).
@@ -11,12 +13,6 @@ It is heavily influenced by aspects of [Java](https://www.java.com/) and [Ruby](
 - `logo` - PNG/SVG logos for Trinity
 - `src` - Java source code for the Trinity interpreter
 - `test` - Trinity unit tests (written in Trinity)
-
-## Getting Started
-See Trinity's [Wiki](https://github.com/trinity-lang/trinity/wiki) for syntax information and example code.
-
-## Development
-Follow Trinity's development plans on [Trello](https://trello.com/b/MUH1xzWc).
 
 ## Copyright
 Copyright &copy; 2017 Christopher Lutz.  See [LICENSE](LICENSE) for further details.
