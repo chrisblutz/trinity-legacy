@@ -1,4 +1,4 @@
-[![Trinity Logo](https://raw.githubusercontent.com/trinity-lang/trinity-lang/master/logo/logo-horizontal.png)](https://github.com/trinity-lang/trinity-legacy)
+[![Trinity Logo](https://raw.githubusercontent.com/trinity-lang/trinity-legacy/master/logo/logo-horizontal.png)](https://github.com/trinity-lang/trinity-legacy)
 
 **This is the legacy version of the Trinity interpreter.  The new, updated version can be found [here](https://github.com/trinity-lang/trinity).**
 
